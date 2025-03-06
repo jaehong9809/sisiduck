@@ -279,7 +279,7 @@ def init_db(): # [어린이/청소년/성인] 맞춤형 VectorDB 구축
         os.makedirs(f"DB/vector")
 
     # # //init_db()함수만을 호출 할때 함수 내에서 openai_api_key지정===========
-    embedding = OpenAIEmbeddings(openai_api_key='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')
+    embedding = OpenAIEmbeddings(openai_api_key='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')
     
     list_en=['Child','Student','Adult']
     list_kr=['어린이','학생','성인']
