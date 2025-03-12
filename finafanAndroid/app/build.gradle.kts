@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.a702.finafan"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.a702.finafan"
