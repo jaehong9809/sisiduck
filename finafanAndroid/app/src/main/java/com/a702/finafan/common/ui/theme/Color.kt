@@ -1,4 +1,4 @@
-package com.a702.finafan.ui.theme
+package com.a702.finafan.common.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
