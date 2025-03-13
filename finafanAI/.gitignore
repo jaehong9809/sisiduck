@@ -1,0 +1,45 @@
+# Python 관련
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 가상 환경
+venv/
+.venv/
+env/
+.env
+*.env
+
+# FastAPI 및 로그
+logs/
+*.log
+
+# 데이터베이스 관련
+*.sqlite3
+*.db
+migrations/
+
+# Python 패키지 관련
+*.pip
+*.pyo
+*.pyd
+Pipfile
+Pipfile.lock
+
+# Docker 관련
+docker-compose.override.yml
+.dockerignore
+
+# IDE 및 편집기
+.vscode/
+.idea/
+*.code-workspace
+
+# 캐시 및 빌드
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+
+# CI/CD
+.github/
