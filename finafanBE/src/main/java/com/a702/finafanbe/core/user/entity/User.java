@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Account {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

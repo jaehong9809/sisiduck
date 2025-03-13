@@ -27,7 +27,6 @@ out/
 !**/src/test/**/out/
 **/application.properties
 /application.properties
-src/main/resources/*.yml
 *.yaml
 
 ### IntelliJ IDEA ###
