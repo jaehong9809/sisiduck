@@ -1,4 +1,4 @@
-package com.a702.finafanbe.config;
+package com.a702.finafanbe.global.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
