@@ -1,4 +1,4 @@
-package com.a702.finafan.domain.auth.model
+package com.a702.finafan.domain.user.model
 
 data class User(
     val userId: Int,

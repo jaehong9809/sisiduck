@@ -1,7 +1,7 @@
 package com.a702.finafan.domain.auth.repository
 
 import com.a702.finafan.common.domain.DataResource
-import com.a702.finafan.domain.auth.model.User
+import com.a702.finafan.domain.user.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
