@@ -1,4 +1,4 @@
-package com.a702.finafan.ui.theme
+package com.a702.finafan.common.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
