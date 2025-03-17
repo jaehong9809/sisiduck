@@ -40,5 +40,32 @@ public class JwtUtil {
                 .compact();
     }
 
+    private Jws<Claims> parseToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(this.secretKey)
+                .build()
+                .parseClaimsJws(token);
+    }
 
+    public String getSubject(String token) {
+        return parseToken(token).getBody().getSubject();
+    }
+
+    public boolean isTokenExpired(String token) {
+        try{
+            parseToken(token);
+        }catch (Exception e){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            parseToken(token);
+        }catch (JwtException e){
+            return false;
+        }
+        return true;
+    }
 }
