@@ -5,9 +5,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 
-@Composable
+/*@Composable
 fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
     val chatMessages by viewModel.chatMessages.collectAsState()
 
@@ -15,7 +16,7 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
         ChatList(chatMessages)
 
         Button(onClick = { viewModel.startListening() }) {
-            Text("음성 녹음")
+            Text("음성 녹음 시작")
         }
     }
-}
+}*/

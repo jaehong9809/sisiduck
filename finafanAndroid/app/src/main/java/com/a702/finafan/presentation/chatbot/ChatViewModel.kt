@@ -3,6 +3,7 @@ package com.a702.finafan.presentation.chatbot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.domain.chatbot.model.ChatMessage
+import com.a702.finafan.domain.chatbot.repository.ChatRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
