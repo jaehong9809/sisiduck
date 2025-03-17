@@ -1,6 +1,8 @@
 package com.a702.finafanbe.core.user.util;
 
 import com.a702.finafanbe.core.user.entity.AuthTokens;
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,6 +40,14 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public void validateRefreshToken(String refreshToken) {
+        try {
+            parseToken(refreshToken);
+        } catch (JwtException e) {
+            throw new BadRequestException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
     }
 
     private Jws<Claims> parseToken(String token) {
