@@ -1,8 +1,7 @@
 package com.a702.finafanbe.core.user.util;
 
 import com.a702.finafanbe.core.user.entity.AuthTokens;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,19 +12,33 @@ import java.util.Date;
 public class JwtUtil {
 
     private SecretKey secretKey;
-    private Long accessTokenExpiration;
-    private Long refreshTokenExpiration;
+    private Long accessTokenExpiry;
+    private Long refreshTokenExpiry;
 
     public JwtUtil(
             @Value("jwt.secretkey") SecretKey secretKey,
             @Value("jwt.access-expiration") Long accessTokenExpiration,
-            @Value("jwt.refresh-expiration") Long refreshTokenExpiration
+            @Value("jwt.refresh-expiration") Long refreshTokenExpiry
     ) {
         this.secretKey = secretKey;
-        this.accessTokenExpiration = accessTokenExpiration;
-        this.refreshTokenExpiration = refreshTokenExpiration;
+        this.accessTokenExpiry = accessTokenExpiration;
+        this.refreshTokenExpiry = refreshTokenExpiry;
     }
 
+    public AuthTokens createLoginToken(String subject) {
+        String refreshToken = createToken("", refreshTokenExpiry);
+        String accessToken = createToken(subject, accessTokenExpiry);
+        return new AuthTokens(refreshToken, accessToken);
+    }
+
+    private String createToken(String subject, Long expiredMs) {
+        return Jwts.builder()
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
+                .signWith(secretKey)
+                .compact();
+    }
 
 
 }
