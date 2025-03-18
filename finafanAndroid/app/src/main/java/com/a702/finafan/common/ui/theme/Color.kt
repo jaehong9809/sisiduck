@@ -21,6 +21,7 @@ val starGradSkyBlue = Color(0xFF7EAEFF)
 /* ------------ Chat Bubble Color ------------ */
 val BubbleLime = Color(0xFFDCF8C6)
 val BubbleWhite = Color(0xFFFFFFFF)
+val BubbleBlue = Color(0xFFD1EBFF)
 
 
 /* ------------ Android System Default Color ------------ */
