@@ -19,6 +19,10 @@ object NetworkModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class MainRetrofit
 
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class AiChatRetrofit
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
@@ -37,15 +41,29 @@ object NetworkModule {
     @Singleton
     fun provideConverterFactory(): GsonConverterFactory = GsonConverterFactory.create()
 
+    @MainRetrofit
     @Provides
     @Singleton
-    @MainRetrofit
-    fun provideRetrofit(
+    fun provideMainRetrofit(
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory,
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL) // 빌드 시점에 baseUrl 설정
+            .addConverterFactory(gsonConverterFactory)
+            .client(okHttpClient)
+            .build()
+    }
+
+    @AiChatRetrofit
+    @Provides
+    @Singleton
+    fun provideAiChatRetrofit(
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory,
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL) // 추후 서버 분리되면 baseUrl 변경
             .addConverterFactory(gsonConverterFactory)
             .client(okHttpClient)
             .build()
