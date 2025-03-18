@@ -9,10 +9,10 @@ import android.speech.SpeechRecognizer
 import java.util.Locale
 
 class SpeechRecognizerHelper(
-    private val context: Context,
-    private val onResult: (String) -> Unit
+    private val context: Context
 ) {
     private val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
+    private var onResult: ((String) -> Unit)? = null
 
     private val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
         putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -24,7 +24,7 @@ class SpeechRecognizerHelper(
             override fun onResults(results: Bundle?) {
                 val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 matches?.firstOrNull()?.let { recognizedText ->
-                    onResult(recognizedText)
+                    onResult?.invoke(recognizedText)
                 }
             }
 
@@ -60,6 +60,10 @@ class SpeechRecognizerHelper(
                 // 에러 처리
             }
         })
+    }
+
+    fun setOnResultListener(listener: (String) -> Unit) {
+        onResult = listener
     }
 
     fun startListening() {
