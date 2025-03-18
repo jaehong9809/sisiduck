@@ -11,14 +11,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.a702.finafan.common.ui.theme.BubbleLime
+import com.a702.finafan.common.ui.theme.BubbleWhite
 import com.a702.finafan.domain.chatbot.model.ChatMessage
 
 @Composable
 fun ChatBubble(chatMessage: ChatMessage) {
     val alignment = if (chatMessage.isUser) Alignment.End else Alignment.Start
-    val backgroundColor = if (chatMessage.isUser) Color(0xFFDCF8C6) else Color(0xFFFFFFFF)
+    val backgroundColor = if (chatMessage.isUser) BubbleLime else BubbleWhite
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = if (chatMessage.isUser) Arrangement.End else Arrangement.Start) {
         Box(
