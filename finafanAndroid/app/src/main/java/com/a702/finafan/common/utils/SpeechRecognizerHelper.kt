@@ -28,11 +28,37 @@ class SpeechRecognizerHelper(
                 }
             }
 
+            override fun onPartialResults(p0: Bundle?) {
+
+            }
+
+            override fun onEvent(p0: Int, p1: Bundle?) {
+
+            }
+
+            override fun onReadyForSpeech(p0: Bundle?) {
+
+            }
+
+            override fun onBeginningOfSpeech() {
+
+            }
+
+            override fun onRmsChanged(p0: Float) {
+
+            }
+
+            override fun onBufferReceived(p0: ByteArray?) {
+
+            }
+
+            override fun onEndOfSpeech() {
+                //
+            }
+
             override fun onError(error: Int) {
                 // 에러 처리
             }
-
-            // 기타 콜백 생략
         })
     }
 
