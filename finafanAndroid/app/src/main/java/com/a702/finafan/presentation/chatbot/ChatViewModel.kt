@@ -23,12 +23,19 @@ class ChatViewModel @Inject constructor(
 
     init {
         speechRecognizerHelper.setOnResultListener { text ->
-            sendUserMessage(text)
+            addUserMessage(text)
+            //sendUserMessage(text)
         }
     }
 
     fun startListening() {
         speechRecognizerHelper.startListening()
+    }
+
+    private fun addUserMessage(text: String) {
+        viewModelScope.launch {
+            _messages.update { it + ChatMessage(text, true) }
+        }
     }
 
     private fun sendUserMessage(text: String) {
