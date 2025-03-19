@@ -49,7 +49,8 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
     ) {
         LazyColumn(
             modifier = Modifier.weight(1f),
-            reverseLayout = true
+            reverseLayout = true,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(chatMessages.reversed()) { chatMessage ->
                 ChatBubble(chatMessage)
