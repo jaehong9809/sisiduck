@@ -18,7 +18,7 @@ RUN mkdir -p /opt/jmx_exporter
 ADD https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.16.1/jmx_prometheus_javaagent-0.16.1.jar /opt/jmx_exporter/jmx_prometheus_javaagent.jar
 COPY config/prometheus/jmx_exporter.yml /opt/jmx_exporter/config.yml
 
-EXPOSE 8080
+EXPOSE 8081
 
 ENTRYPOINT ["java", \
     "-javaagent:/opt/jmx_exporter/jmx_prometheus_javaagent.jar=8081:/opt/jmx_exporter/config.yml", \
