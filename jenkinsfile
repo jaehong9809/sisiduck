@@ -105,15 +105,17 @@ pipeline {
 
     post {
         always {
-            dir('BE') {
-                sh '''
-                    rm -f src/main/resources/application-local.yml
-                    rm -f src/main/resources/application-oauth.yml
-                    rm -f docker/.env
+            node {  // 노드 컨텍스트 추가
+                dir('BE') {
+                    sh '''
+                        rm -f src/main/resources/application-local.yml
+                        rm -f src/main/resources/application-oauth.yml
+                        rm -f docker/.env
 
-                    docker container prune -f
-                    docker image prune -f
-                '''
+                        docker container prune -f
+                        docker image prune -f
+                    '''
+                }
             }
         }
     }
