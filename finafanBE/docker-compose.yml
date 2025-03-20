@@ -1,23 +1,10 @@
 services:
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
-    networks:
-      - app-network
-    depends_on:
-      - spring-app1
-      - spring-app2
-      - spring-app3
   mysql:
     image: mysql:8.0
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: "1234"
-      MYSQL_DATABASE: "alli"
+      MYSQL_DATABASE: "sisiduck"
       TZ: Asia/Seoul
     ports:
       - "3306:3306"
@@ -32,32 +19,21 @@ services:
       timeout: 5s
       retries: 5
 
-  mysql-exporter:
-    container_name: mysql-exporter
-    image: prom/mysqld-exporter
-    command:
-      - "--mysqld.username=user:password"
-      - "--mysqld.address=mysql:3306"
-    ports:
-      - "9104:9104"
-    depends_on:
-      - mysql
-
   spring-app1:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spring-app1
+    container_name: spring-app
     ports:
-      - "8081:8080"
+      - "8081:8081"
     environment:
       SPRING_PROFILES_ACTIVE: "local"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/alli?characterEncoding=UTF-8&serverTimezone=UTC"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/sisiduck?characterEncoding=UTF-8&serverTimezone=UTC"
       SPRING_DATASOURCE_USERNAME: "root"
       SPRING_DATASOURCE_PASSWORD: "1234"
-      ELASTICSEARCH_HOST: "elasticsearch"
-      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
-      SERVER_PORT: "8080"
+#      ELASTICSEARCH_HOST: "elasticsearch"
+#      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
+      SERVER_PORT: "8081"
       INSTANCE_NAME: "app1"
     volumes:
       - ./logs/app1:/app/logs
@@ -66,174 +42,118 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-      prometheus:
-        condition: service_started
+#      elasticsearch:
+#        condition: service_healthy
+#      prometheus:
+#        condition: service_started
 
-  spring-app2:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: spring-app2
-    ports:
-      - "8082:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: "local"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/alli?characterEncoding=UTF-8&serverTimezone=UTC"
-      SPRING_DATASOURCE_USERNAME: "root"
-      SPRING_DATASOURCE_PASSWORD: "1234"
-      ELASTICSEARCH_HOST: "elasticsearch"
-      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
-      SERVER_PORT: "8080"
-      INSTANCE_NAME: "app2"
-    volumes:
-      - ./logs/app2:/app/logs
-    networks:
-      - app-network
-    depends_on:
-      mysql:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-      prometheus:
-        condition: service_started
-
-  spring-app3:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: spring-app3
-    ports:
-      - "8083:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: "local"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/alli?characterEncoding=UTF-8&serverTimezone=UTC"
-      SPRING_DATASOURCE_USERNAME: "root"
-      SPRING_DATASOURCE_PASSWORD: "1234"
-      ELASTICSEARCH_HOST: "elasticsearch"
-      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
-      SERVER_PORT: "8080"
-      INSTANCE_NAME: "app3"
-    volumes:
-      - ./logs/app3:/app/logs
-    networks:
-      - app-network
-    depends_on:
-      mysql:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-      prometheus:
-        condition: service_started
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
-    container_name: elasticsearch
-    environment:
-      - node.name=elasticsearch
-      - cluster.name=es-cluster
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-    ports:
-      - "${ES_PORT:-9200}:9200"
-    networks:
-      - app-network
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9200" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.14.0
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    ports:
-      - "${KIBANA_PORT}:5601"
-    networks:
-      - app-network
-    depends_on:
-      - elasticsearch
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.14.0
-    container_name: logstash
-    volumes:
-      - ./config/logstash/:/usr/share/logstash/pipeline/
-      - ./logs:/usr/share/logstash/pipeline/logs  # 로그 폴더 공유
-    ports:
-      - "${LOGSTASH_PORT:-5044}:5044"
-    networks:
-      - app-network
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-
-  prometheus:
-    image: prom/prometheus:v2.30.3
-    container_name: prometheus
-    volumes:
-      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
-    ports:
-      - "${PROMETHEUS_PORT}:9090"
-    networks:
-      - app-network
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-
-  grafana:
-    image: grafana/grafana:8.2.0
-    container_name: grafana
-    ports:
-      - "${GRAFANA_PORT}:3000"
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./config/grafana/provisioning:/etc/grafana/provisioning
-    networks:
-      - app-network
-    depends_on:
-      - prometheus
-
-  k6:
-    image: grafana/k6:latest
-    ports:
-      - "6565:6565"
-    volumes:
-      - ./script.js:/script.js
-    command: run /script.js
-    networks:
-      - app-network
-    depends_on:
-      - prometheus
-      - nginx
-
-  k6-exporter:
-    image: prom/pushgateway:latest
-    container_name: k6-exporter
-    ports:
-      - "9091:9091"
-    networks:
-      - app-network
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+#    container_name: elasticsearch
+#    environment:
+#      - node.name=elasticsearch
+#      - cluster.name=es-cluster
+#      - discovery.type=single-node
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    volumes:
+#      - elasticsearch-data:/usr/share/elasticsearch/data
+#    ports:
+#      - "${ES_PORT:-9200}:9200"
+#    networks:
+#      - app-network
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:9200" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 3
+#
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:7.14.0
+#    container_name: kibana
+#    environment:
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#    ports:
+#      - "${KIBANA_PORT}:5601"
+#    networks:
+#      - app-network
+#    depends_on:
+#      - elasticsearch
+#
+#  logstash:
+#    image: docker.elastic.co/logstash/logstash:7.14.0
+#    container_name: logstash
+#    volumes:
+#      - ./config/logstash/:/usr/share/logstash/pipeline/
+#      - ./logs:/usr/share/logstash/pipeline/logs  # 로그 폴더 공유
+#    ports:
+#      - "${LOGSTASH_PORT:-5044}:5044"
+#    networks:
+#      - app-network
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#
+#  prometheus:
+#    image: prom/prometheus:v2.30.3
+#    container_name: prometheus
+#    volumes:
+#      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#      - prometheus-data:/prometheus
+#    ports:
+#      - "${PROMETHEUS_PORT}:9090"
+#    networks:
+#      - app-network
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#      - '--storage.tsdb.path=/prometheus'
+#      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+#      - '--web.console.templates=/usr/share/prometheus/consoles'
+#
+#  grafana:
+#    image: grafana/grafana:8.2.0
+#    container_name: grafana
+#    ports:
+#      - "${GRAFANA_PORT}:3000"
+#    volumes:
+#      - grafana-data:/var/lib/grafana
+#      - ./config/grafana/provisioning:/etc/grafana/provisioning
+#    networks:
+#      - app-network
+#    depends_on:
+#      - prometheus
+#
+#  k6:
+#    image: grafana/k6:latest
+#    ports:
+#      - "6565:6565"
+#    volumes:
+#      - ./script.js:/script.js
+#    command: run /script.js
+#    networks:
+#      - app-network
+#    depends_on:
+#      - prometheus
+#      - nginx
+#
+#  k6-exporter:
+#    image: prom/pushgateway:latest
+#    container_name: k6-exporter
+#    ports:
+#      - "9091:9091"
+#    networks:
+#      - app-network
 
 networks:
   app-network:
     driver: bridge
 
 volumes:
-  elasticsearch-data:
-  prometheus-data:
-  grafana-data:
+#  elasticsearch-data:
+#  prometheus-data:
+#  grafana-data:
   mysql-data:
