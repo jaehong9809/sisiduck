@@ -24,9 +24,6 @@ pipeline {
                         sh '''
                           mkdir -p src/main/resources
                           chmod -R 700 src/main/resources
-                          cp $ENV_FILE src/main/resources/application.yml
-                          cp $ENV_FILE src/main/resources/application-local.yml
-                          cp $ENV_FILE src/main/resources/application-oauth.yml
                         '''
                     }
                 }
