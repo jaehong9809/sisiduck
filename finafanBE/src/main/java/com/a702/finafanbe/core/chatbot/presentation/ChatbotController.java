@@ -1,16 +1,24 @@
 package com.a702.finafanbe.core.chatbot.presentation;
 
+import com.a702.finafanbe.core.chatbot.application.ChatbotService;
+import com.a702.finafanbe.core.chatbot.dto.request.QuestionRequest;
+import com.a702.finafanbe.core.chatbot.dto.response.AnswerResponse;
+import com.a702.finafanbe.global.common.util.ResponseUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/chatbot")
+@RequestMapping("/api/v1/chatbot")
+@RequiredArgsConstructor
 public class ChatbotController {
+    private final ChatbotService chatbotService;
 
-    @GetMapping
-    public ResponseEntity<?> chatbot() {
-        return ResponseEntity.ok().build();
+    @PostMapping
+    public ResponseEntity<?> chatbot(@RequestBody QuestionRequest questionRequest) {
+
+        AnswerResponse answerResponse = chatbotService.sendQueryData(questionRequest);
+
+        return ResponseUtil.success(answerResponse);
     }
 }

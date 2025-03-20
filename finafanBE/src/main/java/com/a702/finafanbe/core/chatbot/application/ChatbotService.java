@@ -1,6 +1,7 @@
 package com.a702.finafanbe.core.chatbot.application;
 
 import com.a702.finafanbe.core.chatbot.dto.request.QuestionRequest;
+import com.a702.finafanbe.core.chatbot.dto.response.AnswerResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -12,9 +13,12 @@ public class ChatbotService {
         this.webClient = webClientBuilder.baseUrl("http://localhost:8000/ai").build();
     }
 
-    public String sendQueryData(QuestionRequest req) {
+    public AnswerResponse sendQueryData(QuestionRequest req) {
+        AnswerResponse answerResponse = new AnswerResponse();
+
         if (req == null || req.getQuestion().isBlank()) {
-            return "No query to send.";
+            answerResponse.setAnswer("No query to send.");
+            return answerResponse;
         }
 
         try {
@@ -24,10 +28,11 @@ public class ChatbotService {
                     .retrieve()
                     .bodyToMono(String.class)  // 응답을 String으로 변환
                     .block();  // 동기적으로 응답 대기 후 반환
-
-            return response != null ? response : "No response from server.";
+            answerResponse.setAnswer(response != null ? response : "No response from server.");
+            return answerResponse;
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            answerResponse.setAnswer("Error: " + e.getMessage());
+            return answerResponse;
         }
     }
 }
