@@ -112,7 +112,6 @@ pipeline {
                     rm -f docker/.env
 
                     docker container prune -f
-
                     docker image prune -f
                 '''
             }
