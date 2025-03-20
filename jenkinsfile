@@ -82,10 +82,6 @@ pipeline {
                             # 새로운 이미지로 모든 서비스 시작
                             BUILD_NUMBER=${BUILD_NUMBER} docker-compose -f docker-compose.yml up -d
 
-                            # 각 백엔드 서비스의 상태 확인
-                            docker-compose ps backend1
-                            docker-compose ps backend2
-                            docker-compose ps backend3
                         """
                     }
                 }
