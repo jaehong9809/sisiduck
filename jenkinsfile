@@ -15,23 +15,23 @@ pipeline {
             }
         }
 
-        stage('Setup Environment') {
-            steps {
-                dir('BE') {
-                    withCredentials([
-                    file(credentialsId: 'env-file-credentials', variable: 'ENV_FILE'),
-                    ]) {
-                        sh '''
-                          mkdir -p finafanBE/src/main/resources
-                          chmod -R 700 finafanBE/src/main/resources
-                          cp $ENV_FILE finafanBE/src/main/resources/application.yml
-                          cp $ENV_FILE finafanBE/src/main/resources/application-local.yml
-                          cp $ENV_FILE finafanBE/src/main/resources/application-oauth.yml
-                        '''
-                    }
-                }
-            }
-        }
+//         stage('Setup Environment') {
+//             steps {
+//                 dir('BE') {
+//                     withCredentials([
+//                     file(credentialsId: 'env-file-credentials', variable: 'ENV_FILE'),
+//                     ]) {
+//                         sh '''
+//                           mkdir -p finafanBE/src/main/resources
+//                           chmod -R 700 finafanBE/src/main/resources
+//                           cp $ENV_FILE finafanBE/src/main/resources/application.yml
+//                           cp $ENV_FILE finafanBE/src/main/resources/application-local.yml
+//                           cp $ENV_FILE finafanBE/src/main/resources/application-oauth.yml
+//                         '''
+//                     }
+//                 }
+//             }
+//         }
 
         stage('Build') {
             steps {
