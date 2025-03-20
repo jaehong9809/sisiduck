@@ -39,7 +39,7 @@ fun MainSquareIconButton(
     Box(
         modifier = modifier
             .size(156.dp)
-            .background(MainWhite, shape = RoundedCornerShape(16.dp))
+            .background(MainWhite, shape = RoundedCornerShape(24.dp))
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
@@ -63,6 +63,7 @@ fun MainSquareIconButton(
 fun MainWideIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    icon: @Composable (() -> Unit)? = null,
     text: String
 ) {
     Box(
@@ -73,12 +74,18 @@ fun MainWideIconButton(
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = text,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Medium,
-            color = MainBlack
-        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            icon?.invoke()
+            text?.let {
+                Text(
+                    text = it,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MainBlack,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
     }
 }
 
