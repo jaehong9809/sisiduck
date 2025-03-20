@@ -23,4 +23,10 @@ cloud:
     stack:
       auto: ${CLOUD_AWS_STACK_AUTO}
 
-
+s3:
+  upload:
+    folder:
+      image: ${S3_UPLOAD_FOLDER_IMAGE}
+      result: ${S3_UPLOAD_FOLDER_RESULT}
+    file:
+      url: ${S3_UPLOAD_FILE_URL}
