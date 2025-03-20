@@ -34,7 +34,6 @@ services:
 #      ELASTICSEARCH_HOST: "elasticsearch"
 #      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
       SERVER_PORT: "8081"
-      INSTANCE_NAME: "app1"
     volumes:
       - ./logs/app1:/app/logs
     networks:
