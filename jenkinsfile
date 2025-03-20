@@ -22,11 +22,11 @@ pipeline {
                     file(credentialsId: 'env-file-credentials', variable: 'ENV_FILE'),
                     ]) {
                         sh '''
-                          mkdir -p src/main/resources
-                          chmod -R 700 src/main/resources
-                          cp $ENV_FILE_ENT src/main/resources/application.yml
-                          cp $ENV_FILE src/main/resources/application-prod.yml
-                          cp $ENV_FILE src/main/resources/application-oauth.yml
+                          mkdir -p finafanBE/src/main/resources
+                          chmod -R 700 finafanBE/src/main/resources
+                          cp $ENV_FILE_ENT finafanBE/src/main/resources/application.yml
+                          cp $ENV_FILE finafanBE/src/main/resources/application-prod.yml
+                          cp $ENV_FILE finafanBE/src/main/resources/application-oauth.yml
                         '''
                     }
                 }
