@@ -20,4 +20,7 @@ public class BaseEntity {
     @Column(nullable = false)
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+
+    @Column(name = "deleted_at",nullable = false)
+    private LocalDateTime deletedAt;
 }

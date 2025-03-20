@@ -6,10 +6,10 @@ spring:
       s3:
         enabled: ${SPRING_CLOUD_AWS_S3_ENABLED}
 ---
-#spring:
-#  profiles:
-#    group:
-#      local: oauth
+spring:
+  profiles:
+    group:
+      local: oauth
 
 cloud:
   aws:

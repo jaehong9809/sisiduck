@@ -1,6 +1,6 @@
 package com.a702.finafanbe.core.chatbot.application;
 
-import com.a702.finafanbe.core.chatbot.dto.request.QuestionReq;
+import com.a702.finafanbe.core.chatbot.dto.request.QuestionRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -12,7 +12,7 @@ public class ChatbotService {
         this.webClient = webClientBuilder.baseUrl("http://localhost:8000/ai").build();
     }
 
-    public String sendQueryData(QuestionReq req) {
+    public String sendQueryData(QuestionRequest req) {
         if (req == null || req.getQuestion().isBlank()) {
             return "No query to send.";
         }
