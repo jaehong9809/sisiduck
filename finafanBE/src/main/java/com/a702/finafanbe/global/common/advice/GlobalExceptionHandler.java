@@ -1,5 +1,10 @@
-package com.a702.finafanbe.global.common.exception;
+package com.a702.finafanbe.global.common.advice;
 
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
+import com.a702.finafanbe.global.common.exception.ExceptionResponse;
+import com.a702.finafanbe.global.common.exception.InvalidJwtException;
+import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,16 +35,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .getDefaultMessage();
 
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(ErrorCode.INVALID_REQUEST.getCode(), message));
+                .body(new ExceptionResponse(ErrorCode.SYSTEM_ERROR.getCode(), message));
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ExceptionResponse> handleBadRequestException(BadRequestException e){
+    public ResponseEntity<?> handleBadRequestException(BadRequestException e){
 
         log.warn(e.getMessage(), e);
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ExceptionResponse(e.getCode(), e.getMessage()));
+        return ResponseUtil.failure(e);
     }
 
 //    @ExceptionHandler(SocialLoginException.class)
@@ -51,9 +55,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //    }
 
     @ExceptionHandler(InvalidJwtException.class)
-    public ResponseEntity<ExceptionResponse> handleInvalidJwtException(InvalidJwtException e){
+    public ResponseEntity<?> handleInvalidJwtException(InvalidJwtException e){
         log.warn(e.getMessage(), e);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ExceptionResponse(e.getCode(), e.getMessage()));
+        return ResponseUtil.failure(e);
     }
 }
