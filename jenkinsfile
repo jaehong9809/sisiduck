@@ -24,8 +24,8 @@ pipeline {
                         sh '''
                           mkdir -p finafanBE/src/main/resources
                           chmod -R 700 finafanBE/src/main/resources
-                          cp $ENV_FILE_ENT finafanBE/src/main/resources/application.yml
-                          cp $ENV_FILE finafanBE/src/main/resources/application-prod.yml
+                          cp $ENV_FILE finafanBE/src/main/resources/application.yml
+                          cp $ENV_FILE finafanBE/src/main/resources/application-local.yml
                           cp $ENV_FILE finafanBE/src/main/resources/application-oauth.yml
                         '''
                     }
@@ -107,7 +107,7 @@ pipeline {
         always {
             dir('BE') {
                 sh '''
-                    rm -f src/main/resources/application-prod.yml
+                    rm -f src/main/resources/application-local.yml
                     rm -f src/main/resources/application-oauth.yml
                     rm -f docker/.env
 
