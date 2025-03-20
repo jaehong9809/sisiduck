@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/chatbot")
 public class ChatbotController {
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<?> chatbot() {
         return ResponseEntity.ok().build();
     }
