@@ -15,27 +15,27 @@ pipeline {
             }
         }
 
-//         stage('Setup Environment') {
-//             steps {
-//                 dir('BE') {
-//                     withCredentials([
-//                     file(credentialsId: 'env-file-credentials', variable: 'ENV_FILE'),
-//                     ]) {
-//                         sh '''
-//                           mkdir -p finafanBE/src/main/resources
-//                           chmod -R 700 finafanBE/src/main/resources
-//                           cp $ENV_FILE finafanBE/src/main/resources/application.yml
-//                           cp $ENV_FILE finafanBE/src/main/resources/application-local.yml
-//                           cp $ENV_FILE finafanBE/src/main/resources/application-oauth.yml
-//                         '''
-//                     }
-//                 }
-//             }
-//         }
+        stage('Setup Environment') {
+            steps {
+                dir('finafanBE') {
+                    withCredentials([
+                    file(credentialsId: 'env-file-credentials', variable: 'ENV_FILE'),
+                    ]) {
+                        sh '''
+                          mkdir -p src/main/resources
+                          chmod -R 700 src/main/resources
+                          cp $ENV_FILE src/main/resources/application.yml
+                          cp $ENV_FILE src/main/resources/application-local.yml
+                          cp $ENV_FILE src/main/resources/application-oauth.yml
+                        '''
+                    }
+                }
+            }
+        }
 
         stage('Build') {
             steps {
-                dir('BE') {
+                dir('finafanBE') {
                     sh '''
                         chmod +x ./gradlew
                         ./gradlew clean build
@@ -46,7 +46,7 @@ pipeline {
 
         stage('Build and Push Docker Image') {
             steps {
-                dir('BE') {
+                dir('finafanBE') {
                     script {
                         def dockerImage = "${DOCKER_REGISTRY_USR}/backend:${BUILD_NUMBER}"
                         withCredentials([usernamePassword(
@@ -57,7 +57,7 @@ pipeline {
                         def imageTag = "${DOCKER_USER}/backend:${BUILD_NUMBER}"
                         sh """
                             echo '$DOCKER_PASS' | docker login -u '$DOCKER_USER' --password-stdin
-                            docker build -t ${imageTag} -f finafanBE/Dockerfile .
+                            docker build -t ${imageTag} -f Dockerfile .
                             docker push ${imageTag}
 
                         """
@@ -69,15 +69,14 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                dir('BE') {
+                dir('finafanBE') {
                     withCredentials([
                     file(credentialsId: 'env-file-credentials', variable: 'ENV_FILE'),
                     ]) {
                         sh """
-                            cp \$ENV_FILE finafanBE/.env
+                            cp \$ENV_FILE .env
                             chmod 644 .env
 
-                            cd finafanBE
                             docker-compose -f docker-compose.yml down
 
                             # 새로운 이미지로 모든 서비스 시작
@@ -105,17 +104,15 @@ pipeline {
 
     post {
         always {
-            node {  // 노드 컨텍스트 추가
-                dir('BE') {
-                    sh '''
-                        rm -f src/main/resources/application-local.yml
-                        rm -f src/main/resources/application-oauth.yml
-                        rm -f docker/.env
+            dir('finafanBE') {
+                sh '''
+                    rm -f src/main/resources/application-local.yml
+                    rm -f src/main/resources/application-oauth.yml
+                    rm -f docker/.env
 
-                        docker container prune -f
-                        docker image prune -f
-                    '''
-                }
+                    docker container prune -f
+                    docker image prune -f
+                '''
             }
         }
     }
