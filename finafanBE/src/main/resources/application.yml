@@ -1,8 +1,26 @@
 spring:
   profiles:
     default: local
+  cloud:
+    aws:
+      s3:
+        enabled: ${SPRING_CLOUD_AWS_S3_ENABLED}
 ---
 #spring:
 #  profiles:
 #    group:
 #      local: oauth
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${CLOUD_AWS_CREDENTIALS_ACCESS_KEY}
+      secret-key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY}
+    s3:
+      bucket: ${CLOUD_AWS_S3_BUCKET}
+    region:
+      static: ${CLOUD_AWS_REGION_STATIC}
+    stack:
+      auto: ${CLOUD_AWS_STACK_AUTO}
+
+
