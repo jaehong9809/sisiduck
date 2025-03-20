@@ -49,3 +49,15 @@ management:
 logging:
   level:
     com.a702.finafanbe: DEBUG
+
+jwt:
+  header: Authorization
+  secret: ${JWT_SECRET:2d4e6f8g0h1i3j5k7l9m2n4p6q8r0s2t4v6w8x0z2b4d6f8h0j2l4m6n8p0r2t4v6x8z1a3c5e7g9i}
+  token-validity-in-seconds: 86400
+  access-token-validity-in-seconds: ${JWT_ACCESS_VALIDITY:32140800}
+  refresh-token-validity-in-seconds: ${JWT_REFRESH_VALIDITY:1209600}
+
+oauth: #frontTest용
+  auth-url: https://project.ssafy.com/oauth/sso-check
+  client-id: 0d62ba8e-d889-4fd7-91a7-90a27e517499
+  redirect-uri: http://localhost:8080/api/v1/auth/login/ssafy
