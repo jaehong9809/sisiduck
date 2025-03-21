@@ -1,57 +1,42 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
+import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountListRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
+import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class InquireDemandDepositAccountService {
 
-    private final RestTemplate restTemplate;
+    private final ApiClientUtil apiClientUtil;
     private final AccountRepository accountRepository;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> retrieveDemandDepositAccount(
+            String path,
             InquireDemandDepositAccountRequest retrieveDemandDepositRequest
     ) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<InquireDemandDepositAccountRequest> httpEntity = new HttpEntity<>(
+        return apiClientUtil.callFinancialNetwork(
+                path,
                 retrieveDemandDepositRequest,
-                headers
-        );
-        ResponseEntity<InquireDemandDepositAccountResponse> exchange = restTemplate.exchange(
-                "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccount",
-                HttpMethod.POST,
-                httpEntity,
                 InquireDemandDepositAccountResponse.class
         );
-
-        return ResponseEntity.ok(exchange.getBody());
     }
 
     public ResponseEntity<InquireDemandDepositAccountListResponse> retrieveDemandDepositAccountList(
-            InquireDemandDepositAccountRequest.RetrieveDemandDepositRequestHeader retrieveDemandDepositRequestHeader
+            String path,
+            InquireDemandDepositAccountListRequest inquireDemandDepositAccountListRequest
     ) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<InquireDemandDepositAccountRequest.RetrieveDemandDepositRequestHeader> httpEntity = new HttpEntity<>(
-                retrieveDemandDepositRequestHeader,
-                headers
-        );
-        ResponseEntity<InquireDemandDepositAccountListResponse> exchange = restTemplate.exchange(
-                "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccountList",
-                HttpMethod.POST,
-                httpEntity,
+        return apiClientUtil.callFinancialNetwork(
+                path,
+                inquireDemandDepositAccountListRequest,
                 InquireDemandDepositAccountListResponse.class
         );
-
-        return ResponseEntity.ok(exchange.getBody());
     }
 }
 

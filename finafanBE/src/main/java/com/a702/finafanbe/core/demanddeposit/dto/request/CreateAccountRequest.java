@@ -1,22 +1,11 @@
 package com.a702.finafanbe.core.demanddeposit.dto.request;
 
-import lombok.Getter;
+
+import com.a702.finafanbe.global.common.header.BaseRequestHeaderIncludeUserKey;
 
 public record CreateAccountRequest (
-    CreateDemandDepositAccountRequestHeader Header,
+    BaseRequestHeaderIncludeUserKey Header,
     String accountTypeUniqueNo
 ){
 
-    @Getter
-    public static class CreateDemandDepositAccountRequestHeader {
-        private String apiName;
-        private String transmissionDate;
-        private String transmissionTime;
-        private String institutionCode;
-        private String fintechAppNo;
-        private String apiServiceCode;
-        private String institutionTransactionUniqueNo;
-        private String apiKey;
-        private String userKey;
-    }
 }
