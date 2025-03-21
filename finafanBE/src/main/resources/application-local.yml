@@ -2,9 +2,6 @@ spring:
   config:
     activate:
       on-profile: local
-  application:
-    name: spring-app
-    instance-id: ${INSTANCE_NAME:default}
   jpa:
     hibernate:
       ddl-auto: update
@@ -24,27 +21,24 @@ spring:
     username: ${DATABASE_USERNAME:test}
     password: ${DATABASE_PASSWORD:test}
 
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: health,info,prometheus,metrics
-#  metrics:
-#    export:
-#      prometheus:
-#        enabled: true
-#    tags:
-#      application: ${spring.application.name}
-#      instance: ${spring.application.instance-id}
-#  endpoint:
-#    health:
-#      show-details: always
-#    prometheus:
-#      enabled: true
-#    endpoints:
-#      web:
-#        exposure:
-#          include: health,info,prometheus,metrics
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  metrics:
+    export:
+      prometheus:
+        enabled: false
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+    endpoints:
+      web:
+        exposure:
+          include: health,info,prometheus,metrics
 
 logging:
   level:
