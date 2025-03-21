@@ -8,6 +8,6 @@ router = APIRouter()
 
 @router.post("/ask")
 async def ask_question(request: QuestionRequest):
-    answer = question(request.question)
-
+    # answer = question(request.question)
+    answer = "aa"
     return {"response": answer}

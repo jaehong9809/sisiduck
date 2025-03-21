@@ -100,7 +100,6 @@ agent = initialize_agent(
 # 🔹 Observation을 그대로 반환하도록 설정
 agent_executor = AgentExecutor(
     agent=agent,
-    tools=tools,
     handle_parsing_errors=True,  # 🚀 오류 발생 시 Observation을 그대로 반환
     verbose=True
 )
