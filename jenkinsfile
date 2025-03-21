@@ -35,7 +35,7 @@ pipeline {
                 dir('finafanBE') {
                     sh '''
                         chmod +x ./gradlew
-                        ./gradlew clean build -x test
+                        ./gradlew clean build
                     '''
                 }
             }
@@ -68,7 +68,12 @@ pipeline {
             steps {
                 dir('finafanBE') {
                     withCredentials([
-                    file(credentialsId: 'env-file-credentials', variable: 'ENV_FILE'),
+                        usernamePassword(
+                            credentialsId: 'docker-registry-credentials',
+                            usernameVariable: 'DOCKER_USER',
+                            passwordVariable: 'DOCKER_PASS'
+                        ),
+                        file(credentialsId: 'env-file-credentials', variable: 'ENV_FILE'),
                     ]) {
                         sh """
                             cp \$ENV_FILE .env
@@ -76,10 +81,9 @@ pipeline {
 
                             docker-compose -f docker-compose.yml down
 
-                            # 새로운 이미지로 모든 서비스 시작
-                            BUILD_NUMBER=${BUILD_NUMBER} docker-compose -f docker-compose.yml up -d
-
-                        """
+                            # DOCKER_USER 변수를 설정
+                            DOCKER_USER=${DOCKER_USER} BUILD_NUMBER=${BUILD_NUMBER} docker-compose -f docker-compose.yml up -d
+                            """
                     }
                 }
             }
