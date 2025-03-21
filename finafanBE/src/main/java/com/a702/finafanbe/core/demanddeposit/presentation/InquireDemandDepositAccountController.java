@@ -1,7 +1,9 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
+import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountListRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountRequest;
+import com.a702.finafanbe.global.common.header.BaseRequestHeaderIncludeUserKey;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,22 +33,23 @@ public class InquireDemandDepositAccountController {
             @RequestParam String userKey,
             @RequestParam String accountNo
     ) {
-        InquireDemandDepositAccountRequest.RetrieveDemandDepositRequestHeader retrieveDemandDepositRequestHeader = new InquireDemandDepositAccountRequest.RetrieveDemandDepositRequestHeader(
-                apiName,
-                transmissionDate,
-                transmissionTime,
-                institutionCode,
-                fintechAppNo,
-                apiServiceCode,
-                institutionTransactionUniqueNo,
-                apiKey,
-                userKey
-        );
+        BaseRequestHeaderIncludeUserKey retrieveDemandDepositRequestHeader = BaseRequestHeaderIncludeUserKey.builder()
+            .apiName(apiName)
+            .transmissionDate(transmissionDate)
+            .transmissionTime(transmissionTime)
+            .institutionCode(institutionCode)
+            .fintechAppNo(fintechAppNo)
+            .apiServiceCode(apiServiceCode)
+            .institutionTransactionUniqueNo(institutionTransactionUniqueNo)
+            .apiKey(apiKey)
+            .userKey(userKey)
+            .build();
         InquireDemandDepositAccountRequest retrieveDemandDepositRequest = new InquireDemandDepositAccountRequest(
                 retrieveDemandDepositRequestHeader,
                 accountNo
         );
         return inquireDemandDepositAccountService.retrieveDemandDepositAccount(
+                "/demandDeposit/inquireDemandDepositAccount",
                 retrieveDemandDepositRequest
         );
     }
@@ -63,19 +66,23 @@ public class InquireDemandDepositAccountController {
             @RequestParam String apiKey,
             @RequestParam String userKey
     ) {
-        InquireDemandDepositAccountRequest.RetrieveDemandDepositRequestHeader retrieveDemandDepositRequestHeader = new InquireDemandDepositAccountRequest.RetrieveDemandDepositRequestHeader(
-                apiName,
-                transmissionDate,
-                transmissionTime,
-                institutionCode,
-                fintechAppNo,
-                apiServiceCode,
-                institutionTransactionUniqueNo,
-                apiKey,
-                userKey
+        BaseRequestHeaderIncludeUserKey retrieveDemandDepositRequestHeader = BaseRequestHeaderIncludeUserKey.builder()
+            .apiName(apiName)
+            .transmissionDate(transmissionDate)
+            .transmissionTime(transmissionTime)
+            .institutionCode(institutionCode)
+            .fintechAppNo(fintechAppNo)
+            .apiServiceCode(apiServiceCode)
+            .institutionTransactionUniqueNo(institutionTransactionUniqueNo)
+            .apiKey(apiKey)
+            .userKey(userKey)
+            .build();
+        InquireDemandDepositAccountListRequest retrieveDemandDepositRequest = new InquireDemandDepositAccountListRequest(
+                retrieveDemandDepositRequestHeader
         );
         return inquireDemandDepositAccountService.retrieveDemandDepositAccountList(
-                retrieveDemandDepositRequestHeader
+                "/demandDeposit/inquireDemandDepositAccountList",
+                retrieveDemandDepositRequest
         );
     }
 }
