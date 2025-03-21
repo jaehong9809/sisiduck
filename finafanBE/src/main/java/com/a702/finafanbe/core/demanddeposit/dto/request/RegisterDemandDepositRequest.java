@@ -1,23 +1,13 @@
 package com.a702.finafanbe.core.demanddeposit.dto.request;
 
+import com.a702.finafanbe.global.common.header.BaseRequestHeader;
+import com.a702.finafanbe.global.common.header.RequestHeader;
 import lombok.Getter;
 
 public record RegisterDemandDepositRequest(
-        CreateDemandDepositRequestHeader Header,
+        BaseRequestHeader Header,
          String bankCode,
          String accountName,
          String accountDescription
 ){
-
-    @Getter
-    public static class CreateDemandDepositRequestHeader {
-        private String apiName;
-        private String transmissionDate;
-        private String transmissionTime;
-        private String institutionCode;
-        private String fintechAppNo;
-        private String apiServiceCode;
-        private String institutionTransactionUniqueNo;
-        private String apiKey;
-    }
 }

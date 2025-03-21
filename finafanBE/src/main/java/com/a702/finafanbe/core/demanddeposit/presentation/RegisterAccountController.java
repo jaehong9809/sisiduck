@@ -19,6 +19,9 @@ public class RegisterAccountController {
 
     @PostMapping("/demandDeposit/createDemandDeposit")
     public ResponseEntity<RegisterDemandDepositResponse> registerDemandDeposit(@RequestBody RegisterDemandDepositRequest createAccountRequest) {
-        return registerAccountService.registerDemandDeposit(createAccountRequest);
+        return registerAccountService.registerDemandDeposit(
+                "/demandDeposit/createDemandDeposit/demandDeposit/createDemandDeposit",
+                createAccountRequest
+        );
     }
 }

@@ -1,26 +1,14 @@
 package com.a702.finafanbe.core.demanddeposit.dto.response;
 
+import com.a702.finafanbe.global.common.header.InstitutionResponseHeader;
 import lombok.Getter;
 
 import java.util.List;
 
 public record InquireDemandDepositAccountListResponse(
-    RetrieveDemandDepositListResponseHeader Header,
+    InstitutionResponseHeader Header,
     List<REC> REC
 ) {
-    @Getter
-    public static class RetrieveDemandDepositListResponseHeader {
-        private String responseCode;
-        private String responseMessage;
-        private String apiName;
-        private String transmissionDate;
-        private String transmissionTime;
-        private String institutionCode;
-        private String apiKey;
-        private String apiServiceCode;
-        private String institutionTransactionUniqueNo;
-    }
-
     @Getter
     public static class REC {
         private String accountTypeUniqueNo;

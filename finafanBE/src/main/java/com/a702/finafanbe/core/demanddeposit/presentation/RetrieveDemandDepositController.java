@@ -3,6 +3,8 @@ package com.a702.finafanbe.core.demanddeposit.presentation;
 import com.a702.finafanbe.core.demanddeposit.application.RetrieveAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.RetrieveDemandDepositListRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.RetrieveDemandDepositListResponse;
+import com.a702.finafanbe.global.common.header.BaseRequestHeader;
+import com.a702.finafanbe.global.common.header.RequestHeader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,18 +30,22 @@ public class RetrieveDemandDepositController {
             @RequestParam String institutionTransactionUniqueNo,
             @RequestParam String apiKey
     ) {
-        RetrieveDemandDepositListRequest.RetrieveDemandDepositRequestHeader retrieveDemandDepositRequestHeader = new RetrieveDemandDepositListRequest.RetrieveDemandDepositRequestHeader(
-            apiName,
-            transmissionDate,
-            transmissionTime,
-            institutionCode,
-            fintechAppNo,
-            apiServiceCode,
-            institutionTransactionUniqueNo,
-            apiKey
-        );
+        BaseRequestHeader retrieveDemandDepositRequestHeader = BaseRequestHeader.builder()
+                .apiName(apiName)
+                .transmissionDate(transmissionDate)
+                .transmissionTime(transmissionTime)
+                .institutionCode(institutionCode)
+                .fintechAppNo(fintechAppNo)
+                .apiServiceCode(apiServiceCode)
+                .institutionTransactionUniqueNo(institutionTransactionUniqueNo)
+                .apiKey(apiKey)
+                .build();
+
         RetrieveDemandDepositListRequest retrieveDemandDepositRequest = new RetrieveDemandDepositListRequest(retrieveDemandDepositRequestHeader);
-        return retrieveAccountService.retrieveDemandDepositList(retrieveDemandDepositRequest);
+        return retrieveAccountService.retrieveDemandDepositList(
+                "/demandDeposit/inquireDemandDepositList",
+                retrieveDemandDepositRequest
+        );
     }
 
 }
