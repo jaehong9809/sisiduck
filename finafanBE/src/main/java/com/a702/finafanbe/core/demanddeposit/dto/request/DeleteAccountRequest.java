@@ -2,10 +2,10 @@ package com.a702.finafanbe.core.demanddeposit.dto.request;
 
 import com.a702.finafanbe.global.common.header.BaseRequestHeaderIncludeUserKey;
 
-public record UpdateDemandDepositAccountDepositRequest(
+public record DeleteAccountRequest(
     BaseRequestHeaderIncludeUserKey Header,
     String accountNo,
-    Long transactionBalance,
-    String transactionSummary
+    String refundAccountNo
 ) {
+
 }

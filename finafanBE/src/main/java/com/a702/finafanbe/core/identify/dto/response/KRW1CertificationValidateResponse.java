@@ -1,16 +1,15 @@
 package com.a702.finafanbe.core.identify.dto.response;
 
 import com.a702.finafanbe.global.common.header.BaseResponseHeaderIncludeInstitutionCode;
-import lombok.Getter;
 
-public record KRW1CertificationResponse (
+public record KRW1CertificationValidateResponse(
     BaseResponseHeaderIncludeInstitutionCode Header,
     REC REC
 ) {
 
-    @Getter
-    public static class REC {
-        private String transactionUniqueNo;
-        private String accountNo;
-    }
+    private record REC(
+        String status,
+        Long transactionUniqueNo,
+        String accountNo
+    ){}
 }
