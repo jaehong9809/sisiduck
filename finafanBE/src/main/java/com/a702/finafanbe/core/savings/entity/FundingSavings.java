@@ -11,32 +11,20 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FundingSavings extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long groupSavingsId;
+public class FundingSavings extends SavingsAccount {
 
     @Column(name = "savings_item_id")
     private Long savingsItemId;
 
-    @Column(name = "user_id")
-    private Long userId;
-
-    @Column(name = "entertainer_id")
-    private Long entertainerId;
-
-    @Column(name = "account_nickname")
-    private String accountNickname;
-
     @Column(length = 255)
     private String description;
 
-    @Column(name = "account_no")
-    private String accountNo;
+    @Column(name = "funding_expiry_date")
+    private LocalDateTime fundingExpiryDate;
 
-    private Long balance;
+    @Column(name = "funding_status")
+    private String fundingStatus;
 
-    @Column(name = "account_expiry_date")
-    private LocalDateTime accountExpiryDate;
+    @Column(name = "funding_goal_amount")
+    private Long fundingGoalAmount;
 }
