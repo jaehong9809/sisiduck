@@ -20,7 +20,7 @@ public class ApiClientUtil {
                 headers
         );
         ResponseEntity<R> exchange = restTemplate.exchange(
-                baseUrl+"/demandDeposit/createDemandDepositAccount",
+                baseUrl+path,
                 HttpMethod.POST,
                 httpEntity,
                 responseType

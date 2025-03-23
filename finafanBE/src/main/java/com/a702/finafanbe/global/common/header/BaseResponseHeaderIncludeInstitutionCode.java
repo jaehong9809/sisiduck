@@ -9,6 +9,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InstitutionResponseHeader extends BaseResponseHeader {
+public class BaseResponseHeaderIncludeInstitutionCode extends BaseResponseHeader {
     private String institutionCode;
 }

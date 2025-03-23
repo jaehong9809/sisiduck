@@ -1,8 +1,11 @@
 package com.a702.finafanbe.core.identify.application;
 
 import com.a702.finafanbe.core.identify.dto.request.KRW1CertificationRequest;
+import com.a702.finafanbe.core.identify.dto.request.KRW1CertificationValidateRequest;
 import com.a702.finafanbe.core.identify.dto.response.KRW1CertificationResponse;
+import com.a702.finafanbe.core.identify.dto.response.KRW1CertificationValidateResponse;
 import com.a702.finafanbe.core.identify.entity.infrastructure.KRW1certificationRepository;
+import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,23 +19,27 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class KRW1certificationService {
 
-    private final RestTemplate restTemplate;
+    private final ApiClientUtil apiClientUtil;
     private final KRW1certificationRepository krw1certificationRepository;
 
-    public ResponseEntity<KRW1CertificationResponse> registerKRW1Certification(KRW1CertificationRequest krw1CertificationRequest) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<KRW1CertificationRequest> httpEntity = new HttpEntity<>(
+    public ResponseEntity<KRW1CertificationResponse> registerKRW1Certification(
+        String path,
+        KRW1CertificationRequest krw1CertificationRequest
+    ) {
+        return apiClientUtil.callFinancialNetwork(
+            path,
             krw1CertificationRequest,
-            headers
-        );
-        ResponseEntity<KRW1CertificationResponse> exchange = restTemplate.exchange(
-            "https://finopenapi.ssafy.io/ssafy/api/v1/edu/accountAuth/openAccountAuth",
-            HttpMethod.POST,
-            httpEntity,
             KRW1CertificationResponse.class
         );
+    }
 
-        return ResponseEntity.ok(exchange.getBody());
+    public ResponseEntity<KRW1CertificationValidateResponse> checkKRW1Certification(
+        String path,
+        KRW1CertificationValidateRequest krw1Certification) {
+        return apiClientUtil.callFinancialNetwork(
+            path,
+            krw1Certification,
+            KRW1CertificationValidateResponse.class
+        );
     }
 }
