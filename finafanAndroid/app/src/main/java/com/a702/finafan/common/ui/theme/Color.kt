@@ -17,6 +17,9 @@ val MainBlackWithTransparency = MainBlack.copy(alpha = 0.7f)
 val TermTextGray = Color(0xFF7C7E87)
 val TermBoxGray = Color(0xFFF2F3F7)
 
+val SavingDescBg = Color(0xFFFAFAFA)
+val SavingDescGray = Color(0xFF7D7D7D)
+
 /* ------------ Star Color ------------ */
 val starGradGreen = Color(0xFF49DD81)
 val starGradTurquoise = Color(0xFF22B4C6)
