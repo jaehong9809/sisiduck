@@ -60,27 +60,6 @@ fun CommonBackTopBar(
     text: String? = null,
     isTextCentered: Boolean = false
 ) {
-
-//    Row(
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .height(56.dp)
-//            .background(MainWhite)
-//            .padding(start = 16.dp, end = 16.dp),
-//        verticalAlignment = Alignment.CenterVertically,
-//    ) {
-//        ImageItem(modifier, imageOnClick, R.drawable.arrow_left)
-//
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .weight(1f),
-//            contentAlignment = if (isTextCentered) Alignment.Center else Alignment.CenterEnd
-//        ) {
-//            TextItem(modifier, textOnClick, text)
-//        }
-//    }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()

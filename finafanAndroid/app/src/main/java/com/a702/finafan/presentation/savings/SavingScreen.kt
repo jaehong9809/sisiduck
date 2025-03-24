@@ -32,7 +32,7 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import com.a702.finafan.common.ui.Shadow.innerShadow
+import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.ui.theme.MainBlackWithTransparency
 
 data class SavingData(
@@ -49,7 +49,8 @@ data class Transaction(
     val title: String,
     val amount: Int,
     val balance: Int,
-    val time: String
+    val time: String,
+    val image: String? = null
 )
 
 @Composable

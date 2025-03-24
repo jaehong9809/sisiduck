@@ -1,4 +1,4 @@
-package com.a702.finafan.common.ui
+package com.a702.finafan.common.ui.theme
 
 import android.graphics.BlurMaskFilter
 import android.graphics.PorterDuff
@@ -25,7 +25,7 @@ object Shadow {
     ) = drawWithContent {
         drawContent()
 
-        val rect = Rect(Offset.Zero, size)
+        val rect = Rect(Offset.Companion.Zero, size)
         val paint = Paint().apply {
             this.color = color
             this.isAntiAlias = true
@@ -42,7 +42,7 @@ object Shadow {
             if (blur.toPx() > 0) {
                 frameworkPaint.maskFilter = BlurMaskFilter(blur.toPx(), BlurMaskFilter.Blur.NORMAL)
             }
-            paint.color = Color.Black
+            paint.color = Color.Companion.Black
 
             val spreadOffsetX = offsetX.toPx() + if (offsetX.toPx() < 0) -spread.toPx() else spread.toPx()
             val spreadOffsetY = offsetY.toPx() + if (offsetY.toPx() < 0) -spread.toPx() else spread.toPx()
