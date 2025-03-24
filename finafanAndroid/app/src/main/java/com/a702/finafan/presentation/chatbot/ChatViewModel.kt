@@ -8,6 +8,7 @@ import com.a702.finafan.domain.chatbot.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,8 +19,8 @@ class ChatViewModel @Inject constructor(
     private val speechRecognizerHelper: SpeechRecognizerHelper
 ) : ViewModel() {
 
-    private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
-    val messages: StateFlow<List<ChatMessage>> = _messages
+    private val _uiState = MutableStateFlow(ChatState())
+    val uiState: StateFlow<ChatState> = _uiState.asStateFlow()
 
     init {
         speechRecognizerHelper.setOnResultListener { text ->
@@ -34,16 +35,29 @@ class ChatViewModel @Inject constructor(
 
     private fun addUserMessage(text: String) {
         viewModelScope.launch {
-            _messages.update { it + ChatMessage(text, true) }
+            _uiState.update { it.copy(isLoading = true) }
         }
     }
 
     private fun sendUserMessage(text: String) {
         viewModelScope.launch {
-            _messages.update { it + ChatMessage(text, true) }
-            val reply = repository.sendMessage(text)
-            _messages.update { it + ChatMessage(reply, false) }
+            _uiState.update { it.copy(isLoading = true) }
+
+            runCatching {
+                _uiState.update { state -> state.copy(messages = state.messages + ChatMessage(text, true)) }
+                val reply = repository.sendMessage(text)
+                _uiState.update { state -> state.copy(messages = state.messages + ChatMessage(reply, false)) }
+            }.onFailure { throwable ->
+                _uiState.update { it.copy(error = throwable) }
+            }
+
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
+
+    fun clearToastMessage() {
+        _uiState.update { it.copy(toastMessage = null) }
+    }
 }
+
 
