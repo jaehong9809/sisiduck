@@ -1,9 +1,7 @@
-package com.a702.finafanbe.global.common.header;
+package com.a702.finafanbe.global.common.financialnetwork.header;
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +13,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class BaseRequestHeader implements RequestHeader {
     private String apiName;
-    private String transmissionDate= LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-    private String transmissionTime= LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
+    private String transmissionDate= DateUtil.getTransmissionDate();
+    private String transmissionTime= DateUtil.getTransmissionTime();
     private String institutionCode;
     private String fintechAppNo;
     private String apiServiceCode;

@@ -1,4 +1,4 @@
-package com.a702.finafanbe.global.common.header;
+package com.a702.finafanbe.global.common.financialnetwork.header;
 
 public interface RequestHeader {
     String getApiName();

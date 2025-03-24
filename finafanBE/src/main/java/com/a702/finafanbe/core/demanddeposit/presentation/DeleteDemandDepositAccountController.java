@@ -1,10 +1,7 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
-import com.a702.finafanbe.core.demanddeposit.application.CreateAccountService;
 import com.a702.finafanbe.core.demanddeposit.application.DeleteAccountService;
-import com.a702.finafanbe.core.demanddeposit.dto.request.CreateAccountRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.DeleteAccountRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.DeleteAccountResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
