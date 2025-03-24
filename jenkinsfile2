@@ -2,40 +2,35 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_COMPOSE_FILE = 'finafanAI/docker-compose.yml'
-        ENV_FILE = credentials('env-file-credentials')
-
-        LOCAL_ENV_FILE = '/var/lib/jenkins/.env' // Jenkins 서버의 환경파일
+        ENV_FILE = credentials('env-file-credentials')  // Jenkins에 등록된 .env 파일
     }
 
     stages {
-
-        stage('Check Environment') {
-            steps {
-                sh 'whoami'
-                sh 'git --version'
-                sh 'echo $PATH'
-            }
-        }
-
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Copy .env') {
+        stage('Copy .env File') {
             steps {
-                script {
-                    // Jenkins에 보관된 .env 파일을 프로젝트 내부로 복사
-                    sh "cp $LOCAL_ENV_FILE finafanAI/.env"
+                dir('finafanAI') {
+                    withCredentials([
+                        file(credentialsId: 'env-file-credentials', variable: 'ENV_FILE')
+                    ]) {
+                        sh '''
+                            echo "📦 Copying .env from Jenkins credentials"
+                            cp $ENV_FILE .env
+                            chmod 600 .env
+                        '''
+                    }
                 }
             }
         }
 
         stage('Stop Existing Containers') {
             steps {
-                script {
+                dir('finafanAI') {
                     sh '''
                         docker ps -q --filter "name=ai-server" | xargs -r docker stop
                         docker ps -aq --filter "name=ai-server" | xargs -r docker rm
@@ -56,10 +51,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Deployment 성공!'
+            echo '✅ FastAPI 서버 배포 성공!'
         }
         failure {
-            echo '❌ Deployment 실패!'
+            echo '❌ FastAPI 서버 배포 실패!'
         }
     }
 }
