@@ -8,8 +8,19 @@ public class DateUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    private static final String TRANSMISSION_DATE = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    private static final String TRANSMISSION_TIME = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
+
     private DateUtil() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
+    public static String getTransmissionDate() {
+        return TRANSMISSION_DATE;
+    }
+
+    public static String getTransmissionTime() {
+        return TRANSMISSION_TIME;
     }
 
     public static String format(LocalDateTime dateTime) {

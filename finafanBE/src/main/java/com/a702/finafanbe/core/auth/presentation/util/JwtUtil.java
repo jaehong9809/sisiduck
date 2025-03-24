@@ -1,9 +1,6 @@
 package com.a702.finafanbe.core.auth.presentation.util;
 
 import com.a702.finafanbe.core.auth.entity.AuthTokens;
-import com.a702.finafanbe.global.common.exception.BadRequestException;
-import com.a702.finafanbe.global.common.exception.ErrorCode;
-import com.a702.finafanbe.global.common.exception.GlobalException;
 import com.a702.finafanbe.global.common.exception.InvalidJwtException;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import io.jsonwebtoken.*;
