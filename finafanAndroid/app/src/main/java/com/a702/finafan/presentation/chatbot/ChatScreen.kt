@@ -19,14 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
-import com.a702.finafan.domain.chatbot.model.ChatMessage
 
 
 @Composable
@@ -140,41 +138,5 @@ fun GradientButton(
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun ChatScreenPreview() {
-    val sampleMessages = listOf(
-        ChatMessage("안녕하세요! 챗봇입니다.", isUser = false),
-        ChatMessage("안녕하세요! AI에게 질문할게요.", isUser = true),
-        ChatMessage("네, 무엇이든 물어보세요!", isUser = false),
-        ChatMessage("안드로이드 STT 기능은 어떻게 작동하나요?", isUser = true),
-        ChatMessage("안드로이드 STT는 Google 음성 인식을 기반으로 텍스트 변환을 수행합니다.", isUser = false)
-    )
-
-    ChatScreenPreviewContent(sampleMessages)
-}
-
-@Composable
-fun ChatScreenPreviewContent(messages: List<ChatMessage>) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            reverseLayout = true
-        ) {
-            items(messages.reversed()) { chatMessage ->
-                ChatBubble(chatMessage)
-            }
-        }
-
-        GradientButton(
-            onClick = { /* 미리보기에서 chatbot api 동작하지 않게 */ },
-            buttonText = stringResource(R.string.chatbot_talk_button),
-        )
-    }
-}
 
 

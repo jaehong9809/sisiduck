@@ -24,8 +24,7 @@ class ChatViewModel @Inject constructor(
 
     init {
         speechRecognizerHelper.setOnResultListener { text ->
-            addUserMessage(text)
-            //sendUserMessage(text)
+            sendUserMessage(text)
             _uiState.update { it.copy(isListening = false) }
         }
     }
@@ -35,20 +34,13 @@ class ChatViewModel @Inject constructor(
         speechRecognizerHelper.startListening()
     }
 
-    private fun addUserMessage(text: String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-        }
-    }
-
     private fun sendUserMessage(text: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { state -> state.copy(isLoading = true, messages = state.messages + ChatMessage(text, true)) }
 
             runCatching {
-                _uiState.update { state -> state.copy(messages = state.messages + ChatMessage(text, true)) }
-                val reply = repository.sendMessage(text)
-                _uiState.update { state -> state.copy(messages = state.messages + ChatMessage(reply, false)) }
+                val replyMessage = repository.sendMessage(text)
+                _uiState.update { state -> state.copy(messages = state.messages + replyMessage) }
             }.onFailure { throwable ->
                 _uiState.update { it.copy(error = throwable) }
             }
