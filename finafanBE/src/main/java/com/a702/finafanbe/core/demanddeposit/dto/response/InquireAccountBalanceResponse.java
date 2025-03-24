@@ -1,25 +1,18 @@
 package com.a702.finafanbe.core.demanddeposit.dto.response;
 
 import com.a702.finafanbe.global.common.header.BaseResponseHeaderIncludeInstitutionCode;
-import lombok.Getter;
 
-public record InquireDemandDepositAccountResponse(
+public record InquireAccountBalanceResponse(
     BaseResponseHeaderIncludeInstitutionCode Header,
     REC REC
 ) {
-    private record REC (
+
+    private record REC(
         String bankCode,
-        String bankName,
-        String userName,
         String accountNo,
-        String accountName,
-        String accountTypeCode,
-        String accountTypeName,
+        Long accountBalance,
         String accountCreatedDate,
         String accountExpiryDate,
-        Long dailyTransferLimit,
-        Long oneTimeTransferLimit,
-        Long accountBalance,
         String lastTransactionDate,
         String currency
     ){

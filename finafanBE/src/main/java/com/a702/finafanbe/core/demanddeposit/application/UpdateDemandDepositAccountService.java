@@ -1,8 +1,10 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
 import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountDepositRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountTransferRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountWithdrawalRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountDepositResponse;
+import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountWithdrawalResponse;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,7 @@ public class UpdateDemandDepositAccountService {
 
     private final ApiClientUtil apiClientUtil;
 
-    public ResponseEntity<?> withdrawal(
+    public ResponseEntity<UpdateDemandDepositAccountWithdrawalResponse> withdrawal(
             String path,
             UpdateDemandDepositAccountWithdrawalRequest updateDemandDepositAccountWithdrawalRequest
     ) {
@@ -26,7 +28,7 @@ public class UpdateDemandDepositAccountService {
         );
     }
 
-    public ResponseEntity<?> deposit(
+    public ResponseEntity<UpdateDemandDepositAccountDepositResponse> deposit(
             String path,
             UpdateDemandDepositAccountDepositRequest updateDemandDepositAccountDepositRequest
     ) {
@@ -34,6 +36,17 @@ public class UpdateDemandDepositAccountService {
                 path,
                 updateDemandDepositAccountDepositRequest,
                 UpdateDemandDepositAccountDepositResponse.class
+        );
+    }
+
+    public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transfer(
+        String path,
+        UpdateDemandDepositAccountTransferRequest updateDemandDepositAccountTransferRequest
+    ) {
+        return apiClientUtil.callFinancialNetwork(
+            path,
+            updateDemandDepositAccountTransferRequest,
+            UpdateDemandDepositAccountTransferResponse.class
         );
     }
 }

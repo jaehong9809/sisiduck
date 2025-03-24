@@ -1,15 +1,19 @@
 package com.a702.finafanbe.core.demanddeposit.dto.response;
 
 import com.a702.finafanbe.global.common.header.BaseResponseHeaderIncludeInstitutionCode;
-import lombok.Getter;
 
-public record UpdateDemandDepositAccountDepositResponse(
+public record InquireAccountHolderNameResponse(
     BaseResponseHeaderIncludeInstitutionCode Header,
     REC REC
 ) {
-    @Getter
-    public static class REC{
-        private Long transactionUniqueNo;
-        private String transactionDate;
+
+    private record REC(
+        String bankCode,
+        String bankName,
+        String accountNo,
+        String userName,
+        String currency
+    ){
+
     }
 }
