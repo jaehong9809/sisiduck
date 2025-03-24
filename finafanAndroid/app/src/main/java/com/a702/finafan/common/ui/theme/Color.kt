@@ -12,6 +12,7 @@ val MainGradViolet = Color(0xFF6365F1)
 
 val MainTextGray = Color(0xFF5A5A5A)
 val MainTextBlue = Color(0XFF4D92F5)
+val MainBlackWithTransparency = MainBlack.copy(alpha = 0.5f)
 
 /* ------------ Star Color ------------ */
 val starGradGreen = Color(0xFF49DD81)

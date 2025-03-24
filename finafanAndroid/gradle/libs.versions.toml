@@ -19,6 +19,8 @@ gson = "2.10.1"
 hilt = "2.51.1"
 hiltCommon = "1.2.0"
 
+coil = "2.4.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -51,6 +53,8 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler =  { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltCommon" }
+
+coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 
 [plugins]
