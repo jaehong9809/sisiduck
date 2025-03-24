@@ -43,20 +43,19 @@ services:
         condition: service_healthy
 
   ai-server:
+    container_name: ai-server  # ← 여기 추가!
     build:
       context: ../finafanAI
       dockerfile: Dockerfile
     restart: always
     expose:
       - "8000"  
-    # volumes:
-    #   - /home/ubuntu/models:/home/ubuntu/models
     env_file:
       - .env 
     networks:
       - app-network
     environment:
-      - TZ=Asia/Seoul 
+      - TZ=Asia/Seoul
 
 networks:
   app-network:
