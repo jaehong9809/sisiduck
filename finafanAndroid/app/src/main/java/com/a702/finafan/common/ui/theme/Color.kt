@@ -10,6 +10,9 @@ val MainBgGray = Color(0xFFD9D9D9)
 val MainGradBlue = Color(0xFF39BCF8)
 val MainGradViolet = Color(0xFF6365F1)
 
+val MainTextGray = Color(0xFF5A5A5A)
+val MainTextBlue = Color(0XFF4D92F5)
+
 /* ------------ Star Color ------------ */
 val starGradGreen = Color(0xFF49DD81)
 val starGradTurquoise = Color(0xFF22B4C6)
