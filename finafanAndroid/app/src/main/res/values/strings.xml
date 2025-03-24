@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">FinAFan</string>
+
+
+    <!-- Chat Screen -->
+    <string name="chatbot_talk_button">덕순이와 대화하기</string>
+    <string name="permission_audio_required">음성 인식 권한이 필요합니다.</string>
+    <string name="error_audio">음성 에러가 발생했습니다.</string>
+    <string name="message_send_failed">메시지 전송에 실패했습니다.</string>
+    <string name="ducksoon_is_listening">네, 듣고 있어요!</string>
+
 </resources>

@@ -17,11 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.domain.chatbot.model.ChatMessage
@@ -30,7 +32,7 @@ import com.a702.finafan.domain.chatbot.model.ChatMessage
 @Composable
 fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
     val context = LocalContext.current
-    val chatMessages by viewModel.messages.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     // 음성 권한 요청
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -39,7 +41,24 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
         if (isGranted) {
             viewModel.startListening()
         } else {
-            Toast.makeText(context, "음성 인식 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.permission_audio_required), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { throwable ->
+            Toast.makeText(
+                context,
+                throwable.message ?: context.getString(R.string.error_audio),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    LaunchedEffect(uiState.toastMessage) {
+        uiState.toastMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            viewModel.clearToastMessage()
         }
     }
 
@@ -52,13 +71,28 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
             reverseLayout = true,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(chatMessages.reversed()) { chatMessage ->
+            items(uiState.messages.reversed()) { chatMessage ->
                 ChatBubble(chatMessage)
             }
         }
 
+        if (uiState.isListening) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.LightGray)
+                    .padding(vertical = 4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.ducksoon_is_listening),
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
+            }
+        }
+
         GradientButton(
-            // runtime 음성 권한 확인
             onClick = {
                 when {
                     context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) ==
@@ -69,16 +103,19 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                         permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
                     }
                 }
-            }
+            },
+            buttonText = stringResource(R.string.chatbot_talk_button)
         )
     }
 }
+
 
 // 추후 재사용 가능한 Button Component로 교체
 @Composable
 fun GradientButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    buttonText: String
 ) {
 
     val gradient = Brush.horizontalGradient(
@@ -95,7 +132,7 @@ fun GradientButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "덕순이와 대화하기",
+            text = buttonText,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
@@ -135,6 +172,7 @@ fun ChatScreenPreviewContent(messages: List<ChatMessage>) {
 
         GradientButton(
             onClick = { /* 미리보기에서 chatbot api 동작하지 않게 */ },
+            buttonText = stringResource(R.string.chatbot_talk_button),
         )
     }
 }

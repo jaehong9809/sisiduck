@@ -26,10 +26,12 @@ class ChatViewModel @Inject constructor(
         speechRecognizerHelper.setOnResultListener { text ->
             addUserMessage(text)
             //sendUserMessage(text)
+            _uiState.update { it.copy(isListening = false) }
         }
     }
 
     fun startListening() {
+        _uiState.update { it.copy(isListening = true) }
         speechRecognizerHelper.startListening()
     }
 
