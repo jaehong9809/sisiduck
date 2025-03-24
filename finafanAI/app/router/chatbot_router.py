@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 
-@router.post("/ask")
+@router.post("")
 async def ask_question(request: QuestionRequest):
     async def run_llm():
         await rout.ainvoke(classify_query(request.question))
