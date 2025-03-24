@@ -23,6 +23,7 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"${project.findProperty("BASE_URL")}\"")
+            buildConfigField("String", "AI_URL", "\"${project.findProperty("AI_URL")}\"")
         }
         release {
             isMinifyEnabled = false
