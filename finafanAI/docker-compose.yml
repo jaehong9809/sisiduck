@@ -1,0 +1,19 @@
+services:
+  ai-server:
+    container_name: ai-server 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"  
+    env_file:
+      - .env
+    networks:
+      - app-network
+    environment:
+      - TZ=Asia/Seoul
+
+networks:
+  app-network:
+    driver: bridge
