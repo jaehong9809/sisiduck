@@ -31,6 +31,7 @@ import com.a702.finafan.common.ui.theme.MainBlack
 
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import androidx.compose.foundation.shape.CircleShape
@@ -109,18 +110,13 @@ fun extractDominantColor(bitmap: Bitmap): Int {
     return palette.getDominantColor(0x000000) // 기본값은 검정색
 }
 
-fun extractDominantColorFromDrawable(drawable: Drawable): Int {
-    val bitmap = drawable.toBitmap()
-    return extractDominantColor(bitmap)
-}
-
 @Composable
 fun SavingHeader(info: SavingData) {
     var dominantColor by remember { mutableStateOf<Color>(MainBlack) }
 
 //    val painter = rememberAsyncImagePainter(
 //        model = ImageRequest.Builder(LocalContext.current)
-//            .data("https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/00131df0-455a-4f3f-974d-18e2ebcf77e8_1739945302224.png")
+//            .data("https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg")
 //            .build(),
 //        onSuccess = { result ->
 //            val drawable = result.result.drawable
@@ -142,7 +138,7 @@ fun SavingHeader(info: SavingData) {
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data("https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/00131df0-455a-4f3f-974d-18e2ebcf77e8_1739945302224.png")
+            .data("https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg")
             .build()
     )
 
