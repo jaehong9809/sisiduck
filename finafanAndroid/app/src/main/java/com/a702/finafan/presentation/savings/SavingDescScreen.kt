@@ -8,8 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -37,26 +38,27 @@ fun SavingDescScreen() {
     Column(
         modifier = Modifier.fillMaxSize().background(MainWhite)
     ) {
-        CommonBackTopBar(imageOnClick = {}, textOnClick = {}, text = "스타 적금", isTextCentered = true)
+        CommonBackTopBar(imageOnClick = {}, text = "스타 적금", isTextCentered = true)
 
-        LazyColumn(
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = CenterHorizontally,
         ) {
-            item {
-                FirstDesc()
-                SecondDesc()
-                ThirdDesc()
+            FirstDesc()
+            SecondDesc()
+            ThirdDesc()
 
-                // TODO: 연결된 입출금 계좌가 있을 경우 가입 페이지로 이동, 아닐 경우 1원 송금 페이지로 이동
-                PrimaryGradButton(
-                    onClick = {},
-                    text = "가입하기",
-                    modifier = Modifier
-                        .align(CenterHorizontally)
-                        .padding(top = 32.dp, bottom = 32.dp, start = 16.dp, end = 16.dp)
-                        .fillMaxWidth()
-                )
-            }
+            // TODO: 연결된 입출금 계좌가 있을 경우 가입 페이지로 이동, 아닐 경우 1원 송금 페이지로 이동
+            PrimaryGradButton(
+                onClick = {},
+                text = "가입하기",
+                modifier = Modifier
+                    .align(CenterHorizontally)
+                    .padding(top = 32.dp, bottom = 32.dp, start = 16.dp, end = 16.dp)
+                    .fillMaxWidth()
+            )
         }
 
     }
