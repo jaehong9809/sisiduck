@@ -25,6 +25,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
+import com.dotlottie.dlplayer.Mode
+import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
+import com.lottiefiles.dotlottie.core.util.DotLottieSource
 
 
 @Composable
@@ -75,20 +78,34 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
         }
 
         if (uiState.isListening) {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.LightGray)
-                    .padding(vertical = 4.dp),
-                contentAlignment = Alignment.Center
+                    .background(Color(0xFFECEFF1))
+                    .padding(vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                DotLottieAnimation(
+                    source = DotLottieSource.Url("https://lottie.host/cbdfd462-2890-4e31-89a5-cc1ff1d2d688/MzEAG2h9z8.lottie"),
+                    autoplay = true,
+                    loop = true,
+                    speed = 3f,
+                    useFrameInterpolation = false,
+                    playMode = Mode.FORWARD,
+                    modifier = Modifier.size(80.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
                     text = stringResource(R.string.ducksoon_is_listening),
-                    fontSize = 14.sp,
-                    color = Color.Black
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF37474F)
                 )
             }
         }
+
 
         GradientButton(
             onClick = {

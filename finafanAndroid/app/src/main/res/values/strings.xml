@@ -7,6 +7,8 @@
     <string name="permission_audio_required">음성 인식 권한이 필요합니다.</string>
     <string name="error_audio">음성 에러가 발생했습니다.</string>
     <string name="message_send_failed">메시지 전송에 실패했습니다.</string>
-    <string name="ducksoon_is_listening">네, 듣고 있어요!</string>
+    <string name="ducksoon_is_listening">덕순이가 듣고 있어요!</string>
+    <string name="error_recongnizer">음성 인식 중 오류가 발생했어요.</string>
+    <string name="not_found_audio">말씀을 잘 못 알아들었어요.</string>
 
 </resources>

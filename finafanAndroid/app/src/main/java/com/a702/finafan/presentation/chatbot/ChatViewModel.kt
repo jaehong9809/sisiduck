@@ -27,6 +27,14 @@ class ChatViewModel @Inject constructor(
             sendUserMessage(text)
             _uiState.update { it.copy(isListening = false) }
         }
+
+        speechRecognizerHelper.setOnErrorListener {
+            _uiState.update { it.copy(isListening = false, toastMessage = "음성 인식 중 오류가 발생했어요.") }
+        }
+
+        speechRecognizerHelper.setOnNoResultListener {
+            _uiState.update { it.copy(isListening = false, toastMessage = "말씀을 잘 못 알아들었어요.") }
+        }
     }
 
     fun startListening() {
@@ -45,7 +53,7 @@ class ChatViewModel @Inject constructor(
                 _uiState.update { it.copy(error = throwable) }
             }
 
-            _uiState.update { it.copy(isLoading = false) }
+            _uiState.update { it.copy(isLoading = false, isListening = false) }
         }
     }
 
