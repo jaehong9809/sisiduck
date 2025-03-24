@@ -13,9 +13,26 @@ import asyncio
 
 load_dotenv()
 
-# 1️⃣ OpenAI LLM 설정
+class SSECallbackHandler(BaseCallbackHandler):
+    def __init__(self):
+        self.queue = asyncio.Queue()
 
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.5)
+    async def on_llm_new_token(self, token: str, **kwargs):
+        await self.queue.put(token)
+
+    async def token_generator(self):
+        while True:
+            token = await self.queue.get()
+            if token is None:
+                break
+            yield f"data: {token}\n\n"
+        
+    def finish(self):
+        self.queue.put_nowait(None)
+
+# 1️⃣ OpenAI LLM 설정
+callback = SSECallbackHandler()
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.5, streaming=True, callbacks=[callback])
 
 # 2️⃣ SerpAPI 설정
 
