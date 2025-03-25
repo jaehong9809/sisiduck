@@ -1,15 +1,13 @@
 package com.a702.finafanbe.global.common.exception;
 
+import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
-public class InvalidJwtException extends RuntimeException {
+public class InvalidJwtException extends GlobalException {
 
-    private int code;
-    private String message;
-
-    public InvalidJwtException(final int code, final String message) {
-        this.code = code;
-        this.message = message;
+    public InvalidJwtException(ResponseData<?> error) {
+        super(error, HttpStatus.FORBIDDEN);
     }
 }

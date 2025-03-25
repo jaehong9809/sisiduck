@@ -7,9 +7,11 @@ __pycache__/
 venv/
 .venv/
 env/
-.env
+.aienv
 *.env
-
+myenv/
+.myenv/
+*.myenv
 # FastAPI 및 로그
 logs/
 *.log

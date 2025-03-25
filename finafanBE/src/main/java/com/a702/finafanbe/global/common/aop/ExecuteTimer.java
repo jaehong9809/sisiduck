@@ -14,7 +14,7 @@ import org.springframework.util.StopWatch;
 @Slf4j
 public class ExecuteTimer {
 
-    @Pointcut("@annotation(com.all_i.allibe.common.aop.ExecuteTime)")
+    @Pointcut("@annotation(com.a702.finafanbe.global.common.aop.ExecuteTime)")
     private void timer(){}
 
     @Around("timer()")
