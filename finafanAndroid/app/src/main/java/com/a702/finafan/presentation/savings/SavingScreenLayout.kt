@@ -25,6 +25,7 @@ import com.a702.finafan.common.ui.theme.MainWhite
 
 @Composable
 fun SavingScreenLayout(
+    isFill: Boolean = false,
     topBarTitle: String? = null,
     title: String,
     buttonText: String,
@@ -48,15 +49,15 @@ fun SavingScreenLayout(
                 .verticalScroll(rememberScrollState())
                 .background(MainWhite)
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp)
+                .padding(horizontal = if (isFill) 0.dp else 16.dp)
         ) {
             Text(
+                modifier = Modifier.padding(top = 36.dp, start = if (isFill) 16.dp else 0.dp, end = if (isFill) 16.dp else 0.dp),
                 text = title,
                 color = MainBlack,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 36.sp,
-                modifier = Modifier.padding(top = 36.dp),
                 textAlign = TextAlign.Start
             )
 

@@ -26,6 +26,16 @@
     <string name="saving_item_select_account_title">앞으로 아래 계좌에서\n출금할게요</string>
     <string name="saving_item_select_account_desc">출금계좌는 변경할 수 없으니\n신중하게 선택해 주세요.</string>
     <string name="saving_item_deposit_title">나만의 스타를 향한\n응원 메시지를 써주세요</string>
+    <string name="saving_item_cancel_title">해지하면 아래의 금액이\n통장으로 입금돼요</string>
+    <string name="saving_item_origin_money">원금</string>
+    <string name="saving_item_duration">적금 기간</string>
+    <string name="saving_item_interest">받을 이자</string>
+    <string name="saving_item_total_money">받을 금액</string>
+    <string name="saving_item_total_origin_interest">받을 금액 (원금 + 이자)</string>
+    <string name="saving_item_deposit_account">입금 계좌</string>
+
+    <string name="format_money">%s원</string>
+    <string name="format_duration">%s ~ %s</string>
 
     <!-- TextField Label -->
     <string name="saving_item_name_label">적금 이름</string>
@@ -61,5 +71,6 @@
     <string name="btn_join">가입하기</string>
     <string name="btn_create">개설하기</string>
     <string name="btn_deposit">입금하기</string>
+    <string name="btn_account_cancel">해지하기</string>
 
 </resources>
