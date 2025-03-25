@@ -25,7 +25,7 @@ fun ThreeTabRow(
     labels: List<String>,
     containerColor: Color,
     selectedTabColor: Color,
-    onTabSelected: List<() -> Unit>,
+    onTabSelected: List<() -> Unit>, // 호출할 API 메서드 리스트
     modifier: Modifier = Modifier
 ) {
     var selectedIndex by remember { mutableIntStateOf(0) }
@@ -61,7 +61,7 @@ fun ThreeTabRow(
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = if (selectedIndex == index) Color.White else Color.Black // 텍스트 색상 설정
+                            color = if (selectedIndex == index) Color.White else Color.Black
                         )
                     }
                 )
@@ -79,9 +79,9 @@ fun FundingScreen() {
         containerColor = MainWhite,
         selectedTabColor = Color.Blue,
         onTabSelected = listOf(
-            { getAllFundings() },  // 첫 번째 탭: 모든 모금 조회
-            { getParticipatingFundings() },  // 두 번째 탭: 참여 중인 모금 조회
-            { getMyFundings() }  // 세 번째 탭: 내가 만든 모금 조회
+            { getAllFundings() },
+            { getParticipatingFundings() },
+            { getMyFundings() }
         )
     )
 }
