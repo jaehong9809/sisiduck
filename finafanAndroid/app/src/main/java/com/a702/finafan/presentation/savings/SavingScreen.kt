@@ -1,44 +1,45 @@
 package com.a702.finafan.presentation.savings
 
-import android.media.Image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.a702.finafan.common.ui.theme.MainTextGray
-import com.a702.finafan.common.ui.theme.MainWhite
-import com.a702.finafan.common.utils.StringUtil
-
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.a702.finafan.common.ui.theme.MainBlack
-
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.ContentScale
-import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.ui.theme.MainBlackWithTransparency
+import com.a702.finafan.common.ui.theme.MainTextGray
+import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.ui.theme.Shadow.innerShadow
+import com.a702.finafan.common.utils.StringUtil
 
 data class SavingData(
     val duration: Int,
     val title: String,
-    val amount: Int,
+    val amount: Long,
     val account: String,
     val image: String,
     val transactionList: MutableList<Transaction>
@@ -47,8 +48,8 @@ data class SavingData(
 data class Transaction(
     val isFirst: Boolean,
     val title: String,
-    val amount: Int,
-    val balance: Int,
+    val amount: Long,
+    val balance: Long,
     val time: String,
     val image: String? = null
 )
