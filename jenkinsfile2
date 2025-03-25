@@ -47,6 +47,13 @@ pipeline {
                 }
             }
         }
+
+        stage('Cleanup Docker Images') {
+            steps {
+                echo '🧹 사용하지 않는 Docker 이미지 정리 중...'
+                sh 'docker image prune -f'
+            }
+        }
     }
 
     post {
