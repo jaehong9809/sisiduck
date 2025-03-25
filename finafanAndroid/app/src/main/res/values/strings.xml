@@ -16,6 +16,7 @@
     <string name="saving_item_star_list_title">스타 목록</string>
     <string name="saving_item_create_top_bar">스타 적금 개설</string>
     <string name="saving_history_title">내역 보기</string>
+    <string name="saving_account_manage_title">적금 관리</string>
 
     <!-- Saving Screen -->
     <string name="saving_item_title">스타 적금</string>
@@ -33,6 +34,10 @@
     <string name="saving_item_total_money">받을 금액</string>
     <string name="saving_item_total_origin_interest">받을 금액 (원금 + 이자)</string>
     <string name="saving_item_deposit_account">입금 계좌</string>
+    <string name="saving_item_product_name">상품이름</string>
+    <string name="saving_item_start_date">개설일</string>
+    <string name="saving_item_connect_account">연결계좌</string>
+    <string name="saving_item_apply_interest">적용금리</string>
 
     <string name="format_money">%s원</string>
     <string name="format_duration">%s ~ %s</string>
@@ -43,6 +48,7 @@
     <string name="money_label_default">원</string>
     <string name="email_label">이메일</string>
     <string name="email_duplicate_label">중복확인</string>
+    <string name="saving_item_change_name_label">이름 변경</string>
     <string name="password_label">비밀번호</string>
     <string name="password_confirm_label">비밀번호 확인</string>
     <string name="current_password_label">현재 비밀번호</string>
