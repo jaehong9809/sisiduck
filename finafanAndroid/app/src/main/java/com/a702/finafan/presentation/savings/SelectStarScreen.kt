@@ -23,11 +23,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.component.StringField
@@ -46,7 +48,8 @@ fun SelectStarScreen() {
         .windowInsetsPadding(WindowInsets.ime)
     ) {
         // 상단 바
-        CommonBackTopBar(modifier = Modifier, imageOnClick = {}, text = "스타 적금 개설", isTextCentered = true)
+        CommonBackTopBar(modifier = Modifier, imageOnClick = {},
+            text = stringResource(R.string.saving_item_create_top_bar), isTextCentered = true)
 
         Column(
             modifier = Modifier
@@ -57,17 +60,18 @@ fun SelectStarScreen() {
                 .padding(start = 16.dp, end = 16.dp)
         ) {
             Text(
-                text = "함께 하고싶은 스타의 이름을\n입력해주세요",
+                text = stringResource(R.string.saving_item_select_star_title),
                 color = MainBlack,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
+                lineHeight = 36.sp,
                 modifier = Modifier.padding(top = 36.dp),
                 textAlign = TextAlign.Start
             )
 
             // 스타이름 필드
             StringField(modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
-                label = "스타이름", hint = "이름 입력", text = name)
+                label = stringResource(R.string.star_name_label), hint = stringResource(R.string.name_hint), text = name)
 
             Box(
                 modifier = Modifier
@@ -85,7 +89,7 @@ fun SelectStarScreen() {
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "검색하기",
+                        text = stringResource(R.string.search_btn_label),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         color = EditTextGray
@@ -100,7 +104,7 @@ fun SelectStarScreen() {
             modifier = Modifier.fillMaxWidth()
                 .imePadding(),
             onClick = {},
-            text = "다음",
+            text = stringResource(R.string.btn_next),
             isEnabled = name.value.isNotEmpty()
         )
     }

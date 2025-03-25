@@ -12,4 +12,49 @@
     <string name="not_found_audio">말씀을 잘 못 알아들었어요.</string>
     <string name="down_scroll">⬇</string>
 
+    <!-- TopBar Title -->
+    <string name="saving_item_star_list_title">스타 목록</string>
+    <string name="saving_item_create_top_bar">스타 적금 개설</string>
+    <string name="saving_history_title">내역 보기</string>
+
+    <!-- Saving Screen -->
+    <string name="saving_item_title">스타 적금</string>
+    <string name="saving_item_select_star_title">함께 하고싶은 스타의 이름을\n입력해주세요</string>
+    <string name="saving_item_input_name_title">추억을 기록할\n적금 이름을 지어주세요</string>
+    <string name="saving_item_input_name_guild">입력하지 않으면 스타 이름으로 설정됩니다.</string>
+    <string name="saving_item_empty_transaction">아직 저축 내역이 없어요.\n저축을 시작해 보세요!</string>
+
+    <!-- TextField Label -->
+    <string name="saving_item_name_label">적금 이름</string>
+    <string name="saving_item_name_label_default">적금</string>
+    <string name="money_label_default">원</string>
+    <string name="email_label">이메일</string>
+    <string name="email_duplicate_label">중복확인</string>
+    <string name="password_label">비밀번호</string>
+    <string name="password_confirm_label">비밀번호 확인</string>
+    <string name="current_password_label">현재 비밀번호</string>
+    <string name="new_password_label">새 비밀번호</string>
+    <string name="new_password_cofirm_label">새 비밀번호 확인</string>
+    <string name="birth_label">생년월일</string>
+    <string name="phone_label">전화번호</string>
+    <string name="saving_massage_label">응원 메시지 (20자)</string>
+    <string name="username_label">이름</string>
+    <string name="account_label">출금계좌 선택</string>
+    <string name="star_name_label">스타 이름</string>
+    <string name="money_label">금액</string>
+    <string name="search_btn_label">검색하기</string>
+
+    <!-- TextField Hint -->
+    <string name="name_hint">이름 입력</string>
+    <string name="email_hint">이메일 입력</string>
+    <string name="password_hint">비밀번호 입력</string>
+    <string name="money_hint">0</string>
+    <string name="saving_massage_hint">응원 메시지 입력</string>
+    <string name="search_start_hint">스타 검색</string>
+
+    <!-- button -->
+    <string name="btn_next">다음</string>
+    <string name="btn_select">선택하기</string>
+    <string name="btn_join">가입하기</string>
+
 </resources>

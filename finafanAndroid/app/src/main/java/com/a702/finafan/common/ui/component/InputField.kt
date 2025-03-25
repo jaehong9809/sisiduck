@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -285,7 +286,7 @@ fun CommonTextField(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "중복확인",
+                                text = stringResource(R.string.email_duplicate_label),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = EditTextGray
@@ -296,7 +297,7 @@ fun CommonTextField(
                     if (isMoney) {
                         Spacer(modifier = Modifier.width(width = 8.dp))
                         Text(
-                            text = "원",
+                            text = stringResource(R.string.money_label_default),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,
                             color = MainBlack
@@ -306,7 +307,7 @@ fun CommonTextField(
                     if (isSaving) {
                         Spacer(modifier = Modifier.width(width = 8.dp))
                         Text(
-                            text = "적금",
+                            text = stringResource(R.string.saving_item_name_label_default),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,
                             color = MainBlack
@@ -346,7 +347,7 @@ fun InputFieldPreview() {
         EmailField(true, text1, onClick = {})
 
         val text2 = remember { mutableStateOf("") }
-        PasswordField("비밀번호", "비밀번호 입력", text2)
+        PasswordField(stringResource(R.string.password_label), stringResource(R.string.password_hint), text2)
 
         val text3 = remember { mutableStateOf("") }
         NumberField(label = "금액", hint = "0", text = text3, isMoney = true)
