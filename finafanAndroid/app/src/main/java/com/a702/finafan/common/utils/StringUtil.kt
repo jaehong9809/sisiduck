@@ -9,7 +9,7 @@ object StringUtil {
         return formatter.format(amount) + "원"
     }
 
-    fun formatEditMoney(amount: Int): String {
+    fun formatEditMoney(amount: Long): String {
         val formatter = NumberFormat.getNumberInstance(Locale.KOREA)
         return formatter.format(amount)
     }
