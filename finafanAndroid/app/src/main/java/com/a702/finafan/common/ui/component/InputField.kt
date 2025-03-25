@@ -12,16 +12,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +50,142 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
 
+// 출금 계좌 선택 박스
+@Composable
+fun SelectAccountField() {
+    var expandStatus by remember { mutableStateOf(false) }
+    val menuItems = listOf("NH농협 312-0139-3754-31", "하나 312-0139-3754-31", "우리 312-0139-3754-31", "토스뱅크 312-0139-3754-31")
+
+    var selectedAccount by remember { mutableStateOf(menuItems[0]) }
+
+    TextItem("출금계좌 선택", MainBlack, 16.sp)
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = EditBgGray, shape = RoundedCornerShape(18.dp))
+            .padding(all = 16.dp)
+            .clickable {
+                expandStatus = true
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            TextItem(selectedAccount, MainBlack, 20.sp)
+            Spacer(modifier = Modifier.width(width = 8.dp))
+            Icon(
+                painter = painterResource(R.drawable.angle_down),
+                contentDescription = "",
+            )
+        }
+
+        DropdownMenu(
+            modifier = Modifier
+                .background(MainWhite, shape = RoundedCornerShape(18.dp))
+                .border(1.dp, MainBlack, shape = RoundedCornerShape(18.dp))
+                .fillMaxWidth(),
+            expanded = expandStatus,
+            onDismissRequest = {
+                expandStatus = false
+            }
+        ) {
+            menuItems.forEach { item ->
+                DropdownMenuItem(
+                    text = { Text(text = item, fontSize = 20.sp, color = MainBlack, fontWeight = FontWeight.Normal) },
+                    onClick = {
+                        selectedAccount = item
+                        expandStatus = false
+                        println("Selected: $item")
+                    }
+                )
+            }
+        }
+    }
+}
+
+// 이메일 입력 필드 (회원가입 시 중복확인 버튼)
+@Composable
+fun EmailField(isSignUp: Boolean = false, text: MutableState<String>, onClick: (() -> Unit)? = null,) {
+    CommonTextField(
+        label = "이메일",
+        hint = "이메일 입력",
+        text = text,
+        isSignUp = isSignUp,
+        onClick = onClick
+    )
+}
+
+// 비밀번호 입력 필드
+@Composable
+fun PasswordField(label: String, hint: String, text: MutableState<String>) {
+    CommonTextField(
+        label = label,
+        hint = hint,
+        text = text,
+        isPassword = true
+    )
+}
+
+// 스타 검색 필드
+@Composable
+fun SearchField(onClick: () -> Unit) {
+    val text = remember { mutableStateOf("") }
+
+    CommonTextField(
+        hint = "스타 검색",
+        text = text,
+        isSearch = true,
+        onClick = onClick
+    )
+}
+
+/*
+    숫자 입력 필드
+    인증번호, 생년월일, 금액, 전화번호
+*/
+@Composable
+fun NumberField(modifier: Modifier = Modifier,
+                label: String, hint: String,
+                text: MutableState<String>,
+                isMoney: Boolean = false,
+                maxLength: Int = 0) {
+
+    CommonTextField(
+        modifier = modifier,
+        label = label,
+        hint = hint,
+        text = text,
+        isMoney = isMoney,
+        isNumber = true,
+        maxLength = maxLength
+    )
+}
+
+/*
+    문자 입력 필드
+    이름, 적금이름, 응원메시지, 모금페이지에 쓰이는 필드
+    계좌번호, 스타이름
+*/
+@Composable
+fun StringField(modifier: Modifier = Modifier,
+                label: String, hint: String,
+                text: MutableState<String>,
+                isSaving: Boolean = false,
+                maxLength: Int = 0) {
+
+    CommonTextField(
+        modifier = modifier,
+        label = label,
+        hint = hint,
+        text = text,
+        isSaving = isSaving,
+        maxLength = maxLength
+    )
+}
 
 @Composable
 fun TextItem(text: String, color: Color, fontSize: TextUnit) {
@@ -189,93 +331,15 @@ fun CommonTextField(
     }
 }
 
-
-// 이메일 입력 필드 (중복확인 버튼도 함께)
-@Composable
-fun EmailField(isSignUp: Boolean = false, text: MutableState<String>, onClick: (() -> Unit)? = null,) {
-    CommonTextField(
-        label = "이메일",
-        hint = "이메일 입력",
-        text = text,
-        isSignUp = isSignUp,
-        onClick = onClick
-    )
-}
-
-// 비밀번호 입력 필드
-@Composable
-fun PasswordField(label: String, hint: String, text: MutableState<String>) {
-    CommonTextField(
-        label = label,
-        hint = hint,
-        text = text,
-        isPassword = true
-    )
-}
-
-// 스타 검색 필드 (검색 아이콘 필요)
-@Composable
-fun SearchField(onClick: () -> Unit) {
-    val text = remember { mutableStateOf("") }
-
-    CommonTextField(
-        hint = "스타 검색",
-        text = text,
-        isSearch = true,
-        onClick = onClick
-    )
-}
-
-// 숫자 입력 필드
-// 인증번호, 생년월일, 금액, 전화번호
-@Composable
-fun NumberField(modifier: Modifier = Modifier,
-                label: String, hint: String,
-                text: MutableState<String>,
-                isMoney: Boolean = false,
-                maxLength: Int = 0) {
-
-    CommonTextField(
-        modifier = modifier,
-        label = label,
-        hint = hint,
-        text = text,
-        isMoney = isMoney,
-        isNumber = true,
-        maxLength = maxLength
-    )
-}
-
-// 문자 입력 필드
-// 이름, 적금이름, 응원메시지, 모금페이지에 쓰이는 필드
-// 계좌번호, 스타이름
-@Composable
-fun StringField(modifier: Modifier = Modifier,
-                label: String, hint: String,
-                text: MutableState<String>,
-                isSaving: Boolean = false,
-                maxLength: Int = 0) {
-
-    CommonTextField(
-        modifier = modifier,
-        label = label,
-        hint = hint,
-        text = text,
-        isSaving = isSaving,
-        maxLength = maxLength
-    )
-}
-
-// 출금 계좌 선택 박스
-@Composable
-fun SelectAccount() {
-
-}
-
 @Preview(showBackground = true)
 @Composable
 fun InputFieldPreview() {
-    Column {
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState()),
+    ) {
+        SelectAccountField()
+
         val text1 = remember { mutableStateOf("") }
         EmailField(true, text1, onClick = {})
 

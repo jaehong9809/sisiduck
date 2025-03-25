@@ -21,6 +21,8 @@ hiltCommon = "1.2.0"
 
 coil = "2.4.0"
 
+compose = "1.7.6"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -55,7 +57,7 @@ hilt-compiler =  { group = "com.google.dagger", name = "hilt-android-compiler", 
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltCommon" }
 
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "compose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

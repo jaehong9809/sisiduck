@@ -55,6 +55,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.compose.ui:ui:1.7.6")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -94,4 +95,5 @@ dependencies {
 
     implementation(libs.coil)
     implementation ("androidx.palette:palette:1.0.0")
+    implementation(libs.androidx.compose.runtime)
 }
