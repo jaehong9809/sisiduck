@@ -8,4 +8,9 @@ object StringUtil {
         val formatter = NumberFormat.getNumberInstance(Locale.KOREA)
         return formatter.format(amount) + "원"
     }
+
+    fun formatEditMoney(amount: Int): String {
+        val formatter = NumberFormat.getNumberInstance(Locale.KOREA)
+        return formatter.format(amount)
+    }
 }
