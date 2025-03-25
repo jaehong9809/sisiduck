@@ -11,6 +11,8 @@ val MainBgLightGray = Color(0xFFF2F4F6)
 val MainGradBlue = Color(0xFF39BCF8)
 val MainGradViolet = Color(0xFF6365F1)
 
+val MainTranparent = Color(0xAAFFFFFF)
+
 val MainTextGray = Color(0xFF5A5A5A)
 val MainTextBlue = Color(0XFF4D92F5)
 val MainBlackWithTransparency = MainBlack.copy(alpha = 0.7f)

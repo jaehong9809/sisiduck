@@ -1,15 +1,15 @@
 package com.a702.finafan.presentation.chatbot
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.utils.SpeechRecognizerHelper
 import com.a702.finafan.domain.chatbot.model.ChatMessage
 import com.a702.finafan.domain.chatbot.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,32 +18,71 @@ class ChatViewModel @Inject constructor(
     private val speechRecognizerHelper: SpeechRecognizerHelper
 ) : ViewModel() {
 
-    private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
-    val messages: StateFlow<List<ChatMessage>> = _messages
+    private val _uiState = MutableStateFlow(ChatState())
+    val uiState: StateFlow<ChatState> = _uiState.asStateFlow()
 
     init {
         speechRecognizerHelper.setOnResultListener { text ->
-            addUserMessage(text)
-            //sendUserMessage(text)
+            streamUserMessage(text)
+            _uiState.update { it.copy(isListening = false) }
+        }
+
+        speechRecognizerHelper.setOnErrorListener {
+            _uiState.update { it.copy(isListening = false, toastMessage = "음성 인식 중 오류가 발생했어요.") }
+        }
+
+        speechRecognizerHelper.setOnNoResultListener {
+            _uiState.update { it.copy(isListening = false, toastMessage = "말씀을 잘 못 알아들었어요.") }
         }
     }
 
     fun startListening() {
+        _uiState.update { it.copy(isListening = true) }
         speechRecognizerHelper.startListening()
     }
 
-    private fun addUserMessage(text: String) {
-        viewModelScope.launch {
-            _messages.update { it + ChatMessage(text, true) }
+    fun streamUserMessage(message: String) {
+        _uiState.update {
+            it.copy(
+                messages = it.messages + ChatMessage(message, isUser = true),
+                isStreaming = true,
+                streamingText = ""
+            )
         }
+
+        val builder = StringBuilder()
+
+        repository.streamMessage(
+            message = message,
+            onChunk = { chunk ->
+                builder.append(chunk)
+                _uiState.update {
+                    it.copy(streamingText = builder.toString())
+                }
+            },
+
+            onComplete = {
+                Log.d("ChatViewModel", "✅ onComplete 실행")
+                val finalText = builder.toString()
+                _uiState.update {
+                    it.copy(
+                        messages = it.messages  + ChatMessage(finalText, isUser = false),
+                        streamingText = "",
+                        isStreaming = false
+                    )
+                }
+            },
+
+            onError = { throwable ->
+                _uiState.update {
+                    it.copy(error = throwable, isStreaming = false)
+                }
+            },
+        )
     }
 
-    private fun sendUserMessage(text: String) {
-        viewModelScope.launch {
-            _messages.update { it + ChatMessage(text, true) }
-            val reply = repository.sendMessage(text)
-            _messages.update { it + ChatMessage(reply, false) }
-        }
+    fun clearToastMessage() {
+        _uiState.update { it.copy(toastMessage = null) }
     }
 }
 

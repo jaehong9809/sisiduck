@@ -23,6 +23,7 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"${project.findProperty("BASE_URL")}\"")
+            buildConfigField("String", "AI_URL", "\"${project.findProperty("AI_URL")}\"")
         }
         release {
             isMinifyEnabled = false
@@ -84,6 +85,9 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
+
+    implementation(libs.lottie.compose)
+    implementation(libs.dotlottie)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
