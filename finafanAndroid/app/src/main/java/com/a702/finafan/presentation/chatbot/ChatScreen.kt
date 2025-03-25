@@ -9,6 +9,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,19 +25,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
+import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.domain.chatbot.model.ChatMessage
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
-    // 음성 권한 요청
+    LaunchedEffect(uiState.messages.size, uiState.streamingText) {
+        coroutineScope.launch {
+            listState.animateScrollToItem(uiState.messages.size)
+        }
+    }
+
+    val showScrollToBottomButton by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex < uiState.messages.lastIndex
+        }
+    }
+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -47,42 +66,47 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
     }
 
     LaunchedEffect(uiState.error) {
-        uiState.error?.let { throwable ->
-            Toast.makeText(
-                context,
-                throwable.message ?: context.getString(R.string.error_audio),
-                Toast.LENGTH_SHORT
-            ).show()
+        uiState.error?.let {
+            Toast.makeText(context, it.message ?: context.getString(R.string.error_audio), Toast.LENGTH_SHORT).show()
         }
     }
 
     LaunchedEffect(uiState.toastMessage) {
-        uiState.toastMessage?.let { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        uiState.toastMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             viewModel.clearToastMessage()
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 12.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            reverseLayout = true,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(uiState.messages.reversed()) { chatMessage ->
-                ChatBubble(chatMessage)
+        Column(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(bottom = 84.dp), // 버튼 높이 고려
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(uiState.messages) { ChatBubble(it) }
+
+                if (uiState.isStreaming && uiState.streamingText.isNotBlank()) {
+                    item {
+                        ChatBubble(ChatMessage(uiState.streamingText, isUser = false))
+                    }
+                }
             }
         }
 
         if (uiState.isListening) {
             Column(
                 modifier = Modifier
+                    .align(Alignment.Center)
                     .fillMaxWidth()
-                    .background(Color(0xFFECEFF1))
-                    .padding(vertical = 12.dp),
+                    .padding(vertical = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 DotLottieAnimation(
@@ -94,9 +118,7 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                     playMode = Mode.FORWARD,
                     modifier = Modifier.size(80.dp)
                 )
-
                 Spacer(modifier = Modifier.height(8.dp))
-
                 Text(
                     text = stringResource(R.string.ducksoon_is_listening),
                     fontSize = 24.sp,
@@ -106,12 +128,11 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
             }
         }
 
-
         GradientButton(
             onClick = {
                 when {
-                    context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) ==
-                            android.content.pm.PackageManager.PERMISSION_GRANTED -> {
+                    context.checkSelfPermission(Manifest.permission.RECORD_AUDIO)
+                            == android.content.pm.PackageManager.PERMISSION_GRANTED -> {
                         viewModel.startListening()
                     }
                     else -> {
@@ -119,8 +140,32 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                     }
                 }
             },
-            buttonText = stringResource(R.string.chatbot_talk_button)
+            buttonText = stringResource(R.string.chatbot_talk_button),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
         )
+
+        if (showScrollToBottomButton) {
+            FloatingActionButton(
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(uiState.messages.size)
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 96.dp, end = 16.dp),
+                containerColor = MainWhite,
+                shape = CircleShape,
+                elevation = FloatingActionButtonDefaults.elevation(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.down_scroll),
+                    color = MainBlack,
+                    fontSize = 20.sp,
+                )
+            }
+        }
     }
 }
 

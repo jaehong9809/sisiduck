@@ -8,6 +8,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -21,7 +22,12 @@ object NetworkModule {
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
+    annotation class AiOkHttpClient
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
     annotation class AiChatRetrofit
+
 
     @Provides
     @Singleton
@@ -55,6 +61,16 @@ object NetworkModule {
             .build()
     }
 
+    @AiOkHttpClient
+    @Provides
+    @Singleton
+    fun provideAiOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .readTimeout(0, TimeUnit.MILLISECONDS)
+            .build()
+    }
+
+
     @AiChatRetrofit
     @Provides
     @Singleton
@@ -63,7 +79,7 @@ object NetworkModule {
         gsonConverterFactory: GsonConverterFactory,
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL) // 추후 서버 분리되면 baseUrl 변경
+            .baseUrl(BuildConfig.AI_URL)
             .addConverterFactory(gsonConverterFactory)
             .client(okHttpClient)
             .build()

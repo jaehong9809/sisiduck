@@ -1,7 +1,7 @@
 package com.a702.finafan.presentation.chatbot
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.utils.SpeechRecognizerHelper
 import com.a702.finafan.domain.chatbot.model.ChatMessage
 import com.a702.finafan.domain.chatbot.repository.ChatRepository
@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +23,7 @@ class ChatViewModel @Inject constructor(
 
     init {
         speechRecognizerHelper.setOnResultListener { text ->
-            sendUserMessage(text)
+            streamUserMessage(text)
             _uiState.update { it.copy(isListening = false) }
         }
 
@@ -42,24 +41,48 @@ class ChatViewModel @Inject constructor(
         speechRecognizerHelper.startListening()
     }
 
-    private fun sendUserMessage(text: String) {
-        viewModelScope.launch {
-            _uiState.update { state -> state.copy(isLoading = true, messages = state.messages + ChatMessage(text, true)) }
-
-            runCatching {
-                val replyMessage = repository.sendMessage(text)
-                _uiState.update { state -> state.copy(messages = state.messages + replyMessage) }
-            }.onFailure { throwable ->
-                _uiState.update { it.copy(error = throwable) }
-            }
-
-            _uiState.update { it.copy(isLoading = false, isListening = false) }
+    fun streamUserMessage(message: String) {
+        _uiState.update {
+            it.copy(
+                messages = it.messages + ChatMessage(message, isUser = true),
+                isStreaming = true,
+                streamingText = ""
+            )
         }
+
+        val builder = StringBuilder()
+
+        repository.streamMessage(
+            message = message,
+            onChunk = { chunk ->
+                builder.append(chunk)
+                _uiState.update {
+                    it.copy(streamingText = builder.toString())
+                }
+            },
+
+            onComplete = {
+                Log.d("ChatViewModel", "✅ onComplete 실행")
+                val finalText = builder.toString()
+                _uiState.update {
+                    it.copy(
+                        messages = it.messages  + ChatMessage(finalText, isUser = false),
+                        streamingText = "",
+                        isStreaming = false
+                    )
+                }
+            },
+
+            onError = { throwable ->
+                _uiState.update {
+                    it.copy(error = throwable, isStreaming = false)
+                }
+            },
+        )
     }
 
     fun clearToastMessage() {
         _uiState.update { it.copy(toastMessage = null) }
     }
 }
-
 
