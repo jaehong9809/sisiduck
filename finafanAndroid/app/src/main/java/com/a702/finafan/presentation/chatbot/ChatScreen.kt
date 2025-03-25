@@ -29,6 +29,7 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.domain.chatbot.model.ChatMessage
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
@@ -122,6 +123,7 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                 Text(
                     text = stringResource(R.string.ducksoon_is_listening),
                     fontSize = 24.sp,
+                    fontFamily = Pretendard,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF37474F)
                 )

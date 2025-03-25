@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.BubbleBlue
 import com.a702.finafan.common.ui.theme.BubbleWhite
+import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.domain.chatbot.model.ChatMessage
 
 @Composable
@@ -36,6 +37,7 @@ fun ChatBubble(chatMessage: ChatMessage) {
         ) {
             Text(
                 text = chatMessage.message,
+                fontFamily = Pretendard,
                 fontSize = 18.sp,
                 lineHeight = 22.sp
             )
