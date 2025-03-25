@@ -4,11 +4,9 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,7 +22,6 @@ import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
-
 
 // 가운데 텍스트, 오른쪽 닫기
 @Composable
@@ -56,7 +53,7 @@ fun CommonCloseTopBar(
 fun CommonBackTopBar(
     modifier: Modifier = Modifier,
     imageOnClick: () -> Unit,
-    textOnClick: () -> Unit,
+    textOnClick: (() -> Unit)? = null,
     text: String? = null,
     isTextCentered: Boolean = false
 ) {
@@ -88,10 +85,14 @@ fun ImageItem(modifier: Modifier, onClick: () -> Unit, @DrawableRes imageId: Int
 }
 
 @Composable
-fun TextItem(modifier: Modifier, onClick: () -> Unit?, text: String?) {
+fun TextItem(modifier: Modifier, onClick: (() -> Unit)? = null, text: String?) {
     text?.let {
         Text(
-            modifier = modifier.clickable { onClick() },
+            modifier = if (onClick != null) {
+                modifier.clickable { onClick() }
+            } else {
+                modifier
+            },
             text = it,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,

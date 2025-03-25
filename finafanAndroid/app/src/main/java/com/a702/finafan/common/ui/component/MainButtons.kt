@@ -18,23 +18,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.a702.finafan.common.ui.theme.BtnBgGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
@@ -134,17 +128,23 @@ fun PrimaryGradButton(
 fun PrimaryGradBottomButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    text: String? = null
+    text: String? = null,
+    isEnabled: Boolean = true
 ) {
     val gradient = Brush.horizontalGradient(
         colors = listOf(MainGradBlue, MainGradViolet)
     )
+
+    val gray = Brush.horizontalGradient(
+        colors = listOf(BtnBgGray, BtnBgGray)
+    )
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(60.dp)
-            .clickable { onClick() }
-            .background(gradient),
+            .clickable(enabled = isEnabled) { onClick() }
+            .background(if (isEnabled) gradient else gray),
         contentAlignment = Alignment.Center
     ) {
         text?.let {

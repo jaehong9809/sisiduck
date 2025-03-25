@@ -7,9 +7,12 @@ val MainWhite = Color(0xFFFFFFFF)
 val MainBlack = Color(0xFF2A2A2A)
 val MainBgGray = Color(0xFFD9D9D9)
 val MainBgBlueGray = Color(0xFFF2F4F6)
+val MainBgLightGray = Color(0xFFF2F4F6)
 
 val MainGradBlue = Color(0xFF39BCF8)
 val MainGradViolet = Color(0xFF6365F1)
+
+val MainTranparent = Color(0xAAFFFFFF)
 
 val MainTextGray = Color(0xFF5A5A5A)
 val MainTextBlue = Color(0XFF4D92F5)
@@ -17,6 +20,15 @@ val MainBlackWithTransparency = MainBlack.copy(alpha = 0.7f)
 
 val TermTextGray = Color(0xFF7C7E87)
 val TermBoxGray = Color(0xFFF2F3F7)
+
+val SavingDescBg = Color(0xFFFAFAFA)
+val SavingDescGray = Color(0xFF7D7D7D)
+
+val EditBgGray = Color(0xFFF2F3F7)
+val EditTextGray = Color(0xFF7C7E87)
+val ErrorTextRed = Color(0xFFF44336)
+
+val BtnBgGray = Color(0xFFADB9D1)
 
 /* ------------ Star Color ------------ */
 val starGradGreen = Color(0xFF49DD81)

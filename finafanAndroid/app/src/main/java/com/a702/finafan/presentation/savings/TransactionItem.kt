@@ -15,7 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.a702.finafan.common.ui.theme.*
+import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainTextBlue
+import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.utils.StringUtil
 
 @Composable
@@ -43,8 +45,8 @@ fun TransactionItem(transaction: Transaction) {
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(text = transaction.title, fontSize = 22.sp, color = MainBlack, fontWeight = FontWeight.Medium)
-                Text(text = transaction.time, fontSize = 16.sp, color = MainTextGray, fontWeight = FontWeight.Normal)
+                Text(text = transaction.title, fontSize = 22.sp, color = MainBlack, fontWeight = FontWeight.Medium, lineHeight = 24.sp,)
+                Text(text = transaction.time, fontSize = 16.sp, color = MainTextGray, fontWeight = FontWeight.Normal, lineHeight = 24.sp,)
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -53,8 +55,8 @@ fun TransactionItem(transaction: Transaction) {
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(text = StringUtil.formatCurrency(transaction.amount), fontSize = 20.sp, color = MainTextBlue, fontWeight = FontWeight.Bold)
-                Text(text = StringUtil.formatCurrency(transaction.balance), fontSize = 16.sp, color = MainTextGray, fontWeight = FontWeight.Medium)
+                Text(text = StringUtil.formatCurrency(transaction.amount), fontSize = 20.sp, color = MainTextBlue, fontWeight = FontWeight.Bold, lineHeight = 24.sp,)
+                Text(text = StringUtil.formatCurrency(transaction.balance), fontSize = 16.sp, color = MainTextGray, fontWeight = FontWeight.Medium, lineHeight = 24.sp,)
             }
         }
     }

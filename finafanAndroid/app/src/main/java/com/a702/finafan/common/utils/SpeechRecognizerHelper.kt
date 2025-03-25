@@ -13,6 +13,8 @@ class SpeechRecognizerHelper(
 ) {
     private val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
     private var onResult: ((String) -> Unit)? = null
+    private var onError: (() -> Unit)? = null
+    private var onNoResult: (() -> Unit)? = null
 
     private val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
         putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -23,8 +25,11 @@ class SpeechRecognizerHelper(
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
             override fun onResults(results: Bundle?) {
                 val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                matches?.firstOrNull()?.let { recognizedText ->
-                    onResult?.invoke(recognizedText)
+                if (!matches.isNullOrEmpty()) {
+                    onResult?.invoke(matches.first())
+                }
+                else {
+                    onNoResult?.invoke()
                 }
             }
 
@@ -53,17 +58,25 @@ class SpeechRecognizerHelper(
             }
 
             override fun onEndOfSpeech() {
-                //
+
             }
 
             override fun onError(error: Int) {
-                // 에러 처리
+                onError?.invoke()
             }
         })
     }
 
     fun setOnResultListener(listener: (String) -> Unit) {
         onResult = listener
+    }
+
+    fun setOnErrorListener(listener: () -> Unit) {
+        onError = listener
+    }
+
+    fun setOnNoResultListener(listener: () -> Unit) {
+        onNoResult = listener
     }
 
     fun startListening() {
