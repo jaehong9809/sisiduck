@@ -1,7 +1,6 @@
 package com.a702.finafanbe.core.demanddeposit.dto.response;
 
-import com.a702.finafanbe.global.common.header.BaseResponseHeaderIncludeInstitutionCode;
-import lombok.Getter;
+import com.a702.finafanbe.global.common.financialnetwork.header.BaseResponseHeaderIncludeInstitutionCode;
 
 import java.util.List;
 

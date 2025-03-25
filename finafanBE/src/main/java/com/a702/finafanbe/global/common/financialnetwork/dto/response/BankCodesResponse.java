@@ -1,15 +1,15 @@
-package com.a702.finafanbe.core.identify.dto.response;
+package com.a702.finafanbe.global.common.financialnetwork.dto.response;
 
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseResponseHeaderIncludeInstitutionCode;
+import java.util.List;
 
-public record KRW1CertificationValidateResponse(
+public record BankCodesResponse(
     BaseResponseHeaderIncludeInstitutionCode Header,
-    REC REC
+    List<REC> REC
 ) {
 
     private record REC(
-        String status,
-        Long transactionUniqueNo,
-        String accountNo
+        String bankCode,
+        String bankName
     ){}
 }

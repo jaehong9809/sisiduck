@@ -39,6 +39,13 @@ public class User extends BaseEntity {
     @Column(name = "social_id")
     private String socialId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "social_type")
+    private SocialType socialType;
+
+    @Column(name = "userKey", nullable = false)
+    private String userKey;
+
     @Column(name = "birth_date", nullable = false)
     private LocalDateTime birthDate;
 
@@ -63,6 +70,27 @@ public class User extends BaseEntity {
                 socialId,
                 nickname
         );
+    }
+
+    public static User of(
+            String socialId,
+            String userKey,
+            String socialType) {
+        return new User(
+                socialId,
+                userKey,
+                socialType
+        );
+    }
+
+    private User(
+            String socialId,
+            String userKey,
+            String socialType
+    ){
+        this.socialId = socialId;
+        this.userKey = userKey;
+        this.socialType = SocialType.valueOf(socialType);
     }
 
     private User(

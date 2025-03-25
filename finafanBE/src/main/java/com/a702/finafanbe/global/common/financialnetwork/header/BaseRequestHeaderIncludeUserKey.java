@@ -1,4 +1,4 @@
-package com.a702.finafanbe.global.common.header;
+package com.a702.finafanbe.global.common.financialnetwork.header;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

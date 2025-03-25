@@ -1,6 +1,6 @@
 package com.a702.finafanbe.core.identify.dto.request;
 
-import com.a702.finafanbe.global.common.header.BaseRequestHeaderIncludeUserKey;
+import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
 
 public record KRW1CertificationValidateRequest(
     BaseRequestHeaderIncludeUserKey Header,

@@ -1,15 +1,13 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
-import com.a702.finafanbe.core.demanddeposit.dto.request.CreateAccountRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.InquireAccountBalanceRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.InquireAccountHolderNameRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountListRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountBalanceResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountHolderNameResponse;
-import com.a702.finafanbe.global.common.header.BaseRequestHeaderIncludeUserKey;
+import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountResponse;
 import java.time.LocalDate;
