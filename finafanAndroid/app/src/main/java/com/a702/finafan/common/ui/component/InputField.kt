@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.EditBgGray
 import com.a702.finafan.common.ui.theme.EditTextGray
+import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
@@ -58,7 +59,7 @@ fun SelectAccountField() {
 
     var selectedAccount by remember { mutableStateOf(menuItems[0]) }
 
-    TextItem("출금계좌 선택", MainBlack, 16.sp)
+    TextItem("출금계좌 선택", MainBlack, 16.sp, true)
 
     Box(
         modifier = Modifier
@@ -132,10 +133,9 @@ fun PasswordField(label: String, hint: String, text: MutableState<String>) {
 
 // 스타 검색 필드
 @Composable
-fun SearchField(onClick: () -> Unit) {
-    val text = remember { mutableStateOf("") }
-
+fun SearchField(modifier: Modifier = Modifier, text: MutableState<String>, onClick: () -> Unit) {
     CommonTextField(
+        modifier = modifier,
         hint = "스타 검색",
         text = text,
         isSearch = true,
@@ -188,12 +188,12 @@ fun StringField(modifier: Modifier = Modifier,
 }
 
 @Composable
-fun TextItem(text: String, color: Color, fontSize: TextUnit) {
+fun TextItem(text: String, color: Color, fontSize: TextUnit, isLabel: Boolean = false) {
     Text(
         text = text,
         color = color,
         fontSize = fontSize,
-        modifier = Modifier.padding(bottom = 8.dp)
+        modifier = if (isLabel) Modifier.padding(bottom = 8.dp, start = 8.dp) else Modifier
     )
 }
 
@@ -217,10 +217,10 @@ fun CommonTextField(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(MainWhite)
+            .background(if (isSearch) MainBgLightGray else MainWhite)
     ) {
         label?.let {
-            TextItem(label, MainBlack, 16.sp)
+            TextItem(label, MainBlack, 16.sp, true)
         }
 
         BasicTextField(
@@ -255,7 +255,7 @@ fun CommonTextField(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = EditBgGray, shape = RoundedCornerShape(18.dp))
+                        .background(color = if (isSearch) MainWhite else EditBgGray, shape = RoundedCornerShape(18.dp))
                         .padding(all = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -266,6 +266,7 @@ fun CommonTextField(
                         if (text.value.isEmpty()) {
                             TextItem(hint, EditTextGray, 20.sp)
                         }
+
                         innerTextField()
                     }
 
@@ -362,6 +363,7 @@ fun InputFieldPreview() {
         StringField(label = "응원메시지(20자)", hint = "메시지 입력", text = text7, maxLength = 20)
 
         TextItem("검색창", MainBlack, 16.sp)
-        SearchField { /* 검색 */ }
+        val text8 = remember { mutableStateOf("") }
+        SearchField(text = text8, onClick = { /* 검색 */ })
     }
 }
