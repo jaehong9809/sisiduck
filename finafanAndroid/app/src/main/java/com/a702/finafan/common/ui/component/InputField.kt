@@ -54,25 +54,23 @@ import com.a702.finafan.common.utils.StringUtil
 
 // 출금 계좌 선택 박스
 @Composable
-fun SelectAccountField() {
+fun SelectAccountField(menuItems: MutableList<String>) {
     var expandStatus by remember { mutableStateOf(false) }
-    val menuItems = listOf("NH농협 312-0139-3754-31", "하나 312-0139-3754-31", "우리 312-0139-3754-31", "토스뱅크 312-0139-3754-31")
-
     var selectedAccount by remember { mutableStateOf(menuItems[0]) }
 
-    TextItem("출금계좌 선택", MainBlack, 16.sp, true)
+    TextItem(stringResource(R.string.account_label), MainBlack, 16.sp, true)
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = EditBgGray, shape = RoundedCornerShape(18.dp))
-            .padding(all = 16.dp)
             .clickable {
                 expandStatus = true
             }
     ) {
         Row(
             modifier = Modifier
+                .padding(all = 16.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -341,7 +339,8 @@ fun InputFieldPreview() {
         modifier = Modifier
             .verticalScroll(rememberScrollState()),
     ) {
-        SelectAccountField()
+        val menuItems = mutableListOf("NH농협 312-0139-3754-31", "하나 312-0139-3754-31", "우리 312-0139-3754-31", "토스뱅크 312-0139-3754-31")
+        SelectAccountField(menuItems = menuItems)
 
         val text1 = remember { mutableStateOf("") }
         EmailField(true, text1, onClick = {})

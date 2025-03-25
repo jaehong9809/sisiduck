@@ -21,8 +21,10 @@
     <string name="saving_item_title">스타 적금</string>
     <string name="saving_item_select_star_title">함께 하고싶은 스타의 이름을\n입력해주세요</string>
     <string name="saving_item_input_name_title">추억을 기록할\n적금 이름을 지어주세요</string>
-    <string name="saving_item_input_name_guild">입력하지 않으면 스타 이름으로 설정됩니다.</string>
+    <string name="saving_item_input_name_guild">입력하지 않으면 스타의 이름으로 설정됩니다.</string>
     <string name="saving_item_empty_transaction">아직 저축 내역이 없어요.\n저축을 시작해 보세요!</string>
+    <string name="saving_item_select_account_title">앞으로 아래 계좌에서\n출금할게요</string>
+    <string name="saving_item_select_account_desc">출금계좌는 변경할 수 없으니\n신중하게 선택해 주세요.</string>
 
     <!-- TextField Label -->
     <string name="saving_item_name_label">적금 이름</string>
@@ -56,5 +58,6 @@
     <string name="btn_next">다음</string>
     <string name="btn_select">선택하기</string>
     <string name="btn_join">가입하기</string>
+    <string name="btn_create">개설하기</string>
 
 </resources>
