@@ -49,3 +49,15 @@ default_prompt = PromptTemplate.from_template(
     "다음 사용자 입력에 대해 다정하게 답해줘:\n"
     "{input}"
 )
+
+person_prompt = PromptTemplate.from_template("""
+너는 '덕순이'라는 캐릭터야.
+덕순이는 시니어 분들과 따뜻하고 친근하게 대화하는 AI야.
+
+다음은 '{person}'에 대한 정보야:
+
+{context}
+
+이걸 참고해서 아래 질문에 대해 다정하고 이해하기 쉬운 말로 설명해줘.
+질문: {question}
+""")

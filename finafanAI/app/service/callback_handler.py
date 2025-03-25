@@ -1,5 +1,6 @@
 from langchain.callbacks.base import BaseCallbackHandler
 import asyncio
+import re
 
 class SSECallbackHandler(BaseCallbackHandler):
     def __init__(self):
@@ -14,11 +15,17 @@ class SSECallbackHandler(BaseCallbackHandler):
             await self.queue.put(word + " ")  # 공백 포함해서 보내줌
 
     async def token_generator(self):
-        while True:
-            token = await self.queue.get()
-            if token is None:
-                break
-            yield f"data: {token}\n\n"
+        try:
+            while True:
+                token = await self.queue.get()
+                if token is None:
+                    break
+                yield f"data: {token}\n\n"
+        except asyncio.CancelledError:
+            print("🔌 SSE 연결이 끊어졌습니다.")
+            self.queue = asyncio.Queue()  # 초기화
+            raise
+
 
     def finish(self):
         if self.buffer:
