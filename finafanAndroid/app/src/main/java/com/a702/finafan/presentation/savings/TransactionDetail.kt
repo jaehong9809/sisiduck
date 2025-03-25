@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -23,10 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.theme.MainBlackWithTransparency
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.ui.theme.gradientList
 import com.a702.finafan.common.utils.StringUtil
 import kotlin.random.Random
@@ -74,9 +73,9 @@ fun TransactionDetail(transaction: Transaction) {
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(text = transaction.time, fontSize = 20.sp, fontWeight = FontWeight.Medium, color = MainWhite)
-                Text(text = transaction.title, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MainWhite)
-                Text(text = StringUtil.formatCurrency(transaction.amount), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MainWhite)
+                Text(text = transaction.time, fontSize = 20.sp, fontWeight = FontWeight.Medium, color = MainWhite, lineHeight = 24.sp,)
+                Text(text = transaction.title, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MainWhite, lineHeight = 24.sp,)
+                Text(text = StringUtil.formatCurrency(transaction.amount), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MainWhite, lineHeight = 24.sp,)
             }
         }
     }
