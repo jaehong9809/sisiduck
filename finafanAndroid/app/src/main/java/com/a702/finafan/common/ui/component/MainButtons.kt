@@ -82,7 +82,7 @@ fun MainWideIconButton(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             icon?.invoke()
-            text?.let {
+            text.let {
                 Text(
                     text = it,
                     fontSize = 24.sp,
@@ -202,7 +202,7 @@ fun SquareButtonPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PrimaryButtonsPreview() {
-    Box() {
+    Box {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
