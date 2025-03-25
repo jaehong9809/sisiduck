@@ -193,6 +193,7 @@ fun TextItem(text: String, color: Color, fontSize: TextUnit, isLabel: Boolean = 
         text = text,
         color = color,
         fontSize = fontSize,
+        lineHeight = 24.sp,
         modifier = if (isLabel) Modifier.padding(bottom = 8.dp, start = 8.dp) else Modifier
     )
 }

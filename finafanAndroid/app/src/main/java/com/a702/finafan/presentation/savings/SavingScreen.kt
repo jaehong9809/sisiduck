@@ -89,7 +89,7 @@ fun SavingScreen() {
                     fontWeight = FontWeight.Medium,
                     color = MainTextGray,
                     textAlign = TextAlign.Center,
-                    lineHeight = 30.sp
+                    lineHeight = 24.sp
                 )
             }
         } else {

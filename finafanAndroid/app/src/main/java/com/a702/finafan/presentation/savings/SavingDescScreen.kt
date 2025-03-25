@@ -28,6 +28,7 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.SavingDescBg
 import com.a702.finafan.common.ui.theme.SavingDescGray
 import com.a702.finafan.common.ui.theme.gradientBlue
@@ -76,14 +77,17 @@ fun FirstDesc() {
             text = "사랑하는만큼 모으는",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
+            lineHeight = 30.sp,
             color = MainBlack,
         )
         Text(
+            modifier = Modifier.padding(top = 4.dp),
             text = "스타 적금",
             style = TextStyle(
                 brush = gradientBlue,
                 fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                fontFamily = Pretendard
             )
         )
 
@@ -91,6 +95,7 @@ fun FirstDesc() {
             text = "스타와의 추억을\n순간마다 남기는 저축 기록",
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
+            lineHeight = 24.sp,
             color = MainTextGray,
             modifier = Modifier
                 .padding(top = 24.dp)
@@ -117,10 +122,12 @@ fun SecondDesc() {
                 text = "사랑을\n모았던 순간의",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
+                lineHeight = 44.sp,
                 color = SavingDescGray,
                 textAlign = TextAlign.Center
             )
             Text(
+                modifier = Modifier.padding(top = 4.dp),
                 text = "기록은 영원히",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
@@ -131,6 +138,7 @@ fun SecondDesc() {
                 text = "응원글을 남겨보세요.\n사랑을 모으는 순간에도, \n사랑을 돌려받는 순간에도",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
+                lineHeight = 24.sp,
                 color = MainTextGray,
                 modifier = Modifier
                     .padding(top = 24.dp)
@@ -161,6 +169,7 @@ fun ThirdDesc() {
             text = "이제 기록을 시작해 볼까요?",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
+            lineHeight = 30.sp,
             color = MainBlack,
         )
 

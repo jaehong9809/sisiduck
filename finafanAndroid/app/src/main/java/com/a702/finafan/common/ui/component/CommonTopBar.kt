@@ -23,7 +23,6 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 
-
 // 가운데 텍스트, 오른쪽 닫기
 @Composable
 fun CommonCloseTopBar(

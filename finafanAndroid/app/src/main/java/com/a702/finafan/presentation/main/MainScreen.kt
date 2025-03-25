@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.chatbot.ChatViewModel
+import com.a702.finafan.presentation.savings.SavingDescScreen
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
@@ -15,6 +15,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
     ) {
-        ChatScreen(viewModel = chatViewModel)
+//        ChatScreen(viewModel = chatViewModel)
+        SavingDescScreen()
     }
 }
