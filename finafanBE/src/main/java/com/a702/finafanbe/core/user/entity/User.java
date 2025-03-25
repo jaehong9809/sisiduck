@@ -3,9 +3,12 @@ package com.a702.finafanbe.core.user.entity;
 import com.a702.finafanbe.core.user.dto.request.UserRequest;
 import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,7 +17,10 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE user SET delete_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("deleted_at = false")
 public class User extends BaseEntity {
+    private static final int MAX_SOCIAL_ID_LENGTH = 255;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +35,17 @@ public class User extends BaseEntity {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
+    @Size(max = MAX_SOCIAL_ID_LENGTH)
+    @Column(name = "social_id")
+    private String socialId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "social_type")
+    private SocialType socialType;
+
+    @Column(name = "userKey", nullable = false)
+    private String userKey;
+
     @Column(name = "birth_date", nullable = false)
     private LocalDateTime birthDate;
 
@@ -37,6 +54,7 @@ public class User extends BaseEntity {
 
     @Column(name = "credit_point", nullable = false)
     private String creditPoint;
+
     public static User of(UserRequest userRequest) {
         return new User(
                 "GENERAL",
@@ -46,6 +64,35 @@ public class User extends BaseEntity {
                 userRequest.address()
         );
     }
+
+    public static User of(String socialId, String nickname) {
+        return new User(
+                socialId,
+                nickname
+        );
+    }
+
+    public static User of(
+            String socialId,
+            String userKey,
+            String socialType) {
+        return new User(
+                socialId,
+                userKey,
+                socialType
+        );
+    }
+
+    private User(
+            String socialId,
+            String userKey,
+            String socialType
+    ){
+        this.socialId = socialId;
+        this.userKey = userKey;
+        this.socialType = SocialType.valueOf(socialType);
+    }
+
     private User(
             String memberRole,
             String name,
@@ -58,5 +105,13 @@ public class User extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
         this.address = address;
+    }
+
+    private User(
+            String socialId,
+            String nickname
+    ){
+        this.socialId = socialId;
+        this.name = nickname;
     }
 }

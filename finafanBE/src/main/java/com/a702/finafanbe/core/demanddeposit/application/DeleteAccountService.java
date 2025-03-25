@@ -1,0 +1,25 @@
+package com.a702.finafanbe.core.demanddeposit.application;
+
+import com.a702.finafanbe.core.demanddeposit.dto.request.DeleteAccountRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.response.DeleteAccountResponse;
+import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
+import com.a702.finafanbe.global.common.util.ApiClientUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class DeleteAccountService {
+
+    private final ApiClientUtil apiClientUtil;
+
+    public ResponseEntity<DeleteAccountResponse> deleteAccount(String path,
+        DeleteAccountRequest deleteAccountRequest) {
+        return apiClientUtil.callFinancialNetwork(
+            path,
+            deleteAccountRequest,
+            DeleteAccountResponse.class
+        );
+    }
+}
