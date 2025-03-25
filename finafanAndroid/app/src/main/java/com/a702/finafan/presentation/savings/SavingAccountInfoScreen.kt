@@ -2,8 +2,6 @@ package com.a702.finafan.presentation.savings
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,11 +14,9 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +35,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
-import com.a702.finafan.common.ui.theme.EditTextGray
+import com.a702.finafan.common.ui.component.SubButton
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
@@ -113,22 +109,9 @@ fun SavingAccountInfoScreen() {
                         )
                     }
 
-                    Box(
-                        modifier = Modifier
-                            .width(66.dp)
-                            .height(28.dp)
-                            .clickable { /* TODO: 이름 변경 바텀시트 띄우기 */ }
-                            .background(color = MainWhite, shape = RoundedCornerShape(10.dp))
-                            .border(1.dp, EditTextGray, shape = RoundedCornerShape(10.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.saving_item_change_name_label),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = EditTextGray
-                        )
-                    }
+                    SubButton(
+                        stringResource(R.string.saving_item_change_name_label),
+                        onButtonClick = { /* TODO: 이름 변경 바텀시트 띄우기 */ })
                 }
 
                 Box(

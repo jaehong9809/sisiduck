@@ -39,7 +39,7 @@ fun SelectAccountField(menuItems: MutableList<String>) {
     var expandStatus by remember { mutableStateOf(false) }
     var selectedAccount by remember { mutableStateOf(menuItems[0]) }
 
-    TextItem(stringResource(R.string.account_label), MainBlack, 16.sp, true)
+    TextItem(stringResource(R.string.withdraw_account_label), MainBlack, 16.sp, true)
 
     Box(
         modifier = Modifier

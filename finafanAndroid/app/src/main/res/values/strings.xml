@@ -58,10 +58,11 @@
     <string name="phone_label">전화번호</string>
     <string name="saving_message_label">응원 메시지 (20자)</string>
     <string name="username_label">이름</string>
-    <string name="account_label">출금계좌 선택</string>
+    <string name="withdraw_account_label">출금계좌 선택</string>
     <string name="star_name_label">스타 이름</string>
     <string name="money_label">금액</string>
     <string name="search_btn_label">검색하기</string>
+    <string name="account_label">계좌번호</string>
 
     <!-- TextField Hint -->
     <string name="name_hint">이름 입력</string>
@@ -70,6 +71,7 @@
     <string name="money_hint">0</string>
     <string name="saving_message_hint">응원 메시지 입력</string>
     <string name="search_start_hint">스타 검색</string>
+    <string name="account_hint">계좌번호 입력</string>
 
     <!-- button -->
     <string name="btn_next">다음</string>
@@ -78,5 +80,13 @@
     <string name="btn_create">개설하기</string>
     <string name="btn_deposit">입금하기</string>
     <string name="btn_account_cancel">해지하기</string>
+
+    <!-- Connect Account Screen -->
+    <string name="connect_account_select_back_title">계좌 인증 진행\n연결할 은행을 선택해주세요</string>
+    <string name="connect_account_input_number_title">%s\n계좌 번호를 입력해주세요</string>
+    <string name="connect_account_send_money_title">계좌 인증을 위해 %s으로 1원을 보냈어요</string>
+    <string name="connect_account_verification_code_title">%s 입금 내역을 확인하고 4자리 숫자를 알려주세요</string>
+    <string name="connect_account_verification_code_confirm_title">계좌 인증 완료\n%s 인증이 완료되었어요</string>
+    <string name="connect_account_confirm_title">연결 계좌 확인</string>
 
 </resources>

@@ -1,7 +1,6 @@
 package com.a702.finafan.common.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -215,22 +213,9 @@ fun CommonTextField(
                     if (isSignUp) {
                         Spacer(modifier = Modifier.width(width = 8.dp))
 
-                        Box(
-                            modifier = Modifier
-                                .width(66.dp)
-                                .height(28.dp)
-                                .clickable { onClick?.invoke() }
-                                .background(color = MainWhite, shape = RoundedCornerShape(10.dp))
-                                .border(1.dp, EditTextGray, shape = RoundedCornerShape(10.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = stringResource(R.string.email_duplicate_label),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = EditTextGray
-                            )
-                        }
+                        SubButton(
+                            stringResource(R.string.email_duplicate_label),
+                            onButtonClick = { /* TODO: 이메일 중복 확인 */ })
                     }
 
                     if (isMoney) {
