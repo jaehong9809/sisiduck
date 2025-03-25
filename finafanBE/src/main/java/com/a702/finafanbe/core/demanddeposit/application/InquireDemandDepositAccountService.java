@@ -1,7 +1,11 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
+import com.a702.finafanbe.core.demanddeposit.dto.request.InquireAccountBalanceRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.InquireAccountHolderNameRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountListRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountBalanceResponse;
+import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountHolderNameResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
@@ -36,6 +40,24 @@ public class InquireDemandDepositAccountService {
                 path,
                 inquireDemandDepositAccountListRequest,
                 InquireDemandDepositAccountListResponse.class
+        );
+    }
+
+    public ResponseEntity<InquireAccountHolderNameResponse> inquireAccountHolderName(String path,
+        InquireAccountHolderNameRequest inquireAccountHolderNameRequest) {
+        return apiClientUtil.callFinancialNetwork(
+            path,
+            inquireAccountHolderNameRequest,
+            InquireAccountHolderNameResponse.class
+        );
+    }
+
+    public ResponseEntity<InquireAccountBalanceResponse> inquireBalanceName(String path,
+        InquireAccountBalanceRequest inquireAccountBalanceRequest) {
+        return apiClientUtil.callFinancialNetwork(
+            path,
+            inquireAccountBalanceRequest,
+            InquireAccountBalanceResponse.class
         );
     }
 }

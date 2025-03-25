@@ -1,12 +1,10 @@
 package com.a702.finafanbe.core.demanddeposit.dto.response;
 
-import com.a702.finafanbe.global.common.header.InstitutionResponseHeader;
+import com.a702.finafanbe.global.common.financialnetwork.header.BaseResponseHeaderIncludeInstitutionCode;
 import lombok.Getter;
 
-import java.util.List;
-
 public record CreateAccountResponse (
-    InstitutionResponseHeader Header,
+    BaseResponseHeaderIncludeInstitutionCode Header,
     REC REC
 ) {
     @Getter

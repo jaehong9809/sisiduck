@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,16 +18,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainGradBlue
+import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainWhite
 
 /* 메인 메뉴용 IconButton */
@@ -89,6 +101,62 @@ fun MainWideIconButton(
     }
 }
 
+/* Radius, drop-shadow 있음 */
+@Composable
+fun PrimaryGradButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String? = null
+) {
+    val gradient = Brush.horizontalGradient(
+        colors = listOf(MainGradBlue, MainGradViolet)
+    )
+
+    Box(
+        modifier = modifier
+            .defaultMinSize(minWidth = 320.dp, minHeight = 60.dp)
+            .clickable { onClick() }
+            .background(gradient, shape = RoundedCornerShape(12.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        text?.let {
+            Text(
+                text = it,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite
+            )
+        }
+    }
+}
+
+@Composable
+fun PrimaryGradBottomButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String? = null
+) {
+    val gradient = Brush.horizontalGradient(
+        colors = listOf(MainGradBlue, MainGradViolet)
+    )
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .clickable { onClick() }
+            .background(gradient),
+        contentAlignment = Alignment.Center
+    ) {
+        text?.let {
+            Text(
+                text = it,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite
+            )
+        }
+    }
+}
 
 
 @Preview(showBackground = true)
@@ -131,3 +199,29 @@ fun SquareButtonPreview() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun PrimaryButtonsPreview() {
+    Box() {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            PrimaryGradButton(
+                onClick = {},
+                text = "Primary Button"
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+        ) {
+            PrimaryGradBottomButton(
+                onClick = {},
+                text = "Bottom Button"
+            )
+        }
+    }
+}

@@ -12,7 +12,11 @@ public class ApiClientUtil {
     private final RestTemplate restTemplate;
     private final String baseUrl = "https://finopenapi.ssafy.io/ssafy/api/v1/edu";
 
-    public <T,R> ResponseEntity<R> callFinancialNetwork(String path, T request, Class<R> responseType){
+    public <T,R> ResponseEntity<R> callFinancialNetwork(
+            String path,
+            T request,
+            Class<R> responseType
+    ){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<T> httpEntity = new HttpEntity<>(
@@ -20,7 +24,7 @@ public class ApiClientUtil {
                 headers
         );
         ResponseEntity<R> exchange = restTemplate.exchange(
-                baseUrl+"/demandDeposit/createDemandDepositAccount",
+                baseUrl+path,
                 HttpMethod.POST,
                 httpEntity,
                 responseType

@@ -1,4 +1,11 @@
 package com.a702.finafanbe.core.demanddeposit.dto.request;
 
-public record UpdateDemandDepositAccountDepositRequest() {
+import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
+
+public record UpdateDemandDepositAccountDepositRequest(
+    BaseRequestHeaderIncludeUserKey Header,
+    String accountNo,
+    Long transactionBalance,
+    String transactionSummary
+) {
 }
