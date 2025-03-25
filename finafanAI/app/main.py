@@ -8,6 +8,8 @@ load_dotenv()
 
 api_key  = os.getenv("OPENAI_API_KEY")
 
+
+
 app = FastAPI(root_path="/ai")
 
 app.include_router(chatbot_router.router, prefix="/chatbot", tags=["Chatbot"])
