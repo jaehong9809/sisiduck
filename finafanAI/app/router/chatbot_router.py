@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter
-from app.service.chatbot_service import callback, classify_query
-from app.service.chatbot_service import router as rout
+from app.service.chain import callback, classify_query
+from app.service.chain import router as rout
 from app.schemas.question import QuestionRequest
 from fastapi.responses import StreamingResponse
 import asyncio
