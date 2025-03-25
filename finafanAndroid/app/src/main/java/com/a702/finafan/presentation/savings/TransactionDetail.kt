@@ -32,6 +32,7 @@ import com.a702.finafan.common.ui.theme.gradientList
 import com.a702.finafan.common.utils.StringUtil
 import kotlin.random.Random
 
+// 적금 거래 내역 상세 화면
 @Composable
 fun TransactionDetail(transaction: Transaction) {
     val painter = rememberAsyncImagePainter(

@@ -35,6 +35,7 @@ data class Star(
     val name: String
 )
 
+// 스타 선택 아이템
 @Composable
 fun StarItem(star: Star) {
     /*

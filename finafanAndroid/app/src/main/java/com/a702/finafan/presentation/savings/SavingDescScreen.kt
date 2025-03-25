@@ -35,6 +35,7 @@ import com.a702.finafan.common.ui.theme.SavingDescBg
 import com.a702.finafan.common.ui.theme.SavingDescGray
 import com.a702.finafan.common.ui.theme.gradientBlue
 
+// 적금 상품 설명 화면
 @Composable
 fun SavingDescScreen() {
 

@@ -24,8 +24,9 @@ import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.component.SearchField
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 
+// 스타 검색 화면
 @Composable
-fun SearchStarScreen() {
+fun StarSearchScreen() {
     val starList = mutableListOf(
         Star("", "이찬원"), Star("", "임영웅"), Star("", "권민채")
     )
@@ -83,5 +84,5 @@ fun SearchStarScreen() {
 @Preview
 @Composable
 fun SearchStarPreview() {
-    SearchStarScreen()
+    StarSearchScreen()
 }

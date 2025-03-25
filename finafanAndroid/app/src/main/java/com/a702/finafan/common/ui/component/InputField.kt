@@ -18,16 +18,12 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,61 +47,6 @@ import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
-
-// 출금 계좌 선택 박스
-@Composable
-fun SelectAccountField(menuItems: MutableList<String>) {
-    var expandStatus by remember { mutableStateOf(false) }
-    var selectedAccount by remember { mutableStateOf(menuItems[0]) }
-
-    TextItem(stringResource(R.string.account_label), MainBlack, 16.sp, true)
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = EditBgGray, shape = RoundedCornerShape(18.dp))
-            .clickable {
-                expandStatus = true
-            }
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(all = 16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            TextItem(selectedAccount, MainBlack, 20.sp)
-            Spacer(modifier = Modifier.width(width = 8.dp))
-            Icon(
-                painter = painterResource(R.drawable.angle_down),
-                contentDescription = "",
-            )
-        }
-
-        DropdownMenu(
-            modifier = Modifier
-                .background(MainWhite, shape = RoundedCornerShape(18.dp))
-                .border(1.dp, MainBlack, shape = RoundedCornerShape(18.dp))
-                .fillMaxWidth(),
-            expanded = expandStatus,
-            onDismissRequest = {
-                expandStatus = false
-            }
-        ) {
-            menuItems.forEach { item ->
-                DropdownMenuItem(
-                    text = { Text(text = item, fontSize = 20.sp, color = MainBlack, fontWeight = FontWeight.Normal) },
-                    onClick = {
-                        selectedAccount = item
-                        expandStatus = false
-                        println("Selected: $item")
-                    }
-                )
-            }
-        }
-    }
-}
 
 // 이메일 입력 필드 (회원가입 시 중복확인 버튼)
 @Composable

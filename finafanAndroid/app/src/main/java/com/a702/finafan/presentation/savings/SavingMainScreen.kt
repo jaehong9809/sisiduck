@@ -56,8 +56,9 @@ data class Transaction(
     val image: String? = null
 )
 
+// 적금 거래 내역 화면
 @Composable
-fun SavingScreen() {
+fun SavingMainScreen() {
 //    val transactions = mutableListOf(
 //        Transaction(true, "이찬원 사랑해", 44444, 64444, "17:05"),
 //        Transaction(false, "오늘 너무 귀엽다 찬원아", 10000, 20000, "17:05"),
@@ -171,6 +172,6 @@ fun SavingList(transactions: MutableList<Transaction>) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewSavingScreen() {
-    SavingScreen()
+    SavingMainScreen()
 }
 
