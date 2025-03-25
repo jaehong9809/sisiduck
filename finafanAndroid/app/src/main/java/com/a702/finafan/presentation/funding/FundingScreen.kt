@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a702.finafan.common.ui.component.ThreeTabRow
-import com.a702.finafan.common.ui.theme.MainBgBlueGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.a702.finafan.common.ui.theme.MainBgLightGray
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
@@ -36,8 +36,8 @@ data class Funding(
     val starName: String,
     val fundingTitle: String,
     val fundingEndDate: LocalDate,
-    val fundingGoalAmount: Int,
-    val fundingCurrentAmount: Int,
+    val fundingGoalAmount: Long,
+    val fundingCurrentAmount: Long,
 )
 
 @Composable
@@ -49,7 +49,7 @@ fun FundingScreen() {
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(MainBgBlueGray)
+            .background(MainBgLightGray)
     ) {
         ScreenTitle("모금")
         FundingAddButton(

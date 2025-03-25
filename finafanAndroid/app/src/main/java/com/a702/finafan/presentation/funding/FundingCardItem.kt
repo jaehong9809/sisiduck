@@ -83,10 +83,10 @@ fun FundingCardItem(
                             painter = painter,
                             contentDescription = "Star Image",
                             modifier = Modifier
-                                .size(50.dp) // 이미지 크기
-                                .clip(CircleShape) // 이미지 원형으로 자르기
+                                .size(50.dp)
+                                .clip(CircleShape)
                                 .background(color = MainWhite)
-                                .align(Alignment.Center) // 중앙 정렬
+                                .align(Alignment.Center)
                                 .border(2.dp, color = MainWhite, shape = CircleShape)
                         )
                     }

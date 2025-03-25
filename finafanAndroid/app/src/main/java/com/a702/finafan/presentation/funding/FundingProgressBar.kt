@@ -23,8 +23,8 @@ import com.a702.finafan.common.ui.theme.Pretendard
 
 @Composable
 fun FundingProgressBar(
-    currentAmount: Int,
-    goalAmount: Int,
+    currentAmount: Long,
+    goalAmount: Long,
     gradientColors: List<Color>
 ) {
 

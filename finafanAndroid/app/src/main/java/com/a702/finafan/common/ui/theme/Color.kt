@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.Color
 val MainWhite = Color(0xFFFFFFFF)
 val MainBlack = Color(0xFF2A2A2A)
 val MainBgGray = Color(0xFFD9D9D9)
-val MainBgBlueGray = Color(0xFFF2F4F6)
 val MainBgLightGray = Color(0xFFF2F4F6)
 
 val MainGradBlue = Color(0xFF39BCF8)
