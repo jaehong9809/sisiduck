@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -19,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.ui.theme.Pretendard
 
 @Composable
 fun ThreeTabRow(
@@ -32,12 +34,12 @@ fun ThreeTabRow(
 
     Column(modifier = modifier
         .fillMaxWidth()
-        .background(color = MainWhite, shape = RoundedCornerShape(15.dp))
         ) {
         TabRow(
             selectedTabIndex = selectedIndex,
             containerColor = containerColor,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .clip(RoundedCornerShape(15.dp)) ,
             indicator = {},
             divider = {}
         ) {
@@ -58,6 +60,7 @@ fun ThreeTabRow(
                         Text(
                             text = label,
                             fontSize = 16.sp,
+                            fontFamily = Pretendard,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,

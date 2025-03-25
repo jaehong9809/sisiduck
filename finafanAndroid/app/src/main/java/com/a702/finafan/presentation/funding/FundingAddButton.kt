@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.Pretendard
 
 @Composable
 fun FundingAddButton(
@@ -26,7 +27,7 @@ fun FundingAddButton(
         modifier = modifier
             .fillMaxWidth()
             .height(84.dp)
-            .padding(horizontal = 18.dp, vertical = 12.dp)
+            .padding(horizontal = 14.dp, vertical = 12.dp)
             .background(MainBlack, shape = RoundedCornerShape(12.dp))
             .clickable { onClick() },
         contentAlignment = Alignment.Center
@@ -35,6 +36,7 @@ fun FundingAddButton(
             text = "모금 직접 개설하기",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
+            fontFamily = Pretendard,
             color = Color.White
         )
     }

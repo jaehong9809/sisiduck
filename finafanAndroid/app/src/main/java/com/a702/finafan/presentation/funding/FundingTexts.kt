@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.a702.finafan.common.ui.theme.Pretendard
 
 @Composable
 fun ScreenTitle(
@@ -15,7 +16,8 @@ fun ScreenTitle(
     Text(text = content,
         fontSize = 26.sp,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+        fontFamily = Pretendard,
+        modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 30.dp, bottom = 10.dp)
     )
 }
 
@@ -26,6 +28,7 @@ fun MenuTitle(
     Text(text = content,
         fontSize = 24.sp,
         fontWeight = FontWeight.SemiBold,
+        fontFamily = Pretendard,
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
     )
 }

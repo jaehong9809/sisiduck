@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 val MainWhite = Color(0xFFFFFFFF)
 val MainBlack = Color(0xFF2A2A2A)
 val MainBgGray = Color(0xFFD9D9D9)
+val MainBgBlueGray = Color(0xFFF2F4F6)
 
 val MainGradBlue = Color(0xFF39BCF8)
 val MainGradViolet = Color(0xFF6365F1)
@@ -20,9 +21,15 @@ val TermBoxGray = Color(0xFFF2F3F7)
 /* ------------ Star Color ------------ */
 val starGradGreen = Color(0xFF49DD81)
 val starGradTurquoise = Color(0xFF22B4C6)
+val starMidGreen = Color(0xFF36C9A3)
 
 val starGradPink = Color(0xFFFCA6E9)
 val starGradSkyBlue = Color(0xFF7EAEFF)
+val starMidBlue = Color(0xFF7EAEFF)
+
+val starGradYellow = Color(0xFFFBDA61)
+val starGradOrange = Color(0xFFF76B1C)
+val starMidOrange = Color(0xFFF9A23F)
 
 
 /* ------------ Chat Bubble Color ------------ */
