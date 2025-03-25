@@ -58,6 +58,6 @@ person_prompt = PromptTemplate.from_template("""
 
 {context}
 
-이걸 참고해서 아래 질문에 대해 다정하고 이해하기 쉬운 말로 설명해줘.
+이걸 참고해서 아래 질문에 대해 친절한 말투로 요약해줘.
 질문: {question}
 """)
