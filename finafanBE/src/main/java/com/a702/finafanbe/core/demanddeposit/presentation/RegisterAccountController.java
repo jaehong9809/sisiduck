@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/create-demand-deposit")
+@RequestMapping("/api/v1/demand-deposit")
 @RequiredArgsConstructor
 public class RegisterAccountController {
 
     private final RegisterAccountService registerAccountService;
 
-    @PostMapping("/demandDeposit/createDemandDeposit")
+    @PostMapping("/product")
     public ResponseEntity<RegisterDemandDepositResponse> registerDemandDeposit(@RequestBody RegisterDemandDepositRequest createAccountRequest) {
         return registerAccountService.registerDemandDeposit(
                 "/demandDeposit/createDemandDeposit/demandDeposit/createDemandDeposit",

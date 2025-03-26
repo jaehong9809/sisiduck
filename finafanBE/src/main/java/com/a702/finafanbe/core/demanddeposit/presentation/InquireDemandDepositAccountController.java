@@ -7,12 +7,20 @@ import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAcc
 import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountBalanceResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountHolderNameResponse;
+import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
+import com.a702.finafanbe.global.common.financialnetwork.entity.FinancialNetworkUtil;
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountResponse;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+
+import com.a702.finafanbe.global.common.response.ResponseData;
+import com.a702.finafanbe.global.common.util.ApiClientUtil;
+import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,36 +31,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/inquire-demand-deposit-account")
+@RequestMapping("/api/v1/demand-deposit")
 @RequiredArgsConstructor
 public class InquireDemandDepositAccountController {
 
+    private final FinancialNetworkUtil financialNetworkUtil;
+    private final UserRepository userRepository;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
 
-    @GetMapping("/demandDeposit/inquireDemandDepositAccount")
+    @GetMapping("/account")
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
-            @RequestParam String apiName,
-            @RequestParam String institutionCode,
-            @RequestParam String fintechAppNo,
-            @RequestParam String apiServiceCode,
-            @RequestParam String institutionTransactionUniqueNo,
-            @RequestParam String apiKey,
-            @RequestParam String userKey,
-            @RequestParam String accountNo
+            String userEmail,
+            String accountNo
     ) {
-        BaseRequestHeaderIncludeUserKey inquireDemandDepositRequestHeader = BaseRequestHeaderIncludeUserKey.builder()
-            .apiName(apiName)
-            .transmissionDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-            .transmissionTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HHmmss")))
-            .institutionCode(institutionCode)
-            .fintechAppNo(fintechAppNo)
-            .apiServiceCode(apiServiceCode)
-            .institutionTransactionUniqueNo(institutionTransactionUniqueNo)
-            .apiKey(apiKey)
-            .userKey(userKey)
-            .build();
         InquireDemandDepositAccountRequest inquireDemandDepositAccountRequest = new InquireDemandDepositAccountRequest(
-                inquireDemandDepositRequestHeader,
+                BaseRequestHeaderIncludeUserKey.builder()
+                        .apiName("inquireDemandDepositAccount")
+                        .transmissionDate(DateUtil.getTransmissionDate())
+                        .transmissionTime(DateUtil.getTransmissionTime())
+                        .institutionCode(financialNetworkUtil.getInstitutionCode())
+                        .fintechAppNo(financialNetworkUtil.getFintechAppNo())
+                        .apiServiceCode("inquireDemandDepositAccount")
+                        .institutionTransactionUniqueNo(financialNetworkUtil.getInstitutionTransactionUniqueNo())
+                        .apiKey(financialNetworkUtil.getApiKey())
+                        .userKey(userRepository.findBySocialEmail(userEmail).orElseThrow(()->new BadRequestException(ResponseData.createResponse(ErrorCode.NotFoundUser))).getUserKey())
+                        .build(),
                 accountNo
         );
         return inquireDemandDepositAccountService.retrieveDemandDepositAccount(
@@ -61,29 +64,23 @@ public class InquireDemandDepositAccountController {
         );
     }
 
-    @GetMapping("/demandDeposit/inquireDemandDepositAccountList")
+    @GetMapping("/accounts")
     public ResponseEntity<InquireDemandDepositAccountListResponse> getDemandDepositAccountList(
-            @RequestParam String apiName,
-            @RequestParam String institutionCode,
-            @RequestParam String fintechAppNo,
-            @RequestParam String apiServiceCode,
-            @RequestParam String institutionTransactionUniqueNo,
-            @RequestParam String apiKey,
-            @RequestParam String userKey
+            String userEmail,
+            String accountNo
     ) {
-        BaseRequestHeaderIncludeUserKey inquireDemandDepositRequestHeader = BaseRequestHeaderIncludeUserKey.builder()
-            .apiName(apiName)
-            .transmissionDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-            .transmissionTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HHmmss")))
-            .institutionCode(institutionCode)
-            .fintechAppNo(fintechAppNo)
-            .apiServiceCode(apiServiceCode)
-            .institutionTransactionUniqueNo(institutionTransactionUniqueNo)
-            .apiKey(apiKey)
-            .userKey(userKey)
-            .build();
         InquireDemandDepositAccountListRequest inquireDemandDepositAccountListRequest = new InquireDemandDepositAccountListRequest(
-                inquireDemandDepositRequestHeader
+                BaseRequestHeaderIncludeUserKey.builder()
+                        .apiName("inquireDemandDepositAccountList")
+                        .transmissionDate(DateUtil.getTransmissionDate())
+                        .transmissionTime(DateUtil.getTransmissionTime())
+                        .institutionCode(financialNetworkUtil.getInstitutionCode())
+                        .fintechAppNo(financialNetworkUtil.getFintechAppNo())
+                        .apiServiceCode("inquireDemandDepositAccountList")
+                        .institutionTransactionUniqueNo(financialNetworkUtil.getInstitutionTransactionUniqueNo())
+                        .apiKey(financialNetworkUtil.getApiKey())
+                        .userKey(userRepository.findBySocialEmail(userEmail).orElseThrow(()->new BadRequestException(ResponseData.createResponse(ErrorCode.NotFoundUser))).getUserKey())
+                        .build()
         );
         return inquireDemandDepositAccountService.retrieveDemandDepositAccountList(
                 "/demandDeposit/inquireDemandDepositAccountList",
@@ -91,19 +88,19 @@ public class InquireDemandDepositAccountController {
         );
     }
 
-    @PostMapping("/demandDeposit/inquireDemandDepositAccountHolderName")
+    @GetMapping("/account-holder")
     public ResponseEntity<InquireAccountHolderNameResponse> inquireAccountHolderName(@RequestBody InquireAccountHolderNameRequest inquireAccountHolderNameRequest){
         return inquireDemandDepositAccountService.inquireAccountHolderName(
-            "/demandDeposit/inquireDemandDepositAccountHolderName",
-            inquireAccountHolderNameRequest
+                "/demandDeposit/inquireDemandDepositAccountHolderName",
+                inquireAccountHolderNameRequest
         );
     }
 
-    @PostMapping("/demandDeposit/inquireDemandDepositAccountBalance")
+    @GetMapping("/account-balance")
     public ResponseEntity<InquireAccountBalanceResponse> inquireAccountBalance(@RequestBody InquireAccountBalanceRequest inquireAccountBalanceRequest){
         return inquireDemandDepositAccountService.inquireBalanceName(
-            "/demandDeposit/inquireDemandDepositAccountBalance",
-            inquireAccountBalanceRequest
+                "/demandDeposit/inquireDemandDepositAccountBalance",
+                inquireAccountBalanceRequest
         );
     }
 }
