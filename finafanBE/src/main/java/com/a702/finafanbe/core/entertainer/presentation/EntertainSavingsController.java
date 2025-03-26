@@ -10,10 +10,7 @@ import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,11 +23,12 @@ public class EntertainSavingsController {
 
     @PostMapping("/select")
     public ResponseEntity<ResponseData<EntertainerResponse>> selectStar(
-            @AuthMember User user,
+//            @AuthMember User user,
+            String userEmail,
             String entertainerName
     ){
         return ResponseUtil.success(entertainService.choiceStar(
-                user,
+                userEmail,
                 entertainerName
         ));
     }
@@ -42,14 +40,27 @@ public class EntertainSavingsController {
 
     //TODO 검색.
 
-    @PostMapping("/createSavings")
+    @PostMapping("/savings")
     public ResponseEntity<ResponseData<Void>> createSavings(
-            @AuthMember User user,
+//            @AuthMember User user,
+            String userEmail,
             SelectStartRequest selectStartRequest
     ){
         entertainService.createEntertainerSavings(
-                user,
+                userEmail,
                 selectStartRequest
+        );
+        return ResponseUtil.success();
+    }
+
+    @PutMapping("/despoit")
+    public ResponseEntity<ResponseData<Void>> deposit(
+        String userEmail,
+        DummyREQ req
+    ){
+        entertainService.deposit(
+                userEmail,
+                req
         );
         return ResponseUtil.success();
     }

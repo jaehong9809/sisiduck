@@ -16,7 +16,6 @@ import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialNetworkUtil;
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
-import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeader;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,14 +37,14 @@ public class EntertainSavingsService {
     private final UserRepository userRepository;
 
     public Long createEntertainerSavings(
-            User user,
+            String userEmail,
             SelectStartRequest selectStartRequest
     ) {
-        Long userId = findUserId(user.getSocialEmail());
+        User user = findUser(userEmail);
         Long entertainerId = findEntertainerId(selectStartRequest.entertainer());
-        String userKey = userRepository.findById(userId).orElseThrow(() ->new BadRequestException(ResponseData.createResponse(USER_NOT_FOUND))).getUserKey();
+        String userKey = userRepository.findById(user.getUserId()).orElseThrow(() ->new BadRequestException(ResponseData.createResponse(USER_NOT_FOUND))).getUserKey();
 
-        validateNoExistingAccount(userId, entertainerId);
+        validateNoExistingAccount(user.getUserId(), entertainerId);
 
         return saveEntertainerSavingsAccount(
                 entertainerId,
@@ -135,11 +134,16 @@ public class EntertainSavingsService {
                 .getUserId();
     }
 
+    private User findUser(String userEmail) {
+        return userRepository.findBySocialEmail(userEmail)
+                .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
+    }
+
     public EntertainerResponse choiceStar(
-            User user,
+            String userEmail,
             String entertainerName
     ) {
-        findUserId(user.getSocialEmail());
+        User user = findUser(userEmail);
         user.updateFavoriteEntertainer(findEntertainerId(entertainerName));
         Entertainer entertainer = entertainRepository.findByEntertainerName(entertainerName).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
         return EntertainerResponse.of(
