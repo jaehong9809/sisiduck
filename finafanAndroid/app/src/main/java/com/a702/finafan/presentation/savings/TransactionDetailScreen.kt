@@ -46,7 +46,7 @@ fun TransactionDetailScreen(transaction: Transaction) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        CommonBackTopBar(imageOnClick = {}, textOnClick = {}, text = stringResource(R.string.saving_history_title))
+        CommonBackTopBar(textOnClick = {}, text = stringResource(R.string.saving_history_title))
 
         Box(
             modifier = Modifier

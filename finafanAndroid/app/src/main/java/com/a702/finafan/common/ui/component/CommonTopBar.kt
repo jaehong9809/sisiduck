@@ -22,14 +22,16 @@ import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.presentation.navigation.LocalNavController
 
 // 가운데 텍스트, 오른쪽 닫기
 @Composable
 fun CommonCloseTopBar(
     modifier: Modifier = Modifier,
-    imageOnClick: () -> Unit,
     text: String? = null
 ) {
+    val navController = LocalNavController.current
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,7 +45,11 @@ fun CommonCloseTopBar(
             modifier = Modifier.align(Alignment.CenterEnd),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ImageItem(modifier, imageOnClick, R.drawable.icon_close)
+            ImageItem(
+                modifier,
+                onClick = { navController.popBackStack() },
+                R.drawable.icon_close
+            )
         }
     }
 }
@@ -52,11 +58,12 @@ fun CommonCloseTopBar(
 @Composable
 fun CommonBackTopBar(
     modifier: Modifier = Modifier,
-    imageOnClick: () -> Unit,
     textOnClick: (() -> Unit)? = null,
     text: String? = null,
     isTextCentered: Boolean = false
 ) {
+    val navController = LocalNavController.current
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,7 +75,11 @@ fun CommonBackTopBar(
             modifier = Modifier.align(Alignment.CenterStart),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ImageItem(modifier, imageOnClick, R.drawable.arrow_left)
+            ImageItem(
+                modifier,
+                onClick = { navController.popBackStack() },
+                R.drawable.arrow_left
+            )
         }
 
         TextItem(modifier = if (isTextCentered) Modifier.align(Alignment.Center) else Modifier.align(Alignment.CenterEnd), textOnClick, text)
@@ -106,22 +117,18 @@ fun TextItem(modifier: Modifier, onClick: (() -> Unit)? = null, text: String?) {
 fun EndTextPreview() {
     Column {
         CommonBackTopBar(
-            imageOnClick = {},
             textOnClick = {},
             text = "텍스트")
 
         CommonBackTopBar(
-            imageOnClick = {},
             textOnClick = {},
             text = "텍스트",
             isTextCentered = true)
 
         CommonBackTopBar(
-            imageOnClick = {},
             textOnClick = {},)
 
         CommonCloseTopBar(
-            imageOnClick = {},
             text = "텍스트")
     }
 

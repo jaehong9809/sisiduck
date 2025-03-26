@@ -15,26 +15,24 @@ fun NavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = NavRoutes.Main.route
-    ) {
-        composable(NavRoutes.Main.route) {
-            MainScreen(navController, modifier)
-        }
+    NavControllerProvider(navController = navController) {
+        NavHost(
+            navController = navController,
+            startDestination = NavRoutes.Main.route
+        ) {
+            composable(NavRoutes.Main.route) {
+                MainScreen(navController, modifier)
+            }
 
-        composable(NavRoutes.Chat.route) {
-            val chatViewModel: ChatViewModel = hiltViewModel()
-            ChatScreen(viewModel = chatViewModel)
-        }
+            composable(NavRoutes.Chat.route) {
+                val chatViewModel: ChatViewModel = hiltViewModel()
+                ChatScreen(viewModel = chatViewModel)
+            }
 
-        composable(NavRoutes.SavingMain.route) {
-            SavingNavGraph(navController = navController)
-        }
+            savingGraph(navController = navController)
+            accountGraph(navController)
 
-        composable(NavRoutes.Account.route) {
-            AccountNavGraph(navController)
         }
-
     }
+
 }

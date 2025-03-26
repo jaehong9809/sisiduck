@@ -41,7 +41,7 @@ fun SavingScreenLayout(
             .windowInsetsPadding(WindowInsets.ime)
     ) {
         // 공통 상단 바
-        CommonBackTopBar(modifier = Modifier, imageOnClick = onBackClick, text = topBarTitle, isTextCentered = true)
+        CommonBackTopBar(modifier = Modifier, text = topBarTitle, isTextCentered = true)
 
         Column(
             modifier = Modifier

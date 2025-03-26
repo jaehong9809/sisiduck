@@ -1,9 +1,9 @@
 package com.a702.finafan.presentation.navigation
 
-import androidx.compose.runtime.Composable
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import com.a702.finafan.presentation.savings.SavingAccountInfoScreen
 import com.a702.finafan.presentation.savings.SavingCancelScreen
 import com.a702.finafan.presentation.savings.SavingDepositScreen
@@ -17,26 +17,32 @@ import com.a702.finafan.presentation.savings.TermGuideScreen
 import com.a702.finafan.presentation.savings.Transaction
 import com.a702.finafan.presentation.savings.TransactionDetailScreen
 
-@Composable
-fun SavingNavGraph(
+fun NavGraphBuilder.savingGraph(
     navController: NavHostController
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = NavRoutes.Main.route
+    navigation(
+        startDestination = NavRoutes.Main.route, route = NavRoutes.Saving.route
     ) {
         composable(NavRoutes.SavingMain.route) {
-            SavingMainScreen()
+            SavingMainScreen(
+//                onNavigateBack = { navController.popBackStack() }
+            )
         }
 
         composable(NavRoutes.SavingDeposit.route) {
-            SavingDepositScreen()
+            SavingDepositScreen(
+//                onNavigateBack = { navController.popBackStack() }
+            )
         }
         composable(NavRoutes.SavingDesc.route) {
-            SavingDescScreen()
+            SavingDescScreen(
+//                onNavigateBack = { navController.popBackStack() }
+            )
         }
         composable(NavRoutes.SavingAccountInfo.route) {
-            SavingAccountInfoScreen()
+            SavingAccountInfoScreen(
+
+            )
         }
         composable(NavRoutes.SavingCancel.route) {
             SavingCancelScreen()

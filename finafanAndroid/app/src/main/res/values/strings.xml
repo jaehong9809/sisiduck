@@ -108,5 +108,6 @@
     <string name="saving_item_exist">이미 가입한\n스타 적금입니다.</string>
     <string name="saving_item_change_name">적금 이름 변경</string>
     <string name="saving_item_cancel_complete">적금 해지가 완료되었어요!</string>
+    <string name="saving_item_deposit_complete">입금이 완료되었어요!</string>
 
 </resources>

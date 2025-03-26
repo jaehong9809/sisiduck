@@ -52,7 +52,6 @@ fun SavingAccountInfoScreen() {
         // 공통 상단 바
         CommonBackTopBar(
             modifier = Modifier,
-            imageOnClick = { /* TODO: 뒤로 가기 */ },
             text = stringResource(R.string.saving_account_manage_title),
             isTextCentered = true
         )

@@ -42,7 +42,7 @@ fun SavingDescScreen() {
     Column(
         modifier = Modifier.fillMaxSize().background(MainWhite)
     ) {
-        CommonBackTopBar(imageOnClick = {}, text = stringResource(R.string.saving_item_title), isTextCentered = true)
+        CommonBackTopBar(text = stringResource(R.string.saving_item_title), isTextCentered = true)
 
         Column(
             modifier = Modifier

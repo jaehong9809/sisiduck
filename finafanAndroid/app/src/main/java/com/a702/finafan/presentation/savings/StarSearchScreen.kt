@@ -40,7 +40,7 @@ fun StarSearchScreen() {
             .windowInsetsPadding(WindowInsets.ime)
     ) {
         // 상단 바
-        CommonCloseTopBar(modifier = Modifier, imageOnClick = {}, text = stringResource(R.string.saving_item_star_list_title))
+        CommonCloseTopBar(modifier = Modifier, text = stringResource(R.string.saving_item_star_list_title))
 
         Column(
             modifier = Modifier

@@ -40,7 +40,6 @@ fun TermGuideScreen() {
 
         CommonCloseTopBar(
             modifier = Modifier,
-            imageOnClick = { },
             text = "상품 안내"
         )
 
