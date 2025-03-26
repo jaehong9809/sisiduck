@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.savings
 
+import android.net.Uri
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.ImageField
 import com.a702.finafan.common.ui.component.NumberField
 import com.a702.finafan.common.ui.component.StringField
 
@@ -16,11 +18,12 @@ import com.a702.finafan.common.ui.component.StringField
 fun SavingDepositScreen() {
     val message = remember { mutableStateOf("") }
     val money = remember { mutableStateOf("") }
+    val image = remember { mutableStateOf(Uri.EMPTY) }
 
     SavingScreenLayout(
         title = stringResource(R.string.saving_item_deposit_title),
         buttonText = stringResource(R.string.btn_deposit),
-        isButtonEnabled = message.value.isNotEmpty() && money.value.isNotEmpty(),
+        isButtonEnabled = message.value.isNotEmpty() && money.value.isNotEmpty() && image.value != Uri.EMPTY,
         onBackClick = { /* TODO: 뒤로 가기 */ },
         onButtonClick = { /* TODO: 입금 처리 */ }
     ) {
@@ -43,7 +46,13 @@ fun SavingDepositScreen() {
             isMoney = true
         )
 
-        // TODO: 사진 추가 필드
+        // 사진 필드
+        ImageField(
+            modifier = Modifier.padding(top = 34.dp),
+            label = stringResource(R.string.saving_item_deposit_image_label),
+            selectImage = image
+        )
+
     }
 }
 
