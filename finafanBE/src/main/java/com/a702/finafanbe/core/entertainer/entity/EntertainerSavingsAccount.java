@@ -19,7 +19,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(nullable = false, name = "entertainer_id")
     private Long entertainerId;
 
-    @Column(nullable = false, name="userId")
+    @Column(nullable = false, name="user_id")
     private Long userId;
 
     @Column(nullable = false, name = "account_no")

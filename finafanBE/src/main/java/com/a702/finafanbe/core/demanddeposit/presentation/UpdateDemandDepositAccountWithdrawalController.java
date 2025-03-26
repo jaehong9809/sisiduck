@@ -1,9 +1,8 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
 import com.a702.finafanbe.core.demanddeposit.application.UpdateDemandDepositAccountService;
-import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountDepositRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountTransferRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountWithdrawalRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountTransferRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountDepositResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountWithdrawalResponse;
@@ -20,7 +19,7 @@ public class UpdateDemandDepositAccountWithdrawalController {
 
     @PutMapping("/withdrawal")
     public ResponseEntity<UpdateDemandDepositAccountWithdrawalResponse> updateDemandDepositAccountWithdrawal(
-            @RequestBody UpdateDemandDepositAccountWithdrawalRequest updateDemandDepositAccountWithdrawalRequest
+            @RequestBody UpdateAccountRequest updateDemandDepositAccountWithdrawalRequest
     ){
         return updateDemandDepositAccountService.withdrawal(
                 "/demandDeposit/updateDemandDepositAccountWithdrawal",
@@ -29,7 +28,7 @@ public class UpdateDemandDepositAccountWithdrawalController {
 
     @PutMapping("/deposit")
     public ResponseEntity<UpdateDemandDepositAccountDepositResponse> updateDemandDepositAccountDeposit(
-            @RequestBody UpdateDemandDepositAccountDepositRequest updateDemandDepositAccountDepositRequest
+            @RequestBody UpdateAccountRequest updateDemandDepositAccountDepositRequest
     ){
         return updateDemandDepositAccountService.deposit(
                 "/demandDeposit/updateDemandDepositAccountDeposit",
@@ -38,7 +37,7 @@ public class UpdateDemandDepositAccountWithdrawalController {
 
     @PutMapping("/transfer")
     public ResponseEntity<UpdateDemandDepositAccountTransferResponse> updateDemandDepositAccountTransfer(
-        @RequestBody UpdateDemandDepositAccountTransferRequest updateDemandDepositAccountTransferRequest
+        @RequestBody UpdateAccountTransferRequest updateDemandDepositAccountTransferRequest
     ){
         return updateDemandDepositAccountService.transfer(
             "/demandDeposit/updateDemandDepositAccountTransfer",
