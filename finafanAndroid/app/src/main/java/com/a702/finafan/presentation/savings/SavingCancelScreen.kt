@@ -88,7 +88,7 @@ fun SavingCancelScreen() {
                 lineHeight = 24.sp,
             )
 
-            AccountInfoItem(Account("NH농협", "12-345-678900"), isCancel = true)
+            AccountInfoItem(account = Account("NH농협", "12-345-678900"), isCancel = true)
         }
     }
 }

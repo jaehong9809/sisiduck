@@ -110,7 +110,7 @@ fun SavingAccountInfoScreen() {
                     }
 
                     SubButton(
-                        stringResource(R.string.saving_item_change_name_label),
+                        text = stringResource(R.string.saving_item_change_name_label),
                         onButtonClick = { /* TODO: 이름 변경 바텀시트 띄우기 */ })
                 }
 

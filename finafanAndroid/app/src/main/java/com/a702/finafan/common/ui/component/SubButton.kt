@@ -22,9 +22,9 @@ import com.a702.finafan.common.ui.theme.MainWhite
 
 // 테두리 버튼
 @Composable
-fun SubButton(text: String, onButtonClick: () -> Unit) {
+fun SubButton(modifier: Modifier = Modifier, text: String, onButtonClick: () -> Unit) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .wrapContentSize()
             .clickable { onButtonClick() }
             .background(color = MainWhite, shape = RoundedCornerShape(10.dp))
@@ -44,5 +44,5 @@ fun SubButton(text: String, onButtonClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun SubButtonPreview() {
-    SubButton(stringResource(R.string.saving_item_change_name_label), onButtonClick = { })
+    SubButton(text = stringResource(R.string.saving_item_change_name_label), onButtonClick = { })
 }

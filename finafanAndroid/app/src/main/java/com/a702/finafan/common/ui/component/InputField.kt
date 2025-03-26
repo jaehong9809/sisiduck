@@ -214,7 +214,7 @@ fun CommonTextField(
                         Spacer(modifier = Modifier.width(width = 8.dp))
 
                         SubButton(
-                            stringResource(R.string.email_duplicate_label),
+                            text = stringResource(R.string.email_duplicate_label),
                             onButtonClick = { /* TODO: 이메일 중복 확인 */ })
                     }
 

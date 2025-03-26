@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,8 +25,13 @@ data class Account(
 
 // 계좌번호 정보 아이템 (은행 사진 + 은행명 + 계좌번호)
 @Composable
-fun AccountInfoItem(account: Account, isCancel: Boolean = false) {
+fun AccountInfoItem(
+    modifier: Modifier = Modifier,
+    account: Account,
+    isCancel: Boolean = false,
+    fontColor: Color = MainBlack) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO: 은행명에 해당하는 은행 사진
@@ -39,7 +45,7 @@ fun AccountInfoItem(account: Account, isCancel: Boolean = false) {
         Text(
             modifier = Modifier.padding(start = 8.dp),
             text = account.bankName + " " + account.accountNum,
-            color = MainBlack ,
+            color = fontColor,
             fontSize = if (isCancel) 16.sp else 20.sp,
             fontWeight = if (isCancel) FontWeight.Normal else FontWeight.Medium,
             lineHeight = 24.sp,
@@ -51,7 +57,7 @@ fun AccountInfoItem(account: Account, isCancel: Boolean = false) {
 @Composable
 fun AccountInfoItemPreview() {
     Column {
-        AccountInfoItem(Account("NH농협", "12-345-678900"))
-        AccountInfoItem(Account("NH농협", "12-345-678900"), true)
+        AccountInfoItem(account = Account("NH농협", "12-345-678900"))
+        AccountInfoItem(account = Account("NH농협", "12-345-678900"), isCancel = true)
     }
 }

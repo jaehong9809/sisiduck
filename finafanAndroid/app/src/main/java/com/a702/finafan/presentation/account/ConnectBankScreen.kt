@@ -1,13 +1,7 @@
 package com.a702.finafan.presentation.account
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
 
+// 은행 선택 화면
 @Composable
 fun ConnectBankScreen(bankList: MutableList<String>) {
 
@@ -48,29 +43,30 @@ fun ConnectBankScreen(bankList: MutableList<String>) {
             )
 
             // TODO: 은행 목록 스크롤 문제 수정 필요
-            LazyVerticalGrid (
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .wrapContentHeight(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                userScrollEnabled = false
-            ) {
-                items(bankList) { bank ->
-                    val bankName = bank
-                    val isSelected = selectBank.value == bankName
+//            LazyVerticalGrid (
+//                columns = GridCells.Fixed(2),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(top = 8.dp)
+//                    .wrapContentHeight(),
+//                verticalArrangement = Arrangement.spacedBy(16.dp),
+//                horizontalArrangement = Arrangement.spacedBy(10.dp),
+//                userScrollEnabled = false
+//            ) {
+//                items(bankList) { bank ->
+//                    val bankName = bank
+//                    val isSelected = selectBank.value == bankName
+//
+//                    BankItem(
+//                        bankName = bankName,
+//                        isSelected = isSelected,
+//                        onSelect = {
+//                            selectBank.value = it
+//                        }
+//                    )
+//                }
+//            }
 
-                    BankItem(
-                        bankName = bankName,
-                        isSelected = isSelected,
-                        onSelect = {
-                            selectBank.value = it
-                        }
-                    )
-                }
-            }
         }
 
     }
