@@ -48,8 +48,8 @@ public class EntertainSavingsService {
         validateNoExistingAccount(userId, entertainerId);
 
         return saveEntertainerSavingsAccount(
-                userId,
                 entertainerId,
+                selectStartRequest.accountName(),
                 createEntertainAccount(
                         userKey,
                         findDemandDepositProductUniqueNo()
@@ -57,11 +57,15 @@ public class EntertainSavingsService {
         );
     }
 
-    private Long saveEntertainerSavingsAccount(Long userId, Long entertainerId, String accountNo) {
+    private Long saveEntertainerSavingsAccount(
+            Long entertainerId,
+            String accountName,
+            String accountNo
+    ) {
         return entertainerSavingsAccountRepository.save(
                 EntertainerSavingsAccount.of(
-                        userId,
                         entertainerId,
+                        accountName,
                         accountNo
                 )
         ).getId();
