@@ -18,7 +18,7 @@ class BleForegroundService : Service() {
         super.onCreate()
         advertiser = BleAdvertiser(this)
         scanner = BleScanner(this) { scannedUuid ->
-            BleScanRepositoryProvider.get().addScannedUuid(scannedUuid) // 싱글톤 방식 (예시)
+
         }
 
 

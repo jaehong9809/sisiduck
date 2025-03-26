@@ -15,6 +15,6 @@
 
     <!-- BLUETOOTH -->
     <string name="ble_find_user">주변 팬 찾기</string>
-    <stirng name="ble_finding_user">주변 탐색 중...</stirng>
+    <string name="ble_finding_user">주변 탐색 중...</string>
 
 </resources>
