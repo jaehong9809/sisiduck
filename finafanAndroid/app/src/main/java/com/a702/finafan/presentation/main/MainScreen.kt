@@ -1,6 +1,7 @@
 package com.a702.finafan.presentation.main
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,20 +25,26 @@ fun MainScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        MainSquareIconButton(
-            onClick = {
-                navController.navigate(NavRoutes.SavingMain.route)
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    contentDescription = "Home",
-                    tint = MainBlack,
-                    modifier = Modifier.size(48.dp)
-                )
-            },
-            text = "적금"
-        )
+        Row {
+            MainSquareIconButton(
+                onClick = {
+                    navController.navigate(NavRoutes.SavingMain.route)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = MainBlack,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                text = "적금"
+            )
+
+            Spacer(modifier = Modifier.padding(8.dp))
+
+
+        }
 
         Spacer(modifier = Modifier.padding(8.dp))
 
@@ -57,13 +64,6 @@ fun MainScreen(
         )
     }
 
-    // ChatScreen for Testing STT
-//    val chatViewModel: ChatViewModel = hiltViewModel()
-//    Box(
-//        modifier = Modifier
-//    ) {
-//        ChatScreen(viewModel = chatViewModel)
-//    }
 }
 
 @Preview
