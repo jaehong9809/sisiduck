@@ -44,7 +44,8 @@ fun FundingTermScreen(
         GradSelectBottomButton(
             modifier = Modifier
                 .align(Alignment.BottomCenter),
-            onClick = {},
+            onLeftClick = {},
+            onRightClick = {},
             left = "동의",
             right = "동의 안함",
         )

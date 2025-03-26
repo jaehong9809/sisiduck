@@ -30,10 +30,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.BtnBgGray
+import com.a702.finafan.common.ui.theme.MainBgGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
+import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
+import kotlin.collections.List
 
 /* 메인 메뉴용 IconButton */
 @Composable
@@ -160,6 +163,35 @@ fun PrimaryGradBottomButton(
 }
 
 @Composable
+fun CustomGradButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String? = null,
+    gradientColor: List<Color>
+) {
+    val gradient = Brush.horizontalGradient(
+        colors = gradientColor
+    )
+
+    Box(
+        modifier = modifier
+            .defaultMinSize(minWidth = 320.dp, minHeight = 60.dp)
+            .clickable { onClick() }
+            .background(gradient, shape = RoundedCornerShape(12.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        text?.let {
+            Text(
+                text = it,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite
+            )
+        }
+    }
+}
+
+@Composable
 fun CustomGradBottomButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -197,7 +229,8 @@ fun CustomGradBottomButton(
 @Composable
 fun GradSelectBottomButton(
     modifier: Modifier,
-    onClick: () -> Unit,
+    onLeftClick: () -> Unit,
+    onRightClick: () -> Unit,
     left: String,
     right: String,
     gradientColor: List<Color> = listOf(MainGradBlue, MainGradViolet)
@@ -207,7 +240,7 @@ fun GradSelectBottomButton(
     )
 
     val gray = Brush.horizontalGradient(
-        colors = listOf(BtnBgGray, BtnBgGray)
+        colors = listOf(MainTextGray, MainTextGray)
     )
 
     Row(
@@ -215,10 +248,10 @@ fun GradSelectBottomButton(
     ) {
         Box(
             modifier = modifier
-                .fillMaxWidth()
                 .align(alignment = Alignment.Bottom)
                 .height(60.dp)
-                .clickable() { onClick() }
+                .fillMaxWidth(0.5f)
+                .clickable() { onLeftClick() }
                 .background(gradient),
             contentAlignment = Alignment.Center
         ) {
@@ -231,9 +264,10 @@ fun GradSelectBottomButton(
         }
         Box(
             modifier = modifier
-                .fillMaxWidth()
+                .align(alignment = Alignment.Bottom)
                 .height(60.dp)
-                .clickable() { onClick() }
+                .fillMaxWidth()
+                .clickable() { onRightClick() }
                 .background(gray),
             contentAlignment = Alignment.Center
         ) {
@@ -245,7 +279,6 @@ fun GradSelectBottomButton(
             )
         }
     }
-
 }
 
 
