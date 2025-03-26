@@ -8,4 +8,17 @@ public record RegisterDemandDepositRequest(
          String accountName,
          String accountDescription
 ){
+    public static RegisterDemandDepositRequest of(
+            BaseRequestHeader Header,
+            String bankCode,
+            String accountName,
+            String accountDescription
+    ){
+        return new RegisterDemandDepositRequest(
+                Header,
+                bankCode,
+                accountName,
+                accountDescription
+        );
+    }
 }
