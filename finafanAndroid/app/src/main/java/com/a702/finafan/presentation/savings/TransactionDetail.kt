@@ -16,12 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.theme.MainBlackWithTransparency
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -30,6 +32,7 @@ import com.a702.finafan.common.ui.theme.gradientList
 import com.a702.finafan.common.utils.StringUtil
 import kotlin.random.Random
 
+// 적금 거래 내역 상세 화면
 @Composable
 fun TransactionDetail(transaction: Transaction) {
     val painter = rememberAsyncImagePainter(
@@ -43,7 +46,7 @@ fun TransactionDetail(transaction: Transaction) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        CommonBackTopBar(imageOnClick = {}, textOnClick = {}, text = "내역 보기")
+        CommonBackTopBar(imageOnClick = {}, textOnClick = {}, text = stringResource(R.string.saving_history_title))
 
         Box(
             modifier = Modifier

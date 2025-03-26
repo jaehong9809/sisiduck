@@ -20,6 +20,7 @@ import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.utils.StringUtil
 
+// 적금 거래 내역 아이템
 @Composable
 fun TransactionItem(transaction: Transaction) {
     Column(

@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlackWithTransparency
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -54,8 +56,9 @@ data class Transaction(
     val image: String? = null
 )
 
+// 적금 거래 내역 화면
 @Composable
-fun SavingScreen() {
+fun SavingMainScreen() {
 //    val transactions = mutableListOf(
 //        Transaction(true, "이찬원 사랑해", 44444, 64444, "17:05"),
 //        Transaction(false, "오늘 너무 귀엽다 찬원아", 10000, 20000, "17:05"),
@@ -83,8 +86,7 @@ fun SavingScreen() {
             item {
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Text(text = "아직 저축 내역이 없어요.\n" +
-                        "저축을 시작해 보세요!",
+                Text(text = stringResource(R.string.saving_item_empty_transaction),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     color = MainTextGray,
@@ -170,6 +172,6 @@ fun SavingList(transactions: MutableList<Transaction>) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewSavingScreen() {
-    SavingScreen()
+    SavingMainScreen()
 }
 

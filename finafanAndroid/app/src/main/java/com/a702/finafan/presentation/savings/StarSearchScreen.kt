@@ -15,18 +15,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonCloseTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.component.SearchField
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 
+// 스타 검색 화면
 @Composable
-fun SearchStarScreen() {
+fun StarSearchScreen() {
     val starList = mutableListOf(
         Star("", "이찬원"), Star("", "임영웅"), Star("", "권민채")
     )
+
+    val selectStar = remember { mutableStateOf("") }
 
     Column(modifier =
         Modifier
@@ -35,7 +40,7 @@ fun SearchStarScreen() {
             .windowInsetsPadding(WindowInsets.ime)
     ) {
         // 상단 바
-        CommonCloseTopBar(modifier = Modifier, imageOnClick = {}, text = "스타 목록")
+        CommonCloseTopBar(modifier = Modifier, imageOnClick = {}, text = stringResource(R.string.saving_item_star_list_title))
 
         Column(
             modifier = Modifier
@@ -66,14 +71,22 @@ fun SearchStarScreen() {
                     Column(
                         modifier = Modifier.padding(bottom = 16.dp)
                     ) {
-                        StarItem(star)
+                        StarItem(star,
+                            isSelected = star.name == selectStar.value,
+                            onSelect = {
+                                selectStar.value = star.name
+                            })
                     }
                 }
             }
         }
 
         // 하단 버튼
-        PrimaryGradBottomButton(modifier = Modifier, onClick = {}, text = "선택하기")
+        PrimaryGradBottomButton(
+            modifier = Modifier,
+            onClick = {},
+            text = stringResource(R.string.btn_select),
+            isEnabled = selectStar.value.isNotEmpty())
     }
 }
 
@@ -81,5 +94,5 @@ fun SearchStarScreen() {
 @Preview
 @Composable
 fun SearchStarPreview() {
-    SearchStarScreen()
+    StarSearchScreen()
 }

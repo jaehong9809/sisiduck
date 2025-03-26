@@ -22,6 +22,7 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.TermBoxGray
 import com.a702.finafan.common.ui.theme.TermTextGray
 
+// 안내 및 약관 설명 화면
 @Composable
 fun TermGuideItem(text: String, onClick: () -> Unit) {
     Row(
