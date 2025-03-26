@@ -8,4 +8,13 @@ public record CreateAccountRequest (
     String accountTypeUniqueNo
 ){
 
+    public static CreateAccountRequest of(
+            BaseRequestHeaderIncludeUserKey Header,
+            String accountTypeUniqueNo
+    ) {
+        return new CreateAccountRequest(
+                Header,
+                accountTypeUniqueNo
+        );
+    }
 }
