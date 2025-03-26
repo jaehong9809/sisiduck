@@ -7,11 +7,7 @@ import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/savings")
@@ -20,7 +16,7 @@ public class SavingsController {
 
     private final SavingsAccountService savingsAccountService;
 
-    @PostMapping("/createProduct")
+    @PostMapping("/product")
     public ResponseEntity<ResponseData<RegisterSavingProductResponse>> createProduct(
         @RequestBody RegisterSavingsProductRequest registerSavingsProductRequest) {
         savingsAccountService.createSavingsProduct(
@@ -30,7 +26,7 @@ public class SavingsController {
         return ResponseUtil.success();
     }
 
-    @PostMapping("/inquireSavingsProducts")
+    @GetMapping("/products")
     public ResponseEntity<ResponseData<InquireSavingProductsResponse>> inquirePayment(
         @RequestBody InquireSavingsProductsRequest inquireSavingsProductsRequest) {
         savingsAccountService.inquireSavingsProducts(
@@ -40,7 +36,7 @@ public class SavingsController {
         return ResponseUtil.success();
     }
 
-    @PostMapping("/inquirePayment")
+    @GetMapping("/payment-count")
     public ResponseEntity<ResponseData<InquireSavingAccountPaymentResponse>> inquirePayment(
         @RequestBody InquireSavingsAccountPaymentRequest inquireSavingsAccountPaymentRequest) {
         savingsAccountService.inquireSavingsAccountPayment(
@@ -50,7 +46,7 @@ public class SavingsController {
         return ResponseUtil.success();
     }
 
-    @PostMapping("/inquireExpiryInterest")
+    @GetMapping("/expiry-interest")
     public ResponseEntity<ResponseData<InquireSavingExpiryInterestResponse>> inquireExpiryInterest(
             @RequestBody InquireSavingExpiryInterestRequest inquireSavingExpiryInterestRequest) {
         savingsAccountService.inquireSavingsExpiryInterest(
@@ -60,7 +56,7 @@ public class SavingsController {
         return ResponseUtil.success();
     }
 
-    @PostMapping("/inquireEarlyTerminationInterest")
+    @GetMapping("/early-termination-interest")
     public ResponseEntity<ResponseData<InquireSavingEarlyTerminationInterestResponse>> inquireEarlyTerminationInterest(
             @RequestBody InquireSavingEarlyTerminationInterestRequest inquireSavingEarlyTerminationInterestRequest) {
         savingsAccountService.inquireSavingsEarlyTerminationInterest(
@@ -70,7 +66,7 @@ public class SavingsController {
         return ResponseUtil.success();
     }
 
-    @PostMapping("/deleteAccount")
+    @DeleteMapping("/account")
     public ResponseEntity<ResponseData<DeleteSavingAccountResponse>> deleteSavingsAccount(
             @RequestBody DeleteSavingAccountRequest deleteSavingAccountRequest) {
         savingsAccountService.deleteSavingsAccount(
@@ -80,8 +76,8 @@ public class SavingsController {
         return ResponseUtil.success();
     }
 
-    @PostMapping("/createAccount")
-    public ResponseEntity<ResponseData<RegisterSavingAccountResponse>> createProduct(
+    @PostMapping("/account")
+    public ResponseEntity<ResponseData<RegisterSavingAccountResponse>> createAccount(
             @RequestBody RegisterSavingsAccountRequest registerSavingsAccountRequest) {
         savingsAccountService.createSavingsAccount(
                 "/savings/createAccount",
@@ -90,22 +86,22 @@ public class SavingsController {
         return ResponseUtil.success();
     }
 
-    @PostMapping("/inquireAccountList")
+    @GetMapping("/accounts")
     public ResponseEntity<ResponseData<InquireSavingAccountListResponse>> inquireSavingsAccountList(
-            @RequestBody InquireSavingAccountListRequest inquireSavingAcountListRequest) {
+            @RequestBody InquireSavingAccountListRequest inquireSavingAccountListRequest) {
         savingsAccountService.inquireSavingsAccountList(
                 "/savings/inquireAccountList",
-                inquireSavingAcountListRequest
+                inquireSavingAccountListRequest
         );
         return ResponseUtil.success();
     }
 
-    @PostMapping("/inquireAccount")
+    @GetMapping("/account")
     public ResponseEntity<ResponseData<InquireSavingAccountResponse>> inquireSavingsAccount(
-            @RequestBody InquireSavingAccountRequest inquireSavingAcountRequest) {
+            @RequestBody InquireSavingAccountRequest inquireSavingAccountRequest) {
         savingsAccountService.inquireSavingsAccount(
                 "/savings/inquireAccount",
-                inquireSavingAcountRequest
+                inquireSavingAccountRequest
         );
         return ResponseUtil.success();
     }

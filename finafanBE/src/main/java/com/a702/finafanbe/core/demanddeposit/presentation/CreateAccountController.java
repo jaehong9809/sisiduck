@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/create-account")
+@RequestMapping("/api/v1/demand-deposit")
 @RequiredArgsConstructor
 public class CreateAccountController {
 
     private final CreateAccountService createAccountService;
 
-    @PostMapping
+    @PostMapping("/account")
     public ResponseEntity<CreateAccountResponse> createAccount(@RequestBody CreateAccountRequest createAccountRequest){
         return createAccountService.createAccount(
                 "/demandDeposit/createDemandDepositAccount",

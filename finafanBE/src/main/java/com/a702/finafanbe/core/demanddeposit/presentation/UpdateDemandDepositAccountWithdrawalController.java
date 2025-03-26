@@ -9,19 +9,16 @@ import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAcc
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountWithdrawalResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/update-demand-deposit-account")
+@RequestMapping("/api/v1/account")
 public class UpdateDemandDepositAccountWithdrawalController {
 
     private final UpdateDemandDepositAccountService updateDemandDepositAccountService;
 
-    @PostMapping("/demandDeposit/updateDemandDepositAccountWithdrawal")
+    @PutMapping("/withdrawal")
     public ResponseEntity<UpdateDemandDepositAccountWithdrawalResponse> updateDemandDepositAccountWithdrawal(
             @RequestBody UpdateDemandDepositAccountWithdrawalRequest updateDemandDepositAccountWithdrawalRequest
     ){
@@ -30,7 +27,7 @@ public class UpdateDemandDepositAccountWithdrawalController {
                 updateDemandDepositAccountWithdrawalRequest);
     }
 
-    @PostMapping("/demandDeposit/updateDemandDepositAccountDeposit")
+    @PutMapping("/deposit")
     public ResponseEntity<UpdateDemandDepositAccountDepositResponse> updateDemandDepositAccountDeposit(
             @RequestBody UpdateDemandDepositAccountDepositRequest updateDemandDepositAccountDepositRequest
     ){
@@ -39,7 +36,7 @@ public class UpdateDemandDepositAccountWithdrawalController {
                 updateDemandDepositAccountDepositRequest);
     }
 
-    @PostMapping("/demandDeposit/updateDemandDepositAccountTransfer")
+    @PutMapping("/transfer")
     public ResponseEntity<UpdateDemandDepositAccountTransferResponse> updateDemandDepositAccountTransfer(
         @RequestBody UpdateDemandDepositAccountTransferRequest updateDemandDepositAccountTransferRequest
     ){

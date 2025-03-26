@@ -7,21 +7,20 @@ import com.a702.finafanbe.global.common.financialnetwork.entity.FinancialNetwork
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeader;
 import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/inquire-demand-deposit")
+@RequestMapping("/api/v1/demand-deposit")
 @RequiredArgsConstructor
 public class RetrieveDemandDepositController {
 
     private final FinancialNetworkUtil financialNetworkUtil;
     private final RetrieveAccountService retrieveAccountService;
 
-    @GetMapping("/demandDeposit/inquireDemandDepositList")
+    @GetMapping("/products")
     public ResponseEntity<RetrieveDemandDepositListResponse> getDemandDepositList(
 //            @AuthMember User userId
     ) {

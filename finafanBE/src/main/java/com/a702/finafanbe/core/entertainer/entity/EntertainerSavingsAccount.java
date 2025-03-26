@@ -15,10 +15,13 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
+
     @Column(nullable = false, name = "entertainer_id")
     private Long entertainerId;
+
     @Column(nullable = false, name="userId")
     private Long userId;
+
     @Column(nullable = false, name = "account_no")
     private String accountNo;
 

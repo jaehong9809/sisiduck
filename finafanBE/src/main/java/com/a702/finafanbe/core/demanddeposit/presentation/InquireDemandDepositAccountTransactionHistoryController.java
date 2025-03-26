@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/inquire-demand-deposit-transaction")
+@RequestMapping("/api/v1/demand-deposit-transaction")
 public class InquireDemandDepositAccountTransactionHistoryController {
 
     private final InquireDemandDepositAccountTransactionHistoryService inquireDemandDepositAccountTransactionHistoryService;
 
-    @PostMapping("/demandDeposit/inquireTransactionHistoryList")
+    @GetMapping("/transaction-histories")
     public ResponseEntity<InquireDemandDepositAccountTransactionHistoryListResponse> getDemandDepositTransactionHistories(
         @RequestBody InquireDemandDepositAccountTransactionHistoryListRequest inquireDemandDepositAccountTransactionHistoryListRequest
     ){
@@ -30,7 +30,7 @@ public class InquireDemandDepositAccountTransactionHistoryController {
         );
     }
 
-    @PostMapping("/demandDeposit/inquireTransactionHistory")
+    @GetMapping("/transaction-history")
     public ResponseEntity<InquireDemandDepositAccountTransactionHistoryResponse> getDemandDepositTransactionHistory(
         @RequestBody InquireDemandDepositAccountTransactionHistoryRequest inquireDemandDepositAccountTransactionHistoryRequest
     ){
