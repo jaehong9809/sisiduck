@@ -31,6 +31,8 @@ fun StarSearchScreen() {
         Star("", "이찬원"), Star("", "임영웅"), Star("", "권민채")
     )
 
+    val selectStar = remember { mutableStateOf("") }
+
     Column(modifier =
         Modifier
             .fillMaxSize()
@@ -69,14 +71,22 @@ fun StarSearchScreen() {
                     Column(
                         modifier = Modifier.padding(bottom = 16.dp)
                     ) {
-                        StarItem(star)
+                        StarItem(star,
+                            isSelected = star.name == selectStar.value,
+                            onSelect = {
+                                selectStar.value = star.name
+                            })
                     }
                 }
             }
         }
 
         // 하단 버튼
-        PrimaryGradBottomButton(modifier = Modifier, onClick = {}, text = stringResource(R.string.btn_select))
+        PrimaryGradBottomButton(
+            modifier = Modifier,
+            onClick = {},
+            text = stringResource(R.string.btn_select),
+            isEnabled = selectStar.value.isNotEmpty())
     }
 }
 
