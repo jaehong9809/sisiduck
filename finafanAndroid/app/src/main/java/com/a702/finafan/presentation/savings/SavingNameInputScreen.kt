@@ -29,7 +29,6 @@ fun SavingNameInputScreen(selectName: String) {
         title = stringResource(R.string.saving_item_input_name_title),
         buttonText = stringResource(R.string.btn_next),
         isButtonEnabled = name.value.isNotEmpty(),
-        onBackClick = { /* TODO: 뒤로 가기 */ },
         onButtonClick = { /* TODO: 이름 선택 후 다음으로 넘어가기 */ }
     ) {
 

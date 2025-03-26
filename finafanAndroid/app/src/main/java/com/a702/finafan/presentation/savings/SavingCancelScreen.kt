@@ -29,7 +29,6 @@ fun SavingCancelScreen() {
         title = stringResource(R.string.saving_item_cancel_title),
         buttonText = stringResource(R.string.btn_account_cancel),
         isButtonEnabled = true,
-        onBackClick = { /* TODO: 뒤로 가기 */ },
         onButtonClick = { /* TODO: 적금 해지 절차 */ }
     ) {
 

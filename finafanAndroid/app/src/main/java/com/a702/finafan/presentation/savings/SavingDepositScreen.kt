@@ -15,7 +15,9 @@ import com.a702.finafan.common.ui.component.NumberField
 import com.a702.finafan.common.ui.component.StringField
 
 @Composable
-fun SavingDepositScreen() {
+fun SavingDepositScreen(
+    onComplete: () -> Unit
+) {
     val message = remember { mutableStateOf("") }
     val money = remember { mutableStateOf("") }
     val image = remember { mutableStateOf(Uri.EMPTY) }
@@ -24,8 +26,16 @@ fun SavingDepositScreen() {
         title = stringResource(R.string.saving_item_deposit_title),
         buttonText = stringResource(R.string.btn_deposit),
         isButtonEnabled = message.value.isNotEmpty() && money.value.isNotEmpty() && image.value != Uri.EMPTY,
-        onBackClick = { /* TODO: 뒤로 가기 */ },
-        onButtonClick = { /* TODO: 입금 처리 */ }
+        onButtonClick = {
+            /* TODO: 입금 처리 API 호출 */
+
+            onComplete()
+
+            // 입금 확인 다이얼로그
+//            ConfirmDialog(content = stringResource(R.string.saving_item_deposit_complete)) {
+//                onComplete()
+//            }
+        }
     ) {
 
         // 메시지 필드
@@ -59,5 +69,5 @@ fun SavingDepositScreen() {
 @Preview
 @Composable
 fun SavingDepositPreview() {
-    SavingDepositScreen()
+    SavingDepositScreen(onComplete = {})
 }

@@ -26,7 +26,6 @@ fun SavingSelectAccountScreen() {
         title = stringResource(R.string.saving_item_select_account_title),
         buttonText = stringResource(R.string.btn_create),
         isButtonEnabled = account.value.isNotEmpty(),
-        onBackClick = { /* TODO: 뒤로 가기 */ },
         onButtonClick = { /* TODO: 적금 개설 처리 */ }
     ) {
 

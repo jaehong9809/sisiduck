@@ -24,38 +24,44 @@ fun NavGraphBuilder.savingGraph(
         startDestination = NavRoutes.Main.route, route = NavRoutes.Saving.route
     ) {
         composable(NavRoutes.SavingMain.route) {
-            SavingMainScreen(
-//                onNavigateBack = { navController.popBackStack() }
-            )
+            SavingMainScreen()
         }
 
         composable(NavRoutes.SavingDeposit.route) {
-            SavingDepositScreen(
-//                onNavigateBack = { navController.popBackStack() }
-            )
+            SavingDepositScreen(onComplete = {
+                navController.navigate(NavRoutes.SavingMain.route) {
+                    launchSingleTop = true
+                }
+            })
         }
-        composable(NavRoutes.SavingDesc.route) {
-            SavingDescScreen(
-//                onNavigateBack = { navController.popBackStack() }
-            )
-        }
-        composable(NavRoutes.SavingAccountInfo.route) {
-            SavingAccountInfoScreen(
 
-            )
+        composable(NavRoutes.SavingDesc.route) {
+            SavingDescScreen()
+            // TODO: 가입하기 버튼 -> 출금계좌가 있을 경우 (약관동의 넘어가고) 스타 선택 화면 보여주기, 없으면 1원 인증 화면으로 이동
         }
-        composable(NavRoutes.SavingCancel.route) {
-            SavingCancelScreen()
+
+        composable(NavRoutes.StarSearch.route) {
+            StarSearchScreen()
+            // TODO: 선택하기 -> 이전화면에 선택된 스타의 이름이 보여야함 (Star 객체를 보내야 함)
         }
+        composable(NavRoutes.StarSelect.route) {
+            StarSelectScreen()
+            // TODO: 검색하기 -> star search로 넘어가기
+        }
+
         composable(NavRoutes.SavingNameInput.route) {
             SavingNameInputScreen("test")
+            // TODO: 다음 -> SelectAccount로 이동, 입력된 이름도 같이 보내기
         }
+
         composable(NavRoutes.SavingSelectAccount.route) {
             SavingSelectAccountScreen()
+            // TODO: 가입하기 -> 적금 계좌 개설 후 SavingMain 화면으로 이동 (이전의 화면은 사라짐 popUpTo 사용)
         }
 
         composable(NavRoutes.TransactionDetail.route) {
             TransactionDetailScreen(
+                onNavigateClick = { navController.popBackStack() },
                 transaction = Transaction(true, "test", 44444, 64444, "2025년 3월 24일 17:07", "")
             )
         }
@@ -64,11 +70,17 @@ fun NavGraphBuilder.savingGraph(
             TermGuideScreen()
         }
 
-        composable(NavRoutes.StarSearch.route) {
-            StarSearchScreen()
+        composable(NavRoutes.SavingAccountInfo.route) {
+            SavingAccountInfoScreen(
+                onCancelClick = {
+                    navController.navigate(NavRoutes.SavingCancel.route)
+                }
+            )
         }
-        composable(NavRoutes.StarSelect.route) {
-            StarSelectScreen()
+
+        composable(NavRoutes.SavingCancel.route) {
+            SavingCancelScreen()
+            // TODO: 해지하기 -> 해지 API 호출 후 확인 다이얼로그 띄우기 -> 메인으로 이동 (popUpTo 사용)
         }
 
     }
