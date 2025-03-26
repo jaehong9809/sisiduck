@@ -45,4 +45,4 @@ def youtube_search(query: str, max_results: int = 3) -> str:
 
 embeddings = OpenAIEmbeddings()
 person_db = Chroma(persist_directory="./person_db", embedding_function=embeddings)
-person_retriever = person_db.as_retriever(search_kwargs={"k": 2})
+person_retriever = person_db.as_retriever(search_kwargs={"k": 1})
