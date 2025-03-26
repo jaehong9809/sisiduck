@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -156,6 +157,95 @@ fun PrimaryGradBottomButton(
             )
         }
     }
+}
+
+@Composable
+fun CustomGradBottomButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String? = null,
+    isEnabled: Boolean = true,
+    gradientColor: List<Color>
+) {
+    val gradient = Brush.horizontalGradient(
+        colors = gradientColor
+    )
+
+    val gray = Brush.horizontalGradient(
+        colors = listOf(BtnBgGray, BtnBgGray)
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .clickable(enabled = isEnabled) { onClick() }
+            .background(if (isEnabled) gradient else gray),
+        contentAlignment = Alignment.Center
+    ) {
+        text?.let {
+            Text(
+                text = it,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite
+            )
+        }
+    }
+}
+
+@Composable
+fun GradSelectBottomButton(
+    modifier: Modifier,
+    onClick: () -> Unit,
+    left: String,
+    right: String,
+    gradientColor: List<Color> = listOf(MainGradBlue, MainGradViolet)
+) {
+    val gradient = Brush.horizontalGradient(
+        colors = gradientColor
+    )
+
+    val gray = Brush.horizontalGradient(
+        colors = listOf(BtnBgGray, BtnBgGray)
+    )
+
+    Row(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .align(alignment = Alignment.Bottom)
+                .height(60.dp)
+                .clickable() { onClick() }
+                .background(gradient),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = left,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite
+            )
+        }
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .clickable() { onClick() }
+                .background(gray),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = right,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite
+            )
+        }
+    }
+
 }
 
 

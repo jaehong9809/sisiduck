@@ -1,7 +1,5 @@
 package com.a702.finafan.presentation.funding
 
-import android.graphics.drawable.shapes.Shape
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,11 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,17 +39,15 @@ import com.a702.finafan.common.ui.theme.starThemes
 import com.a702.finafan.common.utils.StringUtil
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun FundingCardItem(
     star: Star,
-    funding: Funding,
+    funding: Funding
 ) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(star.image)
+            .data(star.thumbnail)
             .build()
     )
 
@@ -112,6 +105,6 @@ fun FundingCardItem(
             Text(text = "목표금액  ", color = MainTextGray, fontFamily = Pretendard, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             Text(text = StringUtil.formatCurrency(funding.fundingGoalAmount), color = MainTextGray, fontFamily = Pretendard, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         }
-            FundingProgressBar(funding.fundingCurrentAmount, funding.fundingGoalAmount, listOf(starThemes[star.index].start, starThemes[star.index].end))
+            FundingProgressBar(funding.fundingCurrentAmount, funding.fundingGoalAmount, listOf(starThemes[star.index].start, starThemes[star.index].end), modifier = Modifier)
     }
 }

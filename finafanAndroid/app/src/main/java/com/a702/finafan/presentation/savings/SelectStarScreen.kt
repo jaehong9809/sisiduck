@@ -97,7 +97,8 @@ fun SelectStarScreen() {
 
         // 하단 버튼
         PrimaryGradBottomButton(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .imePadding(),
             onClick = {},
             text = "다음",

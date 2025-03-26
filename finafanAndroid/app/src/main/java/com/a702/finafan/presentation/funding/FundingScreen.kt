@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -18,15 +17,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import java.time.LocalDate
-import java.util.Calendar
-import java.util.Date
 
 //* 나중에 지울 임시 DTO *//
 data class Star(
     val id: Int,       // 스타 ID
     val name: String,  // 스타 이름
     val index: Int,     // 내가 담은 스타 중 몇 번째인지 (0~2)
-    val image: String
+    val thumbnail: String? = null,
+    val image: String? = null
 )
 
 data class Funding(
@@ -41,8 +39,8 @@ data class Funding(
 )
 
 @Composable
-fun FundingScreen() {
-
+fun FundingScreen(
+) {
     val myStars: List<Star> = getMyStars()
     var fundings by remember { mutableStateOf<List<Funding>>(getAllFundings()) }
 
@@ -51,11 +49,12 @@ fun FundingScreen() {
             .fillMaxSize()
             .background(MainBgLightGray)
     ) {
-        ScreenTitle("모금")
+        ScreenTitle("모금", modifier = Modifier.padding(start = 20.dp, top = 20.dp, bottom = 10.dp))
         FundingAddButton(
-            onClick = {}
+            onClick = {
+            }
         )
-        MenuTitle("모금 보기")
+        MenuTitle("모금 보기", modifier = Modifier.padding(start = 20.dp))
         ThreeTabRow(
             labels = listOf("전체", "참여", "내 모금"),
             containerColor = MainWhite,
@@ -115,7 +114,14 @@ fun getMyFundings(): List<Funding> {
 
 fun getMyStars(): List<Star> {
     return listOf(
-        Star(101, "임영웅", 0, "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/limyeongwoong.png"),
-        Star(102, "이찬원", 1, "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/leechanwon.png"),
-    );
+        Star(id = 101,
+            name = "임영웅",
+            index = 0,
+            thumbnail = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/limyeongwoong.png"),
+        Star(id = 102,
+            name = "이찬원",
+            index = 1,
+            thumbnail = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/leechanwon.png",
+            image = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/image12.png"),
+    )
 }
