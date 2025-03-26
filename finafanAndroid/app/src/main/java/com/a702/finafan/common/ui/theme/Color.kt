@@ -32,9 +32,15 @@ val BtnBgGray = Color(0xFFADB9D1)
 /* ------------ Star Color ------------ */
 val starGradGreen = Color(0xFF49DD81)
 val starGradTurquoise = Color(0xFF22B4C6)
+val starMidGreen = Color(0xFF36C9A3)
 
 val starGradPink = Color(0xFFFCA6E9)
 val starGradSkyBlue = Color(0xFF7EAEFF)
+val starMidBlue = Color(0xFF7EAEFF)
+
+val starGradYellow = Color(0xFFFBDA61)
+val starGradOrange = Color(0xFFF76B1C)
+val starMidOrange = Color(0xFFF9A23F)
 
 
 /* ------------ Chat Bubble Color ------------ */
