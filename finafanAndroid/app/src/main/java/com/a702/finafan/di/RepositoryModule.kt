@@ -1,6 +1,8 @@
 package com.a702.finafan.di
 
+import com.a702.finafan.data.ble.repository.BleScanRepositoryImpl
 import com.a702.finafan.data.chatbot.repository.ChatRepositoryImpl
+import com.a702.finafan.domain.ble.repository.BleScanRepository
 import com.a702.finafan.domain.chatbot.repository.ChatRepository
 import dagger.Binds
 import dagger.Module
@@ -18,4 +20,9 @@ internal abstract class RepositoryModule {
         chatRepositoryImpl: ChatRepositoryImpl
     ): ChatRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindBleScanRepository(
+        impl: BleScanRepositoryImpl
+    ): BleScanRepository
 }

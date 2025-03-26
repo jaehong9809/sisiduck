@@ -18,9 +18,9 @@ class BleForegroundService : Service() {
         super.onCreate()
         advertiser = BleAdvertiser(this)
         scanner = BleScanner(this) { scannedUuid ->
-            Log.d("BLE_SERVICE", "Detected UUID: $scannedUuid")
-            // TODO: 서버 전송 또는 로컬 저장 처리
+            BleScanRepositoryProvider.get().addScannedUuid(scannedUuid) // 싱글톤 방식 (예시)
         }
+
 
         val uuid = BleUuidUtil.getRotatingUuid(this)
         advertiser.start(uuid,
