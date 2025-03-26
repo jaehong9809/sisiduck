@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -42,25 +41,27 @@ fun ConnectAccountLayout(
         // 공통 상단 바
         CommonBackTopBar(modifier = Modifier, imageOnClick = onBackClick, text = topBarTitle, isTextCentered = true)
 
-        Column(
+        LazyColumn (
             modifier = Modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState())
+//                .verticalScroll(rememberScrollState())
                 .background(MainWhite)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            Text(
-                modifier = Modifier.padding(top = 36.dp),
-                text = title,
-                color = MainBlack,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 36.sp,
-                textAlign = TextAlign.Start
-            )
+            item {
+                Text(
+                    modifier = Modifier.padding(top = 36.dp),
+                    text = title,
+                    color = MainBlack,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 36.sp,
+                    textAlign = TextAlign.Start
+                )
+            }
 
-            content()
+            item { content() }
         }
 
         // 공통 하단 버튼

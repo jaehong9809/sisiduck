@@ -2,6 +2,8 @@ package com.a702.finafan.presentation.account
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,13 +21,24 @@ import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.gradientBlue
 
 @Composable
-fun BankItem(bankName: String) {
+fun BankItem(bankName: String, isSelected: Boolean, onSelect: (String) -> Unit) {
     Column(
         modifier = Modifier
             .wrapContentSize()
-            .background(MainBgLightGray, shape = RoundedCornerShape(15.dp)),
+            .background(MainBgLightGray, shape = RoundedCornerShape(15.dp))
+            .then(
+                if (isSelected) {
+                    Modifier.border(2.dp, brush = gradientBlue, shape = RoundedCornerShape(15.dp))
+                } else {
+                    Modifier
+                }
+            )
+            .clickable {
+                onSelect(bankName)
+            },
     ) {
         Column(
             modifier = Modifier
@@ -55,5 +68,10 @@ fun BankItem(bankName: String) {
 @Preview(showBackground = true)
 @Composable
 fun BankItemPreview() {
-    BankItem("NH농협")
+    var selectedBank = "NH농협"
+
+    BankItem(bankName = "NH농협", isSelected = selectedBank == "NH농협", onSelect = { selected ->
+        selectedBank = selected
+        println("Selected bank: $selected")
+    })
 }

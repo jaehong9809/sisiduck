@@ -63,6 +63,7 @@
     <string name="money_label">금액</string>
     <string name="search_btn_label">검색하기</string>
     <string name="account_label">계좌번호</string>
+    <string name="select_bank_label">은행 선택</string>
 
     <!-- TextField Hint -->
     <string name="name_hint">이름 입력</string>
