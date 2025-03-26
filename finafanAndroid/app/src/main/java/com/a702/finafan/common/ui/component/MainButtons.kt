@@ -100,17 +100,23 @@ fun MainWideIconButton(
 fun PrimaryGradButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    text: String? = null
+    text: String? = null,
+    isEnabled: Boolean = true
 ) {
     val gradient = Brush.horizontalGradient(
         colors = listOf(MainGradBlue, MainGradViolet)
     )
 
+    val gray = Brush.horizontalGradient(
+        colors = listOf(BtnBgGray, BtnBgGray)
+    )
+
     Box(
         modifier = modifier
             .defaultMinSize(minWidth = 320.dp, minHeight = 60.dp)
-            .clickable { onClick() }
-            .background(gradient, shape = RoundedCornerShape(12.dp)),
+            .clickable(enabled = isEnabled) { onClick() }
+            .background(if (isEnabled) gradient else gray,
+                shape = RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
         text?.let {

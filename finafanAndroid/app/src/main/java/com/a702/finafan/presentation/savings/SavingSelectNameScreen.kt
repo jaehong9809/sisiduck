@@ -35,7 +35,10 @@ fun SavingSelectNameScreen(selectName: String) {
 
         // 적금 이름 필드 (선택한 스타 이름이 자동으로 들어감)
         StringField(modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
-            label = "적금 이름", hint = selectName, text = name, isSaving = true)
+            label = stringResource(R.string.saving_item_name_label),
+            hint = selectName,
+            text = name,
+            isSaving = true)
 
         Row(
             verticalAlignment = Alignment.CenterVertically

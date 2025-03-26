@@ -13,17 +13,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainWhite
 
 @Composable
 fun DialogLayout(
     isBottom: Boolean = false,
-    isInfo: Boolean = true,
-    confirmBtnText: String,
+    isConfirm: Boolean = true,
+    confirmBtnText: String = stringResource(R.string.btn_confirm),
     onClickConfirm: () -> Unit,
+    btnEnabled: Boolean = true,
     content: @Composable () -> Unit
 ) {
     var isDialogVisible = remember { mutableStateOf(true) }
@@ -51,18 +54,17 @@ fun DialogLayout(
                         .wrapContentHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-
                     content()
 
                     Spacer(modifier = Modifier.height(28.dp))
 
                     DialogButton(
-                        isInfo,
+                        isConfirm,
                         confirmBtnText,
                         onClickConfirm,
-                        isDialogVisible
+                        isDialogVisible,
+                        btnEnabled
                     )
-
                 }
             }
         }

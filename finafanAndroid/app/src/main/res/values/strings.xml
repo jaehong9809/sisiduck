@@ -91,6 +91,7 @@
     <string name="btn_delete">삭제하기</string>
     <string name="btn_cancel">취소</string>
     <string name="btn_add">추가</string>
+    <string name="btn_change">변경하기</string>
 
     <!-- Connect Account Screen -->
     <string name="connect_account_select_back_title">계좌 인증 진행\n연결할 은행을 선택해주세요</string>

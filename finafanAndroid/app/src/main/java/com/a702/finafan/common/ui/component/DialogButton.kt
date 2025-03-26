@@ -17,7 +17,8 @@ fun DialogButton(
     isInfo: Boolean = true,
     confirmBtnText: String,
     onClickConfirm: () -> Unit,
-    isDialogVisible: MutableState<Boolean>
+    isDialogVisible: MutableState<Boolean>,
+    btnEnabled: Boolean = true,
 ) {
     Row(
         modifier = Modifier
@@ -44,7 +45,8 @@ fun DialogButton(
                 onClickConfirm()
                 isDialogVisible.value = false
             },
-            text = confirmBtnText
+            text = confirmBtnText,
+            isEnabled = btnEnabled
         )
     }
 }
