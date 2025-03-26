@@ -20,7 +20,7 @@ public class RetrieveDemandDepositController {
     private final FinancialNetworkUtil financialNetworkUtil;
     private final RetrieveAccountService retrieveAccountService;
 
-    @GetMapping("/demandDeposit/inquireDemandDepositList")
+    @GetMapping("/products")
     public ResponseEntity<RetrieveProductsResponse> getDemandDepositList(
 //            @AuthMember User userId
     ) {
