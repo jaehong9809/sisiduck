@@ -20,6 +20,11 @@ spring:
     url: ${DATABASE_URL:test}
     username: ${DATABASE_USERNAME:test}
     password: ${DATABASE_PASSWORD:test}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PW}
 
 management:
   endpoints:
