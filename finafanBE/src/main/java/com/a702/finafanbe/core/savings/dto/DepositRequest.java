@@ -1,7 +1,6 @@
 package com.a702.finafanbe.core.savings.dto;
 
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
-import com.a702.finafanbe.global.common.header.BaseRequestHeaderIncludeUserKey;
 import lombok.Getter;
 
 @Getter

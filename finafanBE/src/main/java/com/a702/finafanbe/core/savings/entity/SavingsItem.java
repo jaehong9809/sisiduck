@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Getter
-@Table(name = "savings_item")
+@Table(name = "savings_items")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SavingsItem {
 

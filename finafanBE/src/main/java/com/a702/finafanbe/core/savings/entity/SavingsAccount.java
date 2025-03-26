@@ -1,43 +1,43 @@
 package com.a702.finafanbe.core.savings.entity;
 
-import com.a702.finafanbe.core.savings.dto.CreateSavingAccountRequest;
 import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Table(name = "savings_accounts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "savings_type")
-public abstract class SavingsAccount extends BaseEntity {
+public class SavingsAccount extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long savingsAccountId;
+    protected Long id;
 
     @Column(name = "user_id")
-    private Long userId;
+    protected Long userId;
 
     @Column(name = "savings_item_id")
-    private String savingsItemId;
+    protected Long savingsItemId;
 
     @Column(name = "account_no")
-    private String accountNo;
+    protected String accountNo;
 
     @Column(name = "account_nickname")
-    private String accountNickname;
+    protected String accountNickname;
 
-    private Long balance;
+    protected Long balance;
 
     @Column(name = "account_expiry_date")
-    private LocalDateTime accountExpiryDate;
+    protected LocalDateTime accountExpiryDate;
 
     @Builder
-    protected SavingsAccount(Long userId, String savingsItemId, String accountNo, String accountNickname, Long balance, LocalDateTime accountExpiryDate) {
+    protected SavingsAccount(Long userId, Long savingsItemId, String accountNo, String accountNickname, Long balance, LocalDateTime accountExpiryDate) {
         this.userId = userId;
         this.savingsItemId = savingsItemId;
         this.accountNo = accountNo;
@@ -45,11 +45,4 @@ public abstract class SavingsAccount extends BaseEntity {
         this.balance = balance;
         this.accountExpiryDate = accountExpiryDate;
     }
-
-    //        private Long userId;
-//        private Long savingsItemId;
-//        private String accountNo
-//        private String accountNickname;
-//        private Long balance;
-//        private LocalDateTime accountExpiryDate;`
 }

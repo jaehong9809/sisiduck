@@ -1,32 +1,29 @@
 package com.a702.finafanbe.core.group.application;
 
 import com.a702.finafanbe.core.group.dto.JoinGroupRequest;
-import com.a702.finafanbe.core.group.entity.Group;
+import com.a702.finafanbe.core.group.entity.FundingGroup;
+import com.a702.finafanbe.core.group.entity.FundingStatus;
 import com.a702.finafanbe.core.group.entity.GroupUser;
 import com.a702.finafanbe.core.group.entity.Role;
-import com.a702.finafanbe.core.group.entity.infrastructure.GroupRepository;
+import com.a702.finafanbe.core.group.entity.infrastructure.FundingRepository;
 import com.a702.finafanbe.core.group.entity.infrastructure.GroupUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class GroupService {
+public class FundingGroupService {
 
-    private final GroupRepository groupRepository;
+    private final FundingRepository fundingGroupRepository;
     private final GroupUserRepository groupUserRepository;
 
-    // 그룹 생성 - 펀딩 통장 생성과 같이 가야 하는 로직
-    @Transactional
-    public void createGroup(Long userId, Long entertainerId, String name, String description) {
-        Group group = Group.create(entertainerId, name, description);
-        Group newGroup = groupRepository.save(group);
-        GroupUser groupUser = GroupUser.create(userId, newGroup.getGroupId(), Role.ADMIN);
-        groupRepository.save(group);
+    public void createFunding(Long userId, Long accountId, Long entertainerId, String name, String description, Long goalAmount) {
+        FundingGroup funding = FundingGroup.create(accountId, entertainerId, name, description, goalAmount, FundingStatus.INPROGRESS);
+        FundingGroup newFunding = fundingGroupRepository.save(funding);
+        GroupUser groupUser = GroupUser.create(userId, newFunding.getId(), Role.ADMIN);
+        fundingGroupRepository.save(funding);
         groupUserRepository.save(groupUser);
     }
 
@@ -44,20 +41,20 @@ public class GroupService {
     // 그룹 탈퇴
     public void leaveGroup(Long userId, Long groupId) {
         // groupCheck();
-        GroupUser groupUser = groupUserRepository.findByUserIdAndGroupId(userId, groupId).orElseThrow();
+        GroupUser groupUser = groupUserRepository.findByUserIdAndFundingGroupId(userId, groupId).orElseThrow();
         groupUserRepository.delete(groupUser);
     }
 
     // 그룹 중도 삭제 - 펀딩 해지와 관련된 로직
     public void abortGroup(Long groupId) {
-        Group group = groupRepository.findById(groupId).orElseThrow();
-        List<GroupUser> groupUsers = groupUserRepository.findAllByGroupId(groupId);
+        FundingGroup funding = fundingGroupRepository.findById(groupId).orElseThrow();
+        List<GroupUser> groupUsers = groupUserRepository.findAllByFundingGroupId(groupId);
         groupUserRepository.deleteAll(groupUsers);
-        groupRepository.delete(group);
+        fundingGroupRepository.delete(funding);
     }
 
     private void groupCheck(Long groupId) {
-        if (!groupRepository.existsById(groupId)) {
+        if (!fundingGroupRepository.existsById(groupId)) {
             // 예외 처리
         }
     }

@@ -1,6 +1,6 @@
 package com.a702.finafanbe.core.group.presentation;
 
-import com.a702.finafanbe.core.group.application.GroupService;
+import com.a702.finafanbe.core.group.application.FundingGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class GroupController {
 
-    private final GroupService groupService;
+    private final FundingGroupService fundingGroupService;
 
 
 }

@@ -1,6 +1,6 @@
 package com.a702.finafanbe.core.savings.dto.apidto;
 
-import com.a702.finafanbe.global.common.header.BaseResponseHeaderIncludeInstitutionCode;
+import com.a702.finafanbe.global.common.financialnetwork.header.BaseResponseHeaderIncludeInstitutionCode;
 import lombok.Getter;
 
 import java.util.List;

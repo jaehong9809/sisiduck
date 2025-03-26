@@ -19,10 +19,10 @@ public class GroupBoard extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long groupBoardId;
+    private Long id;
 
-    @Column(name = "group_id", nullable = false)
-    private Long groupId;
+    @Column(name = "funding_group_id", nullable = false)
+    private Long fundingGroupId;
 
     @Column(length = 50, nullable = false)
     private String title;
@@ -42,17 +42,17 @@ public class GroupBoard extends BaseEntity {
     }
 
     @Builder
-    private GroupBoard(Long groupId, String title, String content, Long amount, String imageUrl) {
-        this.groupId = groupId;
+    private GroupBoard(Long fundingGroupId, String title, String content, Long amount, String imageUrl) {
+        this.fundingGroupId = fundingGroupId;
         this.title = title;
         this.content = content;
         this.amount = amount;
         this.imageUrl = imageUrl;
     }
 
-    public static GroupBoard create(Long groupId, String title, String content, Long amount, String imageUrl) {
+    public static GroupBoard create(Long fundingGroupId, String title, String content, Long amount, String imageUrl) {
         return GroupBoard.builder()
-                        .groupId(groupId)
+                        .fundingGroupId(fundingGroupId)
                         .title(title)
                         .content(content)
                         .amount(amount)

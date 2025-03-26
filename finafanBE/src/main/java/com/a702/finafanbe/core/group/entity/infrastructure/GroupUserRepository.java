@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GroupUserRepository extends JpaRepository<GroupUser, Long> {
-    List<GroupUser> findAllByGroupId(Long groupId);
+    List<GroupUser> findAllByFundingGroupId(Long groupId);
 
-    Optional<GroupUser> findByUserIdAndGroupId(Long userId, Long groupId);
+    Optional<GroupUser> findByUserIdAndFundingGroupId(Long userId, Long groupId);
 }

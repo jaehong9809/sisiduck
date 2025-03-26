@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GroupBoardService {
+public class FundingGroupBoardService {
 
     private final GroupBoardRepository groupBoardRepository;
 
