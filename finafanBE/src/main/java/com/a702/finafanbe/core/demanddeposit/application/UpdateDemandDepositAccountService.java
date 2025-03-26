@@ -1,8 +1,7 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
-import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountDepositRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountTransferRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountWithdrawalRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountTransferRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountDepositResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountWithdrawalResponse;
@@ -19,7 +18,7 @@ public class UpdateDemandDepositAccountService {
 
     public ResponseEntity<UpdateDemandDepositAccountWithdrawalResponse> withdrawal(
             String path,
-            UpdateDemandDepositAccountWithdrawalRequest updateDemandDepositAccountWithdrawalRequest
+            UpdateAccountRequest updateDemandDepositAccountWithdrawalRequest
     ) {
         return apiClientUtil.callFinancialNetwork(
                 path,
@@ -30,7 +29,7 @@ public class UpdateDemandDepositAccountService {
 
     public ResponseEntity<UpdateDemandDepositAccountDepositResponse> deposit(
             String path,
-            UpdateDemandDepositAccountDepositRequest updateDemandDepositAccountDepositRequest
+            UpdateAccountRequest updateDemandDepositAccountDepositRequest
     ) {
         return apiClientUtil.callFinancialNetwork(
                 path,
@@ -41,7 +40,7 @@ public class UpdateDemandDepositAccountService {
 
     public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transfer(
         String path,
-        UpdateDemandDepositAccountTransferRequest updateDemandDepositAccountTransferRequest
+        UpdateAccountTransferRequest updateDemandDepositAccountTransferRequest
     ) {
         return apiClientUtil.callFinancialNetwork(
             path,

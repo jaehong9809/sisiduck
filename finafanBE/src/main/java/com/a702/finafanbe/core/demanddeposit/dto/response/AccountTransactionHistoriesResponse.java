@@ -3,7 +3,7 @@ package com.a702.finafanbe.core.demanddeposit.dto.response;
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseResponseHeaderIncludeInstitutionCode;
 import java.util.List;
 
-public record InquireDemandDepositAccountTransactionHistoryListResponse(
+public record AccountTransactionHistoriesResponse(
         BaseResponseHeaderIncludeInstitutionCode Header,
         REC REC
 ) {

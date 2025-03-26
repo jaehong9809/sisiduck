@@ -3,11 +3,9 @@ package com.a702.finafanbe.core.demanddeposit.dto.response;
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseResponseHeader;
 import lombok.Getter;
 
-import java.util.List;
-
-public record RetrieveDemandDepositListResponse(
+public record RegisterAccountResponse(
         BaseResponseHeader Header,
-        List<REC> REC
+        REC REC
 ) {
     @Getter
     public static class REC {

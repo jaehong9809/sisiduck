@@ -1,4 +1,4 @@
-package com.a702.finafanbe.global.common.financialnetwork.entity;
+package com.a702.finafanbe.global.common.financialnetwork.util;
 
 import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.Getter;

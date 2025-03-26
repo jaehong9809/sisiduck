@@ -3,7 +3,8 @@ package com.a702.finafanbe.core.entertainer.application;
 import com.a702.finafanbe.core.demanddeposit.application.CreateAccountService;
 import com.a702.finafanbe.core.demanddeposit.application.RetrieveAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.CreateAccountRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.RetrieveDemandDepositListRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.RetrieveProductsRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.response.RetrieveProductsResponse;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStartRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
@@ -13,16 +14,14 @@ import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavi
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
-import com.a702.finafanbe.global.common.exception.ErrorCode;
-import com.a702.finafanbe.global.common.financialnetwork.entity.FinancialNetworkUtil;
-import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeader;
+import com.a702.finafanbe.global.common.financialnetwork.util.FinancialNetworkUtil;
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
+import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeader;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.a702.finafanbe.global.common.exception.ErrorCode.*;
 import static com.a702.finafanbe.global.common.exception.ErrorCode.NOT_FOUND_DEMAND_DEPOSIT_PRODUCT;
@@ -92,7 +91,7 @@ public class EntertainSavingsService {
 
         return retrieveAccountService.retrieveDemandDepositList(
                 "/demandDeposit/inquireDemandDepositList",
-                new RetrieveDemandDepositListRequest(
+                new RetrieveProductsRequest(
                         BaseRequestHeader.create(
                                 "inquireDemandDepositList",
                                 financialNetworkUtil
@@ -104,7 +103,7 @@ public class EntertainSavingsService {
                 .stream()
                 .filter(rec->"dummy".equals(rec.getAccountName()))
                 .findFirst()
-                .map(com.a702.finafanbe.core.demanddeposit.dto.response.RetrieveDemandDepositListResponse.REC::getAccountTypeUniqueNo)
+                .map(RetrieveProductsResponse.REC::getAccountTypeUniqueNo)
                 .orElseThrow(()-> new BadRequestException(
                         ResponseData.createResponse(NOT_FOUND_DEMAND_DEPOSIT_PRODUCT)
                 ));

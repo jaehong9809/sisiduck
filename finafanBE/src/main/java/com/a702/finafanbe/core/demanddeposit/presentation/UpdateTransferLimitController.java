@@ -1,8 +1,7 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
-import com.a702.finafanbe.core.demanddeposit.application.UpdateDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.application.UpdateTransferLimitService;
-import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateDemandDepositAccountTransferLimitRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountTransferLimitRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferLimitResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,7 @@ public class UpdateTransferLimitController {
 
     @PutMapping("/transfer-limit")
     public ResponseEntity<UpdateDemandDepositAccountTransferLimitResponse> modifyTransferLimit(
-        @RequestBody UpdateDemandDepositAccountTransferLimitRequest updateDemandDepositAccountTransferLimitRequest
+        @RequestBody UpdateAccountTransferLimitRequest updateDemandDepositAccountTransferLimitRequest
     ){
         return updateTransferLimitService.updateLimit(
             "/demandDeposit/updateTransferLimit",
