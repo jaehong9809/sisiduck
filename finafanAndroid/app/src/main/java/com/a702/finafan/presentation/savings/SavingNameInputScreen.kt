@@ -21,7 +21,7 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 
 // 적금 이름 입력 화면
 @Composable
-fun SavingSelectNameScreen(selectName: String) {
+fun SavingNameInputScreen(selectName: String) {
     val name = remember { mutableStateOf("") }
 
     SavingScreenLayout(
@@ -65,5 +65,5 @@ fun SavingSelectNameScreen(selectName: String) {
 @Preview
 @Composable
 fun SavingNamePreview() {
-    SavingSelectNameScreen("이찬원")
+    SavingNameInputScreen("이찬원")
 }
