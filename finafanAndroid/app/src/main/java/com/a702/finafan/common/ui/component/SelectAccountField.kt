@@ -1,7 +1,6 @@
 package com.a702.finafan.common.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -66,9 +66,8 @@ fun SelectAccountField(menuItems: MutableList<String>) {
 
         DropdownMenu(
             modifier = Modifier
-                .background(MainWhite, shape = RoundedCornerShape(18.dp))
-                .border(1.dp, MainBlack, shape = RoundedCornerShape(18.dp))
-                .fillMaxWidth(),
+                .background(MainWhite)
+                .wrapContentSize(),
             expanded = expandStatus,
             onDismissRequest = {
                 expandStatus = false
