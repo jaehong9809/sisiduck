@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.common.ui.theme.MainBlack
-import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.gradientBlue
 
@@ -82,7 +81,7 @@ fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
                     .border(1.dp, color = MainBlack, shape = CircleShape),
                 contentScale = ContentScale.Crop
             )
-            Text(text = star.image, fontSize = 20.sp, color = MainTextBlue, fontWeight = FontWeight.Bold)
+
             Text(text = star.name, fontSize = 24.sp, color = MainBlack, fontWeight = FontWeight.Normal)
         }
     }

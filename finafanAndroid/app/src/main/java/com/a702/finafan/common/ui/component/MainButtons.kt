@@ -124,6 +124,31 @@ fun PrimaryGradButton(
     }
 }
 
+/* Radius, drop-shadow 있음 */
+@Composable
+fun CommonCancelButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String? = null
+) {
+    Box(
+        modifier = modifier
+            .defaultMinSize(minWidth = 320.dp, minHeight = 60.dp)
+            .clickable { onClick() }
+            .background(BtnBgGray, shape = RoundedCornerShape(12.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        text?.let {
+            Text(
+                text = it,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite
+            )
+        }
+    }
+}
+
 @Composable
 fun PrimaryGradBottomButton(
     modifier: Modifier = Modifier,
