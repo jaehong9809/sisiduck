@@ -12,4 +12,9 @@
     <string name="not_found_audio">말씀을 잘 못 알아들었어요.</string>
     <string name="down_scroll">⬇</string>
 
+
+    <!-- BLUETOOTH -->
+    <string name="ble_find_user">주변 팬 찾기</string>
+    <stirng name="ble_finding_user">주변 탐색 중...</stirng>
+
 </resources>
