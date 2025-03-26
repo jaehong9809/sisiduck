@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.demanddeposit.facade;
 
+import com.a702.finafanbe.core.demanddeposit.dto.request.DepositRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoryRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
@@ -138,6 +139,22 @@ public class DemandDepositFacade {
                         transactionHistoryRequest.transactionUniqueNo()
                 ),
                 InquireDemandDepositAccountTransactionHistoryResponse.class
+        );
+    }
+
+    public ResponseEntity<UpdateDemandDepositAccountDepositResponse> depositAccount(
+            DepositRequest depositRequest
+    ) {
+        return apiClientUtil.callFinancialNetwork(
+                "/demandDeposit/updateDemandDepositAccountDeposit",
+                financialRequestFactory.depositAccount(
+                        depositRequest.email(),
+                        "updateDemandDepositAccountDeposit",
+                        depositRequest.accountNo(),
+                        depositRequest.transactionBalance(),
+                        depositRequest.transactionSummary()
+                ),
+                UpdateDemandDepositAccountDepositResponse.class
         );
     }
 }
