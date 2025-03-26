@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from app.schemas.question import QuestionRequest
-from app.service.service import classify_query
+from app.service.classify import classify_query
 from app.service.prompts import idol_news_prompt, idol_video_prompt, finance_prompt, default_prompt, person_prompt
 from app.service.search import fast_news_search, youtube_search, person_retriever
 from app.service.callback_handler import SSECallbackHandler
@@ -43,7 +43,7 @@ async def ask_question(request: QuestionRequest):
     # ✅ LLM & 체인 세팅
     llm = ChatOpenAI(
         model="gpt-3.5-turbo",
-        temperature=0.5,
+        temperature=0.1,
         streaming=True,
         callbacks=[callback]
     )
@@ -55,18 +55,14 @@ async def ask_question(request: QuestionRequest):
 
     person_chain = (
         RunnableMap({
-            "context": lambda x: log_and_return_context(x),
+            "context": lambda x: "\n\n".join(
+                doc.page_content for doc in person_retriever.get_relevant_documents(x["query"])
+            ),
             "person": lambda x: x["query"],
             "question": lambda x: x["query"]
         }) | person_prompt | llm
     )
 
-    def log_and_return_context(x):
-        docs = person_retriever.get_relevant_documents(x["query"])
-        print("🔍 검색된 문서 리스트:")
-        for i, doc in enumerate(docs, start=1):
-            print(f"\n📄 문서 {i}:\n{doc.page_content}\n{'-'*40}")
-        return "\n\n".join(doc.page_content for doc in docs)
 
     # ✅ 분기 처리용 함수들 정의
     async def handle_video(x):
@@ -107,7 +103,7 @@ async def ask_question(request: QuestionRequest):
     # ✅ 체인 실행
     async def run_chain():
         try:
-            input_data = classify_query(question)
+            input_data = await classify_query(question)
             await router_chain.ainvoke(input_data)
         except Exception as e:
             print(f"⚠️ 오류 발생: {e}")
