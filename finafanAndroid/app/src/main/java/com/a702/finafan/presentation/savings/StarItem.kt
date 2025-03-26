@@ -3,6 +3,7 @@ package com.a702.finafan.presentation.savings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import coil.request.ImageRequest
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.ui.theme.gradientBlue
 
 data class Star(
     val image: String,
@@ -37,16 +39,22 @@ data class Star(
 
 // 스타 선택 아이템
 @Composable
-fun StarItem(star: Star) {
-    /*
-    * 선택된 경우만
-    * .border(2.dp, brush = gradientBlue, RoundedCornerShape(18.dp))
-    * */
+fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
 
     Box(modifier = Modifier
         .fillMaxWidth()
         .height(70.dp)
         .background(MainWhite, shape = RoundedCornerShape(18.dp))
+        .then(
+            if (isSelected) {
+                Modifier.border(2.dp, brush = gradientBlue, shape = RoundedCornerShape(18.dp))
+            } else {
+                Modifier
+            }
+        )
+        .clickable {
+            onSelect(star)
+        },
     ) {
         Row(
             modifier = Modifier
@@ -81,10 +89,12 @@ fun StarItem(star: Star) {
 
 }
 
-@Preview(showBackground = true)
+@Preview()
 @Composable
 fun StarItemPreview() {
     StarItem(
-        star = Star("", "이찬원")
+        star = Star("", "이찬원"),
+        isSelected = true,
+        onSelect = {}
     )
 }
