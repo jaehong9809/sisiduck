@@ -1,5 +1,7 @@
 package com.a702.finafan.common.ui.component
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,9 +61,17 @@ fun SelectAccountField(menuItems: MutableList<String>) {
         ) {
             TextItem(selectedAccount, MainBlack, 20.sp)
             Spacer(modifier = Modifier.width(width = 8.dp))
+
+            val rotationAngle by animateFloatAsState(
+                targetValue = if (expandStatus) -180f else 0f,
+                animationSpec = tween(durationMillis = 300) // 애니메이션의 지속 시간 설정
+            )
+
             Icon(
                 painter = painterResource(R.drawable.angle_down),
                 contentDescription = "",
+                modifier = Modifier
+                    .graphicsLayer(rotationZ = rotationAngle)
             )
         }
 
