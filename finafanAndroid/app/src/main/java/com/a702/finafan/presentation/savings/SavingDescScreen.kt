@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradButton
 import com.a702.finafan.common.ui.theme.MainBlack
@@ -33,13 +35,14 @@ import com.a702.finafan.common.ui.theme.SavingDescBg
 import com.a702.finafan.common.ui.theme.SavingDescGray
 import com.a702.finafan.common.ui.theme.gradientBlue
 
+// 적금 상품 설명 화면
 @Composable
 fun SavingDescScreen() {
 
     Column(
         modifier = Modifier.fillMaxSize().background(MainWhite)
     ) {
-        CommonBackTopBar(imageOnClick = {}, text = "스타 적금", isTextCentered = true)
+        CommonBackTopBar(imageOnClick = {}, text = stringResource(R.string.saving_item_title), isTextCentered = true)
 
         Column(
             modifier = Modifier
@@ -54,7 +57,7 @@ fun SavingDescScreen() {
             // TODO: 연결된 입출금 계좌가 있을 경우 가입 페이지로 이동, 아닐 경우 1원 송금 페이지로 이동
             PrimaryGradButton(
                 onClick = {},
-                text = "가입하기",
+                text = stringResource(R.string.btn_join),
                 modifier = Modifier
                     .align(CenterHorizontally)
                     .padding(top = 32.dp, bottom = 32.dp, start = 16.dp, end = 16.dp)
@@ -82,7 +85,7 @@ fun FirstDesc() {
         )
         Text(
             modifier = Modifier.padding(top = 4.dp),
-            text = "스타 적금",
+            text = stringResource(R.string.saving_item_title),
             style = TextStyle(
                 brush = gradientBlue,
                 fontSize = 32.sp,

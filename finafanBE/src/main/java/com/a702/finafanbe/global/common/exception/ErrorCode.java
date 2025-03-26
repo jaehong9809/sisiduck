@@ -46,7 +46,11 @@ public enum ErrorCode {
     FILE_DELETE_IS_FAILED("E7003", "파일 삭제에 실패하였습니다."),
     FILE_DOES_NOT_EXIST("E7004", "파일이 존재하지 않습니다."),
     UNSUPPORTED_EXTENSION("E7005", "지원하지 않는 파일 형식입니다."),
-    INVALID_FILE_REQUEST("E7006", "잘못된 형식의 파일 요청입니다.");
+    INVALID_FILE_REQUEST("E7006", "잘못된 형식의 파일 요청입니다."),
+
+    NotFoundEntertainer("E8001", "연예인을 찾을 수 없습니다"),
+    EXIST_SAVINGS_PRODUCT("E8002", "해당 연예인 적금 상품을 이미 보유중입니다."),
+    NOT_FOUND_DEMAND_DEPOSIT_PRODUCT("E8003", "수시입출금 상품을 찾을 수 없습니다.");
 
     private final String code;
     private final String message;
