@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/demand-deposit-transaction")
+@RequestMapping("/api/v1/demand-deposit")
 public class InquireDemandDepositAccountTransactionHistoryController {
 
     private final DemandDepositFacade demandDepositFacade;
     private final InquireDemandDepositAccountTransactionHistoryService inquireDemandDepositAccountTransactionHistoryService;
 
-    @PostMapping("/demandDeposit/inquireTransactionHistoryList")
+    @GetMapping("/transaction-histories")
     public ResponseEntity<AccountTransactionHistoriesResponse> getDemandDepositTransactionHistories(
         @RequestBody TransactionHistoriesRequest transactionHistoryListRequest
     ){

@@ -79,7 +79,4 @@ public class Account extends BaseEntity {
 
     @Column(name = "subscription_period")
     private LocalDateTime subscriptionPeriod;
-
-    @Column(name = "isRepresentative")
-    private Boolean isRepresentative;
 }
