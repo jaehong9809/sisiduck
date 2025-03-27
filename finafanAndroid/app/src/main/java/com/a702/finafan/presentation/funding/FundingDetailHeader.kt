@@ -2,9 +2,11 @@ package com.a702.finafan.presentation.funding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,12 +21,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.a702.finafan.common.ui.theme.MainBgGray
+import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.Pretendard
+import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.utils.StringUtil
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 @Composable
 fun FundingDetailHeader(
@@ -40,7 +49,7 @@ fun FundingDetailHeader(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(515.dp)
+            .height(463.dp)
             .background(brush = Brush.linearGradient(
                 colors = listOf(colorSet[0].copy(alpha = 0.1f), colorSet[2].copy(alpha = 0.1f))
             ))
@@ -63,14 +72,43 @@ fun FundingDetailHeader(
             modifier = Modifier
         )
 
-        Row() {
-            Column() {
-                Text("현재 모금액")
-                Text(StringUtil.formatCurrency(funding.fundingCurrentAmount))
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .padding(vertical = 30.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Column(
+                modifier = Modifier.align(Alignment.Bottom)
+                    .padding(end = 30.dp)
+            ) {
+                Text(text = "현재 모금액",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Pretendard,
+                    color = MainBlack
+                    )
+                Text(text = StringUtil.formatCurrency(funding.fundingCurrentAmount),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Pretendard,
+                    color = MainBlack
+                    )
             }
-            Column() {
-                Text("목표 금액")
-                Text(StringUtil.formatCurrency(funding.fundingGoalAmount))
+            Column(
+                modifier = Modifier.align(Alignment.Bottom)
+                    .padding(start = 30.dp)
+            ) {
+                Text(text = "목표 금액",
+                    style = Typography.displaySmall,
+                    color = MainTextGray
+                )
+                Text(text = StringUtil.formatCurrency(funding.fundingGoalAmount),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Pretendard,
+                    color = MainTextGray
+                )
             }
         }
         Row ( modifier = Modifier.fillMaxSize() ) {
@@ -78,13 +116,18 @@ fun FundingDetailHeader(
                 painter = painter,
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.weight(0.8f)
+                modifier = Modifier.weight(0.6f)
                     .clipToBounds()
                     .align(Alignment.Bottom)
             )
-            Text("7일 뒤 종료",
-                modifier = Modifier.weight(0.2f)
-                    .align(Alignment.Bottom))
+            Text("${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingEndDate)}일 뒤 종료",
+                textAlign = TextAlign.End,
+                style = Typography.displaySmall,
+                color = colorSet[2],
+                modifier = Modifier.weight(0.4f)
+                    .align(Alignment.Bottom)
+                    .padding(vertical = 25.dp)
+                )
 
         }
     }

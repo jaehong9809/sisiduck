@@ -16,7 +16,7 @@ val starThemes = listOf(
     StarTheme(
         start = starGradPink,
         end = starGradSkyBlue,
-        mid = starMidBlue
+        mid = starMidViolet
     ),
     StarTheme(
         start = starGradYellow,

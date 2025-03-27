@@ -36,6 +36,7 @@ import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.ui.theme.Pretendard
 import kotlin.collections.List
 
 /* 메인 메뉴용 IconButton */
@@ -177,7 +178,7 @@ fun CustomGradButton(
         modifier = modifier
             .defaultMinSize(minWidth = 320.dp, minHeight = 60.dp)
             .clickable { onClick() }
-            .background(gradient, shape = RoundedCornerShape(12.dp)),
+            .background(gradient, shape = RoundedCornerShape(20.dp)),
         contentAlignment = Alignment.Center
     ) {
         text?.let {
@@ -185,6 +186,7 @@ fun CustomGradButton(
                 text = it,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
+                fontFamily = Pretendard,
                 color = MainWhite
             )
         }

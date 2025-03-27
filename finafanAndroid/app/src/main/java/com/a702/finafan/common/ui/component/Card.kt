@@ -10,9 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.ui.theme.Pretendard
+import com.a702.finafan.common.ui.theme.Typography
 
 @Composable
 fun Card(
@@ -26,6 +30,7 @@ fun Card(
             .background(MainWhite)
             .padding(20.dp)
     ) {
-        Text(content)
+        Text(content, fontSize = 20.sp, fontWeight = FontWeight.Medium, fontFamily = Pretendard,
+            color = MainBlack)
     }
 }
