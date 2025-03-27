@@ -6,7 +6,7 @@ public record InquireDemandDepositAccountResponse(
     BaseResponseHeaderIncludeInstitutionCode Header,
     REC REC
 ) {
-    private record REC (
+    public record REC (
         String bankCode,
         String bankName,
         String userName,

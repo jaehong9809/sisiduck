@@ -1,7 +1,7 @@
 package com.a702.finafanbe.core.entertainer.application;
 
-import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
+import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
@@ -41,7 +41,7 @@ public class EntertainSavingsService {
             String accountNo
     ) {
         User user = findUser(createStartAccountRequest.userEmail());
-        Long entertainerId = findEntertainerId(createStartAccountRequest.entertainer());
+        Long entertainerId = findEntertainerId(createStartAccountRequest.entertainerId());
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
 
@@ -91,8 +91,8 @@ public class EntertainSavingsService {
         );
     }
 
-    private Long findEntertainerId(String entertainer) {
-        return entertainRepository.findByEntertainerName(entertainer)
+    private Long findEntertainerId(Long entertainerId) {
+        return entertainRepository.findByEntertainerId(entertainerId)
                 .orElseThrow(()-> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)))
                 .getEntertainerId();
     }
@@ -113,8 +113,8 @@ public class EntertainSavingsService {
             SelectStarRequest selectStarRequest
     ) {
         User user = findUser(selectStarRequest.userEmail());
-        user.updateFavoriteEntertainer(findEntertainerId(selectStarRequest.entertainerName()));
-        Entertainer entertainer = entertainRepository.findByEntertainerName(selectStarRequest.entertainerName()).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
+        user.updateFavoriteEntertainer(findEntertainerId(selectStarRequest.entertainerId()));
+        Entertainer entertainer = entertainRepository.findByEntertainerId(selectStarRequest.entertainerId()).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
         return EntertainerResponse.of(
                 entertainer.getEntertainerName(),
                 entertainer.getEntertainerProfileUrl(),
@@ -127,9 +127,10 @@ public class EntertainSavingsService {
     }
 
 
-    public void deposit(
+    public EntertainerDepositResponse deposit(
             String userEmail,
-            String accountNo,
+            String depositAccountNo,
+            String withdrawalAccountNo,
             Long transactionBalance,
             Long transactionUniqueNo,
             String message,
@@ -139,12 +140,21 @@ public class EntertainSavingsService {
         entertainerSavingsTransactionDetailRepository.save(
                 EntertainerSavingsTransactionDetail.of(
                         userId,
-                        accountNo,
+                        depositAccountNo,
+                        withdrawalAccountNo,
                         transactionBalance,
                         transactionUniqueNo,
                         message,
                         imageUrl
                 )
+        );
+        return EntertainerDepositResponse.of(
+                depositAccountNo,
+                withdrawalAccountNo,
+                transactionBalance,
+                transactionUniqueNo,
+                message,
+                imageUrl
         );
     }
 }
