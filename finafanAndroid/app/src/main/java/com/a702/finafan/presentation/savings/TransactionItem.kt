@@ -33,7 +33,13 @@ fun TransactionItem(transaction: Transaction) {
         ) {
             // 해당 날짜의 첫 번째 항목인 경우에만 날짜 표시
             if (transaction.isFirst) {
-                Text(text = "3월 24일", fontSize = 18.sp, color = MainTextGray, fontWeight = FontWeight.Normal, modifier = Modifier.padding(bottom = 24.dp))
+                Text(
+                    text = "3월 24일",
+                    fontSize = 18.sp,
+                    color = MainTextGray,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
             }
         }
 
@@ -46,8 +52,21 @@ fun TransactionItem(transaction: Transaction) {
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(text = transaction.title, fontSize = 22.sp, color = MainBlack, fontWeight = FontWeight.Medium, lineHeight = 24.sp,)
-                Text(text = transaction.time, fontSize = 16.sp, color = MainTextGray, fontWeight = FontWeight.Normal, lineHeight = 24.sp,)
+                Text(
+                    text = transaction.title,
+                    fontSize = 22.sp,
+                    color = MainBlack,
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 24.sp
+                    )
+
+                Text(
+                    text = transaction.time,
+                    fontSize = 16.sp,
+                    color = MainTextGray,
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 24.sp
+                )
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -56,8 +75,21 @@ fun TransactionItem(transaction: Transaction) {
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(text = StringUtil.formatCurrency(transaction.amount), fontSize = 20.sp, color = MainTextBlue, fontWeight = FontWeight.Bold, lineHeight = 24.sp,)
-                Text(text = StringUtil.formatCurrency(transaction.balance), fontSize = 16.sp, color = MainTextGray, fontWeight = FontWeight.Medium, lineHeight = 24.sp,)
+                Text(
+                    text = StringUtil.formatCurrency(transaction.amount),
+                    fontSize = 20.sp,
+                    color = MainTextBlue,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp
+                )
+
+                Text(
+                    text = StringUtil.formatCurrency(transaction.balance),
+                    fontSize = 16.sp,
+                    color = MainTextGray,
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 24.sp
+                )
             }
         }
     }

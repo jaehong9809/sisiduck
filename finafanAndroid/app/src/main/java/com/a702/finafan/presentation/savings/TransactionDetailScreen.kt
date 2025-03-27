@@ -59,8 +59,14 @@ fun TransactionDetailScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxSize()
-                .innerShadow(shape = RectangleShape,
-                    color = MainBlackWithTransparency, blur = 100.dp, offsetX = 0.dp, offsetY = (-10).dp, spread = 0.dp)
+                .innerShadow(
+                    shape = RectangleShape,
+                    color = MainBlackWithTransparency,
+                    blur = 100.dp,
+                    offsetX = 0.dp,
+                    offsetY = (-10).dp,
+                    spread = 0.dp
+                )
         ) {
 
             Image(
@@ -83,9 +89,28 @@ fun TransactionDetailScreen(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(text = transaction.time, fontSize = 20.sp, fontWeight = FontWeight.Medium, color = MainWhite, lineHeight = 24.sp,)
-                Text(text = transaction.title, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MainWhite, lineHeight = 24.sp,)
-                Text(text = StringUtil.formatCurrency(transaction.amount), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MainWhite, lineHeight = 24.sp,)
+                Text(
+                    text = transaction.time,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MainWhite, lineHeight = 24.sp,
+                )
+
+                Text(
+                    text = transaction.title,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MainWhite,
+                    lineHeight = 24.sp,
+                )
+
+                Text(
+                    text = StringUtil.formatCurrency(transaction.amount),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MainWhite,
+                    lineHeight = 24.sp,
+                )
             }
         }
     }

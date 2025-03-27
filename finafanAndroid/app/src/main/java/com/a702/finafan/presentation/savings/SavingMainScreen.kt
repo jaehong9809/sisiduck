@@ -164,9 +164,24 @@ fun SavingHeader(info: SavingData) {
             horizontalAlignment = CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = info.title, fontSize = 32.sp, fontWeight = FontWeight.Bold, color = MainWhite)
-            Text(text = StringUtil.formatCurrency(info.amount), fontSize = 36.sp, fontWeight = FontWeight.Bold, color = MainWhite)
-            Text(text = info.account, fontSize = 20.sp, fontWeight = FontWeight.Medium, color = MainWhite)
+            Text(
+                text = info.title,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = MainWhite
+            )
+            Text(
+                text = StringUtil.formatCurrency(info.amount),
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold,
+                color = MainWhite
+            )
+            Text(
+                text = info.account,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                color = MainWhite
+            )
         }
     }
 }

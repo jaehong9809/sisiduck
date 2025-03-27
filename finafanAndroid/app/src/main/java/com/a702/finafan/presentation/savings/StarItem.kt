@@ -35,7 +35,8 @@ fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
         .background(MainWhite, shape = RoundedCornerShape(18.dp))
         .then(
             if (isSelected) {
-                Modifier.border(2.dp, brush = gradientBlue, shape = RoundedCornerShape(18.dp))
+                Modifier
+                    .border(2.dp, brush = gradientBlue, shape = RoundedCornerShape(18.dp))
             } else {
                 Modifier
             }
@@ -58,7 +59,12 @@ fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
                 imageUrl = star.entertainerProfileUrl
             )
 
-            Text(text = star.entertainerName, fontSize = 24.sp, color = MainBlack, fontWeight = FontWeight.Normal)
+            Text(
+                text = star.entertainerName,
+                fontSize = 24.sp,
+                color = MainBlack,
+                fontWeight = FontWeight.Normal
+            )
         }
     }
 
