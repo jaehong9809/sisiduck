@@ -4,8 +4,6 @@ import com.a702.finafanbe.core.demanddeposit.dto.request.DepositRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoryRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
-import com.a702.finafanbe.core.product.entity.AccountProduct;
-import com.a702.finafanbe.core.product.entity.infrastructure.AccountProductRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
@@ -21,7 +19,6 @@ public class DemandDepositFacade {
 
     private final FinancialRequestFactory financialRequestFactory;
     private final ApiClientUtil apiClientUtil;
-    private final AccountProductRepository accountProductRepository;
 //    private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
