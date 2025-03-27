@@ -15,7 +15,7 @@ fun NavGraphBuilder.accountGraph(
     navController: NavHostController
 ) {
     navigation(
-        startDestination = NavRoutes.Main.route, route = NavRoutes.Account.route
+        startDestination = NavRoutes.ConnectBank.route, route = NavRoutes.Account.route
     ) {
         composable(NavRoutes.ConnectBank.route) {
             ConnectBankScreen(mutableListOf())

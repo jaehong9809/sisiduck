@@ -43,7 +43,20 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.padding(8.dp))
 
-
+            MainSquareIconButton(
+                onClick = {
+                    navController.navigate(NavRoutes.SavingDesc.route)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = MainBlack,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                text = "적금 가입"
+            )
         }
 
         Spacer(modifier = Modifier.padding(8.dp))

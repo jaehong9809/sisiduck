@@ -37,7 +37,6 @@ fun NavGraphBuilder.savingGraph(
 
         composable(NavRoutes.SavingDesc.route) {
             SavingDescScreen()
-            // TODO: 가입하기 버튼 -> 출금계좌가 있을 경우 (약관동의 넘어가고) 스타 선택 화면 보여주기, 없으면 1원 인증 화면으로 이동
         }
 
         composable(NavRoutes.StarSearch.route) {
@@ -66,8 +65,9 @@ fun NavGraphBuilder.savingGraph(
             )
         }
 
-        composable(NavRoutes.TermGuide.route) {
-            TermGuideScreen()
+        composable(NavRoutes.TermGuide.route + "/{title}") { backStackEntry ->
+            val title = backStackEntry.arguments?.getString("title")
+            TermGuideScreen(title, onConfirm = { navController.popBackStack() })
         }
 
         composable(NavRoutes.SavingAccountInfo.route) {

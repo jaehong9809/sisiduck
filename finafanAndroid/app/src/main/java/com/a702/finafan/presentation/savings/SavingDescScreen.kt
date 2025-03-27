@@ -34,10 +34,14 @@ import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.SavingDescBg
 import com.a702.finafan.common.ui.theme.SavingDescGray
 import com.a702.finafan.common.ui.theme.gradientBlue
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 
 // 적금 상품 설명 화면
 @Composable
 fun SavingDescScreen() {
+
+    val navController = LocalNavController.current
 
     Column(
         modifier = Modifier.fillMaxSize().background(MainWhite)
@@ -54,9 +58,13 @@ fun SavingDescScreen() {
             SecondDesc()
             ThirdDesc()
 
-            // TODO: 연결된 입출금 계좌가 있을 경우 가입 페이지로 이동, 아닐 경우 1원 송금 페이지로 이동
+            // TODO: 연결된 출금 계좌 있는지 확인하는 API 연결
+            val accountExist = true
+
             PrimaryGradButton(
-                onClick = {},
+                onClick = {
+                    navController.navigate(if(accountExist) NavRoutes.StarSelect.route else NavRoutes.Account.route)
+                },
                 text = stringResource(R.string.btn_join),
                 modifier = Modifier
                     .align(CenterHorizontally)
@@ -207,13 +215,14 @@ fun DescItem(title: String, money: String) {
 // 약관 리스트
 @Composable
 fun TermsButtonList() {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        TermGuideItem("상품 안내", onClick = {})
-        TermGuideItem("금리 안내", onClick = {})
-        TermGuideItem("이용 약관", onClick = {})
-        TermGuideItem("상품 설명서", onClick = {})
+        TermGuideItem(stringResource(R.string.product_info))
+        TermGuideItem(stringResource(R.string.product_interest_rate))
+        TermGuideItem(stringResource(R.string.term_info))
+        TermGuideItem(stringResource(R.string.product_guide))
     }
 }
 

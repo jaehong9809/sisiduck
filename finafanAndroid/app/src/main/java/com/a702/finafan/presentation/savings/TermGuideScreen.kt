@@ -28,7 +28,7 @@ import com.a702.finafan.common.ui.theme.MainWhite
 
 // 상품 안내, 약관동의 안내 화면
 @Composable
-fun TermGuideScreen() {
+fun TermGuideScreen(title: String?, onConfirm: () -> Unit) {
 
     Column(
         modifier = Modifier
@@ -40,7 +40,7 @@ fun TermGuideScreen() {
 
         CommonCloseTopBar(
             modifier = Modifier,
-            text = "상품 안내"
+            text = title
         )
 
         Column(
@@ -67,7 +67,9 @@ fun TermGuideScreen() {
                 .fillMaxWidth()
                 .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 .imePadding(),
-            onClick = {  },
+            onClick = {
+                onConfirm()
+            },
             text = stringResource(R.string.btn_confirm)
         )
     }
@@ -77,5 +79,5 @@ fun TermGuideScreen() {
 @Preview
 @Composable
 fun TermGuidePreview() {
-    TermGuideScreen()
+    TermGuideScreen("title", onConfirm = {})
 }

@@ -18,6 +18,10 @@
     <string name="saving_history_title">내역 보기</string>
     <string name="saving_account_manage_title">적금 관리</string>
     <string name="saving_account_connect_bank_title">연결 계좌</string>
+    <string name="product_info">상품 안내</string>
+    <string name="product_interest_rate">금리 안내</string>
+    <string name="term_info">이용 약관</string>
+    <string name="product_guide">상품 설명서</string>
 
     <!-- Saving Screen -->
     <string name="saving_item_title">스타 적금</string>
