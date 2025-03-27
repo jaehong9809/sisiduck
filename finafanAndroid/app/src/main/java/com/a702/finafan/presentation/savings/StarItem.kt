@@ -1,6 +1,5 @@
 package com.a702.finafan.presentation.savings
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,25 +9,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color.Companion.LightGray
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
+import com.a702.finafan.common.ui.component.CircleBorderImage
 import com.a702.finafan.common.ui.theme.MainBlack
-import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.gradientBlue
 
@@ -65,24 +57,11 @@ fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val painter = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(star.image)
-                    .build()
+            CircleBorderImage(
+                modifier = Modifier.size(50.dp),
+                imageUrl = star.image
             )
 
-            Image(
-                painter = painter,
-                contentDescription = "Background Image",
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .clip(CircleShape)
-                    .background(LightGray)
-                    .border(1.dp, color = MainBlack, shape = CircleShape),
-                contentScale = ContentScale.Crop
-            )
-            Text(text = star.image, fontSize = 20.sp, color = MainTextBlue, fontWeight = FontWeight.Bold)
             Text(text = star.name, fontSize = 24.sp, color = MainBlack, fontWeight = FontWeight.Normal)
         }
     }
