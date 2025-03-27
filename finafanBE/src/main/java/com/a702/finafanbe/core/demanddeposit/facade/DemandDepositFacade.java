@@ -143,12 +143,13 @@ public class DemandDepositFacade {
     }
 
     public ResponseEntity<UpdateDemandDepositAccountDepositResponse> depositAccount(
+            String userEmail,
             DepositRequest depositRequest
     ) {
         return apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/updateDemandDepositAccountDeposit",
                 financialRequestFactory.depositAccount(
-                        depositRequest.email(),
+                        userEmail,
                         "updateDemandDepositAccountDeposit",
                         depositRequest.accountNo(),
                         depositRequest.transactionBalance(),
