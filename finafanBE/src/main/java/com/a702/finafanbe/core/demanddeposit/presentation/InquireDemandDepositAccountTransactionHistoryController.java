@@ -8,20 +8,17 @@ import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAc
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/demand-deposit-transaction")
+@RequestMapping("/api/v1/demand-deposit")
 public class InquireDemandDepositAccountTransactionHistoryController {
 
     private final DemandDepositFacade demandDepositFacade;
     private final InquireDemandDepositAccountTransactionHistoryService inquireDemandDepositAccountTransactionHistoryService;
 
-    @PostMapping("/demandDeposit/inquireTransactionHistoryList")
+    @GetMapping("/transaction-histories")
     public ResponseEntity<AccountTransactionHistoriesResponse> getDemandDepositTransactionHistories(
         @RequestBody TransactionHistoriesRequest transactionHistoryListRequest
     ){

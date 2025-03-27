@@ -6,6 +6,7 @@ import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
+import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeader;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +73,44 @@ public class FinancialRequestFactory {
         );
     }
 
+    private BaseRequestHeader createRequestHeader(String apiName){
+        return BaseRequestHeader.builder()
+                .apiName(apiName)
+                .transmissionDate(DateUtil.getTransmissionDate())
+                .transmissionTime(DateUtil.getTransmissionTime())
+                .institutionCode(financialNetworkUtil.getInstitutionCode())
+                .fintechAppNo(financialNetworkUtil.getFintechAppNo())
+                .apiServiceCode(apiName)
+                .institutionTransactionUniqueNo(financialNetworkUtil.getInstitutionTransactionUniqueNo())
+                .apiKey(financialNetworkUtil.getApiKey())
+                .build();
+    }
+
+    private BaseRequestHeaderIncludeUserKey createRequestHeaderWithUserKey(
+            String email,
+            String apiName
+    ){
+        String userEmail = findUser(email).getSocialEmail();
+        return BaseRequestHeaderIncludeUserKey.builder()
+                .apiName(apiName)
+                .transmissionDate(DateUtil.getTransmissionDate())
+                .transmissionTime(DateUtil.getTransmissionTime())
+                .institutionCode(financialNetworkUtil.getInstitutionCode())
+                .fintechAppNo(financialNetworkUtil.getFintechAppNo())
+                .apiServiceCode(apiName)
+                .institutionTransactionUniqueNo(financialNetworkUtil.getInstitutionTransactionUniqueNo())
+                .apiKey(financialNetworkUtil.getApiKey())
+                .userKey(userRepository.findBySocialEmail(userEmail).orElseThrow(()->new BadRequestException(ResponseData.createResponse(ErrorCode.NotFoundUser))).getUserKey())
+                .build();
+    }
+
+    private User findUser(String userEmail) {
+        return userRepository.findBySocialEmail(userEmail).orElseThrow(() -> new BadRequestException(ResponseData.builder()
+                .code(ErrorCode.NotFoundUser.getCode())
+                .message(ErrorCode.NotFoundUser.getMessage())
+                .build()));
+    }
+
     public AccountTransactionHistoriesRequest inquireHistories(
             String email,
             String apiName,
@@ -110,29 +149,25 @@ public class FinancialRequestFactory {
         );
     }
 
-    private BaseRequestHeaderIncludeUserKey createRequestHeaderWithUserKey(
+    public UpdateAccountRequest depositAccount(
             String email,
-            String apiName
-    ){
-        String userEmail = findUser(email).getSocialEmail();
-        return BaseRequestHeaderIncludeUserKey.builder()
-                .apiName(apiName)
-                .transmissionDate(DateUtil.getTransmissionDate())
-                .transmissionTime(DateUtil.getTransmissionTime())
-                .institutionCode(financialNetworkUtil.getInstitutionCode())
-                .fintechAppNo(financialNetworkUtil.getFintechAppNo())
-                .apiServiceCode(apiName)
-                .institutionTransactionUniqueNo(financialNetworkUtil.getInstitutionTransactionUniqueNo())
-                .apiKey(financialNetworkUtil.getApiKey())
-                .userKey(userRepository.findBySocialEmail(userEmail).orElseThrow(()->new BadRequestException(ResponseData.createResponse(ErrorCode.NotFoundUser))).getUserKey())
-                .build();
+            String apiName,
+            String accountNo,
+            Long transactionBalance,
+            String summary
+    ) {
+        return new UpdateAccountRequest(
+                createRequestHeaderWithUserKey(
+                        email,
+                        apiName
+                ),
+                accountNo,
+                transactionBalance,
+                summary
+        );
     }
 
-    private User findUser(String userEmail) {
-        return userRepository.findBySocialEmail(userEmail).orElseThrow(() -> new BadRequestException(ResponseData.builder()
-                .code(ErrorCode.NotFoundUser.getCode())
-                .message(ErrorCode.NotFoundUser.getMessage())
-                .build()));
+    public RetrieveProductsRequest inquireProducts(String apiName) {
+        return new RetrieveProductsRequest(createRequestHeader(apiName));
     }
-
 }

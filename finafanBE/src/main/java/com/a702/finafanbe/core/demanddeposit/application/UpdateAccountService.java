@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UpdateDemandDepositAccountService {
+public class UpdateAccountService {
 
     private final ApiClientUtil apiClientUtil;
 

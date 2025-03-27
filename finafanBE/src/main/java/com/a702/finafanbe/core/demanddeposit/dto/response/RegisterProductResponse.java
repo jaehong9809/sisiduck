@@ -3,7 +3,7 @@ package com.a702.finafanbe.core.demanddeposit.dto.response;
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseResponseHeader;
 import lombok.Getter;
 
-public record RegisterAccountResponse(
+public record RegisterProductResponse(
         BaseResponseHeader Header,
         REC REC
 ) {
