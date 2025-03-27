@@ -1,17 +1,12 @@
 package com.a702.finafanbe.core.entertainer.application;
 
-import com.a702.finafanbe.core.demanddeposit.application.CreateAccountService;
-import com.a702.finafanbe.core.demanddeposit.application.RetrieveAccountService;
-import com.a702.finafanbe.core.demanddeposit.dto.request.CreateAccountRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.RetrieveProductsRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.RetrieveProductsResponse;
+import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainRepository;
-import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerPictureRepository;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsAccountRepository;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
@@ -19,19 +14,16 @@ import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavi
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
-import com.a702.finafanbe.global.common.financialnetwork.util.FinancialNetworkUtil;
-import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeader;
 import com.a702.finafanbe.global.common.response.ResponseData;
-import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.a702.finafanbe.global.common.exception.ErrorCode.*;
-import static com.a702.finafanbe.global.common.exception.ErrorCode.NOT_FOUND_DEMAND_DEPOSIT_PRODUCT;
 
 @Service
 @RequiredArgsConstructor
@@ -39,20 +31,17 @@ import static com.a702.finafanbe.global.common.exception.ErrorCode.NOT_FOUND_DEM
 public class EntertainSavingsService {
 
     private final EntertainRepository entertainRepository;
-    private final FinancialNetworkUtil financialNetworkUtil;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
-    private final CreateAccountService createAccountService;
-    private final RetrieveAccountService retrieveAccountService;
     private final UserRepository userRepository;
-    private final EntertainerPictureRepository entertainerPictureRepository;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
 
+    @Transactional
     public StarAccountResponse createEntertainerSavings(
-            CreateStarAccountRequest createStartAccountRequest
+            CreateStarAccountRequest createStartAccountRequest,
+            String accountNo
     ) {
         User user = findUser(createStartAccountRequest.userEmail());
         Long entertainerId = findEntertainerId(createStartAccountRequest.entertainer());
-        String userKey = userRepository.findById(user.getUserId()).orElseThrow(() ->new BadRequestException(ResponseData.createResponse(USER_NOT_FOUND))).getUserKey();
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
 
@@ -60,12 +49,9 @@ public class EntertainSavingsService {
                 user.getUserId(),
                 entertainerId,
                 createStartAccountRequest.accountName(),
-                createEntertainAccount(
-                        userKey,
-                        findDemandDepositProductUniqueNo()
-                )
+                accountNo
         );
-        return new StarAccountResponse(
+        return StarAccountResponse.of(
                 entertainerSavingsAccount.getUserId(),
                 entertainerSavingsAccount.getEntertainerId(),
                 entertainerSavingsAccount.getAccountName(),
@@ -87,49 +73,6 @@ public class EntertainSavingsService {
                         accountNo
                 )
         );
-    }
-
-    private String createEntertainAccount(String userKey, String demandDepositAccountTypeUniqueNo) {
-        CreateAccountRequest createAccountRequest = CreateAccountRequest.of(
-                BaseRequestHeaderIncludeUserKey.builder()
-                        .apiName("createDemandDepositAccount")
-                        .transmissionDate(DateUtil.getTransmissionDate())
-                        .transmissionTime(DateUtil.getTransmissionTime())
-                        .apiServiceCode("createDemandDepositAccount")
-                        .institutionCode(financialNetworkUtil.getInstitutionCode())
-                        .fintechAppNo(financialNetworkUtil.getFintechAppNo())
-                        .institutionTransactionUniqueNo(financialNetworkUtil.getInstitutionTransactionUniqueNo())
-                        .apiKey(financialNetworkUtil.getApiKey())
-                        .userKey(userKey)
-                        .build(),
-                demandDepositAccountTypeUniqueNo
-        );
-        String accountNo = createAccountService.createAccount(
-                "/demandDeposit/createDemandDepositAccount",
-                createAccountRequest
-        ).getBody().REC().getAccountNo();
-        return accountNo;
-    }
-
-    private String findDemandDepositProductUniqueNo() {
-        return retrieveAccountService.retrieveDemandDepositList(
-                        "/demandDeposit/inquireDemandDepositList",
-                        new RetrieveProductsRequest(
-                                BaseRequestHeader.create(
-                                        "inquireDemandDepositList",
-                                        financialNetworkUtil
-                                )
-                        )
-                )
-                .getBody()
-                .REC()
-                .stream()
-                .filter(rec -> "001-1-665c2fb533fe48".equals(rec.getAccountTypeUniqueNo()))
-                .findFirst()
-                .map(RetrieveProductsResponse.REC::getAccountTypeUniqueNo)
-                .orElseThrow(() -> new BadRequestException(
-                        ResponseData.createResponse(NOT_FOUND_DEMAND_DEPOSIT_PRODUCT)
-                ));
     }
 
     private void validateNoExistingAccount(Long userId, Long entertainerId) {

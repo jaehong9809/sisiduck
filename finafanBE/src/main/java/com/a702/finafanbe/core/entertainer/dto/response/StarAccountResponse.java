@@ -6,4 +6,17 @@ public record StarAccountResponse(
     String accountName,
     String accountNo
 ) {
+    public static StarAccountResponse of(
+            Long userId,
+            Long entertainerId,
+            String accountName,
+            String accountNo
+    ){
+        return new StarAccountResponse(
+                userId,
+                entertainerId,
+                accountName,
+                accountNo
+        );
+    }
 }

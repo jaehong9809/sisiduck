@@ -4,6 +4,9 @@ import com.a702.finafanbe.core.demanddeposit.dto.request.DepositRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoryRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
+import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
+import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
+import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
@@ -19,7 +22,7 @@ public class DemandDepositFacade {
 
     private final FinancialRequestFactory financialRequestFactory;
     private final ApiClientUtil apiClientUtil;
-//    private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
+    private final EntertainSavingsService entertainSavingsService;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -172,5 +175,14 @@ public class DemandDepositFacade {
                 ),
                 RetrieveProductsResponse.class
         );
+    }
+
+    public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
+        return entertainSavingsService.createEntertainerSavings(
+                createStarAccountRequest,
+                createAccount(
+                        createStarAccountRequest.userEmail(),
+                        createStarAccountRequest.accountName()
+                ).getBody().REC().getAccountNo());
     }
 }

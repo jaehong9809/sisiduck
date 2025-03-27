@@ -53,9 +53,7 @@ public class EntertainSavingsController {
 //            @AuthMember User user,
             @RequestBody CreateStarAccountRequest selectStarRequest
     ){
-        return ResponseUtil.success(entertainService.createEntertainerSavings(
-                selectStarRequest
-        ));
+        return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(selectStarRequest));
     }
 
     /*
