@@ -2,6 +2,7 @@ package com.a702.finafan.presentation.savings
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,17 +43,17 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 
 @Composable
-fun SavingAccountInfoScreen() {
+fun SavingAccountInfoScreen(
+    onCancelClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
             .windowInsetsPadding(WindowInsets.ime)
     ) {
-        // 공통 상단 바
         CommonBackTopBar(
             modifier = Modifier,
-            imageOnClick = { /* TODO: 뒤로 가기 */ },
             text = stringResource(R.string.saving_account_manage_title),
             isTextCentered = true
         )
@@ -134,7 +135,11 @@ fun SavingAccountInfoScreen() {
             )
 
             Text(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clickable {
+                        onCancelClick()
+                    },
                 text = stringResource(R.string.btn_account_cancel),
                 color = MainTextGray,
                 fontSize = 20.sp,
@@ -161,5 +166,5 @@ fun AccountDetailList() {
 @Preview
 @Composable
 fun SavingAccountInfoPreview() {
-    SavingAccountInfoScreen()
+    SavingAccountInfoScreen(onCancelClick = {})
 }

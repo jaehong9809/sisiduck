@@ -34,7 +34,10 @@ import kotlin.random.Random
 
 // 적금 거래 내역 상세 화면
 @Composable
-fun TransactionDetail(transaction: Transaction) {
+fun TransactionDetailScreen(
+    onNavigateClick: () -> Unit,
+    transaction: Transaction
+) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(transaction.image)
@@ -46,7 +49,11 @@ fun TransactionDetail(transaction: Transaction) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        CommonBackTopBar(imageOnClick = {}, textOnClick = {}, text = stringResource(R.string.saving_history_title))
+        CommonBackTopBar(
+            textOnClick = {
+                onNavigateClick()
+            },
+            text = stringResource(R.string.saving_history_title))
 
         Box(
             modifier = Modifier
@@ -87,9 +94,9 @@ fun TransactionDetail(transaction: Transaction) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewTransactionDetail() {
-    TransactionDetail(
+    TransactionDetailScreen(
 //        transaction = Transaction(true, "20자까지써볼게요그러면어떻게나올까요", 44444, 64444, "2025년 3월 24일 17:07")
-
+        onNavigateClick = {},
         transaction = Transaction(true, "20자까지써볼게요그러면어떻게나올까요", 44444, 64444, "2025년 3월 24일 17:07", "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg")
     )
 }
