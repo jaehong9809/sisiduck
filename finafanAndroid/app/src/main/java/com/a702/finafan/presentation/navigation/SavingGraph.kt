@@ -71,7 +71,6 @@ fun NavGraphBuilder.savingGraph(
                     launchSingleTop = true
                 }
             })
-            // TODO: 가입하기 -> 적금 계좌 개설 후 SavingMain 화면으로 이동 (이전의 화면은 사라짐 popUpTo 사용)
         }
 
         composable(NavRoutes.TransactionDetail.route) {
@@ -95,8 +94,11 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.SavingCancel.route) {
-            SavingCancelScreen()
-            // TODO: 해지하기 -> 해지 API 호출 후 확인 다이얼로그 띄우기 -> 메인으로 이동 (popUpTo 사용)
+            SavingCancelScreen(onComplete = {
+                navController.navigate(NavRoutes.Main.route) {
+                    popUpTo(NavRoutes.Main.route)
+                }
+            })
         }
 
     }

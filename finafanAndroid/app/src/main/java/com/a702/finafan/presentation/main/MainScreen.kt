@@ -28,7 +28,8 @@ fun MainScreen(
         Row {
             MainSquareIconButton(
                 onClick = {
-                    navController.navigate(NavRoutes.SavingMain.route)
+                    // TODO: 적금계좌 고유번호 pk 넘기기
+                    navController.navigate(NavRoutes.SavingMain.route + "/11")
                 },
                 icon = {
                     Icon(
