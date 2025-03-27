@@ -15,22 +15,22 @@ class SavingViewModel @Inject constructor(
     private val repository: SavingRepository
 ): ViewModel() {
 
-    private val _uiState = MutableStateFlow(StarState())
-    val uiState: StateFlow<StarState> = _uiState.asStateFlow()
+    private val _starState = MutableStateFlow(StarState())
+    val starState: StateFlow<StarState> = _starState.asStateFlow()
 
     fun fetchStars() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _starState.value = _starState.value.copy(isLoading = true)
 
             try {
                 val stars = repository.getStars()
 
-                _uiState.value = _uiState.value.copy(
+                _starState.value = _starState.value.copy(
                     stars = stars,
                     isLoading = false
                 )
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
+                _starState.value = _starState.value.copy(
                     isLoading = false,
                     error = e
                 )

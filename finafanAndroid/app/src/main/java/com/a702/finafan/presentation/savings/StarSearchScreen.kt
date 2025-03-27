@@ -43,7 +43,7 @@ fun StarSearchScreen(
     val selectStar = remember { mutableStateOf(Star()) }
 
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.starState.collectAsState()
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
