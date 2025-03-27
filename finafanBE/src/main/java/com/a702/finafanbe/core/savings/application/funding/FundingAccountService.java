@@ -1,6 +1,6 @@
-package com.a702.finafanbe.core.savings.application;
+package com.a702.finafanbe.core.savings.application.funding;
 
-import com.a702.finafanbe.core.savings.dto.CreateFundingRequest;
+import com.a702.finafanbe.core.savings.dto.fundingDto.CreateFundingRequest;
 import com.a702.finafanbe.core.savings.entity.SavingsAccount;
 import com.a702.finafanbe.core.savings.entity.SavingsItem;
 import com.a702.finafanbe.core.savings.entity.infrastructure.SavingsAccountRepository;

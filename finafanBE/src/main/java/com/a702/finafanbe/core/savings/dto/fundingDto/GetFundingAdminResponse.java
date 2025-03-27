@@ -1,4 +1,4 @@
-package com.a702.finafanbe.core.savings.dto;
+package com.a702.finafanbe.core.savings.dto.fundingDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

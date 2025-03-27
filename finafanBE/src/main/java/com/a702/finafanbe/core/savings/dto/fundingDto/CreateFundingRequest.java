@@ -1,6 +1,5 @@
-package com.a702.finafanbe.core.savings.dto;
+package com.a702.finafanbe.core.savings.dto.fundingDto;
 
-import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

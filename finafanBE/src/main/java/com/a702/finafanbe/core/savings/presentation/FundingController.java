@@ -1,10 +1,10 @@
 package com.a702.finafanbe.core.savings.presentation;
 
-import com.a702.finafanbe.core.savings.application.FundingService;
-import com.a702.finafanbe.core.savings.dto.CreateFundingRequest;
-import com.a702.finafanbe.core.savings.dto.GetFundingDetailResponse;
-import com.a702.finafanbe.core.savings.dto.GetFundingResponse;
-import com.a702.finafanbe.core.savings.dto.ParticipateFundingRequest;
+import com.a702.finafanbe.core.savings.application.funding.FundingService;
+import com.a702.finafanbe.core.savings.dto.fundingDto.CreateFundingRequest;
+import com.a702.finafanbe.core.savings.dto.fundingDto.GetFundingDetailResponse;
+import com.a702.finafanbe.core.savings.dto.fundingDto.GetFundingResponse;
+import com.a702.finafanbe.core.savings.dto.fundingDto.ParticipateFundingRequest;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
