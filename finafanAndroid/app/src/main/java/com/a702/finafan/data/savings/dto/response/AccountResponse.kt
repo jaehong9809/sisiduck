@@ -4,9 +4,9 @@ import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 
 data class AccountResponse(
-    val accountId: Long,
-    val accountNo: String,
-    val bank: Bank
+    val accountId: Long = 0,
+    val accountNo: String = "",
+    val bank: Bank = Bank()
 )
 
 fun AccountResponse.toDomain(): Account {

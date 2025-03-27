@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.a702.finafan.domain.savings.model.Star
+import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.presentation.savings.SavingAccountInfoScreen
 import com.a702.finafan.presentation.savings.SavingCancelScreen
 import com.a702.finafan.presentation.savings.SavingDepositScreen
@@ -15,7 +16,6 @@ import com.a702.finafan.presentation.savings.SavingNameInputScreen
 import com.a702.finafan.presentation.savings.SavingSelectAccountScreen
 import com.a702.finafan.presentation.savings.StarSearchScreen
 import com.a702.finafan.presentation.savings.TermGuideScreen
-import com.a702.finafan.presentation.savings.Transaction
 import com.a702.finafan.presentation.savings.TransactionDetailScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 import com.google.gson.Gson
@@ -26,9 +26,11 @@ fun NavGraphBuilder.savingGraph(
     navigation(
         startDestination = NavRoutes.Main.route, route = NavRoutes.Saving.route
     ) {
-        composable(NavRoutes.SavingMain.route + "/{savingId}") { backStackEntry ->
-            val savingId = backStackEntry.arguments?.getInt("savingId")
-            SavingMainScreen()
+        composable(NavRoutes.SavingMain.route + "/{savingAccountId}") { backStackEntry ->
+            val savingViewModel: SavingViewModel = hiltViewModel()
+            val savingAccountId = backStackEntry.arguments?.getLong("savingAccountId")
+
+            SavingMainScreen(savingViewModel, savingAccountId)
         }
 
         composable(NavRoutes.SavingDeposit.route) {
@@ -81,9 +83,11 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.TransactionDetail.route) {
+
+
             TransactionDetailScreen(
                 onNavigateClick = { navController.popBackStack() },
-                transaction = Transaction(true, "test", 44444, 64444, "2025년 3월 24일 17:07", "")
+                transaction = Transaction()
             )
         }
 

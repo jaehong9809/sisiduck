@@ -18,11 +18,6 @@ import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
 
-data class Account(
-    val bankName: String,
-    val accountNum: String
-)
-
 // 계좌번호 정보 아이템 (은행 사진 + 은행명 + 계좌번호)
 @Composable
 fun AccountInfoItem(

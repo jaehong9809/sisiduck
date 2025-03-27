@@ -9,5 +9,5 @@ data class SavingAccount(
     val interestRate: String,
     val duration: Int,
     val imageUrl: String,
-    val connectBank: Bank
+    val connectAccount: Account
 )

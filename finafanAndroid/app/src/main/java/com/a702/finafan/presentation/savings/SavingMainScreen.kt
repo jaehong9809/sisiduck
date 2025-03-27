@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
@@ -38,40 +39,64 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.utils.StringUtil
-
-data class SavingData(
-    val duration: Int,
-    val title: String,
-    val amount: Long,
-    val account: String,
-    val image: String,
-    val transactionList: MutableList<Transaction>
-)
-
-data class Transaction(
-    val isFirst: Boolean,
-    val title: String,
-    val amount: Long,
-    val balance: Long,
-    val time: String,
-    val image: String? = null
-)
+import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.domain.savings.model.Transaction
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 적금 거래 내역 화면
 @Composable
 fun SavingMainScreen(
-//    onNavigateBack: () -> Unit
+    viewModel: SavingViewModel = viewModel(),
+    savingAccountId: Long? = null
 ) {
-//    val transactions = mutableListOf(
-//        Transaction(true, "이찬원 사랑해", 44444, 64444, "17:05"),
-//        Transaction(false, "오늘 너무 귀엽다 찬원아", 10000, 20000, "17:05"),
-//        Transaction(false, "20자까지 써볼게요 그러면 어떻게 나올까요", 10000, 20000, "17:05")
-//    )
 
-    val transactions = mutableListOf<Transaction>()
+    val accountInfo = SavingAccount(
+        savingAccountId = 30,
+        accountNo = "123-456-789000",
+        accountName = "이찬원 적금",
+        amount = 40000,
+        interestRate = "1.80%",
+        duration = 30,
+        createdDt = "2025-03-01",
+        imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg",
+        connectAccount =
+            Account(
+                accountId = 1234,
+                accountNo = "456-789-1000",
+                bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
+            )
+    )
 
-    val info = SavingData(30, "찬원이적금", 30400000, "123-456-789000",
-        "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg", transactions)
+//    val transactions = mutableListOf<Transaction>()
+    val transactions = mutableListOf(
+        Transaction(
+            amount = 40000,
+            balance = 10000,
+            message = "이찬원 사랑해",
+            date = "2025-03-14",
+            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
+        ),
+        Transaction(
+            amount = 40000,
+            balance = 10000,
+            message = "오늘 너무 귀여워",
+            date = "2025-03-14",
+            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
+        ),
+        Transaction(
+            amount = 40000,
+            balance = 10000,
+            message = "진짜 귀엽다",
+            date = "2025-03-14",
+            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
+        ),
+    )
+
+    // TODO: 적금 계좌 정보 조회 API 호출
+
+    // TODO: 적금 입금 내역 조회 API 호출
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -83,14 +108,14 @@ fun SavingMainScreen(
             horizontalAlignment = CenterHorizontally
         ) {
             item {
-                SavingHeader(info)
+                SavingHeader(accountInfo)
             }
 
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            if (info.transactionList.isEmpty()) {
+            if (transactions.isEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
 
@@ -112,11 +137,11 @@ fun SavingMainScreen(
 }
 
 @Composable
-fun SavingHeader(info: SavingData) {
+fun SavingHeader(info: SavingAccount) {
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(info.image)
+            .data(info.imageUrl)
             .build()
     )
 
@@ -165,7 +190,7 @@ fun SavingHeader(info: SavingData) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = info.title,
+                text = info.accountName,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = MainWhite
@@ -177,7 +202,7 @@ fun SavingHeader(info: SavingData) {
                 color = MainWhite
             )
             Text(
-                text = info.account,
+                text = info.accountNo,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
                 color = MainWhite

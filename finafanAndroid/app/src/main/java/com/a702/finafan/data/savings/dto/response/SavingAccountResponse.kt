@@ -1,6 +1,6 @@
 package com.a702.finafan.data.savings.dto.response
 
-import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.SavingAccount
 
 data class SavingAccountResponse(
@@ -12,7 +12,7 @@ data class SavingAccountResponse(
     val interestRate: String,
     val duration: Int,
     val imageUrl: String,
-    val connectBank: Bank
+    val connectAccount: Account
 )
 
 fun SavingAccountResponse.toDomain(): SavingAccount {
@@ -25,6 +25,6 @@ fun SavingAccountResponse.toDomain(): SavingAccount {
         interestRate = this.interestRate,
         duration = this.duration,
         imageUrl = this.imageUrl,
-        connectBank = this.connectBank
+        connectAccount = this.connectAccount
     )
 }
