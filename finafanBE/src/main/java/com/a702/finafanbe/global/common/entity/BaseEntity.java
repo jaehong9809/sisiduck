@@ -17,10 +17,6 @@ public class BaseEntity {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-
-    @Column(name = "deleted_at",nullable = false)
-    private LocalDateTime deletedAt;
 }

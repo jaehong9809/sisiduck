@@ -21,20 +21,23 @@ public class FundingGroup extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "account_id")
+    @Column(name = "account_id", nullable = false)
     private Long accountId;
 
-    @Column(name = "entertainer_id")
+    @Column(name = "entertainer_id", nullable = false)
     private Long entertainerId;
 
-    @Column(name = "funding_name")
+    @Column(name = "funding_name", nullable = false)
     private String name;
 
-    @Column(name = "funding_description")
+    @Column(name = "funding_description", nullable = false)
     private String description;
 
-    @Column(name = "goal_amount")
+    @Column(name = "goal_amount", nullable = false)
     private Long goalAmount;
+
+    @Column(name = "funding_expiry_date", nullable = false)
+    private LocalDateTime fundingExpiryDate;
 
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
@@ -48,22 +51,24 @@ public class FundingGroup extends BaseEntity {
     }
 
     @Builder
-    private FundingGroup(Long accountId, Long entertainerId, String name, String description, Long goalAmount, FundingStatus status) {
+    private FundingGroup(Long accountId, Long entertainerId, String name, String description, Long goalAmount, LocalDateTime fundingExpiryDate, FundingStatus status) {
         this.accountId = accountId;
         this.entertainerId = entertainerId;
         this.name = name;
         this.description = description;
         this.goalAmount = goalAmount;
+        this.fundingExpiryDate = fundingExpiryDate;
         this.status = status;
     }
 
-    public static FundingGroup create(Long accountId, Long entertainerId, String name, String description, Long goalAmount, FundingStatus status) {
+    public static FundingGroup create(Long accountId, Long entertainerId, String name, String description, Long goalAmount, LocalDateTime fundingExpiryDate, FundingStatus status) {
         return FundingGroup.builder()
                     .accountId(accountId)
                     .entertainerId(entertainerId)
                     .name(name)
                     .description(description)
                     .goalAmount(goalAmount)
+                    .fundingExpiryDate(fundingExpiryDate)
                     .status(status)
                     .build();
     }

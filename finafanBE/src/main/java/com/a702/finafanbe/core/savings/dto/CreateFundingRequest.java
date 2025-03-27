@@ -17,6 +17,4 @@ public class CreateFundingRequest {
     private String description;
 
     private Long goalAmount;
-
-    private String accountTypeUniqueNo;
 }

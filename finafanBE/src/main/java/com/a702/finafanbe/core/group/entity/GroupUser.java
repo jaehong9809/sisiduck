@@ -19,10 +19,10 @@ public class GroupUser extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "funding_group_id")
+    @Column(name = "funding_group_id", nullable = false)
     private Long fundingGroupId;
 
     @Enumerated(EnumType.STRING)

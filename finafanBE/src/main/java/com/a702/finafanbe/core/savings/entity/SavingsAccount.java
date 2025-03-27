@@ -19,13 +19,13 @@ public class SavingsAccount extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     protected Long userId;
 
-    @Column(name = "savings_item_id")
+    @Column(name = "savings_item_id", nullable = false)
     protected Long savingsItemId;
 
-    @Column(name = "account_no")
+    @Column(name = "account_no", nullable = false)
     protected String accountNo;
 
     @Column(name = "account_nickname")
@@ -33,7 +33,7 @@ public class SavingsAccount extends BaseEntity {
 
     protected Long balance;
 
-    @Column(name = "account_expiry_date")
+    @Column(name = "account_expiry_date", nullable = false)
     protected LocalDateTime accountExpiryDate;
 
     @Builder

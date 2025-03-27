@@ -30,8 +30,10 @@ public class GroupBoard extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private Long amount;
 
+    @Column(nullable = false)
     private String imageUrl;
 
     private LocalDateTime deletedAt;
