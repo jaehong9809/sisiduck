@@ -15,6 +15,8 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import java.time.LocalDate
 
@@ -40,6 +42,7 @@ data class Funding(
 
 @Composable
 fun FundingScreen(
+    navController: NavHostController
 ) {
     val myStars: List<Star> = getMyStars()
     var fundings by remember { mutableStateOf<List<Funding>>(getAllFundings()) }
@@ -66,26 +69,26 @@ fun FundingScreen(
             ),
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 14.dp)
         )
-        FundingList(fundings, myStars)
+        FundingList(fundings, myStars, navController)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun FundingScreenPreview() {
-    FundingScreen()
+//    FundingScreen()
 }
 
 fun getAllFundings(): List<Funding> {
     println("모든 모금 조회 API 호출")
     return listOf(
         Funding(
-        1, 101, 0, "임영웅",
+        0, 101, 0, "임영웅",
         "데뷔 5주년 기념 서포트",
             LocalDate.of(2025, 4, 8), 2_000_000, 1_500_000
         ),
         Funding(
-            2, 102, 1, "이찬원",
+            1, 102, 1, "이찬원",
             "뮤비 촬영장 커피차 서포트",
             LocalDate.of(2025, 5, 10), 1_500_000, 1_300_000
         )
@@ -96,7 +99,7 @@ fun getParticipatingFundings(): List<Funding> {
     println("참여 중인 모금 조회 API 호출")
     return listOf(
         Funding(
-        2, 102, 1, "이찬원",
+        1, 102, 1, "이찬원",
         "뮤비 촬영장 커피차 서포트",
             LocalDate.of(2025, 5, 10), 1_500_000, 1_300_000
         )
@@ -106,7 +109,7 @@ fun getParticipatingFundings(): List<Funding> {
 fun getMyFundings(): List<Funding> {
     println("내가 생성한 모금 조회 API 호출")
     return listOf(Funding(
-        1, 101, 0, "임영웅",
+        0, 101, 0, "임영웅",
         "데뷔 5주년 기념 서포트",
         LocalDate.of(2025, 4, 8), 2_000_000, 1_500_000)
     )

@@ -32,6 +32,8 @@ fun NavGraph(
             savingGraph(navController = navController)
             accountGraph(navController)
 
+            fundingGraph(navController)
+
         }
     }
 

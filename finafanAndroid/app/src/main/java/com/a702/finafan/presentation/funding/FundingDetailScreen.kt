@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +45,8 @@ import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.ui.theme.starThemes
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.presentation.funding.Deposit
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 import java.time.LocalDate
 
 @Composable
@@ -51,6 +54,22 @@ fun FundingDetailScreen(
     star: Star,
     fundingId: Int
 ) {
+    val navController = LocalNavController.current
+    val agreementLiveData = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<Boolean>("agreement")
+
+    val agreement = agreementLiveData!!
+
+    LaunchedEffect(Unit) {
+        val result = false // API 요청 (예제 함수)
+        navController.currentBackStackEntry?.savedStateHandle?.set("agreement", result)
+    }
+
+// 기본값을 설정할 때 (API 요청 실패하면 false로 설정)
+    if (agreement.value == null) {
+        navController.currentBackStackEntry?.savedStateHandle?.set("agreement", false)
+    }
     val funding: Funding = getFundingDetail(fundingId)
     val progress: Int = StringUtil.formatPercentage(
         funding.fundingCurrentAmount, funding.fundingGoalAmount
@@ -61,7 +80,6 @@ fun FundingDetailScreen(
         starThemes[funding.starIndex].end
     )
 
-    val isParticipant: Boolean = false
     var deposits by remember { mutableStateOf<List<Deposit>>(getAllDeposits()) }
 
     Box(
@@ -76,11 +94,11 @@ fun FundingDetailScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 60.dp)
         ) {
-            CommonBackTopBar(modifier = Modifier.background(Color.Transparent), imageOnClick = {}, text = "모금 보기")
+            CommonBackTopBar(modifier = Modifier.background(Color.Transparent), text = "모금 보기")
 
             FundingDetailHeader(funding, star, colorSet)
 
-            if(isParticipant) {
+            if(agreement?.value == true) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -143,7 +161,7 @@ fun FundingDetailScreen(
                 }
             }
         }
-        if(isParticipant) {
+        if(agreement?.value == true) {
             GradSelectBottomButton(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
@@ -159,7 +177,9 @@ fun FundingDetailScreen(
             CustomGradBottomButton(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
-                onClick = {},
+                onClick = {
+                    navController.navigate(NavRoutes.FundingJoin.route + "/${fundingId}")
+                },
                 text = "참가하기",
                 gradientColor = listOf(
                     colorSet[0], colorSet[2]
@@ -173,12 +193,12 @@ fun FundingDetailScreen(
 fun getFundingDetail(id: Int): Funding {
     val fundings: List<Funding> = listOf(
         Funding(
-            1, 101, 0, "임영웅",
+            0, 101, 0, "임영웅",
             "데뷔 5주년 기념 서포트",
             LocalDate.of(2025, 4, 8), 2_000_000, 1_500_000
         ),
         Funding(
-            2, 102, 1, "이찬원",
+            1, 102, 1, "이찬원",
             "뮤비 촬영장 커피차 서포트",
             LocalDate.of(2025, 5, 10), 1_500_000, 1_300_000
         )

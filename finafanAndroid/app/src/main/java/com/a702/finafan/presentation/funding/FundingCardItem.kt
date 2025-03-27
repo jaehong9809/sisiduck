@@ -27,6 +27,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.common.ui.component.Badge
@@ -43,7 +45,8 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun FundingCardItem(
     star: Star,
-    funding: Funding
+    funding: Funding,
+    navController: NavHostController
 ) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
@@ -58,6 +61,7 @@ fun FundingCardItem(
             .background(MainWhite)
             .padding(20.dp)
             .clickable {
+                navController.navigate("funding_detail/${funding.id}")
             }
     ) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween ) {

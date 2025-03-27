@@ -9,15 +9,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.GradSelectBottomButton
 import com.a702.finafan.common.ui.theme.MainWhite
 
 @Composable
 fun FundingTermScreen(
-//    funding: Funding
+    navController: NavController,
+    fundingId: Int
 ) {
     Box(
         modifier = Modifier
@@ -29,7 +30,6 @@ fun FundingTermScreen(
         ) {
             CommonBackTopBar(
                 modifier = Modifier,
-                imageOnClick = {},
                 text = "상품 이용 약관",
                 isTextCentered = true
             )
@@ -44,8 +44,19 @@ fun FundingTermScreen(
         GradSelectBottomButton(
             modifier = Modifier
                 .align(Alignment.BottomCenter),
-            onLeftClick = {},
-            onRightClick = {},
+            onLeftClick = {
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("agreement", true)
+                joinFunding(1, fundingId) // 모금 참가 API
+                navController.popBackStack()
+            },
+            onRightClick = {
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("agreement", false)
+                navController.popBackStack()
+            },
             left = "동의",
             right = "동의 안함",
         )
@@ -54,8 +65,12 @@ fun FundingTermScreen(
 
 }
 
-@Composable
-@Preview
-fun FundingTermScreenPreview() {
-    FundingTermScreen()
+fun joinFunding(userId: Int, fundingId: Int) : Boolean {
+    return true
 }
+
+//@Composable
+//@Preview
+//fun FundingTermScreenPreview() {
+//    FundingTermScreen()
+//}
