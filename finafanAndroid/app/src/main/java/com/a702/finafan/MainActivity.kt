@@ -11,7 +11,13 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.a702.finafan.common.ui.theme.FinAFanTheme
+import com.a702.finafan.presentation.ble.UuidListScreen
+import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.main.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,12 +28,29 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FinAFanTheme {
+                val navController = rememberNavController()
+
                 Scaffold(
                     modifier = Modifier
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                 ) { innerPadding ->
-                    MainScreen(modifier = Modifier.padding(innerPadding))
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = "main",
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        composable("main") {
+                            MainScreen(navController = navController)
+                        }
+                        composable("chat") {
+                            ChatScreen(viewModel = hiltViewModel())
+                        }
+                        composable("ble") {
+                            UuidListScreen(viewModel = hiltViewModel())
+                        }
+                    }
                 }
             }
         }
