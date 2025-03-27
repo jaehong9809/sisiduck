@@ -62,8 +62,9 @@ public class FundingQueryRepository {
                                 e.entertainerName,
                                 e.entertainerProfileUrl
                         ),
+                        fg.id,
                         fg.name,
-                        JPAExpressions.select(fa.balance.sum())
+                        JPAExpressions.select(fa.balance.sum().coalesce(0L))
                                 .from(fa)
                                 .where(fa.fundingGroupId.eq(fg.id), fa.deletedAt.isNull()),
                         fg.goalAmount,
@@ -116,8 +117,9 @@ public class FundingQueryRepository {
                                                         ))
                                         )
                         ),
+                        fg.name,
                         fg.goalAmount,
-                        JPAExpressions.select(fa.balance.sum())
+                        JPAExpressions.select(fa.balance.sum().coalesce(0L))
                                 .from(fa)
                                 .where(fa.fundingGroupId.eq(fg.id), fa.deletedAt.isNull()),
                         fg.fundingExpiryDate,

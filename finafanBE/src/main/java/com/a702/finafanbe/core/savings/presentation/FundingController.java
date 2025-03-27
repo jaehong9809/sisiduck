@@ -34,17 +34,17 @@ public class FundingController {
     @GetMapping
     public ResponseEntity<ResponseData<List<GetFundingResponse>>> getFunding(
             @RequestParam(defaultValue = "all") String filter) {
-        Long userId = 1L;
+        Long userId = 2L;
         return ResponseUtil.success(fundingService.getFunding(userId, filter));
     }
 
     @GetMapping("/{fundingGroupId}")
     public ResponseEntity<ResponseData<GetFundingDetailResponse>> getFunding(@PathVariable Long fundingGroupId) {
-        Long userId = 1L;
+        Long userId = 2L;
         return ResponseUtil.success(fundingService.getFundingDetail(fundingGroupId, userId));
     }
 
-    @PostMapping("/{fundingGroupId}")
+    @GetMapping("/{fundingGroupId}/join")
     public ResponseEntity<?> joinFunding(@PathVariable Long fundingGroupId) {
         Long userId = 2L;
         fundingService.joinFunding(userId, fundingGroupId);
@@ -53,7 +53,7 @@ public class FundingController {
 
     @PostMapping("/{fundingGroupId}/deposit")
     public ResponseEntity<?> participateFunding(@PathVariable Long fundingGroupId, @RequestBody ParticipateFundingRequest request) {
-        Long userId = 1L;
+        Long userId = 2L;
         fundingService.participateFunding(request, userId, fundingGroupId);
         return ResponseUtil.success();
     }

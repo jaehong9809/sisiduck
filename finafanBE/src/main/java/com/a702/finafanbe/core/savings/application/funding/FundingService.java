@@ -10,13 +10,12 @@ import com.a702.finafanbe.core.savings.entity.infrastructure.FundingApplicationR
 import com.a702.finafanbe.core.savings.entity.SavingsAccount;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +38,11 @@ public class FundingService {
     // 펀딩 생성
     @Transactional
     public void createFunding(CreateFundingRequest request, Long userId) {
-        String account = "111111111";
+
+        Random random = new Random();
+        int rand = 100 + random.nextInt(899);
+
+        String account = "111111111"+ String.valueOf(rand);
 
         // String account = apiSavingsAccountService.createAccount(request);
         SavingsAccount fundingAccount = fundingAccountService.createFundingAccount(request, userId, account);
@@ -57,7 +60,9 @@ public class FundingService {
     public GetFundingDetailResponse getFundingDetail(Long fundingGroupId, Long userId) {
         boolean isJoined = groupUserRepository.existsByFundingGroupIdAndUserId(fundingGroupId, userId);
 
-        GetFundingDetailResponse response = fundingQueryRepository.findFundingDetail(fundingGroupId);
+        GetFundingDetailResponse response = Optional.ofNullable(fundingQueryRepository.findFundingDetail(fundingGroupId))
+                .orElseThrow(() -> new EntityNotFoundException("펀딩 상세 정보 없음"));
+
         response.setParticipated(isJoined);
 
         List<FundingApplicationResponse> applicationResponse = new ArrayList<>();

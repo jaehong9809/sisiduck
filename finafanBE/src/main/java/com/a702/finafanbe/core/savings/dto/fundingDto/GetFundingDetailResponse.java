@@ -18,6 +18,8 @@ public class GetFundingDetailResponse {
 
     private GetFundingAdminResponse adminUser;
 
+    private String fundingName;
+
     private Long goalAmount;
 
     private Long currentAmount;
@@ -37,6 +39,7 @@ public class GetFundingDetailResponse {
     public GetFundingDetailResponse(
             EntertainerResponse entertainer,
             GetFundingAdminResponse adminUser,
+            String fundingName,
             Long goalAmount,
             Long currentAmount,
             LocalDateTime fundingExpiryDate,
@@ -44,6 +47,7 @@ public class GetFundingDetailResponse {
     ) {
         this.entertainer = entertainer;
         this.adminUser = adminUser;
+        this.fundingName = fundingName;
         this.goalAmount = goalAmount;
         this.currentAmount = currentAmount;
         this.fundingExpiryDate = fundingExpiryDate; // LocalDate → LocalDateTime 변환
