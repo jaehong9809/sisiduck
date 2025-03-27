@@ -109,7 +109,7 @@ async def ask_question(request: QuestionRequest):
     async def run_chain():
         try:
             input_data = await classify_query(question)
-            await router_chain.ainvoke(input_data)
+            await router_chain.with_config(config={"tags": ["chatbot-seq"], "run_name": "chatbot-main"}).ainvoke(input_data)
         except Exception as e:
             print(f"⚠️ 오류 발생: {e}")
             await callback.queue.put("죄송합니다, 처리가 어려워요.\n")
