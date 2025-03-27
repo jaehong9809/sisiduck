@@ -53,8 +53,6 @@ public class EntertainSavingsController {
         return ResponseUtil.success(entertainService.findStars());
     }
 
-    //TODO 검색.
-
     @PostMapping("/savings")
     public ResponseEntity<ResponseData<StarAccountResponse>> createSavings(
 //            @AuthMember User user,
@@ -64,8 +62,7 @@ public class EntertainSavingsController {
     }
 
     /*
-    * TODO 입금이도 되지만 자동이체도 해야하나?라고하면 해야하니까..
-    * scheduler로 한 달 마다 이체가 되도록하면됨.
+    * TODO scheduler로 한 달 마다 이체가 되도록하면됨.
     *
     * */
     @PutMapping("/despoit")
