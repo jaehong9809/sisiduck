@@ -7,7 +7,7 @@ public class SSAFYUserInfo {
 
     @Getter
     @JsonProperty("id")
-    private String socialId;
+    private String socialEmail;
 
     @JsonProperty("ssafy_member")
     private SSAFYMember ssafyMember;

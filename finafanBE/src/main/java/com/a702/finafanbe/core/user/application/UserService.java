@@ -6,7 +6,7 @@ import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
-import com.a702.finafanbe.global.common.financialnetwork.entity.FinancialNetworkUtil;
+import com.a702.finafanbe.global.common.financialnetwork.util.FinancialNetworkUtil;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -42,7 +42,7 @@ public class UserService {
         User user = findUser(userEmail);
         ResponseEntity<UserFinancialNetworkResponse> exchange = requestFinancialNetwork(
                 "https://finopenapi.ssafy.io/ssafy/api/v1/member",
-                user.getSocialId()
+                user.getSocialEmail()
         );
         userRepository.save(
                 User.of(
@@ -58,13 +58,13 @@ public class UserService {
         User user = findUser(userEmail);
         ResponseEntity<UserFinancialNetworkResponse> exchange = requestFinancialNetwork(
                 "https://finopenapi.ssafy.io/ssafy/api/v1/member/search",
-                user.getSocialId()
+                user.getSocialEmail()
         );
         return exchange.getBody();
     }
 
     private User findUser(String userEmail) {
-        return userRepository.findBySocialId(userEmail).orElseThrow(() -> new BadRequestException(ResponseData.builder()
+        return userRepository.findBySocialEmail(userEmail).orElseThrow(() -> new BadRequestException(ResponseData.builder()
                 .code(ErrorCode.NotFoundUser.getCode())
                 .message(ErrorCode.NotFoundUser.getMessage())
                 .build()));

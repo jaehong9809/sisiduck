@@ -1,5 +1,6 @@
 package com.a702.finafanbe.global.common.response;
 
+import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -22,4 +23,10 @@ public class ResponseData<T> {
     @JsonProperty("data")
     private T data = null;
 
+    public static ResponseData createResponse(ErrorCode errorCode){
+        return ResponseData.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+    }
 }

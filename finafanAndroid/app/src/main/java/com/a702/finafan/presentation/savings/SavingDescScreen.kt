@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradButton
 import com.a702.finafan.common.ui.theme.MainBlack
@@ -32,14 +34,19 @@ import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.SavingDescBg
 import com.a702.finafan.common.ui.theme.SavingDescGray
 import com.a702.finafan.common.ui.theme.gradientBlue
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 
+// 적금 상품 설명 화면
 @Composable
 fun SavingDescScreen() {
+
+    val navController = LocalNavController.current
 
     Column(
         modifier = Modifier.fillMaxSize().background(MainWhite)
     ) {
-        CommonBackTopBar(imageOnClick = {}, text = "스타 적금", isTextCentered = true)
+        CommonBackTopBar(text = stringResource(R.string.saving_item_title), isTextCentered = true)
 
         Column(
             modifier = Modifier
@@ -51,10 +58,14 @@ fun SavingDescScreen() {
             SecondDesc()
             ThirdDesc()
 
-            // TODO: 연결된 입출금 계좌가 있을 경우 가입 페이지로 이동, 아닐 경우 1원 송금 페이지로 이동
+            // TODO: 연결된 출금 계좌 있는지 확인하는 API 연결
+            val accountExist = true
+
             PrimaryGradButton(
-                onClick = {},
-                text = "가입하기",
+                onClick = {
+                    navController.navigate(if(accountExist) NavRoutes.StarSearch.route else NavRoutes.Account.route)
+                },
+                text = stringResource(R.string.btn_join),
                 modifier = Modifier
                     .align(CenterHorizontally)
                     .padding(top = 32.dp, bottom = 32.dp, start = 16.dp, end = 16.dp)
@@ -82,7 +93,7 @@ fun FirstDesc() {
         )
         Text(
             modifier = Modifier.padding(top = 4.dp),
-            text = "스타 적금",
+            text = stringResource(R.string.saving_item_title),
             style = TextStyle(
                 brush = gradientBlue,
                 fontSize = 32.sp,
@@ -204,13 +215,14 @@ fun DescItem(title: String, money: String) {
 // 약관 리스트
 @Composable
 fun TermsButtonList() {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        TermGuideItem("상품 안내", onClick = {})
-        TermGuideItem("금리 안내", onClick = {})
-        TermGuideItem("이용 약관", onClick = {})
-        TermGuideItem("상품 설명서", onClick = {})
+        TermGuideItem(stringResource(R.string.product_info))
+        TermGuideItem(stringResource(R.string.product_interest_rate))
+        TermGuideItem(stringResource(R.string.term_info))
+        TermGuideItem(stringResource(R.string.product_guide))
     }
 }
 

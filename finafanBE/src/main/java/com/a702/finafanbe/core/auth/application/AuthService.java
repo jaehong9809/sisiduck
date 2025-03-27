@@ -24,7 +24,7 @@ public class AuthService {
         SSAFYUserInfo userInfo = ssafyOAuthProvider.getUserInfo(ssafyAccessToken);
 
         User user = findOrCreateUser(
-                userInfo.getSocialId(),
+                userInfo.getSocialEmail(),
                 userInfo.getNickname()
         );
 
@@ -34,21 +34,21 @@ public class AuthService {
     }
 
     private User findOrCreateUser(
-            String socialId,
+            String socialEmail,
             String nickname
     ) {
-        return userRepository.findBySocialId(
-                socialId
+        return userRepository.findBySocialEmail(
+                socialEmail
         ).orElseGet(() -> createUser(
-                socialId,
+                socialEmail,
                 nickname
         ));
     }
 
-    private User createUser(String socialId, String nickname) {
-        String generatedNickName = nickname + "#" + socialId;
+    private User createUser(String socialEmail, String nickname) {
+        String generatedNickName = nickname + "#" + socialEmail;
         return userRepository.save(User.of(
-                socialId,
+                socialEmail,
                 generatedNickName
         ));
     }
