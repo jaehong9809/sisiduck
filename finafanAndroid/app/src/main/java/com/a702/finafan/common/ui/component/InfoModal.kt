@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
-import com.a702.finafan.presentation.savings.Star
+import com.a702.finafan.domain.savings.model.Star
 
 // 스타 추가 다이얼로그
 @Composable
@@ -29,13 +29,13 @@ fun AddStarDialog(
     ) {
         CircleBorderImage(
             modifier = Modifier.size(50.dp),
-            imageUrl = star.image
+            imageUrl = star.entertainerProfileUrl
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = star.name,
+            text = star.entertainerName,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium,
             color = MainBlack,
@@ -48,7 +48,7 @@ fun AddStarDialog(
 @Composable
 fun AddStarDialogPreview() {
     AddStarDialog (
-        Star("", "이찬원"),
+        Star(entertainerName = "이찬원"),
         onClickConfirm = {  }
     )
 }
