@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.theme.MainBlackWithTransparency
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -58,7 +59,9 @@ data class Transaction(
 
 // 적금 거래 내역 화면
 @Composable
-fun SavingMainScreen() {
+fun SavingMainScreen(
+//    onNavigateBack: () -> Unit
+) {
 //    val transactions = mutableListOf(
 //        Transaction(true, "이찬원 사랑해", 44444, 64444, "17:05"),
 //        Transaction(false, "오늘 너무 귀엽다 찬원아", 10000, 20000, "17:05"),
@@ -70,33 +73,39 @@ fun SavingMainScreen() {
     val info = SavingData(30, "찬원이적금", 30400000, "123-456-789000",
         "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg", transactions)
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = CenterHorizontally
+    Column(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        item {
-            SavingHeader(info)
-        }
+        CommonBackTopBar(modifier = Modifier)
 
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
-        }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = CenterHorizontally
+        ) {
+            item {
+                SavingHeader(info)
+            }
 
-        if (info.transactionList.isEmpty()) {
             item {
                 Spacer(modifier = Modifier.height(24.dp))
-
-                Text(text = stringResource(R.string.saving_item_empty_transaction),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MainTextGray,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 24.sp
-                )
             }
-        } else {
-            items(transactions) { transaction ->
-                TransactionItem(transaction)
+
+            if (info.transactionList.isEmpty()) {
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(text = stringResource(R.string.saving_item_empty_transaction),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MainTextGray,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 24.sp
+                    )
+                }
+            } else {
+                items(transactions) { transaction ->
+                    TransactionItem(transaction)
+                }
             }
         }
     }
@@ -116,8 +125,14 @@ fun SavingHeader(info: SavingData) {
             .fillMaxWidth()
             .height(560.dp)
             .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
-            .innerShadow(shape = RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp),
-                color = MainBlackWithTransparency, blur = 100.dp, offsetX = 0.dp, offsetY = (-10).dp, spread = 0.dp)
+            .innerShadow(
+                shape = RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp),
+                color = MainBlackWithTransparency,
+                blur = 100.dp,
+                offsetX = 0.dp,
+                offsetY = (-10).dp,
+                spread = 0.dp
+            )
     ) {
 
         Image(
@@ -152,19 +167,6 @@ fun SavingHeader(info: SavingData) {
             Text(text = info.title, fontSize = 32.sp, fontWeight = FontWeight.Bold, color = MainWhite)
             Text(text = StringUtil.formatCurrency(info.amount), fontSize = 36.sp, fontWeight = FontWeight.Bold, color = MainWhite)
             Text(text = info.account, fontSize = 20.sp, fontWeight = FontWeight.Medium, color = MainWhite)
-        }
-    }
-}
-
-@Composable
-fun SavingList(transactions: MutableList<Transaction>) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 24.dp)
-    ) {
-        items(transactions) { transaction ->
-            TransactionItem(transaction)
         }
     }
 }

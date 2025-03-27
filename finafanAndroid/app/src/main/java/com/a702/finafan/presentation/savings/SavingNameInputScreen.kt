@@ -18,24 +18,30 @@ import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.StringField
 import com.a702.finafan.common.ui.theme.MainTextGray
+import com.a702.finafan.domain.savings.model.Star
 
 // 적금 이름 입력 화면
 @Composable
-fun SavingSelectNameScreen(selectName: String) {
-    val name = remember { mutableStateOf("") }
+fun SavingNameInputScreen(
+    selectStar: Star,
+    onComplete: (String) -> Unit
+) {
+    val savingName = remember { mutableStateOf(selectStar.entertainerName) }
 
     SavingScreenLayout(
         topBarTitle = stringResource(R.string.saving_item_create_top_bar),
         title = stringResource(R.string.saving_item_input_name_title),
         buttonText = stringResource(R.string.btn_next),
-        isButtonEnabled = name.value.isNotEmpty(),
-        onBackClick = { /* TODO: 뒤로 가기 */ },
-        onButtonClick = { /* TODO: 이름 선택 후 다음으로 넘어가기 */ }
+        isButtonEnabled = savingName.value.isNotEmpty(),
+        onButtonClick = { onComplete(selectStar.toString()) }
     ) {
 
         // 적금 이름 필드 (선택한 스타 이름이 자동으로 들어감)
         StringField(modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
-            label = "적금 이름", hint = selectName, text = name, isSaving = true)
+            label = stringResource(R.string.saving_item_name_label),
+            hint = selectStar.entertainerName,
+            text = savingName,
+            isSaving = true)
 
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -62,5 +68,5 @@ fun SavingSelectNameScreen(selectName: String) {
 @Preview
 @Composable
 fun SavingNamePreview() {
-    SavingSelectNameScreen("이찬원")
+    SavingNameInputScreen(Star(entertainerName = "이찬원"), onComplete = {})
 }

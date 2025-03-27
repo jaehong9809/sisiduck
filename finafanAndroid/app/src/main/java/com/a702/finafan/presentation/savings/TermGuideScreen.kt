@@ -14,33 +14,34 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.a702.finafan.common.ui.component.CommonBackTopBar
-import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
+import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.CommonCloseTopBar
+import com.a702.finafan.common.ui.component.PrimaryGradButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 
+// 상품 안내, 약관동의 안내 화면
 @Composable
-fun SavingScreenLayout(
-    isFill: Boolean = false,
-    topBarTitle: String? = null,
-    title: String,
-    buttonText: String,
-    isButtonEnabled: Boolean,
-    onButtonClick: () -> Unit,
-    content: @Composable () -> Unit
-) {
+fun TermGuideScreen(title: String?, onConfirm: () -> Unit) {
+
     Column(
         modifier = Modifier
+            .background(MainWhite)
             .fillMaxSize()
             .imePadding()
             .windowInsetsPadding(WindowInsets.ime)
     ) {
-        // 공통 상단 바
-        CommonBackTopBar(modifier = Modifier, text = topBarTitle, isTextCentered = true)
+
+        CommonCloseTopBar(
+            modifier = Modifier,
+            text = title
+        )
 
         Column(
             modifier = Modifier
@@ -48,27 +49,35 @@ fun SavingScreenLayout(
                 .verticalScroll(rememberScrollState())
                 .background(MainWhite)
                 .fillMaxWidth()
-                .padding(horizontal = if (isFill) 0.dp else 16.dp)
+                .padding(horizontal = 16.dp)
         ) {
             Text(
-                modifier = Modifier.padding(top = 36.dp, start = if (isFill) 16.dp else 0.dp, end = if (isFill) 16.dp else 0.dp),
-                text = title,
+                modifier = Modifier,
+                text = "설명입니다.",
                 color = MainBlack,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 36.sp,
                 textAlign = TextAlign.Start
             )
-
-            content()
         }
 
-        // 공통 하단 버튼
-        PrimaryGradBottomButton(
-            modifier = Modifier.fillMaxWidth().imePadding(),
-            onClick = onButtonClick,
-            text = buttonText,
-            isEnabled = isButtonEnabled
+        PrimaryGradButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                .imePadding(),
+            onClick = {
+                onConfirm()
+            },
+            text = stringResource(R.string.btn_confirm)
         )
     }
+
+}
+
+@Preview
+@Composable
+fun TermGuidePreview() {
+    TermGuideScreen("title", onConfirm = {})
 }

@@ -14,14 +14,19 @@
 
     <!-- TopBar Title -->
     <string name="saving_item_star_list_title">스타 목록</string>
+    <string name="saving_item_star_select_title">함께할 스타 선택</string>
     <string name="saving_item_create_top_bar">스타 적금 개설</string>
     <string name="saving_history_title">내역 보기</string>
     <string name="saving_account_manage_title">적금 관리</string>
     <string name="saving_account_connect_bank_title">연결 계좌</string>
+    <string name="product_info">상품 안내</string>
+    <string name="product_interest_rate">금리 안내</string>
+    <string name="term_info">이용 약관</string>
+    <string name="product_guide">상품 설명서</string>
 
     <!-- Saving Screen -->
     <string name="saving_item_title">스타 적금</string>
-    <string name="saving_item_select_star_title">함께 하고싶은 스타의 이름을\n입력해주세요</string>
+    <string name="saving_item_select_star_title">함께 하고싶은 스타의 이름을\n선택해주세요</string>
     <string name="saving_item_input_name_title">추억을 기록할\n적금 이름을 지어주세요</string>
     <string name="saving_item_input_name_guild">입력하지 않으면 스타의 이름으로 설정됩니다.</string>
     <string name="saving_item_empty_transaction">아직 저축 내역이 없어요.\n저축을 시작해 보세요!</string>
@@ -89,6 +94,9 @@
     <string name="btn_account_cancel">해지하기</string>
     <string name="btn_confirm">확인</string>
     <string name="btn_delete">삭제하기</string>
+    <string name="btn_cancel">취소</string>
+    <string name="btn_add">추가</string>
+    <string name="btn_change">변경하기</string>
 
     <!-- Connect Account Screen -->
     <string name="connect_account_select_back_title">계좌 인증 진행\n연결할 은행을 선택해주세요</string>
@@ -97,5 +105,14 @@
     <string name="connect_account_verification_code_title">%s 입금 내역을 확인하고\n4자리 숫자를 알려주세요</string>
     <string name="connect_account_verification_code_confirm_title">계좌 인증 완료\n%s 인증이 완료되었어요</string>
     <string name="connect_account_confirm_title">연결 계좌 확인</string>
+
+    <!-- Dialog -->
+    <string name="withdraw_fail">출금계좌에 금액이 충분하지 않습니다.\n출금계좌의 잔액을 확인해 주세요. </string>
+    <string name="saving_item_start">오늘부터\n%s적금을 시작할게요!</string>
+    <string name="saving_item_star_not_exist">입력한 스타가\n존재하지 않습니다.</string>
+    <string name="saving_item_exist">이미 가입한\n스타 적금입니다.</string>
+    <string name="saving_item_change_name">적금 이름 변경</string>
+    <string name="saving_item_cancel_complete">적금 해지가 완료되었어요!</string>
+    <string name="saving_item_deposit_complete">입금이 완료되었어요!</string>
 
 </resources>
