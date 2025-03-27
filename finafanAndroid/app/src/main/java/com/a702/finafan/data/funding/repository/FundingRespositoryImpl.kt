@@ -5,21 +5,18 @@ import com.a702.finafan.domain.funding.model.Funding
 import com.a702.finafan.domain.funding.repository.FundingRepository
 import javax.inject.Inject
 
-//class FundingRepositoryImpl @Inject constructor(
-//    private val fundingApi: FundingApi
-//) : FundingRepository {
-//
-//    override fun getFundingList(): List<Funding> {
-//        val fundingResponseList = fundingApi.getFundingList()
-//        return fundingResponseList.map { it.toFunding() } // DTO -> 도메인 모델 변환
-//    }
-//
-//    suspend fun getFundingDetail(fundingId: Long): FundingDetail {
-//        val fundingDetailResponse = fundingApi.getFundingDetail(fundingId)
-//        return fundingDetailResponse.toFundingDetail() // DTO -> 도메인 모델 변환
-//    }
-//
-//    suspend fun joinFunding(fundingId: Long) {
-//        fundingApi.joinFunding(fundingId)
-//    }
-//}
+class FundingRepositoryImpl @Inject constructor(
+    private val api: FundingApi
+) : FundingRepository {
+    override suspend fun getFunding(): Funding {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getFundingList(): List<Funding> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun joinFunding() {
+        TODO("Not yet implemented")
+    }
+}

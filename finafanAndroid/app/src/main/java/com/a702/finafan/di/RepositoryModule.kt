@@ -3,6 +3,7 @@ package com.a702.finafan.di
 import com.a702.finafan.data.chatbot.repository.ChatRepositoryImpl
 import com.a702.finafan.data.savings.repository.SavingRepositoryImpl
 import com.a702.finafan.domain.chatbot.repository.ChatRepository
+import com.a702.finafan.domain.funding.repository.FundingRepository
 import com.a702.finafan.domain.savings.repository.SavingRepository
 import dagger.Binds
 import dagger.Module
@@ -25,5 +26,11 @@ internal abstract class RepositoryModule {
     abstract fun bindSavingRepository(
         starRepositoryImpl: SavingRepositoryImpl
     ): SavingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFundingRepository(
+//        fundingRepositoryImpl: FundingRepositoryImpl
+    ): FundingRepository
 
 }
