@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EntertainerResponse {
+    private Long entertainerId;
     private String name;
     private String imageUrl;
 }

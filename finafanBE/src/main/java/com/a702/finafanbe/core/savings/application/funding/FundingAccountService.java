@@ -18,11 +18,11 @@ public class FundingAccountService {
 
     private final SavingsAccountRepository savingsAccountRepository;
 
-    // 펀딩 계좌 생성
     public SavingsAccount createFundingAccount(CreateFundingRequest request, Long userId, String accountNo) {
 
         // 적금 상품 찾아오기
-        SavingsItem item = savingsItemRepository.findByAccountTypeUniqueNo("1").orElseThrow();
+
+        SavingsItem item = savingsItemRepository.findByAccountTypeUniqueNo("111").orElseThrow();
 
         // 생성한 적금 계좌 저장
         SavingsAccount account = SavingsAccount.builder()

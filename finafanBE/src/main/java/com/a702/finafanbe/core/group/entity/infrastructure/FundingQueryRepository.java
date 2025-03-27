@@ -58,10 +58,14 @@ public class FundingQueryRepository {
                         GetFundingResponse.class,
                         Projections.constructor(
                                 EntertainerResponse.class,
+                                e.entertainerId,
                                 e.entertainerName,
                                 e.entertainerProfileUrl
                         ),
                         fg.name,
+                        JPAExpressions.select(fa.balance.sum())
+                                .from(fa)
+                                .where(fa.fundingGroupId.eq(fg.id), fa.deletedAt.isNull()),
                         fg.goalAmount,
                         fg.createdAt
                 ))
@@ -85,6 +89,7 @@ public class FundingQueryRepository {
                         GetFundingDetailResponse.class,
                         Projections.constructor(
                                 EntertainerResponse.class,
+                                e.entertainerId,
                                 e.entertainerName,
                                 e.entertainerProfileUrl
                         ),
@@ -92,19 +97,16 @@ public class FundingQueryRepository {
                                 GetFundingAdminResponse.class,
                                 gu.userId.stringValue(), // adminName (임시)
                                 fg.description,
-                                // fundingCount
                                 JPAExpressions.select(gu.count())
                                         .from(gu)
-                                        .where(
-                                                gu.userId.eq(adminUserId)
+                                        .where(gu.userId.eq(adminUserId)
                                                         .and(gu.role.eq(Role.ADMIN))
                                         ),
                                 // fundingSuccessCount
                                 JPAExpressions.select(fg.count())
                                         .from(fg)
-                                        .where(
-                                                fg.status.eq(FundingStatus.FINISHED)
-                                                        .and(fg.id.in(
+                                        .where(fg.status.eq(FundingStatus.FINISHED)
+                                                .and(fg.id.in(
                                                                 JPAExpressions.select(gu.fundingGroupId)
                                                                         .from(gu)
                                                                         .where(
@@ -117,10 +119,7 @@ public class FundingQueryRepository {
                         fg.goalAmount,
                         JPAExpressions.select(fa.balance.sum())
                                 .from(fa)
-                                .where(
-                                        fa.fundingGroupId.eq(fg.id),
-                                        fa.deletedAt.isNull()
-                                ),
+                                .where(fa.fundingGroupId.eq(fg.id), fa.deletedAt.isNull()),
                         fg.fundingExpiryDate,
                         Expressions.nullExpression(List.class) // application은 나중에 set
                 ))

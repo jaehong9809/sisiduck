@@ -39,14 +39,10 @@ public class FundingService {
     // 펀딩 생성
     @Transactional
     public void createFunding(CreateFundingRequest request, Long userId) {
-        // 금융 api에 계좌 만듦
-        // String account = apiSavingsAccountService.createAccount(request);
         String account = "111111111";
 
-        // 우리 db에 계좌 정보 저장
+        // String account = apiSavingsAccountService.createAccount(request);
         SavingsAccount fundingAccount = fundingAccountService.createFundingAccount(request, userId, account);
-
-        // 펀딩 관련 생성
         fundingGroupService.createFunding(userId, fundingAccount.getId(), request.getEntertainerId(), request.getAccountNickname(), request.getDescription(), request.getGoalAmount(), request.getFundingExpiryDate());
     }
 

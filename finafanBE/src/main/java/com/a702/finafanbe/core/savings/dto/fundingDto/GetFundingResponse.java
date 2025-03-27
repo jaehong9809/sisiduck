@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class GetFundingResponse {
     private EntertainerResponse entertainer;
     private String fundingName;
+    private Long currentAmount;
     private Long goalAmount;
     private LocalDateTime fundingExpiryDate;
 }
