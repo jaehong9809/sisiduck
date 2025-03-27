@@ -19,6 +19,7 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.savings.model.Transaction
 
 // 적금 거래 내역 아이템
 @Composable
@@ -32,15 +33,15 @@ fun TransactionItem(transaction: Transaction) {
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             // 해당 날짜의 첫 번째 항목인 경우에만 날짜 표시
-            if (transaction.isFirst) {
-                Text(
-                    text = "3월 24일",
-                    fontSize = 18.sp,
-                    color = MainTextGray,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
-            }
+//            if (transaction.isFirst) {
+//                Text(
+//                    text = "3월 24일",
+//                    fontSize = 18.sp,
+//                    color = MainTextGray,
+//                    fontWeight = FontWeight.Normal,
+//                    modifier = Modifier.padding(bottom = 24.dp)
+//                )
+//            }
         }
 
         Row(
@@ -53,7 +54,7 @@ fun TransactionItem(transaction: Transaction) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = transaction.title,
+                    text = transaction.message,
                     fontSize = 22.sp,
                     color = MainBlack,
                     fontWeight = FontWeight.Medium,
@@ -61,7 +62,7 @@ fun TransactionItem(transaction: Transaction) {
                     )
 
                 Text(
-                    text = transaction.time,
+                    text = transaction.date,
                     fontSize = 16.sp,
                     color = MainTextGray,
                     fontWeight = FontWeight.Normal,
@@ -100,6 +101,12 @@ fun TransactionItem(transaction: Transaction) {
 @Composable
 fun PreviewTransactionItem() {
     TransactionItem(
-        transaction = Transaction(true, "20자까지써볼게요그러면어떻게나올까요", 44444, 64444, "17:07")
+        transaction = Transaction(
+            amount = 40000,
+            balance = 10000,
+            message = "오늘 너무 귀여워",
+            date = "2025-03-14",
+            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
+        )
     )
 }

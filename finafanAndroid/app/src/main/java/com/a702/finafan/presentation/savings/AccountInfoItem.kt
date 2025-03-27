@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Bank
 
 // 계좌번호 정보 아이템 (은행 사진 + 은행명 + 계좌번호)
 @Composable
@@ -39,7 +41,7 @@ fun AccountInfoItem(
 
         Text(
             modifier = Modifier.padding(start = 8.dp),
-            text = account.bankName + " " + account.accountNum,
+            text = account.bank.bankName + " " + account.accountNo,
             color = fontColor,
             fontSize = if (isCancel) 16.sp else 20.sp,
             fontWeight = if (isCancel) FontWeight.Normal else FontWeight.Medium,
@@ -52,7 +54,16 @@ fun AccountInfoItem(
 @Composable
 fun AccountInfoItemPreview() {
     Column {
-        AccountInfoItem(account = Account("NH농협", "12-345-678900"))
-        AccountInfoItem(account = Account("NH농협", "12-345-678900"), isCancel = true)
+        AccountInfoItem(account = Account(
+            accountId = 1234,
+            accountNo = "456-789-1000",
+            bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
+        ))
+
+        AccountInfoItem(account = Account(
+            accountId = 1234,
+            accountNo = "456-789-1000",
+            bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
+        ), isCancel = true)
     }
 }

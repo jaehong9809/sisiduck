@@ -3,6 +3,7 @@ package com.a702.finafan.data.savings.repository
 import com.a702.finafan.data.savings.api.SavingApi
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.data.savings.dto.response.toDomain
+import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction

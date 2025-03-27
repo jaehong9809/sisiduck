@@ -30,6 +30,7 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.ui.theme.gradientList
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.savings.model.Transaction
 import kotlin.random.Random
 
 // 적금 거래 내역 상세 화면
@@ -40,7 +41,7 @@ fun TransactionDetailScreen(
 ) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(transaction.image)
+            .data(transaction.imageUrl)
             .build()
     )
 
@@ -90,14 +91,14 @@ fun TransactionDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = transaction.time,
+                    text = transaction.date,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     color = MainWhite, lineHeight = 24.sp,
                 )
 
                 Text(
-                    text = transaction.title,
+                    text = transaction.message,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = MainWhite,
@@ -120,8 +121,13 @@ fun TransactionDetailScreen(
 @Composable
 fun PreviewTransactionDetail() {
     TransactionDetailScreen(
-//        transaction = Transaction(true, "20자까지써볼게요그러면어떻게나올까요", 44444, 64444, "2025년 3월 24일 17:07")
         onNavigateClick = {},
-        transaction = Transaction(true, "20자까지써볼게요그러면어떻게나올까요", 44444, 64444, "2025년 3월 24일 17:07", "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg")
+        transaction = Transaction(
+            amount = 40000,
+            balance = 10000,
+            message = "오늘 너무 귀여워",
+            date = "2025-03-14",
+            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
+        )
     )
 }

@@ -33,6 +33,21 @@ fun NavGraphBuilder.savingGraph(
             SavingMainScreen(savingViewModel, savingAccountId)
         }
 
+        composable(NavRoutes.TransactionDetail.route) {
+            // TODO: 메인 리스트 클릭 시 넘어온 데이터 넘겨주기
+
+            TransactionDetailScreen(
+                onNavigateClick = { navController.popBackStack() },
+                transaction = Transaction(
+                    amount = 40000,
+                    balance = 10000,
+                    message = "오늘 너무 귀여워",
+                    date = "2025-03-14",
+                    imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
+                )
+            )
+        }
+
         composable(NavRoutes.SavingDeposit.route) {
             SavingDepositScreen(onComplete = {
                 navController.navigate(NavRoutes.SavingMain.route) {
@@ -80,15 +95,6 @@ fun NavGraphBuilder.savingGraph(
                     launchSingleTop = true
                 }
             })
-        }
-
-        composable(NavRoutes.TransactionDetail.route) {
-
-
-            TransactionDetailScreen(
-                onNavigateClick = { navController.popBackStack() },
-                transaction = Transaction()
-            )
         }
 
         composable(NavRoutes.TermGuide.route + "/{title}") { backStackEntry ->

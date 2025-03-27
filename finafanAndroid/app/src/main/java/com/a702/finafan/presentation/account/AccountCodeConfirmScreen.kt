@@ -9,7 +9,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainTextGray
-import com.a702.finafan.presentation.savings.Account
+import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.presentation.savings.AccountInfoItem
 
 // 인증 코드 확인 완료 화면
@@ -27,7 +28,11 @@ fun AccountCodeConfirmScreen(selectBank: String) {
         Column {
             AccountInfoItem(
                 modifier = Modifier.padding(top = 34.dp),
-                account = Account("NH농협", "12-345-678900"),
+                account = Account(
+                    accountId = 1234,
+                    accountNo = "456-789-1000",
+                    bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
+                ),
                 fontColor = MainTextGray
             )
         }
