@@ -48,6 +48,8 @@ class BleAdvertiser(
             .setIncludeDeviceName(false)
             .build()
 
+        Log.d("BLE_ADVERTISER", "📢 Prepared AdvertiseData with UUID: $uuid")
+
         advertiseCallback = object : AdvertiseCallback() {
             override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
                 onStart?.invoke()

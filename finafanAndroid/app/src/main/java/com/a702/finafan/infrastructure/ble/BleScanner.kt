@@ -23,6 +23,7 @@ class BleScanner(
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             result.scanRecord?.serviceUuids?.forEach { parcelUuid ->
+                Log.d("BLE_SCANNER", "🔍 Found UUID: ${parcelUuid.uuid}")
                 onScanResult(parcelUuid.uuid)
             }
         }
@@ -30,6 +31,7 @@ class BleScanner(
         override fun onBatchScanResults(results: MutableList<ScanResult>?) {
             results?.forEach { result ->
                 result.scanRecord?.serviceUuids?.forEach { parcelUuid ->
+                    Log.d("BLE_SCANNER", "📦 Batch UUID: ${parcelUuid.uuid}")
                     onScanResult(parcelUuid.uuid)
                 }
             }
