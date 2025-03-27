@@ -6,6 +6,8 @@ import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoryReque
 import com.a702.finafanbe.core.demanddeposit.dto.response.AccountTransactionHistoriesResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountTransactionHistoryResponse;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
+import com.a702.finafanbe.global.common.response.ResponseData;
+import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +21,11 @@ public class InquireDemandDepositAccountTransactionHistoryController {
     private final InquireDemandDepositAccountTransactionHistoryService inquireDemandDepositAccountTransactionHistoryService;
 
     @GetMapping("/transaction-histories")
-    public ResponseEntity<AccountTransactionHistoriesResponse> getDemandDepositTransactionHistories(
+    public ResponseEntity<ResponseData<AccountTransactionHistoriesResponse>> getDemandDepositTransactionHistories(
         @RequestBody TransactionHistoriesRequest transactionHistoryListRequest
     ){
-        return demandDepositFacade.inquireHistories(
-                transactionHistoryListRequest
-        );
+        return ResponseUtil.success(demandDepositFacade.inquireHistories(
+                transactionHistoryListRequest).getBody());
     }
 
     @GetMapping("/transaction-history")

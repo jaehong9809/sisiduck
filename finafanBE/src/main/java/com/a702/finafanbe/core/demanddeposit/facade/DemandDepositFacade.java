@@ -3,10 +3,14 @@ package com.a702.finafanbe.core.demanddeposit.facade;
 import com.a702.finafanbe.core.demanddeposit.dto.request.DepositRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoryRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.TransferRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
+import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
+import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsTransactionDetail;
+import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
@@ -23,6 +27,7 @@ public class DemandDepositFacade {
     private final FinancialRequestFactory financialRequestFactory;
     private final ApiClientUtil apiClientUtil;
     private final EntertainSavingsService entertainSavingsService;
+    private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -184,5 +189,72 @@ public class DemandDepositFacade {
                         createStarAccountRequest.userEmail(),
                         createStarAccountRequest.accountName()
                 ).getBody().REC().getAccountNo());
+    }
+
+
+    public InquireEntertainerAccountResponse getEntertainerAccount(String userEmail, String accountNo) {
+        InquireDemandDepositAccountResponse.REC rec = apiClientUtil.callFinancialNetwork(
+                "/demandDeposit/inquireDemandDepositAccount",
+                financialRequestFactory.UserKeyAccountNoRequest(
+                        userEmail,
+                        accountNo,
+                        "inquireDemandDepositAccount"
+                ),
+                InquireDemandDepositAccountResponse.class
+        ).getBody().REC();
+        EntertainerSavingsTransactionDetail returnValue = entertainerSavingsTransactionDetailRepository.findByDepositAccountNo(rec.accountNo());
+        return InquireEntertainerAccountResponse.of(
+                rec.bankCode(),
+                rec.bankName(),
+                rec.accountNo(),
+                rec.accountName(),
+                rec.dailyTransferLimit(),
+                rec.oneTimeTransferLimit(),
+                rec.accountBalance(),
+                rec.lastTransactionDate(),
+                rec.currency(),
+                returnValue.getImageUrl()
+        );
+    }
+
+    public InquireEntertainerHistoriesResponse inquireEntertainerHistories(TransactionHistoriesRequest transactionHistoriesRequest) {
+        AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = apiClientUtil.callFinancialNetwork(
+                "/demandDeposit/inquireTransactionHistoryList",
+                financialRequestFactory.inquireHistories(
+                        transactionHistoriesRequest.email(),
+                        "inquireTransactionHistoryList",
+                        transactionHistoriesRequest.accountNo(),
+                        transactionHistoriesRequest.startDate(),
+                        transactionHistoriesRequest.endDate(),
+                        transactionHistoriesRequest.transactionType(),
+                        transactionHistoriesRequest.orderByType()
+                ),
+                AccountTransactionHistoriesResponse.class
+        ).getBody().REC();
+        EntertainerSavingsTransactionDetail returnValue = entertainerSavingsTransactionDetailRepository.findByDepositAccountNo(transactionHistoriesRequest.accountNo());
+        return InquireEntertainerHistoriesResponse.of(
+                inquireTransactionHistoryList.totalCount(),
+                inquireTransactionHistoryList.list(),
+                returnValue.getImageUrl()
+        );
+    }
+
+    public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transferAccount(
+            String userEmail,
+            TransferRequest transferRequest
+    ) {
+        return apiClientUtil.callFinancialNetwork(
+                "/demandDeposit/updateDemandDepositAccountTransfer",
+                financialRequestFactory.transferAccount(
+                        userEmail,
+                        "updateDemandDepositAccountTransfer",
+                        transferRequest.depositAccountNo(),
+                        transferRequest.depositTransactionSummary(),
+                        transferRequest.transactionBalance(),
+                        transferRequest.withdrawalAccountNo(),
+                        transferRequest.withdrawalTransactionSummary()
+                ),
+                UpdateDemandDepositAccountTransferResponse.class
+        );
     }
 }
