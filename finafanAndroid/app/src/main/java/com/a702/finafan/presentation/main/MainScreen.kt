@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.main
 
+import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.navigation.NavController
 import com.a702.finafan.common.ui.component.MainSquareIconButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.infrastructure.android.BleForegroundService
+import com.a702.finafan.infrastructure.util.PermissionHelper
 
 
 @Composable
@@ -56,7 +58,11 @@ fun MainScreen(
 
         MainSquareIconButton(
             onClick = {
-                // exe. ForegroundService
+                // Permit: Ble
+                val activity = context as? Activity
+                activity?.let { PermissionHelper.requestAllPermissions(it) }
+
+                // execute: ForegroundService
                 val intent = Intent(context, BleForegroundService::class.java)
                 ContextCompat.startForegroundService(context, intent)
                 navController.navigate("ble")

@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.a702.finafan.common.ui.theme.CustomTypography.bodyMedium
-import com.a702.finafan.common.ui.theme.CustomTypography.displayMedium
+import com.a702.finafan.common.ui.theme.CustomTypography.displayLarge
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import java.util.UUID
 
@@ -37,7 +37,7 @@ fun UuidListContent(uuids: List<UUID>) {
     ) {
         Text(
             text = "주변에서 감지된 UUID",
-            style = displayMedium
+            style = displayLarge
         )
 
         Spacer(modifier = Modifier.height(12.dp))
