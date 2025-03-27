@@ -14,6 +14,7 @@
 
     <!-- TopBar Title -->
     <string name="saving_item_star_list_title">스타 목록</string>
+    <string name="saving_item_star_select_title">함께할 스타 선택</string>
     <string name="saving_item_create_top_bar">스타 적금 개설</string>
     <string name="saving_history_title">내역 보기</string>
     <string name="saving_account_manage_title">적금 관리</string>
@@ -25,7 +26,7 @@
 
     <!-- Saving Screen -->
     <string name="saving_item_title">스타 적금</string>
-    <string name="saving_item_select_star_title">함께 하고싶은 스타의 이름을\n입력해주세요</string>
+    <string name="saving_item_select_star_title">함께 하고싶은 스타의 이름을\n선택해주세요</string>
     <string name="saving_item_input_name_title">추억을 기록할\n적금 이름을 지어주세요</string>
     <string name="saving_item_input_name_guild">입력하지 않으면 스타의 이름으로 설정됩니다.</string>
     <string name="saving_item_empty_transaction">아직 저축 내역이 없어요.\n저축을 시작해 보세요!</string>

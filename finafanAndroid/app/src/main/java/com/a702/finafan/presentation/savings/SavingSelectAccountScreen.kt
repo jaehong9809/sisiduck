@@ -18,15 +18,25 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 
 // 적금 출금 계좌 선택 화면
 @Composable
-fun SavingSelectAccountScreen() {
-    val account = remember { mutableStateOf("") }
+fun SavingSelectAccountScreen(
+    star: Star, name: String?,
+    onComplete: (Int) -> Unit
+) {
+
+    // TODO: 출금계좌 목록 조회 API 호출 -> 첫 번째 계좌 자동 선택
+
+    val menuItems = mutableListOf("NH농협 312-0139-3754-31", "하나 312-0139-3754-31", "우리 312-0139-3754-31", "토스뱅크 312-0139-3754-31")
+    val account = remember { mutableStateOf(menuItems[0]) }
 
     SavingScreenLayout(
         topBarTitle = stringResource(R.string.saving_item_create_top_bar),
         title = stringResource(R.string.saving_item_select_account_title),
         buttonText = stringResource(R.string.btn_create),
         isButtonEnabled = account.value.isNotEmpty(),
-        onButtonClick = { /* TODO: 적금 개설 처리 */ }
+        onButtonClick = {
+            /* TODO: 적금 개설 API 호출, 개설 완료 후에 적금계좌 고유번호 넘기기 */
+            onComplete(1)
+        }
     ) {
 
         Text(
@@ -39,7 +49,6 @@ fun SavingSelectAccountScreen() {
             textAlign = TextAlign.Start
         )
 
-        val menuItems = mutableListOf("NH농협 312-0139-3754-31", "하나 312-0139-3754-31", "우리 312-0139-3754-31", "토스뱅크 312-0139-3754-31")
         SelectAccountField(menuItems)
 
     }
@@ -48,5 +57,5 @@ fun SavingSelectAccountScreen() {
 @Preview
 @Composable
 fun SavingSelectAccountPreview() {
-    SavingSelectAccountScreen()
+    SavingSelectAccountScreen(Star("이찬원", ""), "적금이름", onComplete = {})
 }

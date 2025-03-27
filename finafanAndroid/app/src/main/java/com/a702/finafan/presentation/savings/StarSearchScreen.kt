@@ -19,19 +19,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a702.finafan.R
-import com.a702.finafan.common.ui.component.CommonCloseTopBar
+import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.component.SearchField
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 
-// 스타 검색 화면
+// 스타 선택 화면
 @Composable
-fun StarSearchScreen() {
+fun StarSearchScreen(
+    onSelect: (Star) -> Unit
+) {
+
     val starList = mutableListOf(
         Star("", "이찬원"), Star("", "임영웅"), Star("", "권민채")
     )
 
-    val selectStar = remember { mutableStateOf("") }
+    val selectStar = remember { mutableStateOf(Star("", "")) }
 
     Column(modifier =
         Modifier
@@ -40,7 +43,11 @@ fun StarSearchScreen() {
             .windowInsetsPadding(WindowInsets.ime)
     ) {
         // 상단 바
-        CommonCloseTopBar(modifier = Modifier, text = stringResource(R.string.saving_item_star_list_title))
+        CommonBackTopBar(
+            modifier = Modifier,
+            text = stringResource(R.string.saving_item_star_select_title),
+            isTextCentered = true
+        )
 
         Column(
             modifier = Modifier
@@ -67,14 +74,14 @@ fun StarSearchScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                items(starList) { star ->
+                items(starList) { starItem ->
                     Column(
                         modifier = Modifier.padding(bottom = 16.dp)
                     ) {
-                        StarItem(star,
-                            isSelected = star.name == selectStar.value,
-                            onSelect = {
-                                selectStar.value = star.name
+                        StarItem(starItem,
+                            isSelected = starItem.name == selectStar.value.name,
+                            onSelect = { select ->
+                                selectStar.value = select
                             })
                     }
                 }
@@ -84,9 +91,13 @@ fun StarSearchScreen() {
         // 하단 버튼
         PrimaryGradBottomButton(
             modifier = Modifier,
-            onClick = {},
+            onClick = {
+                // TODO: 스타 추가 확인 다이얼로그
+                // 여기서 추가 버튼 누르면 적금 이름 페이지로 이동
+                onSelect(selectStar.value)
+            },
             text = stringResource(R.string.btn_select),
-            isEnabled = selectStar.value.isNotEmpty())
+            isEnabled = selectStar.value.name.isNotEmpty())
     }
 }
 
@@ -94,5 +105,5 @@ fun StarSearchScreen() {
 @Preview
 @Composable
 fun SearchStarPreview() {
-    StarSearchScreen()
+    StarSearchScreen(onSelect = {})
 }

@@ -63,7 +63,7 @@ fun SavingDescScreen() {
 
             PrimaryGradButton(
                 onClick = {
-                    navController.navigate(if(accountExist) NavRoutes.StarSelect.route else NavRoutes.Account.route)
+                    navController.navigate(if(accountExist) NavRoutes.StarSearch.route else NavRoutes.Account.route)
                 },
                 text = stringResource(R.string.btn_join),
                 modifier = Modifier

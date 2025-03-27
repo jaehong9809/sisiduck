@@ -91,11 +91,12 @@ fun CommonBackTopBar(
 @Composable
 fun ImageItem(modifier: Modifier, onClick: () -> Unit, @DrawableRes imageId: Int) {
     Image(
-        modifier = modifier.clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = { onClick() }
-        ),
+        modifier = modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onClick() }
+            ),
         painter = painterResource(id = imageId),
         contentDescription = "back",
     )

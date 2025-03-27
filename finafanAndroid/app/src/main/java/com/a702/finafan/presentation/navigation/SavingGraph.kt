@@ -11,11 +11,12 @@ import com.a702.finafan.presentation.savings.SavingDescScreen
 import com.a702.finafan.presentation.savings.SavingMainScreen
 import com.a702.finafan.presentation.savings.SavingNameInputScreen
 import com.a702.finafan.presentation.savings.SavingSelectAccountScreen
+import com.a702.finafan.presentation.savings.Star
 import com.a702.finafan.presentation.savings.StarSearchScreen
-import com.a702.finafan.presentation.savings.StarSelectScreen
 import com.a702.finafan.presentation.savings.TermGuideScreen
 import com.a702.finafan.presentation.savings.Transaction
 import com.a702.finafan.presentation.savings.TransactionDetailScreen
+import com.google.gson.Gson
 
 fun NavGraphBuilder.savingGraph(
     navController: NavHostController
@@ -23,7 +24,8 @@ fun NavGraphBuilder.savingGraph(
     navigation(
         startDestination = NavRoutes.Main.route, route = NavRoutes.Saving.route
     ) {
-        composable(NavRoutes.SavingMain.route) {
+        composable(NavRoutes.SavingMain.route + "/{savingId}") { backStackEntry ->
+            val savingId = backStackEntry.arguments?.getInt("savingId")
             SavingMainScreen()
         }
 
@@ -40,21 +42,35 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.StarSearch.route) {
-            StarSearchScreen()
-            // TODO: 선택하기 -> 이전화면에 선택된 스타의 이름이 보여야함 (Star 객체를 보내야 함)
-        }
-        composable(NavRoutes.StarSelect.route) {
-            StarSelectScreen()
-            // TODO: 검색하기 -> star search로 넘어가기
+            StarSearchScreen(onSelect = { selectStar ->
+                val starJson = Gson().toJson(selectStar)
+                navController.navigate(NavRoutes.SavingNameInput.route + "/${starJson}")
+            })
         }
 
-        composable(NavRoutes.SavingNameInput.route) {
-            SavingNameInputScreen("test")
-            // TODO: 다음 -> SelectAccount로 이동, 입력된 이름도 같이 보내기
+        composable(NavRoutes.SavingNameInput.route + "/{star}") { backStackEntry ->
+            val starJson = backStackEntry.arguments?.getString("star")
+            val star = Gson().fromJson(starJson, Star::class.java)
+
+            SavingNameInputScreen(
+                selectStar = star,
+                onComplete = { savingName ->
+                    navController.navigate(NavRoutes.SavingSelectAccount.route + "/${starJson}/${savingName}")
+                }
+            )
         }
 
-        composable(NavRoutes.SavingSelectAccount.route) {
-            SavingSelectAccountScreen()
+        composable(NavRoutes.SavingSelectAccount.route + "/{star}/{name}") { backStackEntry ->
+            val starJson = backStackEntry.arguments?.getString("star")
+            val star = Gson().fromJson(starJson, Star::class.java)
+            val name = backStackEntry.arguments?.getString("title")
+
+            SavingSelectAccountScreen(star, name, onComplete = { savingId ->
+                navController.navigate(NavRoutes.SavingMain.route + "/${savingId}") {
+                    popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
+                    launchSingleTop = true
+                }
+            })
             // TODO: 가입하기 -> 적금 계좌 개설 후 SavingMain 화면으로 이동 (이전의 화면은 사라짐 popUpTo 사용)
         }
 
