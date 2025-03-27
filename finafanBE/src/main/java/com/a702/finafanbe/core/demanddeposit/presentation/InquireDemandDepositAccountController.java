@@ -6,6 +6,8 @@ import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountResponse;
 
+import com.a702.finafanbe.global.common.response.ResponseData;
+import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,21 +20,22 @@ public class InquireDemandDepositAccountController {
     private final DemandDepositFacade demandDepositFacade;
 
     @GetMapping("/account")
-    public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
+    public ResponseEntity<ResponseData<InquireDemandDepositAccountResponse.REC>> getDemandDepositAccount(
            @RequestParam String userEmail,
            @RequestParam String accountNo
     ) {
-        return demandDepositFacade.getDemandDepositAccount(
+        InquireDemandDepositAccountResponse.REC rec = demandDepositFacade.getDemandDepositAccount(
                 userEmail,
                 accountNo
-        );
+        ).getBody().REC();
+        return ResponseUtil.success(rec);
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<InquireDemandDepositAccountListResponse> getDemandDepositAccountList(
+    public ResponseEntity<ResponseData<InquireDemandDepositAccountListResponse>> getDemandDepositAccountList(
             @RequestParam String userEmail
     ) {
-        return demandDepositFacade.getDemandDepositListAccount(userEmail);
+        return ResponseUtil.success(demandDepositFacade.getDemandDepositListAccount(userEmail).getBody());
 
     }
 
