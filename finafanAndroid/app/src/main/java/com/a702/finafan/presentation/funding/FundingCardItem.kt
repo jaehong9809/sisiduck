@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -39,6 +38,8 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.starThemes
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.funding.model.Funding
+import com.a702.finafan.domain.funding.model.Star
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -56,12 +57,12 @@ fun FundingCardItem(
 
     Column(
         modifier = Modifier
-            .height(250.dp)
+            .height(260.dp)
             .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp)) // 외부 그림자 추가
             .background(MainWhite)
             .padding(20.dp)
             .clickable {
-                navController.navigate("funding_detail/${funding.id}")
+                navController.navigate("funding_detail/${funding.id}/${funding.title}")
             }
     ) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween ) {
@@ -91,13 +92,13 @@ fun FundingCardItem(
                     Badge(star.name, MainWhite, starThemes[star.index].mid)
                 }
                 Text(
-                    "종료까지 ${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingEndDate)}일",
+                    "종료까지 ${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingExpiryDate)}일",
                     style = titleMedium,
                     color = MainTextGray
                 )
             }
 
-            Text(text = funding.fundingTitle,
+            Text(text = funding.title,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = Pretendard,
@@ -107,8 +108,12 @@ fun FundingCardItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End) {
             Text(text = "목표금액  ", color = MainTextGray, fontFamily = Pretendard, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-            Text(text = StringUtil.formatCurrency(funding.fundingGoalAmount), color = MainTextGray, fontFamily = Pretendard, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = StringUtil.formatCurrency(funding.goalAmount), color = MainTextGray, fontFamily = Pretendard, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         }
-            FundingProgressBar(funding.fundingCurrentAmount, funding.fundingGoalAmount, listOf(starThemes[star.index].start, starThemes[star.index].end), modifier = Modifier)
+            FundingProgressBar(funding.currentAmount, funding.goalAmount, listOf(starThemes[star.index].start, starThemes[star.index].end), modifier = Modifier)
+            FundingProgressPercentage(funding.currentAmount, funding.goalAmount,
+                starThemes[star.index].end,
+                modifier = Modifier
+            )
     }
 }

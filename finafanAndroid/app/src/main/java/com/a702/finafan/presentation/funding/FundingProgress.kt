@@ -28,7 +28,6 @@ fun FundingProgressBar(
     gradientColors: List<Color>,
     modifier: Modifier
 ) {
-
     val progress = if (goalAmount > 0) currentAmount.toFloat() / goalAmount.toFloat() else 0f
 
     Box(

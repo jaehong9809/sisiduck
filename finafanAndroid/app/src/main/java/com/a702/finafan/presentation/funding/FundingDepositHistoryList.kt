@@ -18,11 +18,14 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.funding.model.Deposit
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun DepositHistoryItem(
     depositorName: String,
-    time: String,
+    time: LocalDateTime,
     amount: Long
 ) {
     Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 30.dp, start = 5.dp, end = 5.dp)) {
@@ -31,7 +34,7 @@ fun DepositHistoryItem(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(text = depositorName, fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = Pretendard, color = MainBlack)
-            Text(text = time, style = Typography.titleLarge,
+            Text(text = time.format(DateTimeFormatter.ofPattern("HH:mm")), style = Typography.titleLarge,
                 color = MainTextGray, modifier = Modifier.align(alignment = Alignment.Bottom))
         }
         Text(
@@ -48,41 +51,19 @@ fun DepositHistoryItem(
 @Composable
 fun DepositHistoryList(deposits: List<Deposit>) {
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
-        var currentYear = ""
-        var currentDate = ""
-
         deposits.forEach { deposit ->
-            if (deposit.year != currentYear) {
-                Text(text = "${deposit.year}년", style = Typography.titleLarge,
-                    color = MainTextGray,
-                    modifier = Modifier.padding(bottom = 13.dp))
-                currentYear = deposit.year
-            }
-            if (deposit.date != currentDate) {
-                Text(text = deposit.date, style = Typography.bodyMedium,
-                    color = MainTextGray)
-                currentDate = deposit.date
-            }
-            DepositHistoryItem(deposit.depositorName, deposit.time, deposit.amount)
+            DepositHistoryItem(deposit.message, deposit.createdAt, deposit.balance)
         }
     }
 }
 
-data class Deposit(
-    val year: String,
-    val date: String,
-    val depositorName: String,
-    val time: String,
-    val amount: Long
-)
-
-@Preview
-@Composable
-fun DepositHistoryPreview() {
-    val deposits = listOf(
-        Deposit("2025", "3월 17일", "입금자명", "09:48", 44444),
-        Deposit("2025", "3월 16일", "입금자명", "15:34", 44444),
-        Deposit("2025", "3월 16일", "입금자명", "15:28", 44444)
-    )
-    DepositHistoryList(deposits)
-}
+//@Preview
+//@Composable
+//fun DepositHistoryPreview() {
+//    val deposits = listOf(
+//        Deposit("2025", "3월 17일", "입금자명", "09:48", 44444),
+//        Deposit("2025", "3월 16일", "입금자명", "15:34", 44444),
+//        Deposit("2025", "3월 16일", "입금자명", "15:28", 44444)
+//    )
+//    DepositHistoryList(deposits)
+//}

@@ -10,16 +10,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.GradSelectBottomButton
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
+import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 
 @Composable
 fun FundingTermScreen(
     navController: NavController,
-    fundingId: Int
+    fundingId: Long
 ) {
+    val viewModel: FundingDetailViewModel = hiltViewModel()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -45,16 +49,10 @@ fun FundingTermScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter),
             onLeftClick = {
-                navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set("agreement", true)
-                joinFunding(1, fundingId) // 모금 참가 API
+                viewModel.joinFunding(fundingId) // 모금 참가 API
                 navController.popBackStack()
             },
             onRightClick = {
-                navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set("agreement", false)
                 navController.popBackStack()
             },
             left = "동의",
@@ -63,10 +61,6 @@ fun FundingTermScreen(
     }
 
 
-}
-
-fun joinFunding(userId: Int, fundingId: Int) : Boolean {
-    return true
 }
 
 //@Composable

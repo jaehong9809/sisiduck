@@ -20,22 +20,18 @@ fun NavGraphBuilder.fundingGraph(
             FundingScreen(navController)
         }
 
-        composable(NavRoutes.FundingDetail.route + "/{fundingId}") { backStackEntry ->
-            val fundingId = backStackEntry.arguments?.getString("fundingId")?.toIntOrNull() ?: 0
+        // TODO: 상세 조회로 넘어갈 때 API에 펀딩 제목이 없어서 내려주기로 했음, 받는대로 고칠 것
+        composable(NavRoutes.FundingDetail.route + "/{fundingId}/{fundingTitle}") { backStackEntry ->
+            val fundingId = backStackEntry.arguments?.getLong("fundingId") ?: 0
+            val fundingTitle = backStackEntry.arguments?.getString("fundingTitle") ?: "모금"
 
             val myStars = getMyStars()
             val star = myStars.find { it.id == fundingId } ?: myStars.firstOrNull()
-
-            if (star == null) {
-                Log.e("FundingDetail", "No stars available! fundingId: $fundingId")
-                return@composable
-            }
-
-            FundingDetailScreen(star, fundingId)
+            FundingDetailScreen(star, fundingId, fundingTitle)
         }
 
         composable(NavRoutes.FundingJoin.route + "/{fundingId}") { backStackEntry ->
-            val fundingId = backStackEntry.arguments?.getString("fundingId")!!.toInt()
+            val fundingId = backStackEntry.arguments?.getString("fundingId")!!.toLong()
             FundingTermScreen(navController, fundingId)
         }
 

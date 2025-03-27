@@ -13,22 +13,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.Card
 import com.a702.finafan.common.ui.component.CommonBackTopBar
@@ -43,44 +40,34 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.ui.theme.starThemes
-import com.a702.finafan.common.utils.StringUtil
-import com.a702.finafan.presentation.funding.Deposit
+import com.a702.finafan.domain.funding.model.Star
+import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import java.time.LocalDate
 
 @Composable
 fun FundingDetailScreen(
-    star: Star,
-    fundingId: Int
+    star: Star?,
+    fundingId: Long,
+    fundingTitle: String
 ) {
+    val viewModel: FundingDetailViewModel = hiltViewModel()
     val navController = LocalNavController.current
-    val agreementLiveData = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.getLiveData<Boolean>("agreement")
 
-    val agreement = agreementLiveData!!
+    val star: Star = star ?: throw IllegalArgumentException("star가 null임!!")
 
     LaunchedEffect(Unit) {
-        val result = false // API 요청 (예제 함수)
-        navController.currentBackStackEntry?.savedStateHandle?.set("agreement", result)
+        viewModel.fetchFundingDetail(fundingId)
     }
 
-// 기본값을 설정할 때 (API 요청 실패하면 false로 설정)
-    if (agreement.value == null) {
-        navController.currentBackStackEntry?.savedStateHandle?.set("agreement", false)
-    }
-    val funding: Funding = getFundingDetail(fundingId)
-    val progress: Int = StringUtil.formatPercentage(
-        funding.fundingCurrentAmount, funding.fundingGoalAmount
-    )
+    val uiState by viewModel.uiState.collectAsState()
+
     val colorSet: List<Color> = listOf(
-        starThemes[funding.starIndex].start,
-        starThemes[funding.starIndex].mid,
-        starThemes[funding.starIndex].end
+        starThemes[uiState.funding?.star?.index?:0].start,
+        starThemes[uiState.funding?.star?.index?:0].mid,
+        starThemes[uiState.funding?.star?.index?:0].end
     )
-
-    var deposits by remember { mutableStateOf<List<Deposit>>(getAllDeposits()) }
 
     Box(
         modifier = Modifier
@@ -96,9 +83,9 @@ fun FundingDetailScreen(
         ) {
             CommonBackTopBar(modifier = Modifier.background(Color.Transparent), text = "모금 보기")
 
-            FundingDetailHeader(funding, star, colorSet)
+            uiState.funding?.let { FundingDetailHeader(it, star, colorSet) }
 
-            if(agreement?.value == true) {
+            if(uiState.isParticipant) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -121,14 +108,14 @@ fun FundingDetailScreen(
                         containerColor = MainWhite,
                         selectedTabColor = MainBlack,
                         onTabSelected = listOf(
-                        { deposits = getAllDeposits() },
-                        { deposits = getMyDeposits() }
+                        { viewModel.fetchAllDeposits(fundingId) },
+                        { viewModel.fetchMyDeposits(fundingId) }
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 22.dp)
                     )
-                    DepositHistoryList(deposits)
+                    DepositHistoryList(uiState.deposits)
 
                 }
             } else {
@@ -161,7 +148,7 @@ fun FundingDetailScreen(
                 }
             }
         }
-        if(agreement?.value == true) {
+        if(uiState.isParticipant) {
             GradSelectBottomButton(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
@@ -190,45 +177,7 @@ fun FundingDetailScreen(
 
 }
 
-fun getFundingDetail(id: Int): Funding {
-    val fundings: List<Funding> = listOf(
-        Funding(
-            0, 101, 0, "임영웅",
-            "데뷔 5주년 기념 서포트",
-            LocalDate.of(2025, 4, 8), 2_000_000, 1_500_000
-        ),
-        Funding(
-            1, 102, 1, "이찬원",
-            "뮤비 촬영장 커피차 서포트",
-            LocalDate.of(2025, 5, 10), 1_500_000, 1_300_000
-        )
-    )
-    return fundings[id]
-}
-
-fun getAllDeposits(): List<Deposit> {
-    val deposits = listOf(
-        Deposit("2025", "3월 17일", "입금자명", "09:48", 44444),
-        Deposit("2025", "3월 16일", "입금자명", "15:34", 44444),
-        Deposit("2025", "3월 16일", "입금자명", "15:28", 44444)
-    )
-    return deposits
-}
-
-fun getMyDeposits(): List<Deposit> {
-    val deposits = listOf(
-        Deposit("2025", "3월 17일", "입금자명", "09:48", 44444)
-    )
-    return deposits
-}
-
 @Preview
 @Composable
 fun FundingDetailScreenPreview() {
-    FundingDetailScreen(
-        Star(id = 102,
-        name = "이찬원",
-        index = 1,
-        thumbnail = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/leechanwon.png",
-        image = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/image12.png"), 1)
 }

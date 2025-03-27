@@ -32,6 +32,8 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.funding.model.Funding
+import com.a702.finafan.domain.funding.model.Star
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -56,18 +58,18 @@ fun FundingDetailHeader(
             .padding(top = 10.dp, start = 25.dp, end = 25.dp)
 
     ) {
-        ScreenTitle(funding.fundingTitle, modifier = Modifier.padding(vertical = 8.dp))
-        Text(funding.starName, modifier = Modifier.padding(bottom = 10.dp),
+        ScreenTitle(funding.title, modifier = Modifier.padding(vertical = 8.dp))
+        Text(funding.star.name, modifier = Modifier.padding(bottom = 10.dp),
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             fontFamily = Pretendard
         )
-        FundingProgressPercentage(funding.fundingCurrentAmount, funding.fundingGoalAmount,
+        FundingProgressPercentage(funding.currentAmount, funding.goalAmount,
             colorSet[2],
             modifier = Modifier
         )
         Spacer(modifier = Modifier.height(13.dp))
-        FundingProgressBar(funding.fundingCurrentAmount, funding.fundingGoalAmount,
+        FundingProgressBar(funding.currentAmount, funding.goalAmount,
             listOf(colorSet[0], colorSet[2]),
             modifier = Modifier
         )
@@ -88,7 +90,7 @@ fun FundingDetailHeader(
                     fontFamily = Pretendard,
                     color = MainBlack
                     )
-                Text(text = StringUtil.formatCurrency(funding.fundingCurrentAmount),
+                Text(text = StringUtil.formatCurrency(funding.currentAmount),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = Pretendard,
@@ -103,7 +105,7 @@ fun FundingDetailHeader(
                     style = Typography.displaySmall,
                     color = MainTextGray
                 )
-                Text(text = StringUtil.formatCurrency(funding.fundingGoalAmount),
+                Text(text = StringUtil.formatCurrency(funding.goalAmount),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = Pretendard,
@@ -120,7 +122,7 @@ fun FundingDetailHeader(
                     .clipToBounds()
                     .align(Alignment.Bottom)
             )
-            Text("${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingEndDate)}일 뒤 종료",
+            Text("${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingExpiryDate)}일 뒤 종료",
                 textAlign = TextAlign.End,
                 style = Typography.displaySmall,
                 color = colorSet[2],
