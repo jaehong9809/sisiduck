@@ -1,7 +1,7 @@
 package com.a702.finafan.presentation.main
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,10 +15,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.a702.finafan.common.ui.component.MainSquareIconButton
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.infrastructure.android.BleForegroundService
 
 
 @Composable
@@ -26,6 +29,8 @@ fun MainScreen(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
+
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -50,7 +55,12 @@ fun MainScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         MainSquareIconButton(
-            onClick = { navController.navigate("ble") },
+            onClick = {
+                // exe. ForegroundService
+                val intent = Intent(context, BleForegroundService::class.java)
+                ContextCompat.startForegroundService(context, intent)
+                navController.navigate("ble")
+            },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Face,
