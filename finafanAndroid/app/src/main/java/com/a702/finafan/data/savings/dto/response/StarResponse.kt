@@ -1,4 +1,4 @@
-package com.a702.finafan.data.savings.dto
+package com.a702.finafan.data.savings.dto.response
 
 import com.a702.finafan.domain.savings.model.Star
 

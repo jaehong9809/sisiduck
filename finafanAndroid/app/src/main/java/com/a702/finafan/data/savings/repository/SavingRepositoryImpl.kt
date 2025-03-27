@@ -2,7 +2,7 @@ package com.a702.finafan.data.savings.repository
 
 import android.util.Log
 import com.a702.finafan.data.savings.api.SavingApi
-import com.a702.finafan.data.savings.dto.toDomain
+import com.a702.finafan.data.savings.dto.response.toDomain
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.repository.SavingRepository
 import javax.inject.Inject
