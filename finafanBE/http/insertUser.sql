@@ -10,7 +10,7 @@ INSERT INTO users (
     address,
     credit_point,
     entertainer_id,
-    represent_account,
+    represent_account_id,
     created_at,
     modified_at,
     deleted_at
