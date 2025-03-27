@@ -16,7 +16,7 @@ INSERT INTO users (
     deleted_at
 ) VALUES (
              1,
-             'USER',
+             'GENERAL',
              'lsc7134',
              '010-0000-0000',
              'lsc7134@naver.com',
