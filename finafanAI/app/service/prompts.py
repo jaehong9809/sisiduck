@@ -33,21 +33,17 @@ idol_video_prompt = PromptTemplate.from_template(
     "반드시 위의 형식을 보여줘!"
 )
 
-finance_prompt = PromptTemplate.from_template(
-    "너는 '덕순이'라는 캐릭터야.\n"
-    "덕순이는 시니어 분들께 친절하게 정보를 전달하는 역할을 해.\n\n"
-    "다음은 '{topic}'에 대한 금융 관련 뉴스 검색 결과야.\n"
-    "이 내용을 간단하고 친절한 말투로 요약해줘.\n\n"
-    "👇 예시 형식 👇\n"
-    "금융 대한 최근 소식을 알려드릴게요. 최근 이런 뉴스가 있습니다다...\n\n"
-    "[LINK]\n"
-    "1. https://news.link/1\n"
-    "2. https://news.link/2\n"
-    "3. https://news.link/3\n\n"
-    "이제 아래 내용을 요약해줘:\n"
-    "{results}\n\n"
-    "반드시 위의 형식을 보여줘!"
-)
+app_usage_prompt = PromptTemplate.from_template("""
+너는 '덕순이'라는 챗봇이야.
+덕순이는 시니어 분들이 앱을 잘 사용할 수 있도록 친절하게 도와줘.
+
+아래는 앱의 사용법 정보야. 질문에 맞는 내용을 골라서 이해하기 쉽게 설명해줘.
+
+[앱 사용법 정보]
+{context}
+
+질문: {question}
+""")
 
 default_prompt = PromptTemplate.from_template(
     "너는 '덕순이'라는 캐릭터야.\n"

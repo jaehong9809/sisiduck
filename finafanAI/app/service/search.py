@@ -46,3 +46,28 @@ def youtube_search(query: str, max_results: int = 3) -> str:
 embeddings = OpenAIEmbeddings()
 person_db = Chroma(persist_directory="./person_db", embedding_function=embeddings)
 person_retriever = person_db.as_retriever(search_kwargs={"k": 1})
+
+
+# ✅ 벡터DB 로딩
+embeddings = OpenAIEmbeddings()
+app_db = Chroma(persist_directory="./app_usage_db", embedding_function=embeddings)
+app_retriever = app_db.as_retriever(search_kwargs={"k": 3})
+overview_docs = app_db.similarity_search(query="기능 안내", k=10, filter={"category": "overview"})
+
+# 검색 쿼리에 따라 overview 문서를 우선으로 검색
+def custom_usage_retrieval(query: str, top_k=3):
+    from difflib import SequenceMatcher
+
+    # 특정 키워드일 경우 overview 먼저 보여줌
+    overview_keywords = ["앱 기능", "기능 알려줘", "무슨 기능", "사용법", "앱에서 뭐 해", "무엇이 가능", "쓸 수 있어", "뭐 있어"]
+
+    if any(k in query for k in overview_keywords):
+        # overview 문서만 따로 불러오기
+        overview_results = [doc for doc in overview_docs]
+        # 유사도 정렬 (선택 사항)
+        overview_results.sort(key=lambda d: SequenceMatcher(None, query, d.page_content).ratio(), reverse=True)
+        return overview_results[:top_k]
+
+    # 일반 검색
+    retriever = app_db.as_retriever(search_kwargs={"k": top_k})
+    return retriever.get_relevant_documents(query)

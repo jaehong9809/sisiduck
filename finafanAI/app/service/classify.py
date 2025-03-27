@@ -13,7 +13,7 @@ classification_prompt = PromptTemplate.from_template("""
 질문: "{question}"
 
 다음 중 하나로 정확히 대답해 주세요:
-- finance (금융/적금/주식 등)
+- usage (앱 사용법/기능/방법/적금/통장 등)
 - news (뉴스/기사/인터뷰 등)
 - video (유튜브/영상/뮤직비디오 등)
 - person (인물/가수/프로필 등)
@@ -28,7 +28,7 @@ classification_chain = RunnableMap({
 
 # ✅ 2. 쿼리 압축 프롬프트 + 체인
 query_compression_prompt = PromptTemplate.from_template("""
-다음 질문에서 핵심적인 검색어만 추출해줘. 쓸데없는 표현은 빼고 2~5단어 이내로 간단하게 정리해.
+다음 질문에서 핵심적인 검색어만 추출해줘. 쓸데없는 표현은 빼고 간단하게 정리해.
 
 질문: "{question}"
 검색용 압축 쿼리:
@@ -50,14 +50,16 @@ def classify_query_rule_based(user_input: str) -> str:
 
 
     news_keywords = [
-    "뉴스", "기사", "소식", "보도", "속보", "헤드라인", "신문", "이슈", "최신", "인터뷰", "발표", "근황",
-    "보여줘", "최근", "요즘", "근래", "화제", "논란", "리포트", "브리핑", "언급", "언론", "인터뷰내용",
+    "뉴스", "기사", "소식", "보도", "속보", "헤드라인", "신문", "이슈", "인터뷰", "발표", "근황",
+    "보여줘", "요즘", "근래", "화제", "논란", "리포트", "브리핑", "언급", "언론", "인터뷰내용",
     "보도자료", "보도된", "언론보도"
     ]
 
 
-    finance_keywords = ["적금", "예금", "금융", "이자", "은행", "통장", "수익", "금리", "상품", "투자", "재테크", "펀드",
-                        "비과세", "이율", "환율", "주식", "자산", "정기예금", "청약"]
+    usage_keywords = [
+    "앱", "사용법", "기능", "가입", "탈퇴", "설정", "알림", "로그인", "변경", "조회", "등록", "삭제",
+    "적금", "예금", "금융", "이자", "은행", "통장", "수익", "상품", "펀드", "방법"
+    ]
 
     person_keywords = [
     "누구야", "누구", "프로필", "정보", "출연", "인물", "소개", "스케줄", "일정",
@@ -68,8 +70,8 @@ def classify_query_rule_based(user_input: str) -> str:
     
     clean_text = re.sub(r"[^가-힣a-zA-Z0-9\s]", "", text)
 
-    if any(word in clean_text for word in finance_keywords):
-        return "finance"
+    if any(word in clean_text for word in usage_keywords):
+        return "usage"
     if any(word in clean_text for word in news_keywords):
         return "news"
     if any(word in clean_text for word in video_keywords):
@@ -78,21 +80,21 @@ def classify_query_rule_based(user_input: str) -> str:
         return "person"
     return "chat"
 
-nickname_map = {
-    "영웅이": "임영웅",
-    "영웅" : "임영웅",
-    "찬원" : "이찬원",
-    "찬또": "이찬원",
-    "지민이": "박지민",
-    "국이": "정국",
-    # 필요 시 계속 추가
-}
+# nickname_map = {
+#     "영웅이": "임영웅",
+#     "영웅" : "임영웅",
+#     "찬원" : "이찬원",
+#     "찬또": "이찬원",
+#     "지민이": "박지민",
+#     "국이": "정국",
+#     # 필요 시 계속 추가
+# }
 
-def replace_nickname(query: str) -> str:
-    for nickname, real_name in nickname_map.items():
-        if nickname in query:
-            query = query.replace(nickname, real_name)
-    return query
+# def replace_nickname(query: str) -> str:
+#     for nickname, real_name in nickname_map.items():
+#         if nickname in query:
+#             query = query.replace(nickname, real_name)
+#     return query
 
 # ✅ 4. 분류 + 압축 쿼리 강제 통합 함수
 async def classify_query(user_input: str) -> dict:
@@ -100,9 +102,15 @@ async def classify_query(user_input: str) -> dict:
 
     if rule_result != "chat":
         # ✅ 압축 쿼리도 함께 생성
+
+        if rule_result == "usage":
+            return {
+                "type": rule_result,
+                "query": user_input
+            }
         compressed = await query_compression_chain.ainvoke({"question": user_input})
         compressed = compressed.content.strip()
-        compressed = replace_nickname(compressed)
+        # compressed = replace_nickname(compressed)
         return {
             "type": rule_result,
             "query": compressed
@@ -112,7 +120,7 @@ async def classify_query(user_input: str) -> dict:
     llm_result = await classification_chain.ainvoke({"question": user_input})
     llm_type = llm_result.content.strip().lower().split()[0]
 
-    if llm_type not in {"finance", "news", "video", "person", "chat"}:
+    if llm_type not in {"usage", "news", "video", "person", "chat"}:
         llm_type = "chat"
 
     if llm_type == "chat":
@@ -121,7 +129,14 @@ async def classify_query(user_input: str) -> dict:
     # ✅ chat 외 분류일 경우 → 압축 쿼리 포함
     compressed = await query_compression_chain.ainvoke({"question": user_input})
     compressed = compressed.content.strip()
-    compressed = replace_nickname(compressed)
+    # compressed = replace_nickname(compressed)
+
+    if llm_type == "usage":
+        return {
+            "type": rule_result,
+            "query": user_input
+        }
+
     return {
         "type": llm_type,
         "query": compressed

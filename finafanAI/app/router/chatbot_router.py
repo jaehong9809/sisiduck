@@ -2,8 +2,8 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from app.schemas.question import QuestionRequest
 from app.service.classify import classify_query
-from app.service.prompts import idol_news_prompt, idol_video_prompt, finance_prompt, default_prompt, person_prompt
-from app.service.search import fast_news_search, youtube_search, person_retriever
+from app.service.prompts import idol_news_prompt, idol_video_prompt, default_prompt, person_prompt, app_usage_prompt
+from app.service.search import fast_news_search, youtube_search, person_retriever, app_retriever, custom_usage_retrieval
 from app.service.callback_handler import SSECallbackHandler
 from app.core.redis_utils import make_cache_key, get_cached_response, set_cached_response
 from dotenv import load_dotenv
@@ -50,8 +50,16 @@ async def ask_question(request: QuestionRequest):
 
     idol_news_chain = idol_news_prompt | llm
     idol_video_chain = idol_video_prompt | llm
-    finance_chain = finance_prompt | llm
     default_chain = default_prompt | llm
+
+    app_usage_chain = (
+        RunnableMap({
+            "context": lambda x: "\n\n".join(
+                doc.page_content for doc in custom_usage_retrieval(x["query"])
+            ),
+            "question": lambda x: x["query"]
+        }) | app_usage_prompt | llm
+    )
 
     person_chain = (
         RunnableMap({
@@ -77,11 +85,8 @@ async def ask_question(request: QuestionRequest):
             "results": fast_news_search(x["query"])
         })
 
-    async def handle_finance(x):
-        return await finance_chain.ainvoke({
-            "topic": x["query"],
-            "results": fast_news_search(x["query"])
-        })
+    async def handle_usage(x):
+        return await app_usage_chain.ainvoke(x)
 
     async def handle_default(x):
         return await default_chain.ainvoke({
@@ -95,7 +100,7 @@ async def ask_question(request: QuestionRequest):
     router_chain = RunnableBranch(
         (lambda x: x.get("type") == "video", handle_video),
         (lambda x: x.get("type") == "news", handle_news),
-        (lambda x: x.get("type") == "finance", handle_finance),
+        (lambda x: x.get("type") == "usage", handle_usage),
         (lambda x: x.get("type") == "person", handle_person),  # ✅ 추가!
         handle_default
     )
