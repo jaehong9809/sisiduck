@@ -29,11 +29,13 @@ public class EntertainerSavingsAccount extends BaseEntity {
     private String accountNo;
 
     public static EntertainerSavingsAccount of(
+            Long userId,
             Long entertainerId,
             String accountName,
             String accountNo
     ) {
         return new EntertainerSavingsAccount(
+                userId,
                 entertainerId,
                 accountName,
                 accountNo
@@ -41,10 +43,12 @@ public class EntertainerSavingsAccount extends BaseEntity {
     }
 
     private EntertainerSavingsAccount(
+            Long userId,
             Long entertainerId,
             String accountName,
             String accountNo
     ){
+        this.userId = userId;
         this.entertainerId = entertainerId;
         this.accountName = accountName;
         this.accountNo = accountNo;

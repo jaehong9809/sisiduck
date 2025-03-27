@@ -32,9 +32,11 @@ public class UpdateAccountController {
     @PutMapping("/deposit")
     public ResponseEntity<UpdateDemandDepositAccountDepositResponse> updateDemandDepositAccountDeposit(
 //            @AuthMember User user,
+            String userEmail,
             @RequestBody DepositRequest depositRequest
     ){
         return demandDepositFacade.depositAccount(
+                userEmail,
                 depositRequest
         );
     }
