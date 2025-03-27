@@ -6,7 +6,10 @@ import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoryReque
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.product.entity.AccountProduct;
 import com.a702.finafanbe.core.product.entity.infrastructure.AccountProductRepository;
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
+import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -117,12 +120,17 @@ public class DemandDepositFacade {
             String email,
             String productName
     ) {
-        AccountProduct product = accountProductRepository.findByProductName(productName);
+        RetrieveProductsResponse.REC rec = getProducts().getBody()
+                .REC()
+                .stream()
+                .filter(product -> product.getAccountName().equals(productName))
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_DEMAND_DEPOSIT_PRODUCT)));
         return apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/createDemandDepositAccount",
                 financialRequestFactory.UserKeyAccountTypeUniqueNoRequest(
                         email,
-                        product.getProductUniqueNo(),
+                        rec.getAccountTypeUniqueNo(),
                         "createDemandDepositAccount"
                 ),
                 CreateAccountResponse.class
@@ -156,6 +164,16 @@ public class DemandDepositFacade {
                         depositRequest.transactionSummary()
                 ),
                 UpdateDemandDepositAccountDepositResponse.class
+        );
+    }
+
+    public ResponseEntity<RetrieveProductsResponse> getProducts() {
+        return apiClientUtil.callFinancialNetwork(
+                "/demandDeposit/inquireDemandDepositList",
+                financialRequestFactory.inquireProducts(
+                        "inquireDemandDepositList"
+                ),
+                RetrieveProductsResponse.class
         );
     }
 }
