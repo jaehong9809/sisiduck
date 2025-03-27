@@ -15,20 +15,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.domain.savings.model.Bank
 
 // 은행 선택 화면
 @Composable
-fun ConnectBankScreen(bankList: MutableList<String>) {
+fun ConnectBankScreen(
+    onSelect: (bank: Bank) -> Unit
+) {
 
-    val selectBank = remember { mutableStateOf("") }
+    val selectBank = remember { mutableStateOf(Bank()) }
 
     ConnectAccountLayout (
         title = stringResource(R.string.connect_account_select_back_title),
         buttonText = stringResource(R.string.btn_next),
-        isButtonEnabled = selectBank.value.isNotEmpty(),
-        onBackClick = { /* TODO: 뒤로 가기 */ },
-        onButtonClick = { /* TODO: 다음으로 넘어가기 */ }
+        isButtonEnabled = selectBank.value.bankName.isNotEmpty(),
+        onButtonClick = { onSelect(selectBank.value) }
     ) {
+
+        // TODO: 은행 목록 API 호출
 
         Column {
             // 은행 목록
@@ -76,5 +80,5 @@ fun ConnectBankScreen(bankList: MutableList<String>) {
 @Composable
 fun ConnectBankPreview() {
     val bankList = mutableListOf("NH농협", "우리은행", "하나은행", "국민은행", "신한은행", "카카오뱅크", "토스", "기업은행")
-    ConnectBankScreen(bankList)
+    ConnectBankScreen(onSelect = {})
 }

@@ -21,7 +21,6 @@ fun AccountCodeConfirmScreen(selectBank: String) {
         title = stringResource(R.string.connect_account_verification_code_confirm_title, selectBank),
         buttonText = stringResource(R.string.btn_confirm),
         isButtonEnabled = true,
-        onBackClick = { /* TODO: 뒤로 가기 */ },
         onButtonClick = { /* TODO: 인증 전의 화면으로 돌아가기 */ }
     ) {
 

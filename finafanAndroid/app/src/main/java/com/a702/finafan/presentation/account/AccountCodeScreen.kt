@@ -29,7 +29,6 @@ fun AccountCodeScreen(selectBank: String) {
         title = stringResource(R.string.connect_account_verification_code_title, selectBank),
         buttonText = stringResource(R.string.btn_next),
         isButtonEnabled = code.value.isNotEmpty(),
-        onBackClick = { /* TODO: 뒤로 가기 */ },
         onButtonClick = { /* TODO: 다음으로 넘어가기 */ }
     ) {
 

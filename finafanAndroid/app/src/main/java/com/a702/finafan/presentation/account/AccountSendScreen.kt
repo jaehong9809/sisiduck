@@ -20,7 +20,6 @@ fun AccountSendScreen(selectBank: String) {
         title = stringResource(R.string.connect_account_send_money_title, selectBank),
         buttonText = stringResource(R.string.btn_next),
         isButtonEnabled = true,
-        onBackClick = { /* TODO: 뒤로 가기 */ },
         onButtonClick = { /* TODO: 다음으로 넘어가기 */ }
     ) {
         AccountInfoItem(

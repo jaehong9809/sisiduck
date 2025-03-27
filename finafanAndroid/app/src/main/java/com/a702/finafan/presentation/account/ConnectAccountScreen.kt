@@ -22,7 +22,6 @@ fun ConnectAccountScreen(selectBank: String) {
         title = stringResource(R.string.connect_account_verification_code_confirm_title, selectBank),
         buttonText = stringResource(R.string.btn_delete),
         isButtonEnabled = true,
-        onBackClick = { /* TODO: 뒤로 가기 */ },
         onButtonClick = { /* TODO: 연결 계좌 삭제 다이얼로그 띄우기 */ }
     ) {
 

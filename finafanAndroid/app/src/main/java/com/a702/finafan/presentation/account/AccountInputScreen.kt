@@ -10,10 +10,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.StringField
+import com.a702.finafan.domain.savings.model.Bank
 
 // 계좌 번호 입력 화면
 @Composable
-fun AccountInputScreen(selectBank: String) {
+fun AccountInputScreen(selectBank: Bank) {
 
     val accountNum = remember { mutableStateOf("") }
 
@@ -21,7 +22,6 @@ fun AccountInputScreen(selectBank: String) {
         title = stringResource(R.string.connect_account_input_number_title, selectBank),
         buttonText = stringResource(R.string.btn_next),
         isButtonEnabled = accountNum.value.isNotEmpty(),
-        onBackClick = { /* TODO: 뒤로 가기 */ },
         onButtonClick = { /* TODO: 다음으로 넘어가기 */ }
     ) {
 
@@ -38,5 +38,5 @@ fun AccountInputScreen(selectBank: String) {
 @Preview
 @Composable
 fun AccountInputPreview() {
-    AccountInputScreen("NH농협")
+    AccountInputScreen(Bank(bankId = 12, bankCode = "345", bankName = "NH농협"))
 }
