@@ -57,8 +57,8 @@ public class User extends BaseEntity {
     @Column(name = "entertainer_id")
     private Long entertainerId;
 
-    @Column(name = "represent_account")
-    private Long representAccount;;
+    @Column(name = "represent_account_id")
+    private Long representAccountId;
 
     public void updateFavoriteEntertainer(Long entertainerId) {
         this.entertainerId = entertainerId;
@@ -124,7 +124,7 @@ public class User extends BaseEntity {
         this.name = nickname;
     }
 
-    public void updateRepresentAccount(Long representAccount) {
-        this.representAccount = representAccount;
+    public void updateRepresentAccount(Long representAccountId) {
+        this.representAccountId = representAccountId;
     }
 }
