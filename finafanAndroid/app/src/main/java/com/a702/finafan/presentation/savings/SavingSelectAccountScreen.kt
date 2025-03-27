@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.SelectAccountField
 import com.a702.finafan.common.ui.theme.MainTextGray
+import com.a702.finafan.domain.savings.model.Star
 
 // 적금 출금 계좌 선택 화면
 @Composable
@@ -57,5 +58,5 @@ fun SavingSelectAccountScreen(
 @Preview
 @Composable
 fun SavingSelectAccountPreview() {
-    SavingSelectAccountScreen(Star("이찬원", ""), "적금이름", onComplete = {})
+    SavingSelectAccountScreen(Star(entertainerName = "이찬원"), "적금이름", onComplete = {})
 }

@@ -23,11 +23,7 @@ import com.a702.finafan.common.ui.component.CircleBorderImage
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.gradientBlue
-
-data class Star(
-    val image: String,
-    val name: String
-)
+import com.a702.finafan.domain.savings.model.Star
 
 // 스타 선택 아이템
 @Composable
@@ -59,10 +55,10 @@ fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
 
             CircleBorderImage(
                 modifier = Modifier.size(50.dp),
-                imageUrl = star.image
+                imageUrl = star.entertainerProfileUrl
             )
 
-            Text(text = star.name, fontSize = 24.sp, color = MainBlack, fontWeight = FontWeight.Normal)
+            Text(text = star.entertainerName, fontSize = 24.sp, color = MainBlack, fontWeight = FontWeight.Normal)
         }
     }
 
@@ -72,7 +68,7 @@ fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
 @Composable
 fun StarItemPreview() {
     StarItem(
-        star = Star("", "이찬원"),
+        star = Star(),
         isSelected = true,
         onSelect = {}
     )

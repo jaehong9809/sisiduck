@@ -1,9 +1,11 @@
 package com.a702.finafan.presentation.navigation
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.presentation.savings.SavingAccountInfoScreen
 import com.a702.finafan.presentation.savings.SavingCancelScreen
 import com.a702.finafan.presentation.savings.SavingDepositScreen
@@ -11,11 +13,11 @@ import com.a702.finafan.presentation.savings.SavingDescScreen
 import com.a702.finafan.presentation.savings.SavingMainScreen
 import com.a702.finafan.presentation.savings.SavingNameInputScreen
 import com.a702.finafan.presentation.savings.SavingSelectAccountScreen
-import com.a702.finafan.presentation.savings.Star
 import com.a702.finafan.presentation.savings.StarSearchScreen
 import com.a702.finafan.presentation.savings.TermGuideScreen
 import com.a702.finafan.presentation.savings.Transaction
 import com.a702.finafan.presentation.savings.TransactionDetailScreen
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 import com.google.gson.Gson
 
 fun NavGraphBuilder.savingGraph(
@@ -42,10 +44,15 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.StarSearch.route) {
-            StarSearchScreen(onSelect = { selectStar ->
-                val starJson = Gson().toJson(selectStar)
-                navController.navigate(NavRoutes.SavingNameInput.route + "/${starJson}")
-            })
+            val savingViewModel: SavingViewModel = hiltViewModel()
+
+            StarSearchScreen(
+                onSelect = { selectStar ->
+                    val starJson = Gson().toJson(selectStar)
+                    navController.navigate(NavRoutes.SavingNameInput.route + "/${starJson}")
+                },
+                savingViewModel
+            )
         }
 
         composable(NavRoutes.SavingNameInput.route + "/{star}") { backStackEntry ->

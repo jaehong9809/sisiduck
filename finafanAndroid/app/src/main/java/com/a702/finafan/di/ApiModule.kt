@@ -1,6 +1,7 @@
 package com.a702.finafan.di
 
 import com.a702.finafan.data.chatbot.api.ChatApi
+import com.a702.finafan.data.savings.api.SavingApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,5 +18,11 @@ object ApiModule {
     fun provideChatApi(@NetworkModule.AiChatRetrofit retrofit: Retrofit)
     : ChatApi {
         return retrofit.create(ChatApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSavingApi(@NetworkModule.MainRetrofit retrofit: Retrofit): SavingApi {
+        return retrofit.create(SavingApi::class.java)
     }
 }
