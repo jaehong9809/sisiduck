@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,9 +17,9 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE user SET delete_at = CURRENT_TIMESTAMP WHERE id = ?")
-@SQLRestriction("deleted_at = false")
+//@SQLRestriction("deleted_at = false")
 public class User extends BaseEntity {
-    private static final int MAX_SOCIAL_ID_LENGTH = 255;
+    private static final int MAX_SOCIAL_EMAIL_LENGTH = 255;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,15 +34,15 @@ public class User extends BaseEntity {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Size(max = MAX_SOCIAL_ID_LENGTH)
-    @Column(name = "social_id")
-    private String socialId;
+    @Size(max = MAX_SOCIAL_EMAIL_LENGTH)
+    @Column(name = "social_email")
+    private String socialEmail;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "social_type")
     private SocialType socialType;
 
-    @Column(name = "userKey", nullable = false)
+    @Column(name = "user_key", nullable = false)
     private String userKey;
 
     @Column(name = "birth_date", nullable = false)
@@ -55,6 +54,16 @@ public class User extends BaseEntity {
     @Column(name = "credit_point", nullable = false)
     private String creditPoint;
 
+    @Column(name = "entertainer_id")
+    private Long entertainerId;
+
+    @Column(name = "represent_account_id")
+    private Long representAccountId;
+
+    public void updateFavoriteEntertainer(Long entertainerId) {
+        this.entertainerId = entertainerId;
+    }
+
     public static User of(UserRequest userRequest) {
         return new User(
                 "GENERAL",
@@ -65,30 +74,30 @@ public class User extends BaseEntity {
         );
     }
 
-    public static User of(String socialId, String nickname) {
+    public static User of(String socialEmail, String nickname) {
         return new User(
-                socialId,
+                socialEmail,
                 nickname
         );
     }
 
     public static User of(
-            String socialId,
+            String socialEmail,
             String userKey,
             String socialType) {
         return new User(
-                socialId,
+                socialEmail,
                 userKey,
                 socialType
         );
     }
 
     private User(
-            String socialId,
+            String socialEmail,
             String userKey,
             String socialType
     ){
-        this.socialId = socialId;
+        this.socialEmail = socialEmail;
         this.userKey = userKey;
         this.socialType = SocialType.valueOf(socialType);
     }
@@ -108,10 +117,14 @@ public class User extends BaseEntity {
     }
 
     private User(
-            String socialId,
+            String socialEmail,
             String nickname
     ){
-        this.socialId = socialId;
+        this.socialEmail = socialEmail;
         this.name = nickname;
+    }
+
+    public void updateRepresentAccount(Long representAccountId) {
+        this.representAccountId = representAccountId;
     }
 }

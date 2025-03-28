@@ -1,7 +1,7 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
-import com.a702.finafanbe.core.demanddeposit.dto.request.RegisterDemandDepositRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.RegisterDemandDepositResponse;
+import com.a702.finafanbe.core.demanddeposit.dto.request.RegisterProductRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.response.RegisterProductResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +15,14 @@ public class RegisterAccountService {
     private final ApiClientUtil apiClientUtil;
     private final AccountRepository accountRepository;
 
-    public ResponseEntity<RegisterDemandDepositResponse> registerDemandDeposit(
+    public ResponseEntity<RegisterProductResponse> registerDemandDeposit(
             String path,
-            RegisterDemandDepositRequest registerDemandDepositRequest
+            RegisterProductRequest registerDemandDepositRequest
     ) {
         return apiClientUtil.callFinancialNetwork(
                 path,
                 registerDemandDepositRequest,
-                RegisterDemandDepositResponse.class
+                RegisterProductResponse.class
         );
     }
 }

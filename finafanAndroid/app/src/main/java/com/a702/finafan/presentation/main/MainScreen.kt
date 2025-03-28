@@ -1,81 +1,78 @@
 package com.a702.finafan.presentation.main
 
-import android.app.Activity
-import android.content.Intent
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.a702.finafan.common.ui.component.MainSquareIconButton
+import com.a702.finafan.common.ui.component.MainWideIconButton
 import com.a702.finafan.common.ui.theme.MainBlack
-import com.a702.finafan.infrastructure.android.BleForegroundService
-import com.a702.finafan.infrastructure.util.PermissionHelper
-
+import com.a702.finafan.presentation.navigation.NavRoutes
 
 @Composable
 fun MainScreen(
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
 ) {
+    Column(modifier = modifier) {
+        Row {
+            MainSquareIconButton(
+                onClick = {
+                    // TODO: 적금계좌 고유번호 pk 넘기기
+                    navController.navigate(NavRoutes.SavingMain.route + "/11")
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = MainBlack,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                text = "적금"
+            )
 
-    val context = LocalContext.current
+            Spacer(modifier = Modifier.padding(8.dp))
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        MainSquareIconButton(
-            onClick = { navController.navigate("chat") },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "AI 챗봇 덕순이",
-                    tint = MainBlack,
-                    modifier = Modifier.size(48.dp)
-                )
-            },
-            text = "덕순이와 대화"
-        )
+            MainSquareIconButton(
+                onClick = {
+                    navController.navigate(NavRoutes.SavingDesc.route)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = MainBlack,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                text = "적금 가입"
+            )
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.padding(8.dp))
 
-        MainSquareIconButton(
+        MainWideIconButton(
             onClick = {
-                // Permit: Ble
-                val activity = context as? Activity
-                activity?.let { PermissionHelper.requestAllPermissions(it) }
-
-                // execute: ForegroundService
-                val intent = Intent(context, BleForegroundService::class.java)
-                ContextCompat.startForegroundService(context, intent)
-                navController.navigate("ble")
+                navController.navigate(NavRoutes.Chat.route)
             },
             icon = {
                 Icon(
-                    imageVector = Icons.Default.Face,
-                    contentDescription = "BLE로 주변 팬 찾기",
+                    imageVector = Icons.Default.Home,
+                    contentDescription = "Home",
                     tint = MainBlack,
                     modifier = Modifier.size(48.dp)
                 )
             },
-            text = "주변 팬 찾기"
+            text = "덕순이"
         )
     }
 }

@@ -18,10 +18,10 @@ public class Entertainer {
     @Column(name = "entertainer_name", nullable = false, length = 100)
     private String entertainerName;
 
-    @Column(name = "entertainer_age", nullable = false)
-    private int entertainerAge;
+    @Column(name = "birth_date", nullable = false)
+    private String birthDate;
 
-    @Column(name = "entertaincer_profile_url", nullable = false, length = 1024)
+    @Column(name = "entertainer_profile_url", nullable = false, length = 1024)
     private String entertainerProfileUrl;
 
     @Column(name = "fandom_name", nullable = false, length = 100)

@@ -1,8 +1,7 @@
 package com.a702.finafanbe.global.common.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,10 +16,6 @@ public class BaseEntity {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-
-    @Column(name = "deleted_at",nullable = false)
-    private LocalDateTime deletedAt;
 }
