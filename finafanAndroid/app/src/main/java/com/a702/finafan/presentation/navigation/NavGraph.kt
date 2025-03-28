@@ -37,9 +37,9 @@ fun NavGraph(
                 UuidListScreen()
             }
 
-            savingGraph(navController = navController, savingViewModel)
+            savingGraph(navController = navController, savingViewModel = savingViewModel)
 
-            accountGraph(navController)
+            accountGraph(navController = navController, savingViewModel = savingViewModel)
 
             fundingGraph(navController)
 

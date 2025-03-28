@@ -150,7 +150,26 @@ fun MainScreen(
                 },
                 text = "적금 계좌 정보"
             )
+
+            Spacer(modifier = Modifier.padding(8.dp))
         }
+
+        Spacer(modifier = Modifier.padding(8.dp))
+        
+        MainSquareIconButton(
+            onClick = {
+                navController.navigate(NavRoutes.Account.route)
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = "Home",
+                    tint = MainBlack,
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            text = "1원 인증"
+        )
 
         Spacer(modifier = Modifier.padding(8.dp))
 
