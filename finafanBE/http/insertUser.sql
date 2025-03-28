@@ -12,8 +12,7 @@ INSERT INTO users (
     entertainer_id,
     represent_account_id,
     created_at,
-    modified_at,
-    deleted_at
+    modified_at
 ) VALUES (
              1,
              'GENERAL',
@@ -28,6 +27,5 @@ INSERT INTO users (
              NULL,
              NULL,
              NOW(),
-             NOW(),
-             '9999-12-31 23:59:59'
+             NOW()
          );
