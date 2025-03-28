@@ -19,13 +19,12 @@ public class Account extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
-    @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(name = "account_no", nullable = false)
     private String accountNo;
 
-    /*precision : 소수점을 포함한 전체 자리 수*/
     @Column(name = "balance", nullable = false, precision = 50)
     private BigDecimal balance;
 
@@ -79,4 +78,30 @@ public class Account extends BaseEntity {
 
     @Column(name = "subscription_period")
     private LocalDateTime subscriptionPeriod;
+
+    public static Account of(
+            Long userId,
+            String accountNo,
+            String bankCode,
+            String currency
+    ){
+        return new Account(
+                userId,
+                accountNo,
+                bankCode,
+                currency
+        );
+    }
+
+    private Account(
+            Long userId,
+            String accountNo,
+            String bankCode,
+            String currency
+    ){
+        this.userId = userId;
+        this.accountNo = accountNo;
+        this.bankCode = bankCode;
+        this.currency = currency;
+    }
 }
