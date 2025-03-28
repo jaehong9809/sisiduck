@@ -12,6 +12,7 @@ import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
+import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.s3.service.S3Service;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/star")
@@ -43,6 +45,22 @@ public class EntertainSavingsController {
         return ResponseUtil.success(entertainService.choiceStar(
                 selectStarRequest
         ));
+    }
+
+    @GetMapping("/accounts")
+    public ResponseEntity<ResponseData<List<StarAccountResponse>>> getStarAccounts(
+//            @AuthMember User user
+    ){
+        List<EntertainerSavingsAccount> starAccounts = entertainService.findStarAccounts(EMAIL);
+        List<StarAccountResponse> responses = starAccounts.stream()
+                .map(account->StarAccountResponse.of(
+                        account.getUserId(),
+                        account.getEntertainerId(),
+                        account.getDepositAccountId(),
+                        account.getWithdrawalAccountId()
+                ))
+                .collect(Collectors.toList());
+        return ResponseUtil.success(responses);
     }
 
     @GetMapping
@@ -87,17 +105,16 @@ public class EntertainSavingsController {
         return ResponseUtil.failure(new BadRequestException(ResponseData.createResponse(ErrorCode.SYSTEM_ERROR)));
     }
 
-    @GetMapping("/account")
+    @GetMapping("/account/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
-            @RequestParam String accountNo
+            @PathVariable Long savingAccountId
     ) {
         return ResponseUtil.success(demandDepositFacade.getEntertainerAccount(
                 EMAIL,
-                accountNo
+                savingAccountId
         ));
     }
 //TODO 검색
-    //savingaccountId 입금 계좌 정보
     @GetMapping("/transaction-histories")
     public ResponseEntity<ResponseData<InquireEntertainerHistoriesResponse>> getDemandDepositTransactionHistories(
             @RequestBody EntertainerTransactionHistoriesRequest entertainerTransactionHistoriesRequest
@@ -105,11 +122,4 @@ public class EntertainSavingsController {
         return ResponseUtil.success(demandDepositFacade.inquireEntertainerHistories(
                 entertainerTransactionHistoriesRequest));
     }
-
-//    @GetMapping("/accounts")
-//    public ResponseEntity<ResponseData<List<?>>> getAccounts(
-//            String userEmail
-//    ){
-//
-//    }
 }
