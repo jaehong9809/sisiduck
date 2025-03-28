@@ -8,11 +8,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.a702.finafan.domain.funding.model.Funding
+import com.a702.finafan.domain.funding.model.Star
 
 @Composable
 fun FundingList(
     fundings: List<Funding>,
-    stars: List<Star>
+    navController: NavHostController
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
@@ -20,8 +23,8 @@ fun FundingList(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(fundings) { funding ->
-            val star: Star = stars[funding.starIndex]
-            FundingCardItem(star, funding)
+            val star: Star = funding.star
+            FundingCardItem(star, funding, navController)
         }
     }
 }

@@ -18,6 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
+import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.ImageItem
 import com.a702.finafan.common.ui.component.MainSquareIconButton
 import com.a702.finafan.common.ui.component.MainWideIconButton
 import com.a702.finafan.common.ui.theme.MainBlack
@@ -81,6 +83,16 @@ fun MainScreen(
         }
 
         Spacer(modifier = Modifier.padding(8.dp))
+
+        MainSquareIconButton(
+            onClick = {
+                navController.navigate(NavRoutes.FundingMain.route)
+            },
+            icon = {
+                ImageItem(Modifier.padding(5.dp), { }, R.drawable.funding_box)
+            },
+            text = "모금"
+        )
 
         MainSquareIconButton(
             onClick = {
