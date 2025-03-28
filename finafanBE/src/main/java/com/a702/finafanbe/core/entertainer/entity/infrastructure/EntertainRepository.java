@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface EntertainRepository extends JpaRepository<Entertainer, Long> {
     Optional<Entertainer> findByEntertainerName(String entertainer);
+
+    Optional<Entertainer> findByEntertainerId(Long entertainerId);
 }

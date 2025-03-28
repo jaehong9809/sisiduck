@@ -2,11 +2,13 @@ package com.a702.finafanbe.core.entertainer.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "entertainer_savings_transaction_detail")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class EntertainerSavingsTransactionDetail {
 
     @Id
@@ -16,8 +18,11 @@ public class EntertainerSavingsTransactionDetail {
     @Column(nullable = false, name = "user_id")
     private Long userId;
 
-    @Column(nullable = false, name = "account_no")
-    private String accountNo;
+    @Column(nullable = false, name = "deposit_account_no")
+    private String depositAccountNo;
+
+    @Column(name = "withdrawal_account_no", nullable = false)
+    private String withdrawalAccountNo;
 
     @Column(nullable = false, name = "transaction_balance")
     private Long transactionBalance;
@@ -33,7 +38,8 @@ public class EntertainerSavingsTransactionDetail {
 
     public static EntertainerSavingsTransactionDetail of(
             Long userId,
-            String accountNo,
+            String depositAccountNo,
+            String withdrawalAccountNo,
             Long transactionBalance,
             Long transactionUniqueNo,
             String message,
@@ -41,7 +47,8 @@ public class EntertainerSavingsTransactionDetail {
     ){
         return new EntertainerSavingsTransactionDetail(
                 userId,
-                accountNo,
+                depositAccountNo,
+                withdrawalAccountNo,
                 transactionBalance,
                 transactionUniqueNo,
                 message,
@@ -51,14 +58,16 @@ public class EntertainerSavingsTransactionDetail {
 
     private EntertainerSavingsTransactionDetail(
             Long userId,
-            String accountNo,
+            String depositAccountNo,
+            String withdrawalAccountNo,
             Long transactionBalance,
             Long transactionUniqueNo,
             String message,
             String imageUrl
     ){
         this.userId = userId;
-        this.accountNo = accountNo;
+        this.depositAccountNo = depositAccountNo;
+        this.withdrawalAccountNo = withdrawalAccountNo;
         this.transactionBalance = transactionBalance;
         this.transactionUniqueNo = transactionUniqueNo;
         this.message = message;

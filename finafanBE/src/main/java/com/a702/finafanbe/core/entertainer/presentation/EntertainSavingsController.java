@@ -1,16 +1,23 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
 import com.a702.finafanbe.core.demanddeposit.dto.request.DepositRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountDepositResponse;
+import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.TransferRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarDepositRequest;
+import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
+import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.s3.service.S3Service;
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +53,6 @@ public class EntertainSavingsController {
         return ResponseUtil.success(entertainService.findStars());
     }
 
-    //TODO 검색.
-
     @PostMapping("/savings")
     public ResponseEntity<ResponseData<StarAccountResponse>> createSavings(
 //            @AuthMember User user,
@@ -57,35 +62,57 @@ public class EntertainSavingsController {
     }
 
     /*
-    * TODO 입금이도 되지만 자동이체도 해야하나?라고하면 해야하니까..
-    * scheduler로 한 달 마다 이체가 되도록하면됨.
+    * TODO scheduler로 한 달 마다 이체가 되도록하면됨.
     *
     * */
     @PutMapping("/despoit")
-    public ResponseEntity<ResponseData<Void>> deposit(
+    public ResponseEntity<ResponseData<EntertainerDepositResponse>> deposit(
             //@AuthMember User user,
-            @ModelAttribute StarDepositRequest starDepositRequest
+            @ModelAttribute StarTransferRequest starTransferRequest
             ){
-        ResponseEntity<UpdateDemandDepositAccountDepositResponse> exchange = demandDepositFacade.depositAccount(
-                starDepositRequest.userEmail(),
-                new DepositRequest(
-                        starDepositRequest.accountNo(),
-                        starDepositRequest.transactionBalance(),
-                        starDepositRequest.transactionSummary()
+        ResponseEntity<UpdateDemandDepositAccountTransferResponse> exchange = demandDepositFacade.transferAccount(
+                starTransferRequest.userEmail(),
+                new TransferRequest(
+                        starTransferRequest.depositAccountNo(),
+                        starTransferRequest.depositTransactionSummary(),
+                        starTransferRequest.transactionBalance(),
+                        starTransferRequest.withdrawalAccountNo(),
+                        starTransferRequest.withdrawalTransactionSummary()
                 )
         );
         if(exchange.getStatusCode()== HttpStatus.OK){
-            String image = s3Service.uploadImage(starDepositRequest.imageFile());
-            entertainService.deposit(
-                    starDepositRequest.userEmail(),
-                    starDepositRequest.accountNo(),
-                    starDepositRequest.transactionBalance(),
-                    exchange.getBody().REC().getTransactionUniqueNo().longValue(),
-                    starDepositRequest.message(),
+            String image = s3Service.uploadImage(starTransferRequest.imageFile());
+            EntertainerDepositResponse response = entertainService.deposit(
+                    starTransferRequest.userEmail(),
+                    starTransferRequest.depositAccountNo(),
+                    starTransferRequest.withdrawalAccountNo(),
+                    starTransferRequest.transactionBalance(),
+                    exchange.getBody().REC().get(0).transactionUniqueNo(),
+                    starTransferRequest.message(),
                     image
             );
+            return ResponseUtil.success(response);
         }
-        return ResponseUtil.success();
+        return ResponseUtil.failure(new BadRequestException(ResponseData.createResponse(ErrorCode.SYSTEM_ERROR)));
+    }
+
+    @GetMapping("/account")
+    public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
+            @RequestParam String userEmail,
+            @RequestParam String accountNo
+    ) {
+        return ResponseUtil.success(demandDepositFacade.getEntertainerAccount(
+                userEmail,
+                accountNo
+        ));
+    }
+
+    @GetMapping("/transaction-histories")
+    public ResponseEntity<ResponseData<InquireEntertainerHistoriesResponse>> getDemandDepositTransactionHistories(
+            @RequestBody TransactionHistoriesRequest transactionHistoryListRequest
+    ){
+        return ResponseUtil.success(demandDepositFacade.inquireEntertainerHistories(
+                transactionHistoryListRequest));
     }
 
 //    @GetMapping("/accounts")

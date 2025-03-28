@@ -1,6 +1,7 @@
 package com.a702.finafanbe.global.common.financialnetwork.util;
 
 import com.a702.finafanbe.core.demanddeposit.dto.request.*;
+import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
@@ -169,5 +170,27 @@ public class FinancialRequestFactory {
 
     public RetrieveProductsRequest inquireProducts(String apiName) {
         return new RetrieveProductsRequest(createRequestHeader(apiName));
+    }
+
+    public UpdateAccountTransferRequest transferAccount(
+            String userEmail,
+            String apiName,
+            String depositAccountNo,
+            String depositTransactionSummary,
+            Long transactionBalance,
+            String withdrawalAccountNo,
+            String withdrawalTransactionSummary
+    ) {
+        return new UpdateAccountTransferRequest(
+                createRequestHeaderWithUserKey(
+                        userEmail,
+                        apiName
+                ),
+                depositAccountNo,
+                depositTransactionSummary,
+                transactionBalance,
+                withdrawalAccountNo,
+                withdrawalTransactionSummary
+        );
     }
 }

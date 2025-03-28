@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EntertainerSavingsTransactionDetailRepository extends JpaRepository<EntertainerSavingsTransactionDetail, Integer> {
+    EntertainerSavingsTransactionDetail findByDepositAccountNo(String accountNo);
 }
