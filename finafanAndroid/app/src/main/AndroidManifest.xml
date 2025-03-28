@@ -2,8 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- INTERNET PERMISSION -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- RECODE PERMISSION FOR STT -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- BLUETOOTH SETTINGS -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:name=".FinafanApp"
@@ -16,6 +30,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinAFan"
         tools:targetApi="31">
+
+        <service
+            android:name=".infrastructure.android.BleForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice|location|dataSync" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
