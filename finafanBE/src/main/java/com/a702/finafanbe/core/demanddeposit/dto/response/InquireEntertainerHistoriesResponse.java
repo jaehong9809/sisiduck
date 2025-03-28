@@ -1,21 +1,17 @@
 package com.a702.finafanbe.core.demanddeposit.dto.response;
 
+import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionWithImageResponse;
+
 import java.util.List;
 
 public record InquireEntertainerHistoriesResponse(
         String totalCount,
-        List<AccountTransactionHistoriesResponse.list> list,
-        String imageUrl
+        List<TransactionWithImageResponse> transactions
 ) {
     public static InquireEntertainerHistoriesResponse of(
             String totalCount,
-            List<AccountTransactionHistoriesResponse.list> list,
-            String imageUrl
-    ){
-        return new InquireEntertainerHistoriesResponse(
-                totalCount,
-                list,
-                imageUrl
-        );
+            List<TransactionWithImageResponse> transactions
+    ) {
+        return new InquireEntertainerHistoriesResponse(totalCount, transactions);
     }
 }
