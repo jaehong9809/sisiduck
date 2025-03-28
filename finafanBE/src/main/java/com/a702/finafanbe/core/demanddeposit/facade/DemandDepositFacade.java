@@ -23,13 +23,12 @@ import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class DemandDepositFacade {
+
+    private static final String EMAIL = "lsc7134@naver.com";
 
     private final FinancialRequestFactory financialRequestFactory;
     private final ApiClientUtil apiClientUtil;
@@ -194,7 +193,7 @@ public class DemandDepositFacade {
         return entertainSavingsService.createEntertainerSavings(
                 createStarAccountRequest,
                 createAccount(
-                        createStarAccountRequest.userEmail(),
+                        EMAIL,
                         createStarAccountRequest.accountName()
                 ).getBody().REC().getAccountNo());
     }

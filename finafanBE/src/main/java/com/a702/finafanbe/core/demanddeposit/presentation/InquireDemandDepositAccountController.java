@@ -33,9 +33,8 @@ public class InquireDemandDepositAccountController {
 
     @GetMapping("/accounts")
     public ResponseEntity<ResponseData<InquireDemandDepositAccountListResponse>> getDemandDepositAccountList(
-            @RequestParam String userEmail
     ) {
-        return ResponseUtil.success(demandDepositFacade.getDemandDepositListAccount(userEmail).getBody());
+        return ResponseUtil.success(demandDepositFacade.getDemandDepositListAccount("lsc7134@naver.com").getBody());
 
     }
 

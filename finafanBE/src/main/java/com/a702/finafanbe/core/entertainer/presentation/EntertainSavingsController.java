@@ -1,14 +1,11 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
-import com.a702.finafanbe.core.demanddeposit.dto.request.DepositRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.TransferRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
+import com.a702.finafanbe.core.entertainer.dto.request.EntertainerTransactionHistoriesRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
-import com.a702.finafanbe.core.entertainer.dto.request.StarDepositRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
@@ -24,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,6 +28,8 @@ import java.util.List;
 @RequestMapping("/api/v1/star")
 @RequiredArgsConstructor
 public class EntertainSavingsController {
+
+    private static final String EMAIL = "lsc7134@naver.com";
 
     private final DemandDepositFacade demandDepositFacade;
     private final EntertainSavingsService entertainService;
@@ -41,7 +39,6 @@ public class EntertainSavingsController {
     public ResponseEntity<ResponseData<EntertainerResponse>> selectStar(
 //            @AuthMember User user,
             @RequestBody SelectStarRequest selectStarRequest
-
     ){
         return ResponseUtil.success(entertainService.choiceStar(
                 selectStarRequest
@@ -70,22 +67,17 @@ public class EntertainSavingsController {
             //@AuthMember User user,
             @ModelAttribute StarTransferRequest starTransferRequest
             ){
-        ResponseEntity<UpdateDemandDepositAccountTransferResponse> exchange = demandDepositFacade.transferAccount(
-                starTransferRequest.userEmail(),
-                new TransferRequest(
-                        starTransferRequest.depositAccountNo(),
-                        starTransferRequest.depositTransactionSummary(),
-                        starTransferRequest.transactionBalance(),
-                        starTransferRequest.withdrawalAccountNo(),
-                        starTransferRequest.withdrawalTransactionSummary()
-                )
+        ResponseEntity<UpdateDemandDepositAccountTransferResponse> exchange = demandDepositFacade.transferEntertainerAccount(
+                EMAIL,
+                starTransferRequest.depositAccountId(),
+                starTransferRequest.transactionBalance()
         );
         if(exchange.getStatusCode()== HttpStatus.OK){
             String image = s3Service.uploadImage(starTransferRequest.imageFile());
             EntertainerDepositResponse response = entertainService.deposit(
-                    starTransferRequest.userEmail(),
-                    starTransferRequest.depositAccountNo(),
-                    starTransferRequest.withdrawalAccountNo(),
+                    EMAIL,
+                    exchange.getBody().REC().stream().map(transaction->transaction.accountNo()).findFirst().get(),
+                    exchange.getBody().REC().stream().map(transaction->transaction.transactionAccountNo()).findFirst().get(),
                     starTransferRequest.transactionBalance(),
                     exchange.getBody().REC().get(0).transactionUniqueNo(),
                     starTransferRequest.message(),
@@ -98,21 +90,20 @@ public class EntertainSavingsController {
 
     @GetMapping("/account")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
-            @RequestParam String userEmail,
             @RequestParam String accountNo
     ) {
         return ResponseUtil.success(demandDepositFacade.getEntertainerAccount(
-                userEmail,
+                EMAIL,
                 accountNo
         ));
     }
 
     @GetMapping("/transaction-histories")
     public ResponseEntity<ResponseData<InquireEntertainerHistoriesResponse>> getDemandDepositTransactionHistories(
-            @RequestBody TransactionHistoriesRequest transactionHistoryListRequest
+            @RequestBody EntertainerTransactionHistoriesRequest entertainerTransactionHistoriesRequest
     ){
         return ResponseUtil.success(demandDepositFacade.inquireEntertainerHistories(
-                transactionHistoryListRequest));
+                entertainerTransactionHistoriesRequest));
     }
 
 //    @GetMapping("/accounts")

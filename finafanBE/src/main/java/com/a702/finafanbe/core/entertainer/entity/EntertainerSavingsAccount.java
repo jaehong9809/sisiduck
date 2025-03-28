@@ -25,8 +25,11 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(nullable = false, name ="account_name")
     private String accountName;
 
-    @Column(nullable = false, name = "account_no")
-    private String accountNo;
+    @Column(nullable = false, name = "deposit_account_no")
+    private String depositAccountNo;
+
+    @Column(nullable = false, name = "withdrawal_account_no")
+    private String withdrawalAccountNo;
 
     public static EntertainerSavingsAccount of(
             Long userId,
@@ -51,7 +54,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
         this.userId = userId;
         this.entertainerId = entertainerId;
         this.accountName = accountName;
-        this.accountNo = accountNo;
+        this.depositAccountNo = accountNo;
     }
 }
 //우리는 개인 적금이지만, 매일 출납이되야함.

@@ -40,7 +40,7 @@ public class EntertainSavingsService {
             CreateStarAccountRequest createStartAccountRequest,
             String accountNo
     ) {
-        User user = findUser(createStartAccountRequest.userEmail());
+        User user = findUser("lsc7134@naver.com");
         Long entertainerId = findEntertainerId(createStartAccountRequest.entertainerId());
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
@@ -55,7 +55,7 @@ public class EntertainSavingsService {
                 entertainerSavingsAccount.getUserId(),
                 entertainerSavingsAccount.getEntertainerId(),
                 entertainerSavingsAccount.getAccountName(),
-                entertainerSavingsAccount.getAccountNo()
+                entertainerSavingsAccount.getDepositAccountNo()
         );
     }
 
@@ -109,10 +109,11 @@ public class EntertainSavingsService {
                 .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
     }
 
+    @Transactional
     public EntertainerResponse choiceStar(
             SelectStarRequest selectStarRequest
     ) {
-        User user = findUser(selectStarRequest.userEmail());
+        User user = findUser("lsc7134@naver.com");
         user.updateFavoriteEntertainer(findEntertainerId(selectStarRequest.entertainerId()));
         Entertainer entertainer = entertainRepository.findByEntertainerId(selectStarRequest.entertainerId()).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
         return EntertainerResponse.of(
