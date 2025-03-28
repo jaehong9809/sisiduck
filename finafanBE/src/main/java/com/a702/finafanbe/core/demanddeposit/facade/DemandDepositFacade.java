@@ -7,18 +7,25 @@ import com.a702.finafanbe.core.demanddeposit.dto.request.TransferRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
+import com.a702.finafanbe.core.entertainer.dto.request.EntertainerTransactionHistoriesRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
+import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsTransactionDetail;
+import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsAccountRepository;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
+import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +35,7 @@ public class DemandDepositFacade {
     private final ApiClientUtil apiClientUtil;
     private final EntertainSavingsService entertainSavingsService;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
+    private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -217,21 +225,23 @@ public class DemandDepositFacade {
         );
     }
 
-    public InquireEntertainerHistoriesResponse inquireEntertainerHistories(TransactionHistoriesRequest transactionHistoriesRequest) {
+    public InquireEntertainerHistoriesResponse inquireEntertainerHistories(
+            EntertainerTransactionHistoriesRequest entertainerTransactionHistoriesRequest
+    ) {
         AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/inquireTransactionHistoryList",
                 financialRequestFactory.inquireHistories(
-                        transactionHistoriesRequest.email(),
+                        entertainerTransactionHistoriesRequest.email(),
                         "inquireTransactionHistoryList",
-                        transactionHistoriesRequest.accountNo(),
-                        transactionHistoriesRequest.startDate(),
-                        transactionHistoriesRequest.endDate(),
-                        transactionHistoriesRequest.transactionType(),
-                        transactionHistoriesRequest.orderByType()
+                        entertainerTransactionHistoriesRequest.accountNo(),
+                        "00000101",
+                        DateUtil.getTransmissionDate(),
+                        "A",
+                        entertainerTransactionHistoriesRequest.orderByType()
                 ),
                 AccountTransactionHistoriesResponse.class
         ).getBody().REC();
-        EntertainerSavingsTransactionDetail returnValue = entertainerSavingsTransactionDetailRepository.findByDepositAccountNo(transactionHistoriesRequest.accountNo());
+        EntertainerSavingsTransactionDetail returnValue = entertainerSavingsTransactionDetailRepository.findByDepositAccountNo(entertainerTransactionHistoriesRequest.accountNo());
         return InquireEntertainerHistoriesResponse.of(
                 inquireTransactionHistoryList.totalCount(),
                 inquireTransactionHistoryList.list(),
@@ -257,4 +267,32 @@ public class DemandDepositFacade {
                 UpdateDemandDepositAccountTransferResponse.class
         );
     }
+
+    public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transferEntertainerAccount(
+        String userEmail,
+        Long depositAccountId,
+        Long transactionBalance
+    ) {
+            EntertainerSavingsAccount entertainerSavingsAccount = entertainerSavingsAccountRepository.findById(depositAccountId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_ACCOUNT)));
+            TransferRequest transferRequest = new TransferRequest(
+                    entertainerSavingsAccount.getDepositAccountNo(),
+                    "",
+                    transactionBalance,
+                    entertainerSavingsAccount.getWithdrawalAccountNo(),
+                    ""
+            );
+            return apiClientUtil.callFinancialNetwork(
+                    "/demandDeposit/updateDemandDepositAccountTransfer",
+                    financialRequestFactory.transferAccount(
+                            userEmail,
+                            "updateDemandDepositAccountTransfer",
+                            transferRequest.depositAccountNo(),
+                            transferRequest.depositTransactionSummary(),
+                            transferRequest.transactionBalance(),
+                            transferRequest.withdrawalAccountNo(),
+                            transferRequest.withdrawalTransactionSummary()
+                    ),
+                    UpdateDemandDepositAccountTransferResponse.class
+            );
+        }
 }
