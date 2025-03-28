@@ -1,7 +1,10 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
+import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
+import com.a702.finafanbe.global.common.response.ResponseData;
+import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,13 +19,13 @@ public class CreateAccountController {
     private final DemandDepositFacade demandDepositFacade;
 
     @PostMapping("/account")
-    public ResponseEntity<CreateAccountResponse> createAccount(
+    public ResponseEntity<ResponseData<CreateAccountResponse>> createAccount(
             String email,
             String productName
     ){
-        return demandDepositFacade.createAccount(
+        return ResponseUtil.success(demandDepositFacade.createAccount(
                 email,
                 productName
-        );
+        ));
     }
 }
