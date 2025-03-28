@@ -29,6 +29,10 @@ val ErrorTextRed = Color(0xFFF44336)
 
 val BtnBgGray = Color(0xFFADB9D1)
 
+val MainBtnLightBlue = Color(0xFFEDEEFF)
+val MainBtnLightOrange = Color(0xFFFFEDDC)
+val MainBtnLightYellow = Color(0xFFFFF9C4)
+
 /* ------------ Star Color ------------ */
 val starGradGreen = Color(0xFF49DD81)
 val starGradTurquoise = Color(0xFF22B4C6)
