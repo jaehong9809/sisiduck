@@ -25,7 +25,6 @@ import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
-import com.google.gson.Gson
 
 // 적금 거래 내역 아이템
 @Composable
@@ -62,9 +61,7 @@ fun TransactionItem(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {
-                        val transactionJson = Gson().toJson(transaction)
-
-                        navController.currentBackStackEntry?.savedStateHandle?.set("transaction", transactionJson)
+                        navController.currentBackStackEntry?.savedStateHandle?.set("transaction", transaction)
                         navController.navigate(NavRoutes.TransactionDetail.route)
                     }
                 ),

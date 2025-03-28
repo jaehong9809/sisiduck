@@ -62,6 +62,42 @@ fun MainScreen(
 
         Spacer(modifier = Modifier.padding(8.dp))
 
+        Row {
+            MainSquareIconButton(
+                onClick = {
+                    navController.navigate(NavRoutes.SavingDeposit.route)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = MainBlack,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                text = "입금하기"
+            )
+
+            Spacer(modifier = Modifier.padding(8.dp))
+
+            MainSquareIconButton(
+                onClick = {
+                    navController.navigate(NavRoutes.SavingAccountInfo.route)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = MainBlack,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                text = "적금 계좌 정보"
+            )
+        }
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
         MainWideIconButton(
             onClick = {
                 navController.navigate(NavRoutes.Chat.route)

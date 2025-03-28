@@ -92,7 +92,7 @@ fun StarSearchScreen(
                         modifier = Modifier.padding(bottom = 16.dp)
                     ) {
                         StarItem(starItem,
-                            isSelected = starItem.entertainerName == selectStar.value.entertainerName,
+                            isSelected = starItem.entertainerId == selectStar.value.entertainerId,
                             onSelect = { select ->
                                 selectStar.value = select
                             })
@@ -110,7 +110,7 @@ fun StarSearchScreen(
                 onSelect(selectStar.value)
             },
             text = stringResource(R.string.btn_select),
-            isEnabled = selectStar.value.entertainerName.isNotEmpty())
+            isEnabled = selectStar.value.entertainerId > 0)
     }
 }
 
