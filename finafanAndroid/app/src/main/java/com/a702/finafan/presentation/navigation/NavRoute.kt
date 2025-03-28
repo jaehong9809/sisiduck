@@ -6,6 +6,9 @@ sealed class NavRoutes(val route: String) {
     /* Chat */
     object Chat : NavRoutes("chat")
 
+    /* Ble */
+    object Ble : NavRoutes("ble")
+
     /* Saving */
     object Saving : NavRoutes("saving")
     object SavingDeposit : NavRoutes("saving_deposit")

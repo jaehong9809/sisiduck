@@ -30,8 +30,6 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                 ) { innerPadding ->
-//                    MainScreen(modifier = Modifier.padding(innerPadding))
-
                     NavGraph(
                         navController = navController,
                         modifier = Modifier.padding(innerPadding)
