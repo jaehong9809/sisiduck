@@ -23,7 +23,7 @@ fun ConnectBankScreen(
     onSelect: (bank: Bank) -> Unit
 ) {
 
-    val selectBank = remember { mutableStateOf(Bank()) }
+    val selectBank = remember { mutableStateOf(Bank(111, "111", "NH농협")) }
 
     ConnectAccountLayout (
         title = stringResource(R.string.connect_account_select_back_title),

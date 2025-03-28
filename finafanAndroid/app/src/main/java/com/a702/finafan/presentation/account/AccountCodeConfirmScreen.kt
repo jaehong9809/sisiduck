@@ -15,22 +15,25 @@ import com.a702.finafan.presentation.savings.AccountInfoItem
 
 // 인증 코드 확인 완료 화면
 @Composable
-fun AccountCodeConfirmScreen(selectBank: String) {
+fun AccountCodeConfirmScreen(account: Account,) {
 
     ConnectAccountLayout (
-        title = stringResource(R.string.connect_account_verification_code_confirm_title, selectBank),
+        title = stringResource(R.string.connect_account_verification_code_confirm_title, account.bank.bankName),
         buttonText = stringResource(R.string.btn_confirm),
         isButtonEnabled = true,
-        onButtonClick = { /* TODO: 인증 전의 화면으로 돌아가기 */ }
+        onButtonClick = { /* TODO: 연결 계좌 목록 화면으로 넘어가기 */ }
     ) {
 
         Column {
             AccountInfoItem(
                 modifier = Modifier.padding(top = 34.dp),
                 account = Account(
-                    accountId = 1234,
-                    accountNo = "456-789-1000",
-                    bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
+                    accountNo = account.accountNo,
+                    bank = Bank(
+                        bankId = account.bank.bankId,
+                        bankCode = account.bank.bankCode,
+                        bankName = account.bank.bankName
+                    )
                 ),
                 fontColor = MainTextGray
             )
@@ -42,5 +45,5 @@ fun AccountCodeConfirmScreen(selectBank: String) {
 @Preview
 @Composable
 fun AccountCodeConfirmPreview() {
-    AccountCodeConfirmScreen("NH농협")
+    AccountCodeConfirmScreen(Account())
 }

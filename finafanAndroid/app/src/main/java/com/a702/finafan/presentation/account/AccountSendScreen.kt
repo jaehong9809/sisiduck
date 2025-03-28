@@ -14,20 +14,28 @@ import com.a702.finafan.presentation.savings.AccountInfoItem
 
 // 1원 송금 확인 화면
 @Composable
-fun AccountSendScreen(selectBank: String) {
+fun AccountSendScreen(
+    account: Account,
+    onComplete: (Account) -> Unit
+) {
 
     ConnectAccountLayout (
-        title = stringResource(R.string.connect_account_send_money_title, selectBank),
+        title = stringResource(R.string.connect_account_send_money_title, account.bank.bankName),
         buttonText = stringResource(R.string.btn_next),
         isButtonEnabled = true,
-        onButtonClick = { /* TODO: 다음으로 넘어가기 */ }
+        onButtonClick = {
+            onComplete(account)
+        }
     ) {
         AccountInfoItem(
             modifier = Modifier.padding(top = 34.dp),
             account = Account(
-                accountId = 1234,
-                accountNo = "456-789-1000",
-                bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
+                accountNo = account.accountNo,
+                bank = Bank(
+                    bankId = account.bank.bankId,
+                    bankCode = account.bank.bankCode,
+                    bankName = account.bank.bankName
+                )
             ),
             fontColor = MainTextGray
         )
@@ -37,5 +45,5 @@ fun AccountSendScreen(selectBank: String) {
 @Preview
 @Composable
 fun AccountSendPreview() {
-    AccountSendScreen("NH농협")
+    AccountSendScreen(Account(), onComplete = {})
 }

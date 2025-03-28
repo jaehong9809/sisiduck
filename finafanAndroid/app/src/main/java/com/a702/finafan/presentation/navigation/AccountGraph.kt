@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.presentation.account.AccountCodeConfirmScreen
 import com.a702.finafan.presentation.account.AccountCodeScreen
@@ -11,7 +12,6 @@ import com.a702.finafan.presentation.account.AccountInputScreen
 import com.a702.finafan.presentation.account.AccountSendScreen
 import com.a702.finafan.presentation.account.ConnectAccountScreen
 import com.a702.finafan.presentation.account.ConnectBankScreen
-import com.google.gson.Gson
 
 fun NavGraphBuilder.accountGraph(
     navController: NavHostController
@@ -21,32 +21,55 @@ fun NavGraphBuilder.accountGraph(
     ) {
         composable(NavRoutes.ConnectBank.route) {
             ConnectBankScreen(onSelect = { selectBank ->
-                val bankJson = Gson().toJson(selectBank)
-                navController.navigate(NavRoutes.AccountInput.route + "/${bankJson}")
+                navController.currentBackStackEntry?.savedStateHandle?.set("bank", selectBank)
+                navController.navigate(NavRoutes.AccountInput.route)
             })
         }
 
-        composable(NavRoutes.AccountInput.route + "/{selectBank}") { backStackEntry ->
-            val bankJson = backStackEntry.arguments?.getString("selectBank")
-            val bank = Gson().fromJson(bankJson, Bank::class.java)
+        composable(NavRoutes.AccountInput.route) { backStackEntry ->
+            val bank = navController.previousBackStackEntry?.savedStateHandle?.get<Bank>("bank")
 
-            AccountInputScreen(bank)
+            AccountInputScreen(
+                bank ?: Bank(), onComplete = { account ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("account", account)
+                    navController.navigate(NavRoutes.AccountSend.route)
+                })
         }
 
         composable(NavRoutes.AccountSend.route) {
-            AccountSendScreen("NH농협")
+            val account = navController.previousBackStackEntry?.savedStateHandle?.get<Account>("account")
+
+            AccountSendScreen(account ?: Account(), onComplete = { account ->
+                navController.currentBackStackEntry?.savedStateHandle?.set("account", account)
+                navController.navigate(NavRoutes.AccountCode.route)
+            })
         }
 
         composable(NavRoutes.AccountCode.route) {
-            AccountCodeScreen("NH농협")
+            val account = navController.previousBackStackEntry?.savedStateHandle?.get<Account>("account")
+
+            AccountCodeScreen(account ?: Account(),
+                onComplete = {
+                    navController.currentBackStackEntry?.savedStateHandle?.set("account", account)
+                    navController.navigate(NavRoutes.AccountCodeConfirm.route)
+                },
+                onNavigateClick = {
+                    navController.navigate(NavRoutes.ConnectBank.route) {
+                    popUpTo(NavRoutes.ConnectBank.route)
+                }
+            })
         }
 
         composable(NavRoutes.AccountCodeConfirm.route) {
-            AccountCodeConfirmScreen("NH농협")
+            val account = navController.previousBackStackEntry?.savedStateHandle?.get<Account>("account")
+
+            AccountCodeConfirmScreen(account ?: Account())
         }
 
         composable(NavRoutes.ConnectAccount.route) {
-            ConnectAccountScreen("NH농협")
+            val account = navController.previousBackStackEntry?.savedStateHandle?.get<Account>("account")
+
+            ConnectAccountScreen(account ?: Account())
         }
 
     }

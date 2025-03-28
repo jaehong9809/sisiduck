@@ -79,7 +79,7 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.SavingSelectAccount.route) { backStackEntry ->
-            val savingCreate = navController.currentBackStackEntry?.savedStateHandle?.get<SavingCreate>("savingCreate")
+            val savingCreate = navController.previousBackStackEntry?.savedStateHandle?.get<SavingCreate>("savingCreate")
 
             SavingSelectAccountScreen(
                 savingCreate = savingCreate ?: SavingCreate(),

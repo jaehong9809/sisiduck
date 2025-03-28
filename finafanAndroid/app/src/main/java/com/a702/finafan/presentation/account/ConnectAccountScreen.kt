@@ -15,11 +15,11 @@ import com.a702.finafan.presentation.savings.AccountInfoItem
 
 // 인증 코드 확인 완료 화면
 @Composable
-fun ConnectAccountScreen(selectBank: String) {
+fun ConnectAccountScreen(account: Account) {
 
     ConnectAccountLayout (
         topBarTitle = stringResource(R.string.saving_account_connect_bank_title),
-        title = stringResource(R.string.connect_account_verification_code_confirm_title, selectBank),
+        title = stringResource(R.string.connect_account_verification_code_confirm_title, account.bank.bankName),
         buttonText = stringResource(R.string.btn_delete),
         isButtonEnabled = true,
         onButtonClick = { /* TODO: 연결 계좌 삭제 다이얼로그 띄우기 */ }
@@ -29,9 +29,12 @@ fun ConnectAccountScreen(selectBank: String) {
             AccountInfoItem(
                 modifier = Modifier.padding(top = 34.dp),
                 account = Account(
-                    accountId = 1234,
-                    accountNo = "456-789-1000",
-                    bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
+                    accountNo = account.accountNo,
+                    bank = Bank(
+                        bankId = account.bank.bankId,
+                        bankCode = account.bank.bankCode,
+                        bankName = account.bank.bankName
+                    )
                 ),
                 fontColor = MainTextGray
             )
@@ -43,5 +46,5 @@ fun ConnectAccountScreen(selectBank: String) {
 @Preview
 @Composable
 fun ConnectAccountPreview() {
-    ConnectAccountScreen("NH농협")
+    ConnectAccountScreen(Account())
 }
