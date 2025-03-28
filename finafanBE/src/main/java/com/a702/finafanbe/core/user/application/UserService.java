@@ -63,7 +63,7 @@ public class UserService {
         return exchange.getBody();
     }
 
-    private User findUser(String userEmail) {
+    public User findUser(String userEmail) {
         return userRepository.findBySocialEmail(userEmail).orElseThrow(() -> new BadRequestException(ResponseData.builder()
                 .code(ErrorCode.NotFoundUser.getCode())
                 .message(ErrorCode.NotFoundUser.getMessage())

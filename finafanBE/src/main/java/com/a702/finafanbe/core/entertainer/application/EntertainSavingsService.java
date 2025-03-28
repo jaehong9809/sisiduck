@@ -1,5 +1,8 @@
 package com.a702.finafanbe.core.entertainer.application;
 
+import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
+import com.a702.finafanbe.core.demanddeposit.entity.Account;
+import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
@@ -35,12 +38,13 @@ public class EntertainSavingsService {
     private final EntertainRepository entertainRepository;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
 
     @Transactional
     public StarAccountResponse createEntertainerSavings(
             CreateStarAccountRequest createStartAccountRequest,
-            String depositAccountNo,
+            CreateAccountResponse.REC rec,
             String withdrawalAccountNo
     ) {
         User user = findUser(EMAIL);
@@ -48,35 +52,39 @@ public class EntertainSavingsService {
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
 
+        accountRepository.save(Account.of(
+                user.getUserId(),
+                rec.getAccountNo(),
+                rec.getBankCode(),
+                rec.getCurrency().getCurrency()
+        ));
+
         EntertainerSavingsAccount entertainerSavingsAccount = saveEntertainerSavingsAccount(
                 user.getUserId(),
                 entertainerId,
-                createStartAccountRequest.depositAccountName(),
-                depositAccountNo,
-                withdrawalAccountNo
+                createStartAccountRequest.productName(),
+                createStartAccountRequest.withdrawalAccountId()
         );
         return StarAccountResponse.of(
                 entertainerSavingsAccount.getUserId(),
                 entertainerSavingsAccount.getEntertainerId(),
-                entertainerSavingsAccount.getAccountName(),
-                entertainerSavingsAccount.getDepositAccountNo()
+                entertainerSavingsAccount.getDepositAccountId(),
+                entertainerSavingsAccount.getWithdrawalAccountId()
         );
     }
 
     private EntertainerSavingsAccount saveEntertainerSavingsAccount(
             Long userId,
             Long entertainerId,
-            String accountName,
-            String accountNo,
-            String depositAccountNo
+            String productName,
+            Long withdrawalAccountId
     ) {
         return entertainerSavingsAccountRepository.save(
                 EntertainerSavingsAccount.of(
                         userId,
                         entertainerId,
-                        accountName,
-                        accountNo,
-                        depositAccountNo
+                        productName,
+                        withdrawalAccountId
                 )
         );
     }
@@ -163,5 +171,14 @@ public class EntertainSavingsService {
                 message,
                 imageUrl
         );
+    }
+
+//    public List<EntertainerSavingsAccount> findStarAccounts(Long userId) {
+//        return entertainerSavingsAccountRepository.findByUserId(userId);
+//    }
+
+    public List<EntertainerSavingsAccount> findStarAccounts(String userEmail) {
+        User user = findUser(userEmail);
+        return entertainerSavingsAccountRepository.findByUserId(user.getUserId());
     }
 }
