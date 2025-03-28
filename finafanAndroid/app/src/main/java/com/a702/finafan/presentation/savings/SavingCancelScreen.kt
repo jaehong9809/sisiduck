@@ -20,6 +20,8 @@ import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Bank
 
 // 적금 해지 화면
 @Composable
@@ -92,7 +94,13 @@ fun SavingCancelScreen(
                 lineHeight = 24.sp,
             )
 
-            AccountInfoItem(account = Account("NH농협", "12-345-678900"), isCancel = true)
+            AccountInfoItem(
+                account = Account(
+                    accountId = 1234,
+                    accountNo = "456-789-1000",
+                    bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
+                ),
+                isCancel = true)
         }
     }
 }

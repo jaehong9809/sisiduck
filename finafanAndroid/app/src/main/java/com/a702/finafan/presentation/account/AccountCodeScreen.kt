@@ -15,27 +15,40 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.NumberField
 import com.a702.finafan.common.ui.component.SubButton
 import com.a702.finafan.common.ui.theme.MainTextGray
-import com.a702.finafan.presentation.savings.Account
+import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.presentation.savings.AccountInfoItem
 
 // 인증 코드 입력 화면
 @Composable
-fun AccountCodeScreen(selectBank: String) {
+fun AccountCodeScreen(
+    account: Account,
+    onComplete: (Account) -> Unit,
+    onNavigateClick: () -> Unit
+) {
 
     val code = remember { mutableStateOf("") }
 
     ConnectAccountLayout (
-        title = stringResource(R.string.connect_account_verification_code_title, selectBank),
+        title = stringResource(R.string.connect_account_verification_code_title, account.bank.bankName),
         buttonText = stringResource(R.string.btn_next),
         isButtonEnabled = code.value.isNotEmpty(),
-        onBackClick = { /* TODO: 뒤로 가기 */ },
-        onButtonClick = { /* TODO: 다음으로 넘어가기 */ }
+        onButtonClick = {
+            onComplete(account)
+        }
     ) {
 
         Column {
             AccountInfoItem(
                 modifier = Modifier.padding(top = 34.dp),
-                account = Account("NH농협", "12-345-678900"),
+                account = Account(
+                    accountNo = account.accountNo,
+                    bank = Bank(
+                        bankId = account.bank.bankId,
+                        bankCode = account.bank.bankCode,
+                        bankName = account.bank.bankName
+                    )
+                ),
                 fontColor = MainTextGray
             )
 
@@ -52,8 +65,8 @@ fun AccountCodeScreen(selectBank: String) {
                 modifier = Modifier.padding(start = 4.dp),
                 text = "다른 계좌로 인증하기",
                 onButtonClick = {
-                // TODO: 은행 선택 화면으로 이동
-            })
+                    onNavigateClick()
+                })
         }
 
     }
@@ -62,5 +75,5 @@ fun AccountCodeScreen(selectBank: String) {
 @Preview
 @Composable
 fun AccountCodePreview() {
-    AccountCodeScreen("NH농협")
+    AccountCodeScreen(Account(), onComplete = {}, onNavigateClick = {})
 }

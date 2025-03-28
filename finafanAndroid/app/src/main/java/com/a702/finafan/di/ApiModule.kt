@@ -23,7 +23,8 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideSavingApi(@NetworkModule.MainRetrofit retrofit: Retrofit): SavingApi {
+    fun provideSavingApi(@NetworkModule.MainRetrofit retrofit: Retrofit)
+    : SavingApi {
         return retrofit.create(SavingApi::class.java)
     }
 

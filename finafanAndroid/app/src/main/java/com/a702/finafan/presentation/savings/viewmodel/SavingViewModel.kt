@@ -2,6 +2,9 @@ package com.a702.finafan.presentation.savings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Star
+import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.repository.SavingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,27 +18,54 @@ class SavingViewModel @Inject constructor(
     private val repository: SavingRepository
 ): ViewModel() {
 
-    private val _uiState = MutableStateFlow(StarState())
-    val uiState: StateFlow<StarState> = _uiState.asStateFlow()
+    private val _savingState = MutableStateFlow(SavingState())
+    val savingState: StateFlow<SavingState> = _savingState.asStateFlow()
+
+    private val _starState = MutableStateFlow(StarState())
+    val starState: StateFlow<StarState> = _starState.asStateFlow()
 
     fun fetchStars() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _starState.value = _starState.value.copy(isLoading = true)
 
             try {
                 val stars = repository.getStars()
 
-                _uiState.value = _uiState.value.copy(
+                _starState.value = _starState.value.copy(
                     stars = stars,
                     isLoading = false
                 )
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
+                _starState.value = _starState.value.copy(
                     isLoading = false,
                     error = e
                 )
             }
         }
+    }
+
+    fun updateSavingStar(star: Star) {
+        _savingState.value = _savingState.value.copy(
+            selectStar = star
+        )
+    }
+
+    fun updateSavingName(accountName: String) {
+        _savingState.value = _savingState.value.copy(
+            accountName = accountName
+        )
+    }
+
+    fun updateSavingConnectAccount(account: Account) {
+        _savingState.value = _savingState.value.copy(
+            connectAccount = account
+        )
+    }
+
+    fun setTransaction(transaction: Transaction) {
+        _savingState.value = _savingState.value.copy(
+            transaction = transaction
+        )
     }
 
 }

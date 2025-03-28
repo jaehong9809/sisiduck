@@ -265,8 +265,8 @@ fun InputFieldPreview() {
         modifier = Modifier
             .verticalScroll(rememberScrollState()),
     ) {
-        val menuItems = mutableListOf("NH농협 312-0139-3754-31", "하나 312-0139-3754-31", "우리 312-0139-3754-31", "토스뱅크 312-0139-3754-31")
-        SelectAccountField(menuItems = menuItems)
+//        val menuItems = mutableListOf("NH농협 312-0139-3754-31", "하나 312-0139-3754-31", "우리 312-0139-3754-31", "토스뱅크 312-0139-3754-31")
+//        SelectAccountField(accounts = menuItems)
 
         val text1 = remember { mutableStateOf("") }
         EmailField(true, text1, onClick = {})
