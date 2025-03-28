@@ -35,13 +35,15 @@ public class EntertainerSavingsAccount extends BaseEntity {
             Long userId,
             Long entertainerId,
             String accountName,
-            String accountNo
+            String depositAccountNo,
+            String withdrawalAccountNo
     ) {
         return new EntertainerSavingsAccount(
                 userId,
                 entertainerId,
                 accountName,
-                accountNo
+                depositAccountNo,
+                withdrawalAccountNo
         );
     }
 
@@ -49,12 +51,14 @@ public class EntertainerSavingsAccount extends BaseEntity {
             Long userId,
             Long entertainerId,
             String accountName,
-            String accountNo
+            String depositAccountNo,
+            String withdrawalAccountNo
     ){
         this.userId = userId;
         this.entertainerId = entertainerId;
         this.accountName = accountName;
-        this.depositAccountNo = accountNo;
+        this.depositAccountNo = depositAccountNo;
+        this.withdrawalAccountNo = withdrawalAccountNo;
     }
 }
 //우리는 개인 적금이지만, 매일 출납이되야함.

@@ -53,9 +53,9 @@ public class EntertainSavingsController {
     @PostMapping("/savings")
     public ResponseEntity<ResponseData<StarAccountResponse>> createSavings(
 //            @AuthMember User user,
-            @RequestBody CreateStarAccountRequest selectStarRequest
+            @RequestBody CreateStarAccountRequest createStarAccountRequest
     ){
-        return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(selectStarRequest));
+        return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(createStarAccountRequest));
     }
 
     /*
@@ -68,7 +68,6 @@ public class EntertainSavingsController {
             @ModelAttribute StarTransferRequest starTransferRequest
             ){
         ResponseEntity<UpdateDemandDepositAccountTransferResponse> exchange = demandDepositFacade.transferEntertainerAccount(
-                EMAIL,
                 starTransferRequest.depositAccountId(),
                 starTransferRequest.transactionBalance()
         );
@@ -97,7 +96,8 @@ public class EntertainSavingsController {
                 accountNo
         ));
     }
-
+//TODO 검색
+    //savingaccountId 입금 계좌 정보
     @GetMapping("/transaction-histories")
     public ResponseEntity<ResponseData<InquireEntertainerHistoriesResponse>> getDemandDepositTransactionHistories(
             @RequestBody EntertainerTransactionHistoriesRequest entertainerTransactionHistoriesRequest

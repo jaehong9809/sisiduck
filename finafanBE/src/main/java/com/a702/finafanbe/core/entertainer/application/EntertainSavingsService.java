@@ -30,6 +30,8 @@ import static com.a702.finafanbe.global.common.exception.ErrorCode.*;
 @Slf4j
 public class EntertainSavingsService {
 
+    private static final String EMAIL = "lsc7134@naver.com";
+
     private final EntertainRepository entertainRepository;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
     private final UserRepository userRepository;
@@ -38,9 +40,10 @@ public class EntertainSavingsService {
     @Transactional
     public StarAccountResponse createEntertainerSavings(
             CreateStarAccountRequest createStartAccountRequest,
-            String accountNo
+            String depositAccountNo,
+            String withdrawalAccountNo
     ) {
-        User user = findUser("lsc7134@naver.com");
+        User user = findUser(EMAIL);
         Long entertainerId = findEntertainerId(createStartAccountRequest.entertainerId());
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
@@ -48,8 +51,9 @@ public class EntertainSavingsService {
         EntertainerSavingsAccount entertainerSavingsAccount = saveEntertainerSavingsAccount(
                 user.getUserId(),
                 entertainerId,
-                createStartAccountRequest.accountName(),
-                accountNo
+                createStartAccountRequest.depositAccountName(),
+                depositAccountNo,
+                withdrawalAccountNo
         );
         return StarAccountResponse.of(
                 entertainerSavingsAccount.getUserId(),
@@ -63,14 +67,16 @@ public class EntertainSavingsService {
             Long userId,
             Long entertainerId,
             String accountName,
-            String accountNo
+            String accountNo,
+            String depositAccountNo
     ) {
         return entertainerSavingsAccountRepository.save(
                 EntertainerSavingsAccount.of(
                         userId,
                         entertainerId,
                         accountName,
-                        accountNo
+                        accountNo,
+                        depositAccountNo
                 )
         );
     }
@@ -113,7 +119,7 @@ public class EntertainSavingsService {
     public EntertainerResponse choiceStar(
             SelectStarRequest selectStarRequest
     ) {
-        User user = findUser("lsc7134@naver.com");
+        User user = findUser(EMAIL);
         user.updateFavoriteEntertainer(findEntertainerId(selectStarRequest.entertainerId()));
         Entertainer entertainer = entertainRepository.findByEntertainerId(selectStarRequest.entertainerId()).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
         return EntertainerResponse.of(
