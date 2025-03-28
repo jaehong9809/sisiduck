@@ -23,16 +23,13 @@ import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.savings.model.Transaction
-import com.a702.finafan.presentation.navigation.LocalNavController
-import com.a702.finafan.presentation.navigation.NavRoutes
 
 // 적금 거래 내역 아이템
 @Composable
 fun TransactionItem(
-    transaction: Transaction
+    transaction: Transaction,
+    onSelect: (Transaction) -> Unit
 ) {
-
-    val navController = LocalNavController.current
 
     Column(
         modifier = Modifier
@@ -61,8 +58,7 @@ fun TransactionItem(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {
-                        navController.currentBackStackEntry?.savedStateHandle?.set("transaction", transaction)
-                        navController.navigate(NavRoutes.TransactionDetail.route)
+                        onSelect(transaction)
                     }
                 ),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -124,7 +120,7 @@ fun PreviewTransactionItem() {
             balance = 10000,
             message = "오늘 너무 귀여워",
             date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        )
+            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg",
+        ), onSelect = {}
     )
 }

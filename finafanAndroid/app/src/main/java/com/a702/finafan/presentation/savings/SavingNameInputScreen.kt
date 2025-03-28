@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -15,18 +17,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.StringField
 import com.a702.finafan.common.ui.theme.MainTextGray
-import com.a702.finafan.domain.savings.model.SavingCreate
-import com.a702.finafan.domain.savings.model.Star
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 적금 이름 입력 화면
 @Composable
 fun SavingNameInputScreen(
-    star: Star,
-    onComplete: (SavingCreate) -> Unit
+    viewModel: SavingViewModel = viewModel(),
+    onComplete: () -> Unit
 ) {
+
+    val savingState by viewModel.savingState.collectAsState()
+
+    val star = savingState.selectStar
     val savingName = remember { mutableStateOf(star.entertainerName) }
 
     SavingScreenLayout(
@@ -35,12 +41,9 @@ fun SavingNameInputScreen(
         buttonText = stringResource(R.string.btn_next),
         isButtonEnabled = savingName.value.isNotEmpty(),
         onButtonClick = {
-            val savingCreate = SavingCreate(
-                entertainerId = star.entertainerId,
-                accountName = savingName.value
-            )
+            viewModel.updateSavingName(savingName.value)
 
-            onComplete(savingCreate)
+            onComplete()
         }
     ) {
 
@@ -76,5 +79,5 @@ fun SavingNameInputScreen(
 @Preview
 @Composable
 fun SavingNamePreview() {
-    SavingNameInputScreen(Star(entertainerName = "이찬원"), onComplete = {})
+    SavingNameInputScreen(onComplete = {})
 }

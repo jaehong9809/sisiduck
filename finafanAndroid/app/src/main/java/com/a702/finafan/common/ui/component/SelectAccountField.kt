@@ -18,6 +18,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,12 +38,17 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 출금 계좌 선택 박스
 @Composable
-fun SelectAccountField(accounts: MutableList<Account>) {
+fun SelectAccountField(
+    viewModel: SavingViewModel,
+    accounts: MutableList<Account>
+) {
+
+    val savingState by viewModel.savingState.collectAsState()
     var expandStatus by remember { mutableStateOf(false) }
-    var selectedAccount by remember { mutableStateOf(accounts[0]) }
 
     Box(
         modifier = Modifier
@@ -58,7 +65,12 @@ fun SelectAccountField(accounts: MutableList<Account>) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            TextItem(selectedAccount.bank.bankName, MainBlack, 20.sp)
+            LaunchedEffect(savingState) {
+
+            }
+            TextItem(savingState.connectAccount.bank.bankName + " " + savingState.connectAccount.accountNo,
+                MainBlack, 20.sp)
+
             Spacer(modifier = Modifier.width(width = 8.dp))
 
             val rotationAngle by animateFloatAsState(
@@ -94,7 +106,7 @@ fun SelectAccountField(accounts: MutableList<Account>) {
                         )
                     },
                     onClick = {
-                        selectedAccount = item
+                        viewModel.updateSavingConnectAccount(item)
                         expandStatus = false
                     }
                 )
@@ -110,5 +122,5 @@ fun SelectAccountPreview() {
         Account(1, "123-456", Bank(1, "123", "NH농협"))
     )
 
-    SelectAccountField(accounts = accounts)
+//    SelectAccountField(accounts = accounts)
 }

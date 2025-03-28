@@ -36,7 +36,7 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 // 스타 선택 화면
 @Composable
 fun StarSearchScreen(
-    onSelect: (Star) -> Unit,
+    onSelect: () -> Unit,
     viewModel: SavingViewModel = viewModel()
 ) {
 
@@ -107,7 +107,9 @@ fun StarSearchScreen(
             onClick = {
                 // TODO: 스타 추가 확인 다이얼로그
                 // 여기서 추가 버튼 누르면 적금 이름 페이지로 이동
-                onSelect(selectStar.value)
+                viewModel.updateSavingStar(selectStar.value)
+
+                onSelect()
             },
             text = stringResource(R.string.btn_select),
             isEnabled = selectStar.value.entertainerId > 0)

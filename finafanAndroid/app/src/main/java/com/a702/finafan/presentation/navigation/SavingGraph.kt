@@ -1,13 +1,9 @@
 package com.a702.finafan.presentation.navigation
 
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.a702.finafan.domain.savings.model.SavingCreate
-import com.a702.finafan.domain.savings.model.Star
-import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.presentation.savings.SavingAccountInfoScreen
 import com.a702.finafan.presentation.savings.SavingCancelScreen
 import com.a702.finafan.presentation.savings.SavingDepositScreen
@@ -21,24 +17,23 @@ import com.a702.finafan.presentation.savings.TransactionDetailScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 fun NavGraphBuilder.savingGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    savingViewModel: SavingViewModel
 ) {
     navigation(
         startDestination = NavRoutes.Main.route, route = NavRoutes.Saving.route
     ) {
+
         composable(NavRoutes.SavingMain.route + "/{savingAccountId}") { backStackEntry ->
-            val savingViewModel: SavingViewModel = hiltViewModel()
             val savingAccountId = backStackEntry.arguments?.getLong("savingAccountId")
 
             SavingMainScreen(savingViewModel, savingAccountId)
         }
 
         composable(NavRoutes.TransactionDetail.route) { backStackEntry ->
-            val transaction = navController.previousBackStackEntry?.savedStateHandle?.get<Transaction>("transaction")
-
             TransactionDetailScreen(
-                onNavigateClick = { navController.popBackStack() },
-                transaction ?: Transaction()
+                savingViewModel,
+                onNavigateClick = { navController.popBackStack() }
             )
         }
 
@@ -55,34 +50,26 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.StarSearch.route) {
-            val savingViewModel: SavingViewModel = hiltViewModel()
-
             StarSearchScreen(
-                onSelect = { selectStar ->
-                    navController.currentBackStackEntry?.savedStateHandle?.set("selectStar", selectStar)
+                onSelect = {
                     navController.navigate(NavRoutes.SavingNameInput.route)
                 },
                 savingViewModel
             )
         }
 
-        composable(NavRoutes.SavingNameInput.route) { backStackEntry ->
-            val star = navController.previousBackStackEntry?.savedStateHandle?.get<Star>("selectStar")
-
+        composable(NavRoutes.SavingNameInput.route) {
             SavingNameInputScreen(
-                star = star ?: Star(),
-                onComplete = { savingCreate ->
-                    navController.currentBackStackEntry?.savedStateHandle?.set("savingCreate", savingCreate)
+                savingViewModel,
+                onComplete = {
                     navController.navigate(NavRoutes.SavingSelectAccount.route)
                 }
             )
         }
 
-        composable(NavRoutes.SavingSelectAccount.route) { backStackEntry ->
-            val savingCreate = navController.previousBackStackEntry?.savedStateHandle?.get<SavingCreate>("savingCreate")
-
+        composable(NavRoutes.SavingSelectAccount.route) {
             SavingSelectAccountScreen(
-                savingCreate = savingCreate ?: SavingCreate(),
+                savingViewModel,
                 onComplete = { savingId ->
                     navController.navigate(NavRoutes.SavingMain.route + "/${savingId}") {
                         popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }

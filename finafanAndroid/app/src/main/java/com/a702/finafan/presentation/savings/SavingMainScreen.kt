@@ -43,6 +43,8 @@ import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.Transaction
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 적금 거래 내역 화면
@@ -51,6 +53,8 @@ fun SavingMainScreen(
     viewModel: SavingViewModel = viewModel(),
     savingAccountId: Long? = null
 ) {
+
+    val navController = LocalNavController.current
 
     val accountInfo = SavingAccount(
         savingAccountId = 30,
@@ -129,7 +133,10 @@ fun SavingMainScreen(
                 }
             } else {
                 items(transactions) { transaction ->
-                    TransactionItem(transaction)
+                    TransactionItem(transaction, onSelect = {
+                        viewModel.setTransaction(transaction)
+                        navController.navigate(NavRoutes.TransactionDetail.route)
+                    })
                 }
             }
         }

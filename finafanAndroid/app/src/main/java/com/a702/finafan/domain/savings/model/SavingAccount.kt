@@ -1,9 +1,5 @@
 package com.a702.finafan.domain.savings.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
 data class SavingAccount(
     val savingAccountId: Long,
     val accountNo: String,
@@ -14,4 +10,4 @@ data class SavingAccount(
     val duration: Int,
     val imageUrl: String,
     val connectAccount: Account
-) : Parcelable
+)

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
@@ -29,15 +32,19 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.ui.theme.gradientList
 import com.a702.finafan.common.utils.StringUtil
-import com.a702.finafan.domain.savings.model.Transaction
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 import kotlin.random.Random
 
 // 적금 거래 내역 상세 화면
 @Composable
 fun TransactionDetailScreen(
-    onNavigateClick: () -> Unit,
-    transaction: Transaction
+    viewModel: SavingViewModel = viewModel(),
+    onNavigateClick: () -> Unit
 ) {
+
+    val savingState by viewModel.savingState.collectAsState()
+    val transaction = savingState.transaction
+
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(transaction.imageUrl)
@@ -120,13 +127,6 @@ fun TransactionDetailScreen(
 @Composable
 fun PreviewTransactionDetail() {
     TransactionDetailScreen(
-        onNavigateClick = {},
-        transaction = Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "오늘 너무 귀여워",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        )
+        onNavigateClick = {}
     )
 }
