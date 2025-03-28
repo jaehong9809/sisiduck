@@ -4,7 +4,9 @@ import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsTransactionD
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface EntertainerSavingsTransactionDetailRepository extends JpaRepository<EntertainerSavingsTransactionDetail, Integer> {
-    EntertainerSavingsTransactionDetail findByDepositAccountNo(String accountNo);
+    List<EntertainerSavingsTransactionDetail> findByDepositAccountNo(String accountNo);
 }
