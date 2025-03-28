@@ -62,7 +62,7 @@ fun FundingCardItem(
             .background(MainWhite)
             .padding(20.dp)
             .clickable {
-                navController.navigate("funding_detail/${funding.id}/${funding.title}")
+                navController.navigate("funding_detail/${funding.id}")
             }
     ) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween ) {

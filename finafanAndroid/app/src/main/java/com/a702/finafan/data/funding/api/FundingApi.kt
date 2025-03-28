@@ -20,6 +20,6 @@ interface FundingApi {
     @GET("v1/fundings/{fundingGroupId}")
     suspend fun getFundingDetail(@Path("fundingGroupId") fundingId: Long): ApiResponse<FundingDetailResponse>
 
-    @POST("v1/fundings/{fundingGroupId}")
+    @GET("v1/fundings/{fundingGroupId}/join")
     suspend fun joinFunding(@Path("fundingGroupId") fundingId: Long): ApiResponse<Void>
 }

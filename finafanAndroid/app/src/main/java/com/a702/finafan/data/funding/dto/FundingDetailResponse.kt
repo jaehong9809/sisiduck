@@ -10,6 +10,7 @@ data class FundingDetailResponse(
     val participated: Boolean,
     val entertainer: Entertainer,
     val adminUser: AdminUser,
+    val fundingName: String,
     val goalAmount: Long,
     val currentAmount: Long,
     val fundingExpiryDate: LocalDateTime,
@@ -36,7 +37,7 @@ data class FundingApplication(
     val createdAt: LocalDateTime
 )
 
-fun FundingDetailResponse.toDomain(id: Long, title: String): FundingDetail {
+fun FundingDetailResponse.toDomain(id: Long): FundingDetail {
     return FundingDetail(
         funding = Funding(
             star = Star(
@@ -47,7 +48,7 @@ fun FundingDetailResponse.toDomain(id: Long, title: String): FundingDetail {
                 thumbnail = entertainer.imageUrl
             ),
             id = id,
-            title = title,
+            title = fundingName,
             currentAmount = currentAmount,
             goalAmount = goalAmount,
             fundingExpiryDate = fundingExpiryDate

@@ -1,7 +1,6 @@
 package com.a702.finafan.data.funding.dto
 
 import com.a702.finafan.domain.funding.model.Funding
-import com.a702.finafan.domain.funding.model.Star
 import java.time.LocalDateTime
 
 data class FundingResponse(

@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,19 +51,18 @@ import java.time.LocalDate
 @Composable
 fun FundingDetailScreen(
     star: Star?,
-    fundingId: Long,
-    fundingTitle: String
+    fundingId: Long
 ) {
     val viewModel: FundingDetailViewModel = hiltViewModel()
     val navController = LocalNavController.current
 
     val star: Star = star ?: throw IllegalArgumentException("star가 null임!!")
 
+    val uiState by viewModel.uiState.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.fetchFundingDetail(fundingId)
     }
-
-    val uiState by viewModel.uiState.collectAsState()
 
     val colorSet: List<Color> = listOf(
         starThemes[uiState.funding?.star?.index?:0].start,
@@ -174,7 +175,6 @@ fun FundingDetailScreen(
             )
         }
     }
-
 }
 
 @Preview
