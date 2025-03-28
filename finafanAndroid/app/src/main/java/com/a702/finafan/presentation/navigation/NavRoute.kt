@@ -6,6 +6,9 @@ sealed class NavRoutes(val route: String) {
     /* Chat */
     object Chat : NavRoutes("chat")
 
+    /* Ble */
+    object Ble : NavRoutes("ble")
+
     /* Saving */
     object Saving : NavRoutes("saving")
     object SavingDeposit : NavRoutes("saving_deposit")
@@ -32,4 +35,9 @@ sealed class NavRoutes(val route: String) {
     object AccountCodeConfirm : NavRoutes("account_code_confirm")
     object ConnectAccount : NavRoutes("connect_account")
 
+    /* Funding */
+    object Funding : NavRoutes("funding")
+    object FundingMain : NavRoutes("funding_main")
+    object FundingDetail : NavRoutes("funding_detail")
+    object FundingJoin : NavRoutes("funding_join")
 }

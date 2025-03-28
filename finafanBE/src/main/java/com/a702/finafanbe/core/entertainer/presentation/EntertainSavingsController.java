@@ -1,19 +1,30 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
-import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
+import com.a702.finafanbe.core.demanddeposit.dto.request.DepositRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.TransferRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.response.*;
+import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
-import com.a702.finafanbe.core.entertainer.dto.request.SelectStartRequest;
+import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
+import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
+import com.a702.finafanbe.core.entertainer.dto.request.StarDepositRequest;
+import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
+import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
-import com.a702.finafanbe.core.user.entity.User;
+import com.a702.finafanbe.core.s3.service.S3Service;
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,16 +33,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EntertainSavingsController {
 
+    private final DemandDepositFacade demandDepositFacade;
     private final EntertainSavingsService entertainService;
+    private final S3Service s3Service;
 
     @PostMapping("/select")
     public ResponseEntity<ResponseData<EntertainerResponse>> selectStar(
-            @AuthMember User user,
-            String entertainerName
+//            @AuthMember User user,
+            @RequestBody SelectStarRequest selectStarRequest
+
     ){
         return ResponseUtil.success(entertainService.choiceStar(
-                user,
-                entertainerName
+                selectStarRequest
         ));
     }
 
@@ -40,19 +53,72 @@ public class EntertainSavingsController {
         return ResponseUtil.success(entertainService.findStars());
     }
 
-    //TODO 검색.
-
-    @PostMapping("/createSavings")
-    public ResponseEntity<ResponseData<Void>> createSavings(
-            @AuthMember User user,
-            SelectStartRequest selectStartRequest
+    @PostMapping("/savings")
+    public ResponseEntity<ResponseData<StarAccountResponse>> createSavings(
+//            @AuthMember User user,
+            @RequestBody CreateStarAccountRequest selectStarRequest
     ){
-        entertainService.createEntertainerSavings(
-                user,
-                selectStartRequest
-        );
-        return ResponseUtil.success();
+        return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(selectStarRequest));
     }
 
-    //TODO 1.수시입출금하기 + 응원메시지 + 출금은 안되게 처리하기 ㅗ
+    /*
+    * TODO scheduler로 한 달 마다 이체가 되도록하면됨.
+    *
+    * */
+    @PutMapping("/despoit")
+    public ResponseEntity<ResponseData<EntertainerDepositResponse>> deposit(
+            //@AuthMember User user,
+            @ModelAttribute StarTransferRequest starTransferRequest
+            ){
+        ResponseEntity<UpdateDemandDepositAccountTransferResponse> exchange = demandDepositFacade.transferAccount(
+                starTransferRequest.userEmail(),
+                new TransferRequest(
+                        starTransferRequest.depositAccountNo(),
+                        starTransferRequest.depositTransactionSummary(),
+                        starTransferRequest.transactionBalance(),
+                        starTransferRequest.withdrawalAccountNo(),
+                        starTransferRequest.withdrawalTransactionSummary()
+                )
+        );
+        if(exchange.getStatusCode()== HttpStatus.OK){
+            String image = s3Service.uploadImage(starTransferRequest.imageFile());
+            EntertainerDepositResponse response = entertainService.deposit(
+                    starTransferRequest.userEmail(),
+                    starTransferRequest.depositAccountNo(),
+                    starTransferRequest.withdrawalAccountNo(),
+                    starTransferRequest.transactionBalance(),
+                    exchange.getBody().REC().get(0).transactionUniqueNo(),
+                    starTransferRequest.message(),
+                    image
+            );
+            return ResponseUtil.success(response);
+        }
+        return ResponseUtil.failure(new BadRequestException(ResponseData.createResponse(ErrorCode.SYSTEM_ERROR)));
+    }
+
+    @GetMapping("/account")
+    public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
+            @RequestParam String userEmail,
+            @RequestParam String accountNo
+    ) {
+        return ResponseUtil.success(demandDepositFacade.getEntertainerAccount(
+                userEmail,
+                accountNo
+        ));
+    }
+
+    @GetMapping("/transaction-histories")
+    public ResponseEntity<ResponseData<InquireEntertainerHistoriesResponse>> getDemandDepositTransactionHistories(
+            @RequestBody TransactionHistoriesRequest transactionHistoryListRequest
+    ){
+        return ResponseUtil.success(demandDepositFacade.inquireEntertainerHistories(
+                transactionHistoryListRequest));
+    }
+
+//    @GetMapping("/accounts")
+//    public ResponseEntity<ResponseData<List<?>>> getAccounts(
+//            String userEmail
+//    ){
+//
+//    }
 }

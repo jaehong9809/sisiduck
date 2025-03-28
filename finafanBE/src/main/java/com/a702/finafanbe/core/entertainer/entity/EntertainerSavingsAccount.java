@@ -15,20 +15,29 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
+
     @Column(nullable = false, name = "entertainer_id")
     private Long entertainerId;
-    @Column(nullable = false, name="userId")
+
+    @Column(nullable = false, name="user_id")
     private Long userId;
+
+    @Column(nullable = false, name ="account_name")
+    private String accountName;
+
     @Column(nullable = false, name = "account_no")
     private String accountNo;
 
     public static EntertainerSavingsAccount of(
             Long userId,
             Long entertainerId,
-            String accountNo) {
+            String accountName,
+            String accountNo
+    ) {
         return new EntertainerSavingsAccount(
                 userId,
                 entertainerId,
+                accountName,
                 accountNo
         );
     }
@@ -36,10 +45,12 @@ public class EntertainerSavingsAccount extends BaseEntity {
     private EntertainerSavingsAccount(
             Long userId,
             Long entertainerId,
+            String accountName,
             String accountNo
     ){
         this.userId = userId;
         this.entertainerId = entertainerId;
+        this.accountName = accountName;
         this.accountNo = accountNo;
     }
 }

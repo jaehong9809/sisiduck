@@ -44,22 +44,22 @@ object CustomTypography {
 
     val headlineLarge = TextStyle(
         fontFamily = Pretendard,
-        fontWeight = FontWeight.Bold,
-        fontSize = 14.sp,
-        lineHeight = 20.sp
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 22.sp,
+        lineHeight = 30.sp
     )
 
     val headlineMedium = TextStyle(
         fontFamily = Pretendard,
-        fontWeight = FontWeight.Bold,
-        fontSize = 12.sp,
-        lineHeight = 18.sp
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp,
+        lineHeight = 24.sp
     )
 
     val headlineSmall = TextStyle(
         fontFamily = Pretendard,
-        fontWeight = FontWeight.Medium,
-        fontSize = 18.sp,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
         lineHeight = 24.sp
     )
 

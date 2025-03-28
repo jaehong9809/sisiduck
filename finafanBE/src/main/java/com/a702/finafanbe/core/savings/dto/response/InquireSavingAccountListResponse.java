@@ -2,8 +2,6 @@ package com.a702.finafanbe.core.savings.dto.response;
 
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseResponseHeaderIncludeInstitutionCode;
 
-import java.util.List;
-
 public record InquireSavingAccountListResponse(
         BaseResponseHeaderIncludeInstitutionCode Header,
         REC REC

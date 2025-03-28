@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/accountAuth")
+@RequestMapping("/api/v1/account-auth")
 public class KRW1certificationController {
     private final KRW1certificationService krw1certificationService;
 
-    @PostMapping("/openAccountAuth")
+    @PostMapping("/certification")
     public ResponseEntity<KRW1CertificationResponse> registerKRW1Certification(@RequestBody KRW1CertificationRequest krw1Certification) {
         return krw1certificationService.registerKRW1Certification(
             "/accountAuth/openAccountAuth",
             krw1Certification);
     }
 
-    @PostMapping("/checkAuthCode")
+    @PostMapping("/verification")
     public ResponseEntity<KRW1CertificationValidateResponse> checkKRW1Certification(@RequestBody KRW1CertificationValidateRequest krw1Certification) {
         return krw1certificationService.checkKRW1Certification(
             "/accountAuth/checkAuthCode",

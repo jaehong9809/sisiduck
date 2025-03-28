@@ -6,7 +6,7 @@ import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
-import com.a702.finafanbe.global.common.financialnetwork.entity.FinancialNetworkUtil;
+import com.a702.finafanbe.global.common.financialnetwork.util.FinancialNetworkUtil;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;

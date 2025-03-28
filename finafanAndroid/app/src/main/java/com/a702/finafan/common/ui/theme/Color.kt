@@ -36,7 +36,7 @@ val starMidGreen = Color(0xFF36C9A3)
 
 val starGradPink = Color(0xFFFCA6E9)
 val starGradSkyBlue = Color(0xFF7EAEFF)
-val starMidBlue = Color(0xFF7EAEFF)
+val starMidViolet = Color(0xFFBDAAF4)
 
 val starGradYellow = Color(0xFFFBDA61)
 val starGradOrange = Color(0xFFF76B1C)

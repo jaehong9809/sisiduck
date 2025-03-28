@@ -1,42 +1,39 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountTransactionHistoryService;
-import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountTransactionHistoryListRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountTransactionHistoryRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountTransactionHistoryListResponse;
+import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoryRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.response.AccountTransactionHistoriesResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountTransactionHistoryResponse;
+import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
+import com.a702.finafanbe.global.common.response.ResponseData;
+import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/inquire-demand-deposit-transaction")
+@RequestMapping("/api/v1/demand-deposit")
 public class InquireDemandDepositAccountTransactionHistoryController {
 
+    private final DemandDepositFacade demandDepositFacade;
     private final InquireDemandDepositAccountTransactionHistoryService inquireDemandDepositAccountTransactionHistoryService;
 
-    @PostMapping("/demandDeposit/inquireTransactionHistoryList")
-    public ResponseEntity<InquireDemandDepositAccountTransactionHistoryListResponse> getDemandDepositTransactionHistories(
-        @RequestBody InquireDemandDepositAccountTransactionHistoryListRequest inquireDemandDepositAccountTransactionHistoryListRequest
+    @GetMapping("/transaction-histories")
+    public ResponseEntity<ResponseData<AccountTransactionHistoriesResponse>> getDemandDepositTransactionHistories(
+        @RequestBody TransactionHistoriesRequest transactionHistoryListRequest
     ){
-        return inquireDemandDepositAccountTransactionHistoryService.inquireHistories(
-            "/demandDeposit/inquireTransactionHistoryList",
-            inquireDemandDepositAccountTransactionHistoryListRequest
-        );
+        return ResponseUtil.success(demandDepositFacade.inquireHistories(
+                transactionHistoryListRequest).getBody());
     }
 
-    @PostMapping("/demandDeposit/inquireTransactionHistory")
+    @GetMapping("/transaction-history")
     public ResponseEntity<InquireDemandDepositAccountTransactionHistoryResponse> getDemandDepositTransactionHistory(
-        @RequestBody InquireDemandDepositAccountTransactionHistoryRequest inquireDemandDepositAccountTransactionHistoryRequest
+        @RequestBody TransactionHistoryRequest transactionHistoryRequest
     ){
-        return inquireDemandDepositAccountTransactionHistoryService.inquireHistory(
-            "/demandDeposit/inquireTransactionHistory",
-            inquireDemandDepositAccountTransactionHistoryRequest
+        return demandDepositFacade.inquireHistory(
+                transactionHistoryRequest
         );
     }
 }

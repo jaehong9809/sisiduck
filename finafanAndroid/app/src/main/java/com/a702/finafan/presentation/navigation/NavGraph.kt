@@ -6,6 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.a702.finafan.presentation.ble.UuidListScreen
 import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.chatbot.ChatViewModel
 import com.a702.finafan.presentation.main.MainScreen
@@ -29,8 +30,14 @@ fun NavGraph(
                 ChatScreen(viewModel = chatViewModel)
             }
 
+            composable(NavRoutes.Ble.route){
+                UuidListScreen()
+            }
+
             savingGraph(navController = navController)
             accountGraph(navController)
+
+            fundingGraph(navController)
 
         }
     }
