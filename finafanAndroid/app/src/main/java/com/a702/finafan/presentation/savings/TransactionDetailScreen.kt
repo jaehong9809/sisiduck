@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -65,9 +64,9 @@ fun TransactionDetailScreen(
                     color = MainBlackWithTransparency,
                     blur = 100.dp,
                     offsetX = 0.dp,
-                    offsetY = (-10).dp,
+                    offsetY = (-20).dp,
                     spread = 0.dp
-                )
+                ),
         ) {
 
             Image(
@@ -85,8 +84,8 @@ fun TransactionDetailScreen(
 
             Column(
                 modifier = Modifier
-                    .padding(bottom = 64.dp, start = 24.dp, end = 24.dp)
-                    .align(BottomCenter),
+                    .padding(bottom = 48.dp, start = 24.dp, end = 24.dp)
+                    .align(Alignment.BottomStart),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -99,7 +98,7 @@ fun TransactionDetailScreen(
 
                 Text(
                     text = transaction.message,
-                    fontSize = 24.sp,
+                    fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
                     color = MainWhite,
                     lineHeight = 24.sp,

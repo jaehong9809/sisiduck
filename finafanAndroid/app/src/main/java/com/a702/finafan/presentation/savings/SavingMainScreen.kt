@@ -150,14 +150,6 @@ fun SavingHeader(info: SavingAccount) {
             .fillMaxWidth()
             .height(560.dp)
             .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
-            .innerShadow(
-                shape = RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp),
-                color = MainBlackWithTransparency,
-                blur = 100.dp,
-                offsetX = 0.dp,
-                offsetY = (-10).dp,
-                spread = 0.dp
-            )
     ) {
 
         Image(
@@ -168,7 +160,15 @@ fun SavingHeader(info: SavingAccount) {
                 .height(560.dp)
                 .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
                 .background(LightGray)
-                .align(Alignment.Center),
+                .align(Alignment.Center)
+                .innerShadow(
+                    shape = RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp),
+                    color = MainBlackWithTransparency,
+                    blur = 100.dp,
+                    offsetX = 0.dp,
+                    offsetY = (-10).dp,
+                    spread = 0.dp
+                ),
             contentScale = ContentScale.Crop
         )
 

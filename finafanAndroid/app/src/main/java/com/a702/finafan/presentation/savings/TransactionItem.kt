@@ -1,5 +1,7 @@
 package com.a702.finafan.presentation.savings
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -20,10 +23,18 @@ import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.savings.model.Transaction
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
+import com.google.gson.Gson
 
 // 적금 거래 내역 아이템
 @Composable
-fun TransactionItem(transaction: Transaction) {
+fun TransactionItem(
+    transaction: Transaction
+) {
+
+    val navController = LocalNavController.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,7 +57,17 @@ fun TransactionItem(transaction: Transaction) {
 
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        val transactionJson = Gson().toJson(transaction)
+
+                        navController.currentBackStackEntry?.savedStateHandle?.set("transaction", transactionJson)
+                        navController.navigate(NavRoutes.TransactionDetail.route)
+                    }
+                ),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Column(
@@ -100,8 +121,8 @@ fun TransactionItem(transaction: Transaction) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewTransactionItem() {
-    TransactionItem(
-        transaction = Transaction(
+        TransactionItem(
+            transaction = Transaction(
             amount = 40000,
             balance = 10000,
             message = "오늘 너무 귀여워",

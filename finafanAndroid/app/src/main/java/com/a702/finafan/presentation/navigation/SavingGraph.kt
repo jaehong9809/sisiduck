@@ -33,18 +33,17 @@ fun NavGraphBuilder.savingGraph(
             SavingMainScreen(savingViewModel, savingAccountId)
         }
 
-        composable(NavRoutes.TransactionDetail.route) {
-            // TODO: 메인 리스트 클릭 시 넘어온 데이터 넘겨주기
+        composable(NavRoutes.TransactionDetail.route) { backStackEntry ->
+
+//            val transactionJson = navController.previousBackStackEntry?.savedStateHandle?.get<Transaction>("transaction")
+//            val transaction = Gson().fromJson(transactionJson, Transaction::class.java)
+
+            val transactionJson = navController.previousBackStackEntry?.savedStateHandle?.get<String>("transaction")
+            val transaction = transactionJson?.let { Gson().fromJson(it, Transaction::class.java) }
 
             TransactionDetailScreen(
                 onNavigateClick = { navController.popBackStack() },
-                transaction = Transaction(
-                    amount = 40000,
-                    balance = 10000,
-                    message = "오늘 너무 귀여워",
-                    date = "2025-03-14",
-                    imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-                )
+                transaction ?: Transaction()
             )
         }
 
