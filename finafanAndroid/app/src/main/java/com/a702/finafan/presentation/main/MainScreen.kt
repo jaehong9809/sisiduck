@@ -94,6 +94,8 @@ fun MainScreen(
             text = "모금"
         )
 
+        Spacer(modifier = Modifier.padding(8.dp))
+
         MainSquareIconButton(
             onClick = {
                 blePermissionLauncher.launch(
