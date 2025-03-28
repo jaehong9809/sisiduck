@@ -294,8 +294,8 @@ public class DemandDepositFacade {
                     );
                 })
                 .collect(Collectors.toList());
-
         return InquireEntertainerHistoriesResponse.of(
+                Long transactionId,//TODO
                 inquireTransactionHistoryList.totalCount(),
                 transactionsWithImages
         );
