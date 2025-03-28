@@ -26,6 +26,8 @@ coil = "2.4.0"
 
 compose = "1.7.6"
 
+leakcanary = "2.12"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -64,6 +66,8 @@ dotlottie = { group = "com.github.LottieFiles", name = "dotlottie-android", vers
 
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "compose" }
+
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -97,6 +97,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    debugImplementation(libs.leakcanary.android)
+
     implementation(libs.coil)
     implementation ("androidx.palette:palette:1.0.0")
     implementation(libs.androidx.compose.runtime)
