@@ -1,17 +1,16 @@
 package com.a702.finafanbe.core.demanddeposit.facade;
 
-import com.a702.finafanbe.core.demanddeposit.dto.request.DepositRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoryRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.TransferRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.request.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.EntertainerTransactionHistoriesRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
+import com.a702.finafanbe.core.entertainer.entity.EntertainerPicture;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsTransactionDetail;
+import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerPictureRepository;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsAccountRepository;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
@@ -24,6 +23,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class DemandDepositFacade {
@@ -35,6 +38,7 @@ public class DemandDepositFacade {
     private final EntertainSavingsService entertainSavingsService;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
+    private final EntertainerPictureRepository entertainerPictureRepository;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -194,8 +198,10 @@ public class DemandDepositFacade {
                 createStarAccountRequest,
                 createAccount(
                         EMAIL,
-                        createStarAccountRequest.accountName()
-                ).getBody().REC().getAccountNo());
+                        createStarAccountRequest.depositAccountName()
+                ).getBody().REC().getAccountNo(),
+                createStarAccountRequest.withdrawalAccount()
+        );
     }
 
 
@@ -209,7 +215,8 @@ public class DemandDepositFacade {
                 ),
                 InquireDemandDepositAccountResponse.class
         ).getBody().REC();
-        EntertainerSavingsTransactionDetail returnValue = entertainerSavingsTransactionDetailRepository.findByDepositAccountNo(rec.accountNo());
+        EntertainerSavingsAccount savingsAccount = entertainerSavingsAccountRepository.findByDepositAccountNo(rec.accountNo());
+        EntertainerPicture entertainerPicture = entertainerPictureRepository.findByEntertainerId(savingsAccount.getEntertainerId());
         return InquireEntertainerAccountResponse.of(
                 rec.bankCode(),
                 rec.bankName(),
@@ -220,7 +227,7 @@ public class DemandDepositFacade {
                 rec.accountBalance(),
                 rec.lastTransactionDate(),
                 rec.currency(),
-                returnValue.getImageUrl()
+                entertainerPicture.getEntertainerPictureUrl()
         );
     }
 
@@ -230,7 +237,7 @@ public class DemandDepositFacade {
         AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/inquireTransactionHistoryList",
                 financialRequestFactory.inquireHistories(
-                        entertainerTransactionHistoriesRequest.email(),
+                        EMAIL,
                         "inquireTransactionHistoryList",
                         entertainerTransactionHistoriesRequest.accountNo(),
                         "00000101",
@@ -240,11 +247,38 @@ public class DemandDepositFacade {
                 ),
                 AccountTransactionHistoriesResponse.class
         ).getBody().REC();
-        EntertainerSavingsTransactionDetail returnValue = entertainerSavingsTransactionDetailRepository.findByDepositAccountNo(entertainerTransactionHistoriesRequest.accountNo());
+        List<EntertainerSavingsTransactionDetail> transactionDetails = entertainerSavingsTransactionDetailRepository.findByDepositAccountNo(entertainerTransactionHistoriesRequest.accountNo());
+
+        Map<Long, String> transactionImageMap = transactionDetails.stream().collect(
+                Collectors.toMap(
+                        EntertainerSavingsTransactionDetail::getTransactionUniqueNo,
+                        EntertainerSavingsTransactionDetail::getImageUrl,
+                        (existingValue, newValue) -> existingValue
+                )
+        );
+
+        List<TransactionWithImageResponse> transactionsWithImages = inquireTransactionHistoryList.list().stream()
+                .map(transaction -> {
+                    String imageUrl = transactionImageMap.getOrDefault(transaction.transactionUniqueNo(), null);
+                    return new TransactionWithImageResponse(
+                            transaction.transactionUniqueNo(),
+                            transaction.transactionDate(),
+                            transaction.transactionTime(),
+                            transaction.transactionType(),
+                            transaction.transactionTypeName(),
+                            transaction.transactionAccountNo(),
+                            transaction.transactionBalance(),
+                            transaction.transactionAfterBalance(),
+                            transaction.transactionSummary(),
+                            transaction.transactionMemo(),
+                            imageUrl
+                    );
+                })
+                .collect(Collectors.toList());
+
         return InquireEntertainerHistoriesResponse.of(
                 inquireTransactionHistoryList.totalCount(),
-                inquireTransactionHistoryList.list(),
-                returnValue.getImageUrl()
+                transactionsWithImages
         );
     }
 
@@ -268,7 +302,6 @@ public class DemandDepositFacade {
     }
 
     public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transferEntertainerAccount(
-        String userEmail,
         Long depositAccountId,
         Long transactionBalance
     ) {
@@ -283,7 +316,7 @@ public class DemandDepositFacade {
             return apiClientUtil.callFinancialNetwork(
                     "/demandDeposit/updateDemandDepositAccountTransfer",
                     financialRequestFactory.transferAccount(
-                            userEmail,
+                            EMAIL,
                             "updateDemandDepositAccountTransfer",
                             transferRequest.depositAccountNo(),
                             transferRequest.depositTransactionSummary(),
