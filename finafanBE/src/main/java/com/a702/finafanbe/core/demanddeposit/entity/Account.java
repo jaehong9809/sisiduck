@@ -25,17 +25,14 @@ public class Account extends BaseEntity {
     @Column(name = "account_no", nullable = false)
     private String accountNo;
 
-    @Column(name = "balance", nullable = false, precision = 50)
-    private BigDecimal balance;
+    @Column(name = "amount", nullable = false, precision = 50)
+    private BigDecimal amount;
 
     @Column(name = "interest_rate", nullable = false)
-    private BigDecimal interestRate;
+    private Double interestRate;
 
     @Column(name = "status", nullable = false, length = 20)
     private String status;
-
-    @Column(name = "bank_code", nullable = false, length = 3)
-    private String bankCode;
 
     @Column(name = "bank_id", nullable = false)
     private Long bankId;
@@ -82,21 +79,25 @@ public class Account extends BaseEntity {
     @Column(name = "subscription_period")
     private LocalDateTime subscriptionPeriod;
 
+    public BigDecimal addAmount(BigDecimal amount) {
+        return this.amount.add(amount);
+    }
+
     public static Account of(
         Long userId,
         String accountNo,
-        String bankCode,
         String currency
     ) {
-        Account account = new Account(userId, accountNo, bankCode, currency);
+        Account account = new Account(userId, accountNo, currency);
         account.accountDescription = "기본 계좌 설명";
         account.accountExpiryDate = LocalDateTime.now().plusYears(5);
         account.accountName = "기본 계좌";
+        account.bankId = 1L;
         account.accountPw = 1234;
         account.accountTypeCode = "1";
         account.accountTypeUniqueNo = "SAVE001";
-        account.balance = BigDecimal.ZERO;
-        account.interestRate = new BigDecimal("0.01");
+        account.amount = BigDecimal.ZERO;
+        account.interestRate = 0.01;
         account.status = "ACTIVE";
         account.dailyTransferLimit = new BigDecimal("5000000");
         account.oneTimeTransferLimit = new BigDecimal("1000000");
@@ -110,12 +111,10 @@ public class Account extends BaseEntity {
     private Account(
             Long userId,
             String accountNo,
-            String bankCode,
             String currency
     ){
         this.userId = userId;
         this.accountNo = accountNo;
-        this.bankCode = bankCode;
         this.currency = currency;
     }
 }

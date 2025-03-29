@@ -1,11 +1,13 @@
 package com.a702.finafanbe.core.entertainer.application;
 
+import com.a702.finafanbe.core.bank.entity.Bank;
 import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
@@ -18,6 +20,8 @@ import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.response.ResponseData;
+import java.math.BigDecimal;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -54,7 +58,6 @@ public class EntertainSavingsService {
         Account createdAccount = accountRepository.save(Account.of(
             user.getUserId(),
             accountResponse.accountNo(),
-            accountResponse.bankCode(),
             accountResponse.currency()
         ));
 
@@ -82,11 +85,14 @@ public class EntertainSavingsService {
     ) {
         return entertainerSavingsAccountRepository.save(
                 EntertainerSavingsAccount.of(
-                        userId,
-                        entertainerId,
-                        productName,
-                        depositAccountId,
-                        withdrawalAccountId
+                    userId,
+                    entertainerId,
+                    productName,
+                    depositAccountId,
+                    withdrawalAccountId,
+                    0.05,
+                    5L,
+                    "example.com"
                 )
         );
     }
@@ -146,9 +152,10 @@ public class EntertainSavingsService {
 
     public EntertainerDepositResponse deposit(
             String userEmail,
-            String depositAccountNo,
-            String withdrawalAccountNo,
-            Long transactionBalance,
+            Long depositAccountId,
+            Long withdrawalAccountId,
+            BigDecimal depositAmount,
+            BigDecimal transactionBalance,
             Long transactionUniqueNo,
             String message,
             String imageUrl
@@ -157,8 +164,9 @@ public class EntertainSavingsService {
         entertainerSavingsTransactionDetailRepository.save(
                 EntertainerSavingsTransactionDetail.of(
                         userId,
-                        depositAccountNo,
-                        withdrawalAccountNo,
+                        depositAccountId,
+                        withdrawalAccountId,
+                        depositAmount,
                         transactionBalance,
                         transactionUniqueNo,
                         message,
@@ -166,8 +174,8 @@ public class EntertainSavingsService {
                 )
         );
         return EntertainerDepositResponse.of(
-                depositAccountNo,
-                withdrawalAccountNo,
+                depositAccountId,
+                withdrawalAccountId,
                 transactionBalance,
                 transactionUniqueNo,
                 message,
@@ -175,22 +183,41 @@ public class EntertainSavingsService {
         );
     }
 
-//    public List<EntertainerSavingsAccount> findStarAccounts(Long userId) {
-//        return entertainerSavingsAccountRepository.findByUserId(userId);
+//    public StarAccountResponse findStarAccount(
+//        String email,
+//        Long savingAccountId
+//    ) {
+//        User user = findUser(email);
+//        return entertainerSavingsAccountRepository.findByUserId(user.getUserId()).stream()
+//            .filter(account -> account.getDepositAccountId().equals(savingAccountId))
+//            .findFirst()
+//            .map(account->StarAccountResponse.of(
+//                account.getUserId(),
+//                account.getEntertainerId(),
+//                account.getDepositAccountId(),
+//                account.getWithdrawalAccountId()
+//            ))
+//            .orElseThrow(()->new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
 //    }
 
-    public List<EntertainerSavingsAccount> findStarAccounts(String userEmail) {
-        User user = findUser(userEmail);
-        return entertainerSavingsAccountRepository.findByUserId(user.getUserId());
-    }
+
 
     public Entertainer findEntertainer(Long entertainerId) {
         return entertainRepository.findByEntertainerId(entertainerId).orElseThrow(
             () -> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
     }
 
-    public EntertainerSavingsAccount findEntertainerAccountById(Long savingAccountId) {
+    public EntertainerSavingsAccount findEntertainerAccountByDepositAccountId(Long savingAccountId) {
         return entertainerSavingsAccountRepository.findByDepositAccountId(savingAccountId).orElseThrow(
             () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
+    }
+
+    public EntertainerSavingsAccount findEntertainerAccountByWithdrawalAccountId(Long savingAccountId) {
+        return entertainerSavingsAccountRepository.findByWithdrawalAccountId(savingAccountId).orElseThrow(
+            () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
+    }
+
+    public List<EntertainerSavingsAccount> findAccountByUserId(Long userId) {
+        return entertainerSavingsAccountRepository.findByUserId(userId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundUser)));
     }
 }

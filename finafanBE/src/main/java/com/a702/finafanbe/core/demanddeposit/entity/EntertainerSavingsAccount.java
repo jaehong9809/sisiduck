@@ -41,32 +41,44 @@ public class EntertainerSavingsAccount extends BaseEntity {
     private String imageUrl;
 
     public static EntertainerSavingsAccount of(
-            Long userId,
-            Long entertainerId,
-            String productName,
-            Long depositAccountId,
-            Long withdrawalAccountId
+        Long userId,
+        Long entertainerId,
+        String productName,
+        Long depositAccountId,
+        Long withdrawalAccountId,
+        Double interestRate,
+        Long duration,
+        String imageUrl
     ) {
         return new EntertainerSavingsAccount(
-                userId,
-                entertainerId,
-                productName,
-                depositAccountId,
-                withdrawalAccountId
+            userId,
+            entertainerId,
+            productName,
+            depositAccountId,
+            withdrawalAccountId,
+            interestRate,
+            duration,
+            imageUrl
         );
     }
 
     private EntertainerSavingsAccount(
-            Long userId,
-            Long entertainerId,
-            String productName,
-            Long depositAccountId,
-            Long withdrawalAccountId
+        Long userId,
+        Long entertainerId,
+        String productName,
+        Long depositAccountId,
+        Long withdrawalAccountId,
+        Double interestRate,
+        Long duration,
+        String imageUrl
     ){
         this.userId = userId;
         this.entertainerId = entertainerId;
         this.productName = productName;
         this.depositAccountId = depositAccountId;
         this.withdrawalAccountId = withdrawalAccountId;
+        this.interestRate = interestRate;
+        this.duration = duration;
+        this.imageUrl = imageUrl;
     }
 }
