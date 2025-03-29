@@ -1,43 +1,45 @@
 package com.a702.finafanbe.core.entertainer.dto.response;
 
+import com.a702.finafanbe.core.bank.entity.Bank;
+import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record InquireEntertainerAccountResponse(
-        String bankCode,
-        String bankName,
+        Long accountId,
         String accountNo,
         String accountName,
-        BigDecimal dailyTransferLimit,
-        BigDecimal oneTimeTransferLimit,
-        BigDecimal accountBalance,
-        LocalDateTime lastTransactionDate,
-        String currency,
-        String imageUrl
+        BigDecimal amount,
+        LocalDateTime createdDate,
+        Double interestRate,
+        Long duration,
+        String imageUrl,
+        Account withdrawalAccount,
+        Bank bank
 ) {
     public static InquireEntertainerAccountResponse of(
-            String bankCode,
-            String bankName,
-            String accountNo,
-            String accountName,
-            BigDecimal dailyTransferLimit,
-            BigDecimal oneTimeTransferLimit,
-            BigDecimal accountBalance,
-            LocalDateTime lastTransactionDate,
-            String currency,
-            String imageUrl
+        Long accountId,
+        String accountNo,
+        String accountName,
+        BigDecimal amount,
+        LocalDateTime createdDate,
+        Double interestRate,
+        Long duration,
+        String imageUrl,
+        Account withdrawalAccount,
+        Bank bank
     ){
         return new InquireEntertainerAccountResponse(
-                bankCode,
-                bankName,
-                accountNo,
-                accountName,
-                dailyTransferLimit,
-                oneTimeTransferLimit,
-                accountBalance,
-                lastTransactionDate,
-                currency,
-                imageUrl
+            accountId,
+            accountNo,
+            accountName,
+            amount,
+            createdDate,
+            interestRate,
+            duration,
+            imageUrl,
+            withdrawalAccount,
+            bank
         );
     }
 }
