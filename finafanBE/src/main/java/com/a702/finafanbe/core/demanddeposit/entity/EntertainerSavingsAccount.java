@@ -31,6 +31,15 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(nullable = false, name = "product_name")
     private String productName;
 
+    @Column(nullable = false, name = "interest_rate")
+    private Double interestRate;
+
+    @Column(nullable = false, name = "duration")
+    private Long duration;
+
+    @Column(nullable = false, name = "image_url")
+    private String imageUrl;
+
     public static EntertainerSavingsAccount of(
             Long userId,
             Long entertainerId,
