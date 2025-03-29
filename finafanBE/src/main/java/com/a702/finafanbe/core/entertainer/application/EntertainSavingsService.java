@@ -183,4 +183,14 @@ public class EntertainSavingsService {
         User user = findUser(userEmail);
         return entertainerSavingsAccountRepository.findByUserId(user.getUserId());
     }
+
+    public Entertainer findEntertainer(Long entertainerId) {
+        return entertainRepository.findByEntertainerId(entertainerId).orElseThrow(
+            () -> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
+    }
+
+    public EntertainerSavingsAccount findEntertainerAccountById(Long savingAccountId) {
+        return entertainerSavingsAccountRepository.findByDepositAccountId(savingAccountId).orElseThrow(
+            () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
+    }
 }

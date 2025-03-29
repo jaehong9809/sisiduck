@@ -39,7 +39,7 @@ public class UserService {
         String userEmail
     ) {
 
-        User user = findUser(userEmail);
+        User user = findUserByEmail(userEmail);
         ResponseEntity<UserFinancialNetworkResponse> exchange = requestFinancialNetwork(
                 "https://finopenapi.ssafy.io/ssafy/api/v1/member",
                 user.getSocialEmail()
@@ -55,7 +55,7 @@ public class UserService {
 
 
     public UserFinancialNetworkResponse getUserWithFinancialNetwork(String userEmail) {
-        User user = findUser(userEmail);
+        User user = findUserByEmail(userEmail);
         ResponseEntity<UserFinancialNetworkResponse> exchange = requestFinancialNetwork(
                 "https://finopenapi.ssafy.io/ssafy/api/v1/member/search",
                 user.getSocialEmail()
@@ -63,7 +63,7 @@ public class UserService {
         return exchange.getBody();
     }
 
-    public User findUser(String userEmail) {
+    public User findUserByEmail(String userEmail) {
         return userRepository.findBySocialEmail(userEmail).orElseThrow(() -> new BadRequestException(ResponseData.builder()
                 .code(ErrorCode.NotFoundUser.getCode())
                 .message(ErrorCode.NotFoundUser.getMessage())
