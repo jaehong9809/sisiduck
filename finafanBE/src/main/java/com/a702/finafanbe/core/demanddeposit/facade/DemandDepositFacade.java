@@ -1,10 +1,13 @@
 package com.a702.finafanbe.core.demanddeposit.facade;
 
+import com.a702.finafanbe.core.bank.application.BankService;
+import com.a702.finafanbe.core.bank.entity.Bank;
+import com.a702.finafanbe.core.bank.entity.infrastructure.BankRepository;
+import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse.REC;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
-import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.EntertainerTransactionHistoriesRequest;
@@ -12,10 +15,9 @@ import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccoun
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
+import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
-import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.EntertainerSavingsAccountRepository;
-import com.a702.finafanbe.core.transaction.deposittransaction.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
 import com.a702.finafanbe.core.user.application.UserService;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
@@ -34,7 +36,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.a702.finafanbe.global.common.exception.ErrorCode.NOT_FOUND_ACCOUNT;
-import static com.a702.finafanbe.global.common.exception.ErrorCode.NotFoundEntertainer;
 import static com.a702.finafanbe.global.common.exception.ErrorCode.NotFoundUser;
 
 @Service
@@ -46,12 +47,10 @@ public class DemandDepositFacade {
     private final FinancialRequestFactory financialRequestFactory;
     private final ApiClientUtil apiClientUtil;
     private final EntertainSavingsService entertainSavingsService;
-    private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
-    private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
-    private final EntertainerRepository entertainerRepository;
-    private final AccountRepository accountRepository;
+    private final DepositTransactionService depositTransactionService;
+    private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
     private final UserService userService;
-    private final UserRepository userRepository;
+    private final BankService bankService;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -149,8 +148,7 @@ public class DemandDepositFacade {
             String email,
             String productName
     ) {
-        User user = userRepository.findBySocialEmail(email)
-            .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
+        User user = userService.findUserByEmail(email);
         RetrieveProductsResponse.REC rec = getProducts().getBody()
                 .REC()
                 .stream()
@@ -217,7 +215,9 @@ public class DemandDepositFacade {
     }
 
     public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
-        Account withdrawalAccount = findAccount(createStarAccountRequest.withdrawalAccountId());
+
+        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
+            createStarAccountRequest.withdrawalAccountId());
         ApiCreateAccountResponse response = createAccount(
             EMAIL,
             createStarAccountRequest.productName()
@@ -229,39 +229,28 @@ public class DemandDepositFacade {
         );
     }
 
-
     public InquireEntertainerAccountResponse getEntertainerAccount(
             String userEmail,
             Long savingAccountId
     ) {
-        EntertainerSavingsAccount entertainerSavingsAccount = entertainerSavingsAccountRepository.findByDepositAccountId(savingAccountId);
-        Account depositAccount = findAccount(entertainerSavingsAccount.getDepositAccountId());
-        InquireDemandDepositAccountResponse.REC rec = apiClientUtil.callFinancialNetwork(
-                "/demandDeposit/inquireDemandDepositAccount",
-                financialRequestFactory.UserKeyAccountNoRequest(
-                        userEmail,
-                        depositAccount.getAccountNo(),
-                        "inquireDemandDepositAccount"
-                ),
-                InquireDemandDepositAccountResponse.class
-        ).getBody().REC();
-        String accountNo = rec.accountNo();
+        EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
+        Account depositAccount = inquireDemandDepositAccountService.findAccountById(
+            savingsAccount.getDepositAccountId());
+        Account account = inquireDemandDepositAccountService.findAccountByAccountNo(
+            depositAccount.getAccountNo());
+        Entertainer entertainer = entertainSavingsService.findEntertainer(savingsAccount.getEntertainerId());
+        Bank bank = bankService.findBankById(account.getBankId());
 
-        Account account = accountRepository.findByAccountNo(accountNo).orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
-        EntertainerSavingsAccount savingsAccount = entertainerSavingsAccountRepository.findByDepositAccountId(account.getAccountId());
-        Entertainer entertainer = entertainerRepository.findByEntertainerId(
-            savingsAccount.getEntertainerId()).orElseThrow(
-            () -> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
         return InquireEntertainerAccountResponse.of(
-                rec.bankCode(),
-                rec.bankName(),
-                rec.accountNo(),
-                rec.accountName(),
-                rec.dailyTransferLimit(),
-                rec.oneTimeTransferLimit(),
-                rec.accountBalance(),
-                rec.lastTransactionDate(),
-                rec.currency(),
+                account.getBankCode(),
+                bank.getBankName(),
+                account.getAccountNo(),
+                account.getAccountName(),
+                account.getDailyTransferLimit(),
+                account.getOneTimeTransferLimit(),
+                account.getBalance(),
+                account.getLastTransactionDate(),
+                account.getCurrency(),
                 entertainer.getEntertainerProfileUrl()
         );
     }
@@ -282,8 +271,8 @@ public class DemandDepositFacade {
                 ),
                 AccountTransactionHistoriesResponse.class
         ).getBody().REC();
-        List<EntertainerSavingsTransactionDetail> transactionDetails = entertainerSavingsTransactionDetailRepository.findByDepositAccountNo(entertainerTransactionHistoriesRequest.accountNo());
-
+        List<EntertainerSavingsTransactionDetail> transactionDetails = depositTransactionService.getEntertainerSavingsDetails(
+            entertainerTransactionHistoriesRequest.accountNo());
         Map<Long, String> transactionImageMap = transactionDetails.stream().collect(
                 Collectors.toMap(
                         EntertainerSavingsTransactionDetail::getTransactionUniqueNo,
@@ -297,14 +286,8 @@ public class DemandDepositFacade {
                     String imageUrl = transactionImageMap.getOrDefault(transaction.transactionUniqueNo(), null);
                     return new TransactionWithImageResponse(
                             transaction.transactionUniqueNo(),
-//                            transaction.transactionDate(),
-//                            transaction.transactionTime(),
-//                            transaction.transactionType(),
-//                            transaction.transactionTypeName(),
-//                            transaction.transactionAccountNo(),
                             transaction.transactionBalance(),
                             transaction.transactionAfterBalance(),
-//                            transaction.transactionSummary(),
                             transaction.transactionMemo(),
                             imageUrl
                     );
@@ -340,9 +323,9 @@ public class DemandDepositFacade {
         Long depositAccountId,
         Long transactionBalance
     ) {
-            EntertainerSavingsAccount entertainerSavingsAccount = entertainerSavingsAccountRepository.findById(depositAccountId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
-            Account depositAccount = findAccount(entertainerSavingsAccount.getDepositAccountId());
-            Account withdrawalAccount = findAccount(entertainerSavingsAccount.getWithdrawalAccountId());
+            EntertainerSavingsAccount entertainerSavingsAccount = entertainSavingsService.findEntertainerAccountById(depositAccountId);
+            Account depositAccount = inquireDemandDepositAccountService.findAccountById(entertainerSavingsAccount.getDepositAccountId());
+            Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(entertainerSavingsAccount.getWithdrawalAccountId());
             TransferRequest transferRequest = new TransferRequest(
                     depositAccount.getAccountNo(),
                     "",
@@ -364,8 +347,4 @@ public class DemandDepositFacade {
                     UpdateDemandDepositAccountTransferResponse.class
             );
         }
-
-    private Account findAccount(Long accountId) {
-        return accountRepository.findById(accountId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
-    }
 }
