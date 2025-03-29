@@ -1,10 +1,10 @@
 INSERT INTO accounts (
     user_id,
     account_no,
-    balance,
+    amount,
     interest_rate,
     status,
-    bank_code,
+    bank_id,
     account_pw,
     account_type_unique_no,
     account_type_code,
@@ -22,10 +22,10 @@ INSERT INTO accounts (
 ) VALUES (
              1, -- user_id
              '0013509698246275', -- account_no
-             10000.00, -- balance
+             10000.00, -- amount
              0.015, -- interest_rate (1.5%)
              'ACTIVE', -- status
-             '001', -- bank_code
+             1, -- bank_code
              1234, -- account_pw
              'SAVING001', -- account_type_unique_no
              '1', -- account_type_code
