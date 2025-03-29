@@ -1,4 +1,4 @@
-package com.a702.finafanbe.core.entertainer.entity;
+package com.a702.finafanbe.core.transaction.deposittransaction.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

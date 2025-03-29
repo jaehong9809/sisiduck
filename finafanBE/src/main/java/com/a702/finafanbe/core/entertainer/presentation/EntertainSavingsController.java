@@ -12,7 +12,7 @@ import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
-import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
+import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.s3.service.S3Service;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
@@ -114,7 +114,7 @@ public class EntertainSavingsController {
                 savingAccountId
         ));
     }
-//TODO 검색
+
     @GetMapping("/transaction-histories")
     public ResponseEntity<ResponseData<InquireEntertainerHistoriesResponse>> getDemandDepositTransactionHistories(
             @RequestBody EntertainerTransactionHistoriesRequest entertainerTransactionHistoriesRequest

@@ -37,6 +37,9 @@ public class Account extends BaseEntity {
     @Column(name = "bank_code", nullable = false, length = 3)
     private String bankCode;
 
+    @Column(name = "bank_id", nullable = false)
+    private Long bankId;
+
     @Column(name = "account_pw", nullable = false)
     private int accountPw;
 

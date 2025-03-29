@@ -1,6 +1,6 @@
-package com.a702.finafanbe.core.entertainer.entity.infrastructure;
+package com.a702.finafanbe.core.demanddeposit.entity.infrastructure;
 
-import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
+import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

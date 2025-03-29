@@ -1,4 +1,4 @@
-package com.a702.finafanbe.core.entertainer.entity;
+package com.a702.finafanbe.core.demanddeposit.entity;
 
 import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
