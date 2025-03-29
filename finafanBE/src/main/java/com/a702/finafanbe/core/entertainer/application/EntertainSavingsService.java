@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.entertainer.application;
 
+import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
@@ -44,7 +45,7 @@ public class EntertainSavingsService {
     @Transactional
     public StarAccountResponse createEntertainerSavings(
             CreateStarAccountRequest createStartAccountRequest,
-            CreateAccountResponse.REC rec,
+            ApiCreateAccountResponse accountResponse,
             String withdrawalAccountNo
     ) {
         User user = findUser(EMAIL);
@@ -52,17 +53,18 @@ public class EntertainSavingsService {
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
 
-        accountRepository.save(Account.of(
-                user.getUserId(),
-                rec.getAccountNo(),
-                rec.getBankCode(),
-                rec.getCurrency().getCurrency()
+        Account createdAccount = accountRepository.save(Account.of(
+            user.getUserId(),
+            accountResponse.accountNo(),
+            accountResponse.bankCode(),
+            accountResponse.currency()
         ));
 
         EntertainerSavingsAccount entertainerSavingsAccount = saveEntertainerSavingsAccount(
                 user.getUserId(),
                 entertainerId,
                 createStartAccountRequest.productName(),
+                createdAccount.getAccountId(),
                 createStartAccountRequest.withdrawalAccountId()
         );
         return StarAccountResponse.of(
@@ -77,6 +79,7 @@ public class EntertainSavingsService {
             Long userId,
             Long entertainerId,
             String productName,
+            Long depositAccountId,
             Long withdrawalAccountId
     ) {
         return entertainerSavingsAccountRepository.save(
@@ -84,6 +87,7 @@ public class EntertainSavingsService {
                         userId,
                         entertainerId,
                         productName,
+                        depositAccountId,
                         withdrawalAccountId
                 )
         );

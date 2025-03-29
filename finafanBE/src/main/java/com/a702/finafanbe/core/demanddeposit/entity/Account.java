@@ -80,17 +80,28 @@ public class Account extends BaseEntity {
     private LocalDateTime subscriptionPeriod;
 
     public static Account of(
-            Long userId,
-            String accountNo,
-            String bankCode,
-            String currency
-    ){
-        return new Account(
-                userId,
-                accountNo,
-                bankCode,
-                currency
-        );
+        Long userId,
+        String accountNo,
+        String bankCode,
+        String currency
+    ) {
+        Account account = new Account(userId, accountNo, bankCode, currency);
+        account.accountDescription = "기본 계좌 설명";
+        account.accountExpiryDate = LocalDateTime.now().plusYears(5);
+        account.accountName = "기본 계좌";
+        account.accountPw = 1234;
+        account.accountTypeCode = "1";
+        account.accountTypeUniqueNo = "SAVE001";
+        account.balance = BigDecimal.ZERO;
+        account.interestRate = new BigDecimal("0.01");
+        account.status = "ACTIVE";
+        account.dailyTransferLimit = new BigDecimal("5000000");
+        account.oneTimeTransferLimit = new BigDecimal("1000000");
+        account.lastTransactionDate = LocalDateTime.now();
+        account.minSubscriptionBalance = new BigDecimal("1000");
+        account.maxSubscriptionBalance = new BigDecimal("10000000");
+
+        return account;
     }
 
     private Account(

@@ -2,6 +2,7 @@ package com.a702.finafanbe.core.demanddeposit.facade;
 
 import com.a702.finafanbe.core.demanddeposit.dto.request.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
+import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse.REC;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
@@ -17,6 +18,7 @@ import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavi
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
 import com.a702.finafanbe.core.user.application.UserService;
 import com.a702.finafanbe.core.user.entity.User;
+import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.a702.finafanbe.global.common.exception.ErrorCode.NOT_FOUND_ACCOUNT;
+import static com.a702.finafanbe.global.common.exception.ErrorCode.NotFoundUser;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +50,7 @@ public class DemandDepositFacade {
     private final EntertainerPictureRepository entertainerPictureRepository;
     private final AccountRepository accountRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -140,18 +144,20 @@ public class DemandDepositFacade {
         );
     }
 
-    public CreateAccountResponse createAccount(
+    public ApiCreateAccountResponse createAccount(
             String email,
             String productName
     ) {
+        User user = userRepository.findBySocialEmail(email)
+            .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
         RetrieveProductsResponse.REC rec = getProducts().getBody()
                 .REC()
                 .stream()
                 .filter(product -> product.getAccountName().equals(productName))
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_DEMAND_DEPOSIT_PRODUCT)));
-
-        ResponseEntity<CreateAccountResponse> createDemandDepositAccount = apiClientUtil.callFinancialNetwork(
+        String productUniqueNo = rec.getAccountTypeUniqueNo();
+        REC createDemandDepositAccount = apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/createDemandDepositAccount",
                 financialRequestFactory.UserKeyAccountTypeUniqueNoRequest(
                         email,
@@ -159,8 +165,14 @@ public class DemandDepositFacade {
                         "createDemandDepositAccount"
                 ),
                 CreateAccountResponse.class
+        ).getBody().REC();
+        return ApiCreateAccountResponse.of(
+            user.getUserId(),
+            createDemandDepositAccount.getAccountNo(),
+            createDemandDepositAccount.getBankCode(),
+            createDemandDepositAccount.getCurrency().getCurrency(),
+            productUniqueNo
         );
-        return createDemandDepositAccount.getBody();
     }
 
     public ResponseEntity<InquireDemandDepositAccountTransactionHistoryResponse> inquireHistory(TransactionHistoryRequest transactionHistoryRequest) {
@@ -205,12 +217,13 @@ public class DemandDepositFacade {
 
     public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
         Account withdrawalAccount = findAccount(createStarAccountRequest.withdrawalAccountId());
+        ApiCreateAccountResponse response = createAccount(
+            EMAIL,
+            createStarAccountRequest.productName()
+        );
         return entertainSavingsService.createEntertainerSavings(
                 createStarAccountRequest,
-                createAccount(
-                        EMAIL,
-                        createStarAccountRequest.productName()
-                ).REC(),
+                response,
                 withdrawalAccount.getAccountNo()
         );
     }
