@@ -1,7 +1,6 @@
 package com.a702.finafanbe.core.entertainer.application;
 
 import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
-import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
@@ -10,7 +9,7 @@ import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsTransactionDetail;
-import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainRepository;
+import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsAccountRepository;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
@@ -18,7 +17,6 @@ import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavi
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
-import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeader;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +34,7 @@ public class EntertainSavingsService {
 
     private static final String EMAIL = "lsc7134@naver.com";
 
-    private final EntertainRepository entertainRepository;
+    private final EntertainerRepository entertainRepository;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;

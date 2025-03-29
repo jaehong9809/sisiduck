@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface EntertainRepository extends JpaRepository<Entertainer, Long> {
+public interface EntertainerRepository extends JpaRepository<Entertainer, Long> {
     Optional<Entertainer> findByEntertainerName(String entertainer);
 
     Optional<Entertainer> findByEntertainerId(Long entertainerId);

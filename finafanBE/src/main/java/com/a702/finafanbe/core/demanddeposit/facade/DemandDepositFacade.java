@@ -10,10 +10,12 @@ import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.EntertainerTransactionHistoriesRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
+import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerPicture;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerPictureRepository;
+import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsAccountRepository;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
 import com.a702.finafanbe.core.user.application.UserService;
@@ -34,6 +36,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.a702.finafanbe.global.common.exception.ErrorCode.NOT_FOUND_ACCOUNT;
+import static com.a702.finafanbe.global.common.exception.ErrorCode.NotFoundEntertainer;
 import static com.a702.finafanbe.global.common.exception.ErrorCode.NotFoundUser;
 
 @Service
@@ -47,7 +50,7 @@ public class DemandDepositFacade {
     private final EntertainSavingsService entertainSavingsService;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
-    private final EntertainerPictureRepository entertainerPictureRepository;
+    private final EntertainerRepository entertainerRepository;
     private final AccountRepository accountRepository;
     private final UserService userService;
     private final UserRepository userRepository;
@@ -248,7 +251,9 @@ public class DemandDepositFacade {
 
         Account account = accountRepository.findByAccountNo(accountNo).orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
         EntertainerSavingsAccount savingsAccount = entertainerSavingsAccountRepository.findByDepositAccountId(account.getAccountId());
-        EntertainerPicture entertainerPicture = entertainerPictureRepository.findByEntertainerId(savingsAccount.getEntertainerId());
+        Entertainer entertainer = entertainerRepository.findByEntertainerId(
+            savingsAccount.getEntertainerId()).orElseThrow(
+            () -> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
         return InquireEntertainerAccountResponse.of(
                 rec.bankCode(),
                 rec.bankName(),
@@ -259,7 +264,7 @@ public class DemandDepositFacade {
                 rec.accountBalance(),
                 rec.lastTransactionDate(),
                 rec.currency(),
-                entertainerPicture.getEntertainerPictureUrl()
+                entertainer.getEntertainerProfileUrl()
         );
     }
 
