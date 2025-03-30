@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
+import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
@@ -13,11 +14,15 @@ import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.EntertainerSearchResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.WithdrawalAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.s3.service.S3Service;
+import com.a702.finafanbe.core.savings.application.SavingsAccountService;
+import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
@@ -41,6 +46,7 @@ public class EntertainSavingsController {
     private final DemandDepositFacade demandDepositFacade;
     private final EntertainSavingsService entertainService;
     private final S3Service s3Service;
+    private final SavingsAccountService savingsAccountService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
 
     @GetMapping("/account/{savingAccountId}")
@@ -130,5 +136,22 @@ public class EntertainSavingsController {
     @GetMapping
     public ResponseEntity<ResponseData<List<Entertainer>>> getStars(){
         return ResponseUtil.success(entertainService.findStars());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ResponseData<List<EntertainerSearchResponse>>> searchEntertainers(
+        @RequestParam(required = false) String keyword
+    ) {
+        return ResponseUtil.success(entertainService.searchEntertainers(keyword));
+    }
+
+    @GetMapping("/withdrawal-accounts")
+    public ResponseEntity<ResponseData<List<WithdrawalAccountResponse>>> getWithdrawalAccounts(
+//        @AuthMember User user;
+    ) {
+        String email = EMAIL;
+
+        List<WithdrawalAccountResponse> accounts = savingsAccountService.getWithdrawalAccounts(email);
+        return ResponseUtil.success(accounts);
     }
 }
