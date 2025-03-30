@@ -7,6 +7,7 @@ import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountReposi
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.EntertainerSearchResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
@@ -119,12 +120,6 @@ public class EntertainSavingsService {
                 .getEntertainerId();
     }
 
-    private Long findUserId(String userEmail) {
-        return userRepository.findBySocialEmail(userEmail)
-                .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)))
-                .getUserId();
-    }
-
     private User findUser(String userEmail) {
         log.info("Find user by email: " + userEmail);
         return userRepository.findBySocialEmail(userEmail)
@@ -183,41 +178,24 @@ public class EntertainSavingsService {
         );
     }
 
-//    public StarAccountResponse findStarAccount(
-//        String email,
-//        Long savingAccountId
-//    ) {
-//        User user = findUser(email);
-//        return entertainerSavingsAccountRepository.findByUserId(user.getUserId()).stream()
-//            .filter(account -> account.getDepositAccountId().equals(savingAccountId))
-//            .findFirst()
-//            .map(account->StarAccountResponse.of(
-//                account.getUserId(),
-//                account.getEntertainerId(),
-//                account.getDepositAccountId(),
-//                account.getWithdrawalAccountId()
-//            ))
-//            .orElseThrow(()->new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
-//    }
-
-
-
-    public Entertainer findEntertainer(Long entertainerId) {
-        return entertainRepository.findByEntertainerId(entertainerId).orElseThrow(
-            () -> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
-    }
-
     public EntertainerSavingsAccount findEntertainerAccountByDepositAccountId(Long savingAccountId) {
         return entertainerSavingsAccountRepository.findByDepositAccountId(savingAccountId).orElseThrow(
             () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
-    public EntertainerSavingsAccount findEntertainerAccountByWithdrawalAccountId(Long savingAccountId) {
-        return entertainerSavingsAccountRepository.findByWithdrawalAccountId(savingAccountId).orElseThrow(
-            () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
-    }
-
     public List<EntertainerSavingsAccount> findAccountByUserId(Long userId) {
         return entertainerSavingsAccountRepository.findByUserId(userId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundUser)));
+    }
+
+    public List<EntertainerSearchResponse> searchEntertainers(String keyword) {
+        List<Entertainer> entertainers;
+        if (keyword == null || keyword.trim().isEmpty()) {
+            entertainers = entertainRepository.findAll();
+        }else {
+            entertainers = entertainRepository.searchByNameOrFandom(keyword);
+        }
+        return entertainers.stream()
+            .map(EntertainerSearchResponse::of)
+            .collect(Collectors.toList());
     }
 }
