@@ -115,6 +115,17 @@
     <string name="saving_item_cancel_complete">적금 해지가 완료되었어요!</string>
     <string name="saving_item_deposit_complete">입금이 완료되었어요!</string>
 
+    <!-- Saving Ranking -->
+    <string name="ranking_daily_title">일간</string>
+    <string name="ranking_weekly_title">주간</string>
+    <string name="ranking_together">같이 덕질하기</string>
+    <string name="ranking_daily_star">오늘의 1등 스타</string>
+    <string name="ranking_weekly_star">이번 주 1등 스타</string>
+    <string name="ranking_history_title">랭킹 보기</string>
+    <string name="ranking_history">응원글 보기</string>
+    <string name="ranking_my_history">나의 응원 내역</string>
+    <string name="ranking_star_name">1위 • %s</string>
+    <string name="ranking_first_title">1위</string>
 
     <!-- BLUETOOTH -->
     <string name="ble_find_user">주변 팬 찾기</string>
