@@ -23,6 +23,8 @@
     <string name="product_interest_rate">금리 안내</string>
     <string name="term_info">이용 약관</string>
     <string name="product_guide">상품 설명서</string>
+    <string name="saving_ranking_title">적금 랭킹</string>
+    <string name="saving_ranking_history_title">랭킹 보기</string>
 
     <!-- Saving Screen -->
     <string name="saving_item_title">스타 적금</string>
@@ -124,7 +126,7 @@
     <string name="ranking_history_title">랭킹 보기</string>
     <string name="ranking_history">응원글 보기</string>
     <string name="ranking_my_history">나의 응원 내역</string>
-    <string name="ranking_star_name">1위 • %s</string>
+    <string name="ranking_star_name">%d위 • %s</string>
     <string name="ranking_first_title">1위</string>
 
     <!-- BLUETOOTH -->

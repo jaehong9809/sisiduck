@@ -33,7 +33,11 @@ fun RankingScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        CommonBackTopBar(modifier = Modifier, text = "적금 랭킹")
+        CommonBackTopBar(
+            modifier = Modifier,
+            text = stringResource(R.string.saving_ranking_title),
+            isTextCentered = true
+        )
 
         LazyColumn(
             modifier = Modifier
