@@ -15,6 +15,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -51,7 +54,7 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 @Composable
 fun SavingMainScreen(
     viewModel: SavingViewModel = viewModel(),
-    savingAccountId: Long? = null
+    savingAccountId: Long
 ) {
 
     val navController = LocalNavController.current
@@ -73,7 +76,6 @@ fun SavingMainScreen(
             )
     )
 
-//    val transactions = mutableListOf<Transaction>()
     val transactions = mutableListOf(
         Transaction(
             amount = 40000,
@@ -98,9 +100,12 @@ fun SavingMainScreen(
         ),
     )
 
-    // TODO: 적금 계좌 정보 조회 API 호출
+    // 적금 계좌 정보, 입금 내역 목록
+    LaunchedEffect(Unit) {
+        viewModel.fetchSavingInfo(savingAccountId)
+    }
 
-    // TODO: 적금 입금 내역 조회 API 호출
+    val savingState by viewModel.savingState.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -112,7 +117,7 @@ fun SavingMainScreen(
             horizontalAlignment = CenterHorizontally
         ) {
             item {
-                SavingHeader(accountInfo)
+                SavingHeader(savingState.savingInfo.savingAccount)
             }
 
             item {
@@ -132,7 +137,7 @@ fun SavingMainScreen(
                     )
                 }
             } else {
-                items(transactions) { transaction ->
+                items(savingState.savingInfo.transactions) { transaction ->
                     TransactionItem(transaction, onSelect = {
                         viewModel.setTransaction(transaction)
                         navController.navigate(NavRoutes.TransactionDetail.route)
@@ -144,11 +149,11 @@ fun SavingMainScreen(
 }
 
 @Composable
-fun SavingHeader(info: SavingAccount) {
+fun SavingHeader(account: SavingAccount) {
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(info.imageUrl)
+            .data(account.imageUrl)
             .build()
     )
 
@@ -161,7 +166,7 @@ fun SavingHeader(info: SavingAccount) {
 
         Image(
             painter = painter,
-            contentDescription = "Background Image",
+            contentDescription = "Star Image",
             modifier = Modifier
                 .fillMaxSize()
                 .height(560.dp)
@@ -180,7 +185,7 @@ fun SavingHeader(info: SavingAccount) {
         )
 
         Text(
-            text = "DAY ${info.duration}",
+            text = "DAY ${account.duration}",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = MainWhite,
@@ -197,19 +202,19 @@ fun SavingHeader(info: SavingAccount) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = info.accountName,
+                text = account.accountName,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = MainWhite
             )
             Text(
-                text = StringUtil.formatCurrency(info.amount),
+                text = StringUtil.formatCurrency(account.amount),
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
                 color = MainWhite
             )
             Text(
-                text = info.accountNo,
+                text = account.accountNo,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
                 color = MainWhite
@@ -221,6 +226,6 @@ fun SavingHeader(info: SavingAccount) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewSavingScreen() {
-    SavingMainScreen()
+    SavingMainScreen(savingAccountId = 0)
 }
 

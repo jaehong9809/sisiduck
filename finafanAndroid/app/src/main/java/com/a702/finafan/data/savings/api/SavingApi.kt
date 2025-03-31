@@ -15,22 +15,23 @@ interface SavingApi {
     @GET("v1/star")
     suspend fun getStars(): ApiResponse<List<StarResponse>>
 
-    // TODO: 적금 - 입금하기
-    @POST("v1/saving/deposit")
+    // 입금하기
+    @POST("v1/star/deposit")
     suspend fun deposit(@Body request: SavingDepositRequest): ApiResponse<String>
 
-    // TODO: 적금 입금내역 조회
-    @GET("v1/saving/history")
+    // 적금 입금내역 조회
+    @GET("v1/star/transaction-histories/{savingAccountId}")
     suspend fun history(savingAccountId: Long): ApiResponse<List<TransactionResponse>>
 
-    // TODO: 적금 계좌 정보 조회
-    @GET("v1/saving/{savingAccountId}")
+    // 적금 계좌 정보 조회
+    @GET("v1/star/{savingAccountId}")
     suspend fun accountInfo(@Path("savingAccountId") savingAccountId: Long): ApiResponse<SavingAccountResponse>
 
-    // TODO: 적금 계좌 목록 조회
+    // 적금 계좌 목록 조회
+    @GET("v1/star/accounts")
     suspend fun accountList(): ApiResponse<List<SavingAccountResponse>>
 
-    // TODO: 출금 계좌번호 목록 조회
-    @GET("v1/saving/withdraw")
+    // 출금 계좌번호 목록 조회
+    @GET("v1/saving/withdraw-accounts")
     suspend fun withdrawAccount(): ApiResponse<List<AccountResponse>>
 }
