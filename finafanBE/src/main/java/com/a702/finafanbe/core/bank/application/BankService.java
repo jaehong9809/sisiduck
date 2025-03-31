@@ -19,4 +19,10 @@ public class BankService {
         return bankRepository.findByBankId(bankId).orElseThrow(
             () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_BANK)));
     }
+
+    public Bank findBankByCode(String code) {
+        return bankRepository.findByBankCode(code).orElseThrow(
+            ()-> new BadRequestException(ResponseData.createResponse(NOT_FOUND_BANK)
+        ));
+    }
 }
