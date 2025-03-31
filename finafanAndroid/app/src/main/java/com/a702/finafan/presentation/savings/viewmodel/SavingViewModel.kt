@@ -12,7 +12,7 @@ import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
 import com.a702.finafan.domain.savings.usecase.DepositUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingUseCase
-import com.a702.finafan.domain.savings.usecase.GetStarsUseCase
+import com.a702.finafan.domain.savings.usecase.GetStarUseCase
 import com.a702.finafan.domain.savings.usecase.GetWithdrawalAccountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SavingViewModel @Inject constructor(
-    private val getStarsUseCase: GetStarsUseCase,
+    private val getStarUseCase: GetStarUseCase,
     private val getSavingUseCase: GetSavingUseCase,
     private val createSavingUseCase: CreateSavingUseCase,
     private val getWithdrawalAccountUseCase: GetWithdrawalAccountUseCase,
@@ -42,7 +42,7 @@ class SavingViewModel @Inject constructor(
             _starState.update { it.copy(isLoading = true) }
 
             try {
-                val stars = getStarsUseCase()
+                val stars = getStarUseCase()
 
                 _starState.update {
                     it.copy(
