@@ -305,13 +305,17 @@ public class DemandDepositFacade {
         );
 
         List<TransactionWithImageResponse> transactionsWithImages = inquireTransactionHistoryList.list().stream()
+                .filter(transaction ->{
+                    EntertainerSavingsTransactionDetail detail = transactionImageMap.get(transaction.transactionUniqueNo());
+                    return detail != null;
+                })
             .map(transaction -> {
                 EntertainerSavingsTransactionDetail detail = transactionImageMap.get(transaction.transactionUniqueNo());
-                String imageUrl = detail != null ? detail.getImageUrl() : null;
+                String imageUrl = detail != null ? detail.getImageUrl() : "";
                 Long detailId = detail != null ? detail.getId() : null;
 
                 return new TransactionWithImageResponse(
-                    detailId,  // null일 수 있음을 허용
+                    detailId,
                     transaction.transactionUniqueNo(),
                     transaction.transactionAfterBalance(),
                     transaction.transactionBalance(),
