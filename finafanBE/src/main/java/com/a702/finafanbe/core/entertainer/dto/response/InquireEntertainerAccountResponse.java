@@ -14,8 +14,9 @@ public record InquireEntertainerAccountResponse(
         Double interestRate,
         Long duration,
         String imageUrl,
-        Account withdrawalAccount,
-        Bank bank
+        AccountInfo withdrawalAccount,
+        Bank bank,
+        Bank withdrawalBank
 ) {
     public static InquireEntertainerAccountResponse of(
         Long accountId,
@@ -27,8 +28,18 @@ public record InquireEntertainerAccountResponse(
         Long duration,
         String imageUrl,
         Account withdrawalAccount,
-        Bank bank
+        Bank bank,
+        Bank withdrawalBank
     ){
+        AccountInfo withdrawalAccountInfo = new AccountInfo(
+                withdrawalAccount.getAccountId(),
+                withdrawalAccount.getAccountNo(),
+                withdrawalAccount.getAccountName(),
+                withdrawalAccount.getAmount(),
+                withdrawalBank.getBankName(),
+                withdrawalBank.getBankCode()
+        );
+
         return new InquireEntertainerAccountResponse(
             accountId,
             accountNo,
@@ -38,8 +49,9 @@ public record InquireEntertainerAccountResponse(
             interestRate,
             duration,
             imageUrl,
-            withdrawalAccount,
-            bank
+            withdrawalAccountInfo,
+            bank,
+            withdrawalBank
         );
     }
 }

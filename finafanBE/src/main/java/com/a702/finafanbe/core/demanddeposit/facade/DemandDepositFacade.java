@@ -2,6 +2,7 @@ package com.a702.finafanbe.core.demanddeposit.facade;
 
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.entity.Bank;
+import com.a702.finafanbe.core.bank.entity.infrastructure.BankRepository;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
@@ -45,6 +46,7 @@ public class DemandDepositFacade {
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
     private final UserService userService;
     private final BankService bankService;
+    private final BankRepository bankRepository;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -229,6 +231,7 @@ public class DemandDepositFacade {
             savingsAccount.getDepositAccountId());
         Bank bank = bankService.findBankById(depositAccount.getBankId());
         Account withDrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
+        Bank withdrawalBank = bankService.findBankById(withDrawalAccount.getBankId());
         return InquireEntertainerAccountResponse.of(
             depositAccount.getAccountId(),
             depositAccount.getAccountNo(),
@@ -239,7 +242,8 @@ public class DemandDepositFacade {
             savingsAccount.getDuration(),
             savingsAccount.getImageUrl(),
             withDrawalAccount,
-            bank
+            bank,
+            withdrawalBank
         );
     }
 
@@ -254,7 +258,7 @@ public class DemandDepositFacade {
                 Bank bank = bankService.findBankById(depositAccount.getBankId());
                 Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
                     savingsAccount.getWithdrawalAccountId());
-
+                Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
                 return InquireEntertainerAccountResponse.of(
                     depositAccount.getAccountId(),
                     depositAccount.getAccountNo(),
@@ -265,7 +269,8 @@ public class DemandDepositFacade {
                     savingsAccount.getDuration(),
                     savingsAccount.getImageUrl(),
                     withdrawalAccount,
-                    bank
+                    bank,
+                    withdrawalBank
                 );
             })
             .collect(Collectors.toList());
