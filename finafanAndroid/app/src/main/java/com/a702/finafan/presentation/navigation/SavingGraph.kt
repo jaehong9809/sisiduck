@@ -14,6 +14,8 @@ import com.a702.finafan.presentation.savings.SavingSelectAccountScreen
 import com.a702.finafan.presentation.savings.StarSearchScreen
 import com.a702.finafan.presentation.savings.TermGuideScreen
 import com.a702.finafan.presentation.savings.TransactionDetailScreen
+import com.a702.finafan.presentation.savings.ranking.RankingHistoryScreen
+import com.a702.finafan.presentation.savings.ranking.RankingScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 fun NavGraphBuilder.savingGraph(
@@ -24,10 +26,10 @@ fun NavGraphBuilder.savingGraph(
         startDestination = NavRoutes.Main.route, route = NavRoutes.Saving.route
     ) {
 
-        composable(NavRoutes.SavingMain.route + "/{savingAccountId}") { backStackEntry ->
-            val savingAccountId = backStackEntry.arguments?.getLong("savingAccountId")
+        composable(NavRoutes.SavingMain.route + "/{accountId}") { backStackEntry ->
+            val savingAccountId = backStackEntry.arguments?.getString("accountId")!!.toLongOrNull()
 
-            SavingMainScreen(savingViewModel, savingAccountId)
+            SavingMainScreen(savingViewModel, savingAccountId ?: 0)
         }
 
         composable(NavRoutes.TransactionDetail.route) { backStackEntry ->
@@ -98,6 +100,16 @@ fun NavGraphBuilder.savingGraph(
                     popUpTo(NavRoutes.Main.route)
                 }
             })
+        }
+
+        composable(NavRoutes.RankingMain.route) {
+            RankingScreen(savingViewModel)
+        }
+
+        composable(NavRoutes.RankingHistory.route) { backStackEntry ->
+            RankingHistoryScreen(
+                viewModel = savingViewModel
+            )
         }
 
     }
