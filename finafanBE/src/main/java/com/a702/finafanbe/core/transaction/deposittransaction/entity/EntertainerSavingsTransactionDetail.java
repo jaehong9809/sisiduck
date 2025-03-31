@@ -1,6 +1,7 @@
-package com.a702.finafanbe.core.entertainer.entity;
+package com.a702.finafanbe.core.transaction.deposittransaction.entity;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,14 +19,17 @@ public class EntertainerSavingsTransactionDetail {
     @Column(nullable = false, name = "user_id")
     private Long userId;
 
-    @Column(nullable = false, name = "deposit_account_no")
-    private String depositAccountNo;
+    @Column(nullable = false, name = "deposit_account_id")
+    private Long depositAccountId;
 
-    @Column(name = "withdrawal_account_no", nullable = false)
-    private String withdrawalAccountNo;
+    @Column(name = "withdrawal_account_id", nullable = false)
+    private Long withdrawalAccountId;
+
+    @Column(name = "amount", nullable = false)
+    private BigDecimal amount;
 
     @Column(nullable = false, name = "transaction_balance")
-    private Long transactionBalance;
+    private BigDecimal transactionBalance;
 
     @Column(nullable = false, name = "transaction_unique_no")
     private Long transactionUniqueNo;
@@ -36,19 +40,25 @@ public class EntertainerSavingsTransactionDetail {
     @Column(nullable = false, name = "image_url")
     private String imageUrl;
 
+    public void addAmount(BigDecimal amount) {
+        this.amount = this.amount.add(amount);
+    }
+
     public static EntertainerSavingsTransactionDetail of(
             Long userId,
-            String depositAccountNo,
-            String withdrawalAccountNo,
-            Long transactionBalance,
+            Long depositAccountId,
+            Long withdrawalAccountNo,
+            BigDecimal amount,
+            BigDecimal transactionBalance,
             Long transactionUniqueNo,
             String message,
             String imageUrl
     ){
         return new EntertainerSavingsTransactionDetail(
                 userId,
-                depositAccountNo,
+                depositAccountId,
                 withdrawalAccountNo,
+                amount,
                 transactionBalance,
                 transactionUniqueNo,
                 message,
@@ -58,16 +68,18 @@ public class EntertainerSavingsTransactionDetail {
 
     private EntertainerSavingsTransactionDetail(
             Long userId,
-            String depositAccountNo,
-            String withdrawalAccountNo,
-            Long transactionBalance,
+            Long depositAccountId,
+            Long withdrawalAccountId,
+            BigDecimal amount,
+            BigDecimal transactionBalance,
             Long transactionUniqueNo,
             String message,
             String imageUrl
     ){
         this.userId = userId;
-        this.depositAccountNo = depositAccountNo;
-        this.withdrawalAccountNo = withdrawalAccountNo;
+        this.depositAccountId = depositAccountId;
+        this.withdrawalAccountId = withdrawalAccountId;
+        this.amount = amount;
         this.transactionBalance = transactionBalance;
         this.transactionUniqueNo = transactionUniqueNo;
         this.message = message;

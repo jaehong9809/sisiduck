@@ -1,24 +1,26 @@
 package com.a702.finafanbe.core.entertainer.dto.response;
 
+import java.math.BigDecimal;
+
 public record EntertainerDepositResponse(
-        String depositAccountNo,
-        String withdrawalAccountNo,
-        Long transactionBalance,
+        Long depositAccountId,
+        Long withdrawalAccountId,
+        BigDecimal transactionBalance,
         Long transactionUniqueNo,
         String message,
         String imageUrl
 ) {
     public static EntertainerDepositResponse of(
-            String depositAccountNo,
-            String withdrawalAccountNo,
-            Long transactionBalance,
+            Long depositAccountId,
+            Long withdrawalAccountId,
+            BigDecimal transactionBalance,
             Long transactionUniqueNo,
             String message,
             String imageUrl
     ){
         return new EntertainerDepositResponse(
-                depositAccountNo,
-                withdrawalAccountNo,
+                depositAccountId,
+                withdrawalAccountId,
                 transactionBalance,
                 transactionUniqueNo,
                 message,
