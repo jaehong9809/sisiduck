@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public record WithdrawalAccountResponse(
     Long accountId,
     String accountNo,
-    String bankName,
+    Bank bank,
     String accountName,
     BigDecimal balance
 ) {
@@ -15,7 +15,7 @@ public record WithdrawalAccountResponse(
         return new WithdrawalAccountResponse(
             account.getAccountId(),
             account.getAccountNo(),
-            bank.getBankName(),
+            bank,
             account.getAccountName(),
             account.getAmount()
         );
