@@ -21,6 +21,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,20 +36,41 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
+import com.a702.finafan.common.ui.component.SavingNameBottomSheet
 import com.a702.finafan.common.ui.component.SubButton
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 @Composable
-fun SavingAccountInfoScreen(
+fun SavingAccountManageScreen(
+    viewModel: SavingViewModel = viewModel(),
     onCancelClick: () -> Unit
 ) {
+
+    val savingState by viewModel.savingState.collectAsState()
+    val accountInfo = savingState.savingInfo.savingAccount
+
+    val showBottomSheet = rememberSaveable { mutableStateOf(false) }
+    val changeName = rememberSaveable { mutableStateOf(accountInfo.accountName) }
+
+    if (showBottomSheet.value) {
+        SavingNameBottomSheet(changeName, showBottomSheet) {
+            showBottomSheet.value = false
+
+            // TODO: 적금 이름 변경 API 호출
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,7 +96,7 @@ fun SavingAccountInfoScreen(
             ) {
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("")
+                        .data(accountInfo.imageUrl)
                         .build()
                 )
 
@@ -93,7 +118,7 @@ fun SavingAccountInfoScreen(
                 ) {
                     Column {
                         Text(
-                            text = "이찬원 적금",
+                            text = stringResource(R.string.saving_item_name, accountInfo.accountName),
                             color = MainBlack,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
@@ -102,7 +127,7 @@ fun SavingAccountInfoScreen(
 
                         Text(
                             modifier = Modifier.padding(top = 8.dp),
-                            text = "123-456-789000",
+                            text = accountInfo.accountNo,
                             color = MainTextGray,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Normal,
@@ -112,7 +137,10 @@ fun SavingAccountInfoScreen(
 
                     SubButton(
                         text = stringResource(R.string.saving_item_change_name_label),
-                        onButtonClick = { /* TODO: 이름 변경 바텀시트 띄우기 */ })
+                        onButtonClick = {
+                            showBottomSheet.value = true
+                        }
+                    )
                 }
 
                 Box(
@@ -123,7 +151,7 @@ fun SavingAccountInfoScreen(
                         .background(MainBgLightGray)
                 )
 
-                AccountDetailList()
+                AccountDetailList(accountInfo)
             }
 
             Box(
@@ -152,19 +180,19 @@ fun SavingAccountInfoScreen(
 }
 
 @Composable
-fun AccountDetailList() {
+fun AccountDetailList(accountInfo: SavingAccount) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        ProductContentItem(stringResource(R.string.saving_item_product_name), "스타적금")
-        ProductContentItem(stringResource(R.string.saving_item_start_date), "2025.03.18")
-        ProductContentItem(stringResource(R.string.saving_item_connect_account), "NH농협 312-0139-3754-31")
-        ProductContentItem(stringResource(R.string.saving_item_apply_interest), "1.80%")
+        ProductContentItem(stringResource(R.string.saving_item_product_name), stringResource(R.string.saving_item_product_name_title))
+        ProductContentItem(stringResource(R.string.saving_item_start_date), StringUtil.formatDate(accountInfo.createdDate))
+        ProductContentItem(stringResource(R.string.saving_item_connect_account), accountInfo.withdrawalAccount.bank.bankName + " " + accountInfo.withdrawalAccount.accountNo)
+        ProductContentItem(stringResource(R.string.saving_item_apply_interest), accountInfo.interestRate)
     }
 }
 
 @Preview
 @Composable
 fun SavingAccountInfoPreview() {
-    SavingAccountInfoScreen(onCancelClick = {})
+    SavingAccountManageScreen(onCancelClick = {})
 }

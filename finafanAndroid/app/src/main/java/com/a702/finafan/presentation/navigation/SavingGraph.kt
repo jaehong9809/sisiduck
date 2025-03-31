@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.a702.finafan.presentation.savings.SavingAccountInfoScreen
+import com.a702.finafan.presentation.savings.SavingAccountManageScreen
 import com.a702.finafan.presentation.savings.SavingCancelScreen
 import com.a702.finafan.presentation.savings.SavingDepositScreen
 import com.a702.finafan.presentation.savings.SavingDescScreen
@@ -81,8 +81,9 @@ fun NavGraphBuilder.savingGraph(
             TermGuideScreen(title, onConfirm = { navController.popBackStack() })
         }
 
-        composable(NavRoutes.SavingAccountInfo.route) {
-            SavingAccountInfoScreen(
+        composable(NavRoutes.SavingAccountManage.route) {
+            SavingAccountManageScreen(
+                savingViewModel,
                 onCancelClick = {
                     navController.navigate(NavRoutes.SavingCancel.route)
                 }
@@ -90,11 +91,14 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.SavingCancel.route) {
-            SavingCancelScreen(onComplete = {
-                navController.navigate(NavRoutes.Main.route) {
-                    popUpTo(NavRoutes.Main.route)
+            SavingCancelScreen(
+                savingViewModel,
+                onComplete = {
+                    navController.navigate(NavRoutes.Main.route) {
+                        popUpTo(NavRoutes.Main.route)
+                    }
                 }
-            })
+            )
         }
 
         composable(NavRoutes.RankingMain.route) {

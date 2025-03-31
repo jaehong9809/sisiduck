@@ -66,7 +66,13 @@ fun SavingMainScreen(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        CommonBackTopBar(modifier = Modifier)
+        CommonBackTopBar(
+            modifier = Modifier,
+            text = stringResource(R.string.saving_account_manage_title),
+            textOnClick = {
+                navController.navigate(NavRoutes.SavingAccountManage.route)
+            }
+        )
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

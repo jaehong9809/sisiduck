@@ -22,13 +22,15 @@ import com.a702.finafan.common.ui.theme.MainBlack
 // 공통 바텀시트
 @Composable
 fun ConfirmBottomSheet(
+    showBottomSheet: MutableState<Boolean>,
     title: String? = null,
     content: String,
     isInfo: Boolean = true,
     onClickConfirm: () -> Unit
 ) {
-    DialogLayout(
-        isBottom = true,
+
+    BottomSheetLayout (
+        showBottomSheet = showBottomSheet,
         isConfirm = isInfo,
         onClickConfirm = onClickConfirm
     ) {
@@ -60,10 +62,11 @@ fun ConfirmBottomSheet(
 @Composable
 fun SavingNameBottomSheet(
     name: MutableState<String>,
-    onClickConfirm: () -> Unit
+    showBottomSheet: MutableState<Boolean>,
+    onClickConfirm: () -> Unit,
 ) {
-    DialogLayout(
-        isBottom = true,
+    BottomSheetLayout(
+        showBottomSheet = showBottomSheet,
         confirmBtnText = stringResource(R.string.btn_change),
         onClickConfirm = onClickConfirm,
         btnEnabled = name.value.isNotEmpty()
@@ -94,6 +97,7 @@ fun SavingNameBottomSheet(
 @Composable
 fun CommonBottomPreview() {
     ConfirmBottomSheet(
+        showBottomSheet = remember { mutableStateOf(true) },
         content = "내용",
         onClickConfirm = {  }
     )
@@ -103,6 +107,7 @@ fun CommonBottomPreview() {
 @Composable
 fun CommonBottomWithTitlePreview() {
     ConfirmBottomSheet(
+        showBottomSheet = remember { mutableStateOf(true) },
         title = "제목",
         content = "내용",
         onClickConfirm = {  }
@@ -113,7 +118,8 @@ fun CommonBottomWithTitlePreview() {
 @Composable
 fun SavingNameBottomPreview() {
     SavingNameBottomSheet(
-        remember { mutableStateOf("이찬원") }
+        name = remember { mutableStateOf("이찬원") },
+        showBottomSheet = remember { mutableStateOf(true) }
     ) {
         // 이름 변경
     }

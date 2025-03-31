@@ -50,7 +50,7 @@ fun MainScreen(
         Row {
             MainSquareIconButton(
                 onClick = {
-                    val accountId = 2
+                    val accountId = 5
                     navController.navigate(NavRoutes.SavingMain.route + "/${accountId}")
                 },
                 icon = {
