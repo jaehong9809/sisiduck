@@ -2,13 +2,17 @@ package com.a702.finafan.presentation.savings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
+import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
+import com.a702.finafan.domain.savings.usecase.DepositUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingUseCase
 import com.a702.finafan.domain.savings.usecase.GetStarsUseCase
+import com.a702.finafan.domain.savings.usecase.GetWithdrawalAccountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +25,9 @@ import javax.inject.Inject
 class SavingViewModel @Inject constructor(
     private val getStarsUseCase: GetStarsUseCase,
     private val getSavingUseCase: GetSavingUseCase,
+    private val createSavingUseCase: CreateSavingUseCase,
+    private val getWithdrawalAccountUseCase: GetWithdrawalAccountUseCase,
+    private val depositUseCase: DepositUseCase,
 ): ViewModel() {
 
     private val _savingState = MutableStateFlow(SavingState())
@@ -63,6 +70,33 @@ class SavingViewModel @Inject constructor(
                 it.copy(
                     savingInfo = savingInfo,
                     isLoading = false
+                )
+            }
+        }
+    }
+
+    fun createSaving(request: SavingCreateRequest) {
+        viewModelScope.launch {
+            val createAccountId = createSavingUseCase(request)
+
+            _savingState.update {
+                it.copy(
+                    createAccountId = createAccountId
+                )
+            }
+        }
+    }
+
+    fun fetchWithdrawalAccount() {
+        viewModelScope.launch {
+            val withdrawalAccounts = getWithdrawalAccountUseCase()
+
+            _savingState.update { it.copy(isLoading = true) }
+
+            _savingState.update {
+                it.copy(
+                    isLoading = false,
+                    withdrawalAccounts = withdrawalAccounts
                 )
             }
         }

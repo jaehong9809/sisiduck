@@ -3,6 +3,7 @@ package com.a702.finafan.presentation.savings
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -17,8 +18,6 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.SelectAccountField
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.data.savings.dto.request.toData
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.SavingCreate
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
@@ -26,18 +25,23 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 @Composable
 fun SavingSelectAccountScreen(
     viewModel: SavingViewModel = viewModel(),
-    onComplete: (Int) -> Unit
+    onComplete: (Long) -> Unit
 ) {
 
     val savingState by viewModel.savingState.collectAsState()
 
-    // TODO: 출금계좌 목록 조회 API 호출 -> 첫 번째 계좌 자동 선택
-    val accounts = mutableListOf(
-        Account(1, "123-456", Bank(1, "123", "NH농협")),
-        Account(2, "456-789", Bank(2, "123", "토스뱅크"))
-    )
+    // 출금계좌 목록 조회 -> 첫 번째 계좌 자동 선택
+    LaunchedEffect(Unit) {
+        viewModel.fetchWithdrawalAccount()
+    }
 
-//    viewModel.updateSavingConnectAccount(accounts[1])
+    LaunchedEffect(savingState.withdrawalAccounts) {
+        val firstAccount = savingState.withdrawalAccounts.firstOrNull()
+        
+        if (firstAccount != null) {
+            viewModel.updateSavingConnectAccount(firstAccount)
+        }
+    }
 
     SavingScreenLayout(
         topBarTitle = stringResource(R.string.saving_item_create_top_bar),
@@ -45,7 +49,7 @@ fun SavingSelectAccountScreen(
         buttonText = stringResource(R.string.btn_create),
         isButtonEnabled = savingState.connectAccount.accountNo.isNotEmpty(),
         onButtonClick = {
-            /* TODO: 적금 개설 API 호출, 개설 완료 후에 적금계좌 고유번호 넘기기 */
+            // 적금 개설
             val savingCreate = SavingCreate(
                 savingState.selectStar.entertainerId,
                 savingState.accountName,
@@ -53,8 +57,9 @@ fun SavingSelectAccountScreen(
             )
 
             val request = savingCreate.toData()
+            viewModel.createSaving(request)
 
-            onComplete(1)
+            onComplete(savingState.createAccountId)
         }
     ) {
 
@@ -68,7 +73,7 @@ fun SavingSelectAccountScreen(
             textAlign = TextAlign.Start
         )
 
-        SelectAccountField(viewModel, accounts)
+        SelectAccountField(viewModel, savingState.withdrawalAccounts)
 
     }
 }
