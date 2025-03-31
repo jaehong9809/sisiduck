@@ -15,8 +15,7 @@ public record InquireEntertainerAccountResponse(
         Long duration,
         String imageUrl,
         AccountInfo withdrawalAccount,
-        Bank bank,
-        Bank withdrawalBank
+        Bank bank
 ) {
     public static InquireEntertainerAccountResponse of(
         Long accountId,
@@ -36,8 +35,7 @@ public record InquireEntertainerAccountResponse(
                 withdrawalAccount.getAccountNo(),
                 withdrawalAccount.getAccountName(),
                 withdrawalAccount.getAmount(),
-                withdrawalBank.getBankName(),
-                withdrawalBank.getBankCode()
+                withdrawalBank
         );
 
         return new InquireEntertainerAccountResponse(
@@ -50,8 +48,7 @@ public record InquireEntertainerAccountResponse(
             duration,
             imageUrl,
             withdrawalAccountInfo,
-            bank,
-            withdrawalBank
+            bank
         );
     }
 }
