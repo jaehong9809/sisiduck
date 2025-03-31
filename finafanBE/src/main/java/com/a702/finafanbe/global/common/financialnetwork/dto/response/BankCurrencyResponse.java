@@ -8,7 +8,7 @@ public record BankCurrencyResponse(
     List<REC> REC
 ) {
 
-    private record REC(
+    public record REC(
         String currency,
         String currencyName
     ){

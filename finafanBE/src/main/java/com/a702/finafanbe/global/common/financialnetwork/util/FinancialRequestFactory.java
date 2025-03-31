@@ -74,7 +74,7 @@ public class FinancialRequestFactory {
         );
     }
 
-    private BaseRequestHeader createRequestHeader(String apiName){
+    public BaseRequestHeader createRequestHeader(String apiName){
         return BaseRequestHeader.builder()
                 .apiName(apiName)
                 .transmissionDate(DateUtil.getTransmissionDate())

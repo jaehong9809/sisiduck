@@ -3,7 +3,7 @@ package com.a702.finafanbe.core.demanddeposit.presentation;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountTransactionHistoryService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoriesRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.request.TransactionHistoryRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.AccountTransactionHistoriesResponse;
+import com.a702.finafanbe.core.demanddeposit.dto.response.AccountTransactionHistoriesResponse.REC;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountTransactionHistoryResponse;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.global.common.response.ResponseData;
@@ -21,11 +21,11 @@ public class InquireDemandDepositAccountTransactionHistoryController {
     private final InquireDemandDepositAccountTransactionHistoryService inquireDemandDepositAccountTransactionHistoryService;
 
     @GetMapping("/transaction-histories")
-    public ResponseEntity<ResponseData<AccountTransactionHistoriesResponse>> getDemandDepositTransactionHistories(
+    public ResponseEntity<ResponseData<REC>> getDemandDepositTransactionHistories(
         @RequestBody TransactionHistoriesRequest transactionHistoryListRequest
     ){
         return ResponseUtil.success(demandDepositFacade.inquireHistories(
-                transactionHistoryListRequest).getBody());
+                transactionHistoryListRequest).getBody().REC());
     }
 
     @GetMapping("/transaction-history")
