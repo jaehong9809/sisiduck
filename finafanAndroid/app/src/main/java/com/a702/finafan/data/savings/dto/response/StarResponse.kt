@@ -1,9 +1,9 @@
-package com.a702.finafan.data.savings.dto
+package com.a702.finafan.data.savings.dto.response
 
 import com.a702.finafan.domain.savings.model.Star
 
 data class StarResponse(
-    val entertainerId: Int = 0,
+    val entertainerId: Long = 0,
     val entertainerName: String = "",
     val birthDate: String = "",
     val entertainerProfileUrl: String = "",

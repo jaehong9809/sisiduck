@@ -36,7 +36,10 @@ fun StarSelectScreen(
         // 스타 이름 필드
         StringField(
             modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
-            label = stringResource(R.string.star_name_label), hint = stringResource(R.string.name_hint), text = name)
+            label = stringResource(R.string.star_name_label),
+            hint = stringResource(R.string.name_hint),
+            text = name
+        )
 
         SubButton(
             text = stringResource(R.string.search_btn_label),
