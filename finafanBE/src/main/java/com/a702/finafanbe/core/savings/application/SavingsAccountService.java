@@ -1,9 +1,22 @@
 package com.a702.finafanbe.core.savings.application;
 
+import com.a702.finafanbe.core.bank.application.BankService;
+import com.a702.finafanbe.core.bank.entity.Bank;
+import com.a702.finafanbe.core.demanddeposit.entity.Account;
+import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
+import com.a702.finafanbe.core.entertainer.dto.response.WithdrawalAccountResponse;
 import com.a702.finafanbe.core.savings.dto.request.*;
 import com.a702.finafanbe.core.savings.dto.response.*;
 import com.a702.finafanbe.core.savings.entity.infrastructure.SavingsAccountRepository;
+import com.a702.finafanbe.core.user.application.UserService;
+import com.a702.finafanbe.core.user.entity.User;
+import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
+import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,7 +26,9 @@ import org.springframework.stereotype.Service;
 public class SavingsAccountService {
 
     private final ApiClientUtil apiClientUtil;
-    private final SavingsAccountRepository savingsAccountRepository;
+    private final UserService userService;
+    private final BankService bankService;
+    private final AccountRepository accountRepository;
 
 
     public RegisterSavingProductResponse createSavingsProduct(
@@ -113,5 +128,20 @@ public class SavingsAccountService {
                 inquireSavingEarlyTerminationInterestRequest,
                 InquireSavingEarlyTerminationInterestResponse.class
         ).getBody();
+    }
+
+    public List<WithdrawalAccountResponse> getWithdrawalAccounts(String email) {
+        User user = userService.findUserByEmail(email);
+
+        List<Account> accounts = accountRepository.findByUserId(
+                user.getUserId())
+            .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_ACCOUNT)));
+
+        return accounts.stream()
+            .map(account -> {
+                Bank bank = bankService.findBankById(account.getBankId());
+                return WithdrawalAccountResponse.of(account, bank);
+            })
+            .collect(Collectors.toList());
     }
 }
