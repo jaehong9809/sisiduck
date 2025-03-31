@@ -2,7 +2,6 @@ package com.a702.finafanbe.core.demanddeposit.facade;
 
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.entity.Bank;
-import com.a702.finafanbe.core.bank.entity.infrastructure.BankRepository;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
@@ -44,9 +43,10 @@ public class DemandDepositFacade {
     private final EntertainSavingsService entertainSavingsService;
     private final DepositTransactionService depositTransactionService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
+    private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final UserService userService;
     private final BankService bankService;
-    private final BankRepository bankRepository;
+    private final SavingTransactionService savingTransactionService;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -140,15 +140,14 @@ public class DemandDepositFacade {
         );
     }
 
-    public ApiCreateAccountResponse createAccount(
-            String email,
-            String productName
+    public ApiCreateAccountResponse createEntertainerAccount(
+            String email
     ) {
         User user = userService.findUserByEmail(email);
         RetrieveProductsResponse.REC rec = getProducts().getBody()
                 .REC()
                 .stream()
-                .filter(product -> product.getAccountName().equals(productName))
+                .filter(product -> product.getAccountName().equals("연예인 적금"))
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_DEMAND_DEPOSIT_PRODUCT)));
         String productUniqueNo = rec.getAccountTypeUniqueNo();
@@ -212,9 +211,8 @@ public class DemandDepositFacade {
 
     public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
 
-        ApiCreateAccountResponse response = createAccount(
-            EMAIL,
-            createStarAccountRequest.productName()
+        ApiCreateAccountResponse response = createEntertainerAccount(
+            EMAIL
         );
         return entertainSavingsService.createEntertainerSavings(
                 createStarAccountRequest,
@@ -305,17 +303,16 @@ public class DemandDepositFacade {
         );
 
         List<TransactionWithImageResponse> transactionsWithImages = inquireTransactionHistoryList.list().stream()
-                .filter(transaction ->{
-                    EntertainerSavingsTransactionDetail detail = transactionImageMap.get(transaction.transactionUniqueNo());
-                    return detail != null;
-                })
+            .filter(transaction ->{
+                EntertainerSavingsTransactionDetail detail = transactionImageMap.get(transaction.transactionUniqueNo());
+                return detail != null;
+            })
             .map(transaction -> {
                 EntertainerSavingsTransactionDetail detail = transactionImageMap.get(transaction.transactionUniqueNo());
                 String imageUrl = detail != null ? detail.getImageUrl() : "";
-                Long detailId = detail != null ? detail.getId() : null;
 
                 return new TransactionWithImageResponse(
-                    detailId,
+                    detail.getId(),
                     transaction.transactionUniqueNo(),
                     transaction.transactionAfterBalance(),
                     transaction.transactionBalance(),

@@ -1,7 +1,6 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
 import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
-import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
@@ -23,9 +22,8 @@ public class CreateAccountController {
             String email,
             String productName
     ){
-        return ResponseUtil.success(demandDepositFacade.createAccount(
-                email,
-                productName
+        return ResponseUtil.success(demandDepositFacade.createEntertainerAccount(
+                email
         ));
     }
 }
