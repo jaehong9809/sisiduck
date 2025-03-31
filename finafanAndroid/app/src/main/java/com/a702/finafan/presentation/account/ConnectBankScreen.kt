@@ -13,14 +13,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 은행 선택 화면
 @Composable
 fun ConnectBankScreen(
-    onSelect: (bank: Bank) -> Unit
+    viewModel: SavingViewModel = viewModel(),
+    onComplete: () -> Unit
 ) {
 
     val selectBank = remember { mutableStateOf(Bank(111, "111", "NH농협")) }
@@ -29,7 +32,10 @@ fun ConnectBankScreen(
         title = stringResource(R.string.connect_account_select_back_title),
         buttonText = stringResource(R.string.btn_next),
         isButtonEnabled = selectBank.value.bankName.isNotEmpty(),
-        onButtonClick = { onSelect(selectBank.value) }
+        onButtonClick = {
+            viewModel.updateBank(selectBank.value)
+            onComplete()
+        }
     ) {
 
         // TODO: 은행 목록 API 호출
@@ -80,5 +86,5 @@ fun ConnectBankScreen(
 @Composable
 fun ConnectBankPreview() {
     val bankList = mutableListOf("NH농협", "우리은행", "하나은행", "국민은행", "신한은행", "카카오뱅크", "토스", "기업은행")
-    ConnectBankScreen(onSelect = {})
+    ConnectBankScreen(onComplete = {})
 }
