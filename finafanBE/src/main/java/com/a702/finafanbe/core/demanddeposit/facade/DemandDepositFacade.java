@@ -43,10 +43,8 @@ public class DemandDepositFacade {
     private final EntertainSavingsService entertainSavingsService;
     private final DepositTransactionService depositTransactionService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
-    private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final UserService userService;
     private final BankService bankService;
-    private final SavingTransactionService savingTransactionService;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -212,16 +210,13 @@ public class DemandDepositFacade {
 
     public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
 
-        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
-            createStarAccountRequest.withdrawalAccountId());
         ApiCreateAccountResponse response = createAccount(
             EMAIL,
             createStarAccountRequest.productName()
         );
         return entertainSavingsService.createEntertainerSavings(
                 createStarAccountRequest,
-                response,
-                withdrawalAccount.getAccountNo()
+                response
         );
     }
 
