@@ -15,6 +15,7 @@ import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
+import com.a702.finafanbe.core.transaction.savingtransaction.application.SavingTransactionService;
 import com.a702.finafanbe.core.user.application.UserService;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
@@ -45,6 +46,7 @@ public class DemandDepositFacade {
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final UserService userService;
     private final BankService bankService;
+    private final SavingTransactionService savingTransactionService;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
