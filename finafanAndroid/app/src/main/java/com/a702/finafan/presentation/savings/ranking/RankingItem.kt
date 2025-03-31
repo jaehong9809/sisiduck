@@ -33,43 +33,35 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.GradSubButton
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
-import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
-import com.a702.finafan.domain.savings.model.RankingStar
+import com.a702.finafan.domain.savings.model.Ranking
+import com.a702.finafan.domain.savings.model.Star
 
 @Composable
-fun RankingItem(rankingStar: RankingStar) {
+fun RankingItem(
+    ranking: Ranking,
+    onSelect: (Ranking) -> Unit
+) {
 
+    if (ranking.rankingIdx == 1) {
+        FirstStar(ranking, onSelect)
+    } else {
+        RestStar(ranking, onSelect)
+    }
 }
 
 @Composable
-fun FirstStar() {
+fun FirstStar(
+    ranking: Ranking,
+    onSelect: (Ranking) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .background(MainWhite)
     ) {
-
-        Text(
-            modifier = Modifier.padding(start = 4.dp),
-            text = stringResource(R.string.ranking_together),
-            fontWeight = FontWeight.Medium,
-            fontSize = 14.sp,
-            lineHeight = 24.sp,
-            color = MainTextGray
-        )
-
-        // TODO: 탭 선택에 따라 일간/주간 타이틀 변경
-        Text(
-            modifier = Modifier.padding(top = 4.dp),
-            text = stringResource(R.string.ranking_daily_star),
-            fontWeight = FontWeight.Bold,
-            fontSize = 30.sp,
-            lineHeight = 46.sp,
-            color = MainBlack
-        )
 
         Row(
             modifier = Modifier
@@ -80,7 +72,7 @@ fun FirstStar() {
 
             val painter = rememberAsyncImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("")
+                    .data(ranking.star.entertainerProfileUrl)
                     .build()
             )
 
@@ -111,7 +103,7 @@ fun FirstStar() {
                 // 스타 이름
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
-                    text = "이찬원",
+                    text = ranking.star.entertainerName,
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
                     lineHeight = 30.sp,
@@ -121,7 +113,7 @@ fun FirstStar() {
                 // 총 금액
                 Text(
                     modifier = Modifier.padding(top = 12.dp),
-                    text = StringUtil.formatCurrency(2300450),
+                    text = StringUtil.formatCurrency(ranking.amount),
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     lineHeight = 30.sp,
@@ -133,7 +125,7 @@ fun FirstStar() {
                     text = stringResource(R.string.ranking_history),
                     fontSize = 16.sp,
                     onButtonClick = {
-                        // TODO: 스타별 적금 내역 페이지로 이동
+                        onSelect(ranking)
                     })
             }
         }
@@ -143,16 +135,19 @@ fun FirstStar() {
 }
 
 @Composable
-fun RestStar() {
+fun RestStar(
+    ranking: Ranking,
+    onSelect: (Ranking) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 8.dp)
+            .padding(horizontal = 20.dp, vertical = 12.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = {
-                    // TODO: 스타별 적금 내역 페이지로 이동
+                    onSelect(ranking)
                 }
             ),
         verticalAlignment = Alignment.CenterVertically
@@ -161,7 +156,7 @@ fun RestStar() {
         // 순위
         Text(
             modifier = Modifier,
-            text = "2",
+            text = ranking.rankingIdx.toString(),
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
             lineHeight = 30.sp,
@@ -209,12 +204,14 @@ fun RestStar() {
 @Preview
 @Composable
 fun ItemPreView() {
+    val ranking = Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 2)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(MainWhite)
     ) {
-        FirstStar()
-        RestStar()
+        FirstStar(ranking, onSelect = {})
+        RestStar(ranking, onSelect = {})
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.repository.SavingRepository
@@ -78,6 +79,12 @@ class SavingViewModel @Inject constructor(
     fun updateInputAccountNo(accountNo: String) {
         _savingState.value = _savingState.value.copy(
             inputAccountNo = accountNo
+        )
+    }
+
+    fun setRanking(ranking: Ranking) {
+        _savingState.value = _savingState.value.copy(
+            ranking = ranking
         )
     }
 

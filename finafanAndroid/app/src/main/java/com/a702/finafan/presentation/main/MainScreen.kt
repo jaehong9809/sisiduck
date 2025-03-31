@@ -138,7 +138,7 @@ fun MainScreen(
 
             MainSquareIconButton(
                 onClick = {
-                    navController.navigate(NavRoutes.SavingAccountInfo.route)
+                    navController.navigate(NavRoutes.RankingMain.route)
                 },
                 icon = {
                     Icon(
@@ -148,7 +148,7 @@ fun MainScreen(
                         modifier = Modifier.size(48.dp)
                     )
                 },
-                text = "적금 계좌 정보"
+                text = "랭킹"
             )
 
             Spacer(modifier = Modifier.padding(8.dp))

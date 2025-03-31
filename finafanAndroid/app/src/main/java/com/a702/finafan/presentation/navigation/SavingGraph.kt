@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.navigation
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -14,6 +15,8 @@ import com.a702.finafan.presentation.savings.SavingSelectAccountScreen
 import com.a702.finafan.presentation.savings.StarSearchScreen
 import com.a702.finafan.presentation.savings.TermGuideScreen
 import com.a702.finafan.presentation.savings.TransactionDetailScreen
+import com.a702.finafan.presentation.savings.ranking.RankingHistoryScreen
+import com.a702.finafan.presentation.savings.ranking.RankingScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 fun NavGraphBuilder.savingGraph(
@@ -98,6 +101,16 @@ fun NavGraphBuilder.savingGraph(
                     popUpTo(NavRoutes.Main.route)
                 }
             })
+        }
+
+        composable(NavRoutes.RankingMain.route) {
+            RankingScreen(savingViewModel)
+        }
+
+        composable(NavRoutes.RankingHistory.route) { backStackEntry ->
+            RankingHistoryScreen(
+                viewModel = savingViewModel
+            )
         }
 
     }
