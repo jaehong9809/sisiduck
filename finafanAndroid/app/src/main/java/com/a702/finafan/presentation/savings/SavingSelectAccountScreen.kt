@@ -50,13 +50,24 @@ fun SavingSelectAccountScreen(
 
     // 첫 번째 계좌 자동 선택
     LaunchedEffect(savingState.withdrawalAccounts) {
-        if (savingState.withdrawalAccounts.isNotEmpty()) {
-            val firstAccount = savingState.withdrawalAccounts.first()
-            viewModel.updateSavingConnectAccount(firstAccount)
-        } else {
-            // 출금 계좌 없을 경우 계좌 연결 페이지로 이동
-            showAccountDialog.value = true
+        if (!savingState.isLoading) {
+            if (savingState.withdrawalAccounts.isEmpty()) {
+                // 출금 계좌가 없으면 계좌 연결 페이지로 이동
+                showAccountDialog.value = true
+            } else {
+                // 출금 계좌가 있으면 첫 번째 계좌를 연결
+                val firstAccount = savingState.withdrawalAccounts.first()
+                viewModel.updateSavingConnectAccount(firstAccount)
+            }
         }
+
+//        if (savingState.withdrawalAccounts.isNotEmpty()) {
+//            val firstAccount = savingState.withdrawalAccounts.first()
+//            viewModel.updateSavingConnectAccount(firstAccount)
+//        } else if (savingState.isLoading == false && savingState.withdrawalAccounts.isEmpty()) {
+//            // 출금 계좌 없을 경우 계좌 연결 페이지로 이동
+//            showAccountDialog.value = true
+//        }
     }
 
     if (showAccountDialog.value) {

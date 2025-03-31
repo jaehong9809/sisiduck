@@ -102,9 +102,9 @@ class SavingViewModel @Inject constructor(
 
     fun fetchWithdrawalAccount() {
         viewModelScope.launch {
-            val withdrawalAccounts = getWithdrawalAccountUseCase()
-
             _savingState.update { it.copy(isLoading = true) }
+
+            val withdrawalAccounts = getWithdrawalAccountUseCase()
 
             _savingState.update {
                 it.copy(
