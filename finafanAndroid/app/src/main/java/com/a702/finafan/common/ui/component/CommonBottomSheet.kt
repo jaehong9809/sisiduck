@@ -38,17 +38,20 @@ fun ConfirmBottomSheet(
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 color = MainBlack,
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                lineHeight = 30.sp
             )
-            Spacer(modifier = Modifier.height(16.dp))
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = content,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium,
             color = MainBlack,
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            lineHeight = 30.sp
         )
     }
 }
@@ -71,7 +74,8 @@ fun SavingNameBottomSheet(
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             color = MainBlack,
-            fontSize = 24.sp
+            fontSize = 24.sp,
+            lineHeight = 30.sp
         )
 
         Spacer(modifier = Modifier.height(16.dp))

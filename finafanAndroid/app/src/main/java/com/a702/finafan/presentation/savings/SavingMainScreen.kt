@@ -158,7 +158,7 @@ fun SavingHeader(account: SavingAccount) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = account.accountName,
+                text = stringResource(R.string.saving_item_name, account.accountName),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = MainWhite

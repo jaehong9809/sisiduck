@@ -77,12 +77,24 @@ class SavingViewModel @Inject constructor(
 
     fun createSaving(request: SavingCreateRequest) {
         viewModelScope.launch {
-            val createAccountId = createSavingUseCase(request)
+            _savingState.update { it.copy(isLoading = true) }
 
-            _savingState.update {
-                it.copy(
-                    createAccountId = createAccountId
-                )
+            try {
+                val accountId = createSavingUseCase(request)
+
+                _savingState.update {
+                    it.copy(
+                    createAccountId = accountId,
+                    isLoading = false
+                    ) }
+
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e
+                    )
+                }
             }
         }
     }

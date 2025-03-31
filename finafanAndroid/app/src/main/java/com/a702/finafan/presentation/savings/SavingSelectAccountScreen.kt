@@ -6,7 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -15,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.SelectAccountField
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.data.savings.dto.request.toData
@@ -28,18 +32,52 @@ fun SavingSelectAccountScreen(
     onComplete: (Long) -> Unit
 ) {
 
+    val context = LocalContext.current
     val savingState by viewModel.savingState.collectAsState()
 
-    // 출금계좌 목록 조회 -> 첫 번째 계좌 자동 선택
+    val showDialog = remember { mutableStateOf(false) }
+    val dialogContent = remember { mutableStateOf("") }
+
+    // 출금계좌 목록 조회
     LaunchedEffect(Unit) {
         viewModel.fetchWithdrawalAccount()
     }
 
+    // 첫 번째 계좌 자동 선택
     LaunchedEffect(savingState.withdrawalAccounts) {
-        val firstAccount = savingState.withdrawalAccounts.firstOrNull()
-        
-        if (firstAccount != null) {
+        if (savingState.withdrawalAccounts.isNotEmpty()) {
+            val firstAccount = savingState.withdrawalAccounts.first()
             viewModel.updateSavingConnectAccount(firstAccount)
+        } else {
+
+        }
+    }
+
+    LaunchedEffect(savingState.error) {
+        savingState.error?.let {
+            showDialog.value = true
+            dialogContent.value = it.message ?: context.getString(R.string.saving_item_create_fail)
+        }
+    }
+
+    if (showDialog.value) {
+        ConfirmDialog(
+            content = dialogContent.value,
+            onClickConfirm = {
+                showDialog.value = false
+
+                // 개설 완료 시
+                if (savingState.createAccountId > 0) {
+                    onComplete(savingState.createAccountId)
+                }
+            }
+        )
+    }
+
+    LaunchedEffect(savingState.createAccountId) {
+        if (savingState.createAccountId > 0) {
+            showDialog.value = true
+            dialogContent.value = context.getString(R.string.saving_item_start, savingState.accountName)
         }
     }
 
@@ -58,8 +96,6 @@ fun SavingSelectAccountScreen(
 
             val request = savingCreate.toData()
             viewModel.createSaving(request)
-
-            onComplete(savingState.createAccountId)
         }
     ) {
 

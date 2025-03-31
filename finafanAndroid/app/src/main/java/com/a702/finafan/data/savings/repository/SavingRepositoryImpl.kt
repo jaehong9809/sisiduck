@@ -1,5 +1,6 @@
 package com.a702.finafan.data.savings.repository
 
+import com.a702.finafan.common.domain.ExceptionHandler
 import com.a702.finafan.data.savings.api.SavingApi
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
@@ -36,12 +37,16 @@ class SavingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createSaving(request: SavingCreateRequest): Long {
-        val response = api.createSaving(request)
+        return try {
+            val response = api.createSaving(request)
 
-        return if (response.code == "S0000" && response.data != null) {
-            response.data.depositAccountId
-        } else {
-            throw Exception(response.message)
+            if (response.code == "S0000" && response.data != null) {
+                response.data.depositAccountId
+            } else {
+                throw Exception(response.message)
+            }
+        } catch (e: Exception) {
+            throw Exception(ExceptionHandler.handle(e))
         }
     }
 
