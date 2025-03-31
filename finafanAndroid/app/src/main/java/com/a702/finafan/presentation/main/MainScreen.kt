@@ -65,12 +65,6 @@ fun MainScreen(
         .fillMaxSize()
         .background(color = MainBgLightGray)
     ) {
-        Column() {
-
-        }
-        Column() {
-
-        }
         Column(modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
