@@ -4,19 +4,22 @@ public record ApiCreateAccountResponse(
         Long userId,
         String accountNo,
         String bankCode,
-        String currency
+        String currency,
+        String accountTypeUniqueNo
 ) {
     public static ApiCreateAccountResponse of(
             Long userId,
             String accountNo,
             String bankCode,
-            String currency
+            String currency,
+            String accountTypeUniqueNo
     ){
         return new ApiCreateAccountResponse(
                 userId,
                 accountNo,
                 bankCode,
-                currency
+                currency,
+                accountTypeUniqueNo
         );
     }
 }

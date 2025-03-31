@@ -19,7 +19,7 @@ public class CreateAccountController {
     private final DemandDepositFacade demandDepositFacade;
 
     @PostMapping("/account")
-    public ResponseEntity<ResponseData<CreateAccountResponse>> createAccount(
+    public ResponseEntity<ResponseData<ApiCreateAccountResponse>> createAccount(
             String email,
             String productName
     ){

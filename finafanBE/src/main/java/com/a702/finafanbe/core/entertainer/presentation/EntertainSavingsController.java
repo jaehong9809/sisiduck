@@ -1,6 +1,11 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
+import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
+import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
+import com.a702.finafanbe.core.demanddeposit.entity.Account;
+import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
+import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.EntertainerSavingsAccountRepository;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.request.EntertainerTransactionHistoriesRequest;
@@ -9,15 +14,20 @@ import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.EntertainerSearchResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.WithdrawalAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
-import com.a702.finafanbe.core.entertainer.entity.EntertainerSavingsAccount;
+import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.s3.service.S3Service;
+import com.a702.finafanbe.core.savings.application.SavingsAccountService;
+import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,36 +46,24 @@ public class EntertainSavingsController {
     private final DemandDepositFacade demandDepositFacade;
     private final EntertainSavingsService entertainService;
     private final S3Service s3Service;
+    private final SavingsAccountService savingsAccountService;
+    private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
 
-    @PostMapping("/select")
-    public ResponseEntity<ResponseData<EntertainerResponse>> selectStar(
-//            @AuthMember User user,
-            @RequestBody SelectStarRequest selectStarRequest
-    ){
-        return ResponseUtil.success(entertainService.choiceStar(
-                selectStarRequest
+    @GetMapping("/account/{savingAccountId}")
+    public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
+        @PathVariable Long savingAccountId
+    ) {
+        return ResponseUtil.success(demandDepositFacade.getEntertainerAccount(
+            EMAIL,
+            savingAccountId
         ));
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<ResponseData<List<StarAccountResponse>>> getStarAccounts(
+    public ResponseEntity<ResponseData<List<InquireEntertainerAccountResponse>>> getStarAccounts(
 //            @AuthMember User user
     ){
-        List<EntertainerSavingsAccount> starAccounts = entertainService.findStarAccounts(EMAIL);
-        List<StarAccountResponse> responses = starAccounts.stream()
-                .map(account->StarAccountResponse.of(
-                        account.getUserId(),
-                        account.getEntertainerId(),
-                        account.getDepositAccountId(),
-                        account.getWithdrawalAccountId()
-                ))
-                .collect(Collectors.toList());
-        return ResponseUtil.success(responses);
-    }
-
-    @GetMapping
-    public ResponseEntity<ResponseData<List<Entertainer>>> getStars(){
-        return ResponseUtil.success(entertainService.findStars());
+        return ResponseUtil.success(demandDepositFacade.findStarAccounts(EMAIL));
     }
 
     @PostMapping("/savings")
@@ -89,37 +87,71 @@ public class EntertainSavingsController {
                 starTransferRequest.depositAccountId(),
                 starTransferRequest.transactionBalance()
         );
+        String depositAccountNo = exchange.getBody().REC().stream()
+            .map(transaction -> transaction.accountNo())
+            .findFirst().get();
+        String transactionAccountNo = exchange.getBody().REC().stream()
+            .map(transaction -> transaction.transactionAccountNo())
+            .findFirst().get();
+        Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(depositAccountNo);
+        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountByAccountNo(
+            transactionAccountNo);
+
         if(exchange.getStatusCode()== HttpStatus.OK){
             String image = s3Service.uploadImage(starTransferRequest.imageFile());
             EntertainerDepositResponse response = entertainService.deposit(
-                    EMAIL,
-                    exchange.getBody().REC().stream().map(transaction->transaction.accountNo()).findFirst().get(),
-                    exchange.getBody().REC().stream().map(transaction->transaction.transactionAccountNo()).findFirst().get(),
-                    starTransferRequest.transactionBalance(),
-                    exchange.getBody().REC().get(0).transactionUniqueNo(),
-                    starTransferRequest.message(),
-                    image
+                EMAIL,
+                depositAccount.getAccountId(),
+                withdrawalAccount.getAccountId(),
+                depositAccount.addAmount(new BigDecimal(starTransferRequest.transactionBalance())),
+                new BigDecimal(starTransferRequest.transactionBalance()),
+                exchange.getBody().REC().get(0).transactionUniqueNo(),
+                starTransferRequest.message(),
+                image
             );
             return ResponseUtil.success(response);
         }
         return ResponseUtil.failure(new BadRequestException(ResponseData.createResponse(ErrorCode.SYSTEM_ERROR)));
     }
 
-    @GetMapping("/account/{savingAccountId}")
-    public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
-            @PathVariable Long savingAccountId
-    ) {
-        return ResponseUtil.success(demandDepositFacade.getEntertainerAccount(
-                EMAIL,
-                savingAccountId
-        ));
-    }
-//TODO 검색
-    @GetMapping("/transaction-histories")
+
+    @GetMapping("/transaction-histories/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerHistoriesResponse>> getDemandDepositTransactionHistories(
-            @RequestBody EntertainerTransactionHistoriesRequest entertainerTransactionHistoriesRequest
+            @PathVariable Long savingAccountId
     ){
         return ResponseUtil.success(demandDepositFacade.inquireEntertainerHistories(
-                entertainerTransactionHistoriesRequest));
+                savingAccountId));
+    }
+
+    @PostMapping("/select")
+    public ResponseEntity<ResponseData<EntertainerResponse>> selectStar(
+//            @AuthMember User user,
+        @RequestBody SelectStarRequest selectStarRequest
+    ){
+        return ResponseUtil.success(entertainService.choiceStar(
+            selectStarRequest
+        ));
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseData<List<Entertainer>>> getStars(){
+        return ResponseUtil.success(entertainService.findStars());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ResponseData<List<EntertainerSearchResponse>>> searchEntertainers(
+        @RequestParam(required = false) String keyword
+    ) {
+        return ResponseUtil.success(entertainService.searchEntertainers(keyword));
+    }
+
+    @GetMapping("/withdrawal-accounts")
+    public ResponseEntity<ResponseData<List<WithdrawalAccountResponse>>> getWithdrawalAccounts(
+//        @AuthMember User user;
+    ) {
+        String email = EMAIL;
+
+        List<WithdrawalAccountResponse> accounts = savingsAccountService.getWithdrawalAccounts(email);
+        return ResponseUtil.success(accounts);
     }
 }
