@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.entertainer.application;
 
+import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.entity.Bank;
 import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
@@ -44,6 +45,7 @@ public class EntertainSavingsService {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
+    private final BankService bankService;
 
     @Transactional
     public StarAccountResponse createEntertainerSavings(
@@ -54,11 +56,14 @@ public class EntertainSavingsService {
         Long entertainerId = findEntertainerId(createStartAccountRequest.entertainerId());
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
-
+        Bank bank = bankService.findBankByCode(accountResponse.bankCode());
         Account createdAccount = accountRepository.save(Account.of(
             user.getUserId(),
             accountResponse.accountNo(),
-            accountResponse.currency()
+            accountResponse.currency(),
+            createStartAccountRequest.productName(),
+            accountResponse.accountTypeUniqueNo(),
+            bank.getBankId()
         ));
 
         EntertainerSavingsAccount entertainerSavingsAccount = saveEntertainerSavingsAccount(
@@ -72,7 +77,8 @@ public class EntertainSavingsService {
                 entertainerSavingsAccount.getUserId(),
                 entertainerSavingsAccount.getEntertainerId(),
                 entertainerSavingsAccount.getDepositAccountId(),
-                entertainerSavingsAccount.getWithdrawalAccountId()
+                entertainerSavingsAccount.getWithdrawalAccountId(),
+                bank
         );
     }
 
