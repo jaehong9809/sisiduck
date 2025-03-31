@@ -1,6 +1,5 @@
 package com.a702.finafan.data.savings.repository
 
-import android.util.Log
 import com.a702.finafan.common.domain.ExceptionHandler
 import com.a702.finafan.data.savings.api.SavingApi
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
@@ -37,7 +36,6 @@ class SavingRepositoryImpl @Inject constructor(
                 throw Exception(response.message)
             }
         } catch (e: Exception) {
-            Log.d("saving repository", "222222222 실패")
             throw Exception(ExceptionHandler.handle(e))
         }
     }
