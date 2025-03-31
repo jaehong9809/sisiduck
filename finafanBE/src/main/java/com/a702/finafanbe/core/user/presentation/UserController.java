@@ -1,6 +1,8 @@
 package com.a702.finafanbe.core.user.presentation;
 
+import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.user.application.UserService;
+import com.a702.finafanbe.core.user.dto.request.UpdateStarIdRequest;
 import com.a702.finafanbe.core.user.dto.request.UserFinancialNetworkRequest;
 import com.a702.finafanbe.core.user.dto.request.UserRequest;
 import com.a702.finafanbe.core.user.dto.response.InquireUserResponse;
@@ -36,5 +38,22 @@ public class UserController {
     ) {
         UserFinancialNetworkResponse response = userService.getUserWithFinancialNetwork(userEmail);
         return ResponseUtil.success(response);
+    }
+
+    @GetMapping("/star")
+    public ResponseEntity<?> getUserStarId(
+            @AuthMember User user
+    ) {
+        Long starId = userService.getUserStarId(user.getUserId());
+        return ResponseUtil.success(starId);
+    }
+
+    @PostMapping("/star")
+    public ResponseEntity<?> updateUserStarId(
+            @AuthMember User user,
+            @RequestBody UpdateStarIdRequest updateStarIdRequest
+    ) {
+        Long newStarId = userService.updateUserStarId(user.getUserId(), updateStarIdRequest.starId());
+        return ResponseUtil.success(newStarId);
     }
 }
