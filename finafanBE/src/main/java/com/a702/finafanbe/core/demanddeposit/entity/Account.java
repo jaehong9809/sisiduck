@@ -86,16 +86,16 @@ public class Account extends BaseEntity {
     public static Account of(
         Long userId,
         String accountNo,
-        String currency
+        String currency,
+        String accountName,
+        String accountTypeUniqueNo,
+        Long bankId
     ) {
-        Account account = new Account(userId, accountNo, currency);
+        Account account = new Account(userId, accountNo, currency,accountName, accountTypeUniqueNo,bankId);
         account.accountDescription = "기본 계좌 설명";
         account.accountExpiryDate = LocalDateTime.now().plusYears(5);
-        account.accountName = "기본 계좌";
-        account.bankId = 1L;
         account.accountPw = 1234;
         account.accountTypeCode = "1";
-        account.accountTypeUniqueNo = "SAVE001";
         account.amount = BigDecimal.ZERO;
         account.interestRate = 0.01;
         account.status = "ACTIVE";
@@ -111,10 +111,16 @@ public class Account extends BaseEntity {
     private Account(
             Long userId,
             String accountNo,
-            String currency
+            String currency,
+            String accountName,
+            String accountTypeUniqueNo,
+            Long bankId
     ){
         this.userId = userId;
         this.accountNo = accountNo;
         this.currency = currency;
+        this.accountName = accountName;
+        this.accountTypeUniqueNo = accountTypeUniqueNo;
+        this.bankId = bankId;
     }
 }

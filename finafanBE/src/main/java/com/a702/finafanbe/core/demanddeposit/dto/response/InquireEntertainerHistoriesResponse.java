@@ -12,9 +12,7 @@ public record InquireEntertainerHistoriesResponse(
             String totalCount,
             List<TransactionWithImageResponse> transactions
     ) {
-        return new InquireEntertainerHistoriesResponse(
-                totalCount,
-                transactions
-        );
+        return new InquireEntertainerHistoriesResponse(totalCount, transactions);
     }
 }
+
