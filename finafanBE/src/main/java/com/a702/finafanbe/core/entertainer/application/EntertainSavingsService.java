@@ -48,8 +48,7 @@ public class EntertainSavingsService {
     @Transactional
     public StarAccountResponse createEntertainerSavings(
             CreateStarAccountRequest createStartAccountRequest,
-            ApiCreateAccountResponse accountResponse,
-            String withdrawalAccountNo
+            ApiCreateAccountResponse accountResponse
     ) {
         User user = findUser(EMAIL);
         Long entertainerId = findEntertainerId(createStartAccountRequest.entertainerId());
