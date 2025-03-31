@@ -121,7 +121,7 @@ fun MainScreen(
         Row {
             MainSquareIconButton(
                 onClick = {
-                    navController.navigate(NavRoutes.SavingDeposit.route)
+                    navController.navigate(NavRoutes.SavingDeposit.route + "/2")
                 },
                 icon = {
                     Icon(

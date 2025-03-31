@@ -113,6 +113,7 @@
 
     <!-- Dialog -->
     <string name="withdraw_fail">출금계좌에 금액이 충분하지 않습니다.\n출금계좌의 잔액을 확인해 주세요. </string>
+    <string name="withdraw_server_fail">입금에 실패했습니다</string>
     <string name="saving_item_start">오늘부터\n%s 적금을 시작할게요!</string>
     <string name="saving_item_star_not_exist">입력한 스타가\n존재하지 않습니다.</string>
     <string name="saving_item_exist">이미 가입한\n스타 적금입니다.</string>

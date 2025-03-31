@@ -3,6 +3,7 @@ package com.a702.finafan.presentation.savings.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
+import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
@@ -110,6 +111,30 @@ class SavingViewModel @Inject constructor(
                     isLoading = false,
                     withdrawalAccounts = withdrawalAccounts
                 )
+            }
+        }
+    }
+
+    fun depositSaving(request: SavingDepositRequest) {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val accountId = depositUseCase(request)
+
+                _savingState.update {
+                    it.copy(
+                        depositAccountId = accountId,
+                        isLoading = false
+                    ) }
+
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e
+                    )
+                }
             }
         }
     }

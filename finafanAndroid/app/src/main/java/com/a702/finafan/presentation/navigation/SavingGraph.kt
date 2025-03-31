@@ -39,14 +39,12 @@ fun NavGraphBuilder.savingGraph(
             )
         }
 
-        composable(NavRoutes.SavingDeposit.route) {
+        composable(NavRoutes.SavingDeposit.route + "/{accountId}") { backStackEntry ->
+            val savingAccountId = backStackEntry.arguments?.getString("accountId")!!.toLongOrNull()
+
             SavingDepositScreen(
                 savingViewModel,
-                onComplete = {
-                    navController.navigate(NavRoutes.SavingMain.route) {
-                        launchSingleTop = true
-                    }
-                }
+                savingAccountId ?: 0
             )
         }
 
@@ -74,13 +72,7 @@ fun NavGraphBuilder.savingGraph(
 
         composable(NavRoutes.SavingSelectAccount.route) {
             SavingSelectAccountScreen(
-                savingViewModel,
-                onComplete = { savingId ->
-                    navController.navigate(NavRoutes.SavingMain.route + "/${savingId}") {
-                        popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
+                savingViewModel
             )
         }
 

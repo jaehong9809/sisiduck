@@ -7,7 +7,7 @@ import javax.inject.Inject
 class DepositUseCase @Inject constructor(
     private val repository: SavingRepository
 ) {
-    suspend operator fun invoke(request: SavingDepositRequest): String {
+    suspend operator fun invoke(request: SavingDepositRequest): Long {
         return repository.deposit(request)
     }
 }

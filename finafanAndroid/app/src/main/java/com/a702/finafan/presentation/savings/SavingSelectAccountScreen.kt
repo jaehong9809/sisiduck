@@ -31,7 +31,6 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 @Composable
 fun SavingSelectAccountScreen(
     viewModel: SavingViewModel = viewModel(),
-    onComplete: (Long) -> Unit
 ) {
 
     val navController = LocalNavController.current
@@ -60,7 +59,7 @@ fun SavingSelectAccountScreen(
         }
     }
 
-    if (showDialog.value) {
+    if (showAccountDialog.value) {
         ConfirmDialog(
             content = context.getString(R.string.saving_item_withdrawal_empty),
             isConfirm = false,
@@ -86,7 +85,10 @@ fun SavingSelectAccountScreen(
 
                 // 개설 완료 시
                 if (savingState.createAccountId > 0) {
-                    onComplete(savingState.createAccountId)
+                    navController.navigate(NavRoutes.SavingMain.route + "/${savingState.createAccountId}") {
+                        popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             }
         )
@@ -135,5 +137,5 @@ fun SavingSelectAccountScreen(
 @Preview
 @Composable
 fun SavingSelectAccountPreview() {
-    SavingSelectAccountScreen(onComplete = {})
+    SavingSelectAccountScreen()
 }
