@@ -23,6 +23,8 @@ import com.a702.finafan.common.ui.component.SelectAccountField
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.data.savings.dto.request.toData
 import com.a702.finafan.domain.savings.model.SavingCreate
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 적금 출금 계좌 선택 화면
@@ -32,11 +34,15 @@ fun SavingSelectAccountScreen(
     onComplete: (Long) -> Unit
 ) {
 
+    val navController = LocalNavController.current
+
     val context = LocalContext.current
     val savingState by viewModel.savingState.collectAsState()
 
     val showDialog = remember { mutableStateOf(false) }
     val dialogContent = remember { mutableStateOf("") }
+
+    val showAccountDialog = remember { mutableStateOf(false) }
 
     // 출금계좌 목록 조회
     LaunchedEffect(Unit) {
@@ -49,8 +55,20 @@ fun SavingSelectAccountScreen(
             val firstAccount = savingState.withdrawalAccounts.first()
             viewModel.updateSavingConnectAccount(firstAccount)
         } else {
-
+            // 출금 계좌 없을 경우 계좌 연결 페이지로 이동
+            showAccountDialog.value = true
         }
+    }
+
+    if (showDialog.value) {
+        ConfirmDialog(
+            content = context.getString(R.string.saving_item_withdrawal_empty),
+            isConfirm = false,
+            onClickConfirm = {
+                showAccountDialog.value = false
+                navController.navigate(NavRoutes.Account.route)
+            }
+        )
     }
 
     LaunchedEffect(savingState.error) {

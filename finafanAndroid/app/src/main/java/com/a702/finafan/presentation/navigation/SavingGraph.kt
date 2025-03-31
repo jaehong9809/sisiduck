@@ -40,11 +40,14 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.SavingDeposit.route) {
-            SavingDepositScreen(onComplete = {
-                navController.navigate(NavRoutes.SavingMain.route) {
-                    launchSingleTop = true
+            SavingDepositScreen(
+                savingViewModel,
+                onComplete = {
+                    navController.navigate(NavRoutes.SavingMain.route) {
+                        launchSingleTop = true
+                    }
                 }
-            })
+            )
         }
 
         composable(NavRoutes.SavingDesc.route) {
