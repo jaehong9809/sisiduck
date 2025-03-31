@@ -25,6 +25,9 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PW}
+      sentinel:
+        master: ${REDIS_MASTER:mymatser}
+        nodes: ${REDIS_NODES:127.0.0.1:26379}
 
 management:
   endpoints:
