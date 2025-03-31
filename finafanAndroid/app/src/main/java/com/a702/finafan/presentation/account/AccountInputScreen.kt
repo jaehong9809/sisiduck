@@ -2,27 +2,39 @@ package com.a702.finafan.presentation.account
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.StringField
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 계좌 번호 입력 화면
 @Composable
-fun AccountInputScreen(selectBank: String) {
+fun AccountInputScreen(
+    viewModel: SavingViewModel = viewModel(),
+    onComplete: () -> Unit
+) {
 
-    val accountNum = remember { mutableStateOf("") }
+    val savingState by viewModel.savingState.collectAsState()
+
+    val selectBank = savingState.selectBank
+    val accountNo = remember { mutableStateOf("") }
 
     ConnectAccountLayout (
-        title = stringResource(R.string.connect_account_input_number_title, selectBank),
+        title = stringResource(R.string.connect_account_input_number_title, selectBank.bankName),
         buttonText = stringResource(R.string.btn_next),
-        isButtonEnabled = accountNum.value.isNotEmpty(),
-        onBackClick = { /* TODO: 뒤로 가기 */ },
-        onButtonClick = { /* TODO: 다음으로 넘어가기 */ }
+        isButtonEnabled = accountNo.value.isNotEmpty(),
+        onButtonClick = {
+            viewModel.updateInputAccountNo(accountNo.value)
+            onComplete()
+        }
     ) {
 
         // 계좌번호 입력 필드
@@ -30,7 +42,8 @@ fun AccountInputScreen(selectBank: String) {
             modifier = Modifier.padding(top = 34.dp),
             label = stringResource(R.string.account_label),
             hint = stringResource(R.string.account_hint),
-            text = accountNum)
+            text = accountNo
+        )
 
     }
 }
@@ -38,5 +51,5 @@ fun AccountInputScreen(selectBank: String) {
 @Preview
 @Composable
 fun AccountInputPreview() {
-    AccountInputScreen("NH농협")
+    AccountInputScreen(onComplete = {})
 }

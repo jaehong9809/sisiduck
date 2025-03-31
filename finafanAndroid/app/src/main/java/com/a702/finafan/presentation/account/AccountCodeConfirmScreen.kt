@@ -3,31 +3,47 @@ package com.a702.finafan.presentation.account
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainTextGray
-import com.a702.finafan.presentation.savings.Account
+import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.presentation.savings.AccountInfoItem
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 인증 코드 확인 완료 화면
 @Composable
-fun AccountCodeConfirmScreen(selectBank: String) {
+fun AccountCodeConfirmScreen(
+    viewModel: SavingViewModel = viewModel()
+) {
+
+    val savingState by viewModel.savingState.collectAsState()
+    val selectBank = savingState.selectBank
 
     ConnectAccountLayout (
-        title = stringResource(R.string.connect_account_verification_code_confirm_title, selectBank),
+        title = stringResource(R.string.connect_account_verification_code_confirm_title, selectBank.bankName),
         buttonText = stringResource(R.string.btn_confirm),
         isButtonEnabled = true,
-        onBackClick = { /* TODO: 뒤로 가기 */ },
-        onButtonClick = { /* TODO: 인증 전의 화면으로 돌아가기 */ }
+        onButtonClick = { /* TODO: 연결 계좌 목록 화면으로 넘어가기 */ }
     ) {
 
         Column {
             AccountInfoItem(
                 modifier = Modifier.padding(top = 34.dp),
-                account = Account("NH농협", "12-345-678900"),
+                account = Account(
+                    accountNo = savingState.inputAccountNo,
+                    bank = Bank(
+                        bankId = selectBank.bankId,
+                        bankCode = selectBank.bankCode,
+                        bankName = selectBank.bankName
+                    )
+                ),
                 fontColor = MainTextGray
             )
         }
@@ -38,5 +54,5 @@ fun AccountCodeConfirmScreen(selectBank: String) {
 @Preview
 @Composable
 fun AccountCodeConfirmPreview() {
-    AccountCodeConfirmScreen("NH농협")
+    AccountCodeConfirmScreen()
 }

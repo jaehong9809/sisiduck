@@ -18,6 +18,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,14 +36,19 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.EditBgGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 출금 계좌 선택 박스
 @Composable
-fun SelectAccountField(menuItems: MutableList<String>) {
-    var expandStatus by remember { mutableStateOf(false) }
-    var selectedAccount by remember { mutableStateOf(menuItems[0]) }
+fun SelectAccountField(
+    viewModel: SavingViewModel,
+    accounts: MutableList<Account>
+) {
 
-    TextItem(stringResource(R.string.withdraw_account_label), MainBlack, 16.sp, true)
+    val savingState by viewModel.savingState.collectAsState()
+    var expandStatus by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -59,12 +65,17 @@ fun SelectAccountField(menuItems: MutableList<String>) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            TextItem(selectedAccount, MainBlack, 20.sp)
+            LaunchedEffect(savingState) {
+
+            }
+            TextItem(savingState.connectAccount.bank.bankName + " " + savingState.connectAccount.accountNo,
+                MainBlack, 20.sp)
+
             Spacer(modifier = Modifier.width(width = 8.dp))
 
             val rotationAngle by animateFloatAsState(
                 targetValue = if (expandStatus) -180f else 0f,
-                animationSpec = tween(durationMillis = 300) // 애니메이션의 지속 시간 설정
+                animationSpec = tween(durationMillis = 300)
             )
 
             Icon(
@@ -84,13 +95,19 @@ fun SelectAccountField(menuItems: MutableList<String>) {
                 expandStatus = false
             }
         ) {
-            menuItems.forEach { item ->
+            accounts.forEach { item ->
                 DropdownMenuItem(
-                    text = { Text(text = item, fontSize = 20.sp, color = MainBlack, fontWeight = FontWeight.Normal) },
+                    text = {
+                        Text(
+                            text = item.bank.bankName + " " + item.accountNo,
+                            fontSize = 20.sp,
+                            color = MainBlack,
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
                     onClick = {
-                        selectedAccount = item
+                        viewModel.updateSavingConnectAccount(item)
                         expandStatus = false
-                        println("Selected: $item")
                     }
                 )
             }
@@ -101,6 +118,9 @@ fun SelectAccountField(menuItems: MutableList<String>) {
 @Preview(showBackground = true)
 @Composable
 fun SelectAccountPreview() {
-    val menuItems = mutableListOf("NH농협 312-0139-3754-31", "하나 312-0139-3754-31", "우리 312-0139-3754-31", "토스뱅크 312-0139-3754-31")
-    SelectAccountField(menuItems = menuItems)
+    val accounts = mutableListOf(
+        Account(1, "123-456", Bank(1, "123", "NH농협"))
+    )
+
+//    SelectAccountField(accounts = accounts)
 }

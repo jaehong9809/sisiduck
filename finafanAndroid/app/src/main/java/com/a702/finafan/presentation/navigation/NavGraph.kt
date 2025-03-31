@@ -10,6 +10,7 @@ import com.a702.finafan.presentation.ble.UuidListScreen
 import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.chatbot.ChatViewModel
 import com.a702.finafan.presentation.main.MainScreen
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 @Composable
 fun NavGraph(
@@ -17,6 +18,8 @@ fun NavGraph(
     modifier: Modifier = Modifier
 ) {
     NavControllerProvider(navController = navController) {
+        val savingViewModel: SavingViewModel = hiltViewModel()
+
         NavHost(
             navController = navController,
             startDestination = NavRoutes.Main.route
@@ -34,8 +37,9 @@ fun NavGraph(
                 UuidListScreen()
             }
 
-            savingGraph(navController = navController)
-            accountGraph(navController)
+            savingGraph(navController = navController, savingViewModel = savingViewModel)
+
+            accountGraph(navController = navController, savingViewModel = savingViewModel)
 
             fundingGraph(navController)
 

@@ -3,7 +3,9 @@ package com.a702.finafanbe.global.common.util;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DateUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -16,6 +18,7 @@ public class DateUtil {
     }
 
     public static String getTransmissionDate() {
+        log.info("Transmission date being sent: {}", TRANSMISSION_DATE);
         return TRANSMISSION_DATE;
     }
 

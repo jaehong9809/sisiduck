@@ -84,7 +84,12 @@ fun CommonBackTopBar(
             )
         }
 
-        TextItem(modifier = if (isTextCentered) Modifier.align(Alignment.Center) else Modifier.align(Alignment.CenterEnd), textOnClick, text)
+        TextItem(
+            modifier =
+                if (isTextCentered) Modifier.align(Alignment.Center)
+                else Modifier.align(Alignment.CenterEnd),
+            textOnClick, text
+        )
     }
 }
 

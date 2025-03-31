@@ -28,7 +28,6 @@ fun ConnectAccountLayout(
     title: String,
     buttonText: String,
     isButtonEnabled: Boolean,
-    onBackClick: () -> Unit,
     onButtonClick: () -> Unit,
     content: @Composable () -> Unit
 ) {

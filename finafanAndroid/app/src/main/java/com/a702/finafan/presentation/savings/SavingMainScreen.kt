@@ -15,6 +15,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -29,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
@@ -38,40 +42,51 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.utils.StringUtil
-
-data class SavingData(
-    val duration: Int,
-    val title: String,
-    val amount: Long,
-    val account: String,
-    val image: String,
-    val transactionList: MutableList<Transaction>
-)
-
-data class Transaction(
-    val isFirst: Boolean,
-    val title: String,
-    val amount: Long,
-    val balance: Long,
-    val time: String,
-    val image: String? = null
-)
+import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.domain.savings.model.Transaction
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 적금 거래 내역 화면
 @Composable
 fun SavingMainScreen(
-//    onNavigateBack: () -> Unit
+    viewModel: SavingViewModel = viewModel(),
+    savingAccountId: Long
 ) {
-//    val transactions = mutableListOf(
-//        Transaction(true, "이찬원 사랑해", 44444, 64444, "17:05"),
-//        Transaction(false, "오늘 너무 귀엽다 찬원아", 10000, 20000, "17:05"),
-//        Transaction(false, "20자까지 써볼게요 그러면 어떻게 나올까요", 10000, 20000, "17:05")
-//    )
 
-    val transactions = mutableListOf<Transaction>()
+    val navController = LocalNavController.current
 
-    val info = SavingData(30, "찬원이적금", 30400000, "123-456-789000",
-        "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg", transactions)
+    val transactions = mutableListOf(
+        Transaction(
+            amount = 40000,
+            balance = 10000,
+            message = "이찬원 사랑해",
+            date = "2025-03-14",
+            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
+        ),
+        Transaction(
+            amount = 40000,
+            balance = 10000,
+            message = "오늘 너무 귀여워",
+            date = "2025-03-14",
+            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
+        ),
+        Transaction(
+            amount = 40000,
+            balance = 10000,
+            message = "진짜 귀엽다",
+            date = "2025-03-14",
+            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
+        ),
+    )
+
+    // 적금 계좌 정보, 입금 내역 목록
+    LaunchedEffect(Unit) {
+        viewModel.fetchSavingInfo(savingAccountId)
+    }
+
+    val savingState by viewModel.savingState.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -83,14 +98,14 @@ fun SavingMainScreen(
             horizontalAlignment = CenterHorizontally
         ) {
             item {
-                SavingHeader(info)
+                SavingHeader(savingState.savingInfo.savingAccount)
             }
 
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            if (info.transactionList.isEmpty()) {
+            if (transactions.isEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
 
@@ -103,8 +118,11 @@ fun SavingMainScreen(
                     )
                 }
             } else {
-                items(transactions) { transaction ->
-                    TransactionItem(transaction)
+                items(savingState.savingInfo.transactions) { transaction ->
+                    TransactionItem(transaction, onSelect = {
+                        viewModel.setTransaction(transaction)
+                        navController.navigate(NavRoutes.TransactionDetail.route)
+                    })
                 }
             }
         }
@@ -112,11 +130,11 @@ fun SavingMainScreen(
 }
 
 @Composable
-fun SavingHeader(info: SavingData) {
+fun SavingHeader(account: SavingAccount) {
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(info.image)
+            .data(account.imageUrl)
             .build()
     )
 
@@ -125,30 +143,30 @@ fun SavingHeader(info: SavingData) {
             .fillMaxWidth()
             .height(560.dp)
             .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
-            .innerShadow(
-                shape = RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp),
-                color = MainBlackWithTransparency,
-                blur = 100.dp,
-                offsetX = 0.dp,
-                offsetY = (-10).dp,
-                spread = 0.dp
-            )
     ) {
 
         Image(
             painter = painter,
-            contentDescription = "Background Image",
+            contentDescription = "Star Image",
             modifier = Modifier
                 .fillMaxSize()
                 .height(560.dp)
                 .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
                 .background(LightGray)
-                .align(Alignment.Center),
+                .align(Alignment.Center)
+                .innerShadow(
+                    shape = RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp),
+                    color = MainBlackWithTransparency,
+                    blur = 100.dp,
+                    offsetX = 0.dp,
+                    offsetY = (-10).dp,
+                    spread = 0.dp
+                ),
             contentScale = ContentScale.Crop
         )
 
         Text(
-            text = "DAY ${info.duration}",
+            text = "DAY ${account.duration}",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = MainWhite,
@@ -164,9 +182,24 @@ fun SavingHeader(info: SavingData) {
             horizontalAlignment = CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = info.title, fontSize = 32.sp, fontWeight = FontWeight.Bold, color = MainWhite)
-            Text(text = StringUtil.formatCurrency(info.amount), fontSize = 36.sp, fontWeight = FontWeight.Bold, color = MainWhite)
-            Text(text = info.account, fontSize = 20.sp, fontWeight = FontWeight.Medium, color = MainWhite)
+            Text(
+                text = account.accountName,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = MainWhite
+            )
+            Text(
+                text = StringUtil.formatCurrency(account.amount),
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold,
+                color = MainWhite
+            )
+            Text(
+                text = account.accountNo,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                color = MainWhite
+            )
         }
     }
 }
@@ -174,6 +207,6 @@ fun SavingHeader(info: SavingData) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewSavingScreen() {
-    SavingMainScreen()
+    SavingMainScreen(savingAccountId = 0)
 }
 
