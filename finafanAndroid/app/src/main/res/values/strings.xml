@@ -54,6 +54,8 @@
     <string name="format_money">%s원</string>
     <string name="format_duration">%s ~ %s</string>
 
+    <string name="saving_item_media_permission">미디어 권한에 동의하지 않았습니다.</string>
+
     <!-- TextField Label -->
     <string name="saving_item_name_label">적금 이름</string>
     <string name="saving_item_name_label_default">적금</string>

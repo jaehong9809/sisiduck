@@ -1,10 +1,17 @@
 package com.a702.finafan.common.ui.component
 
+import android.app.Activity
 import android.net.Uri
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,6 +47,7 @@ import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.utils.MediaUtil
 
 // 이미지 추가 버튼
 @Composable
@@ -47,6 +55,7 @@ fun ImageField(modifier: Modifier = Modifier, label: String,
                selectImage: MutableState<Uri>) {
 
     val isImageAdd = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Column(
         modifier = modifier.wrapContentWidth()
@@ -68,7 +77,7 @@ fun ImageField(modifier: Modifier = Modifier, label: String,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!isImageAdd.value) {
-                ImageAddButton(selectImage)
+                ImageAddButton(selectImage, context)
             }
 
             if (isImageAdd.value) {
@@ -76,22 +85,66 @@ fun ImageField(modifier: Modifier = Modifier, label: String,
                 ImageInfo(isImageAdd, selectImage)
             }
         }
-
     }
 }
 
 @Composable
-fun ImageAddButton(selectImage: MutableState<Uri>) {
+fun ImageAddButton(selectImage: MutableState<Uri>, context: android.content.Context) {
+    val resultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                selectImage.value = uri // 선택한 이미지 업데이트
+            }
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            MediaUtil.openAlbum(resultLauncher)
+        } else {
+            // 권한 거부 시 사용자에게 알림
+            Toast.makeText(context, context.getString(R.string.saving_item_media_permission), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val pickMedia = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+    ) { uri ->
+        if (uri != null) {
+            selectImage.value = uri
+        }
+    }
+
     Column(
         modifier = Modifier
             .width(200.dp)
             .wrapContentHeight()
             .background(color = MainBgLightGray,
                 shape = RoundedCornerShape(10.dp))
-            .clickable {
-                // TODO: 사진 권한 확인
-                // selectImage에 갤러리에서 받아온 이미지 넣기
-            },
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = {
+                    when {
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        }
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        }
+                        MediaUtil.checkPermission(context) -> {
+                            MediaUtil.openAlbum(resultLauncher)
+                        }
+                        else -> {
+                            MediaUtil.requestPermission(permissionLauncher)
+                        }
+                    }
+                }
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -137,11 +190,15 @@ fun ImageInfo(isImageAdd: MutableState<Boolean>, selectImage: MutableState<Uri>)
                 .height(56.dp)
                 .background(color = MainWhite, shape = RoundedCornerShape(18.dp))
                 .border(2.dp, MainBgGray, shape = RoundedCornerShape(18.dp))
-                .clickable {
-                    /* TODO: 사진 삭제 */
-                    isImageAdd.value = false
-                    selectImage.value = Uri.EMPTY
-                },
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        /* TODO: 사진 삭제 */
+                        isImageAdd.value = false
+                        selectImage.value = Uri.EMPTY
+                    }
+                ),
             contentAlignment = Alignment.Center
         ) {
             Text(
