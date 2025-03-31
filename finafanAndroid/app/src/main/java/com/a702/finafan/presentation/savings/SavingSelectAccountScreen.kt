@@ -48,7 +48,6 @@ fun SavingSelectAccountScreen(
         viewModel.fetchWithdrawalAccount()
     }
 
-    // 첫 번째 계좌 자동 선택
     LaunchedEffect(savingState.withdrawalAccounts) {
         if (!savingState.isLoading) {
             if (savingState.withdrawalAccounts.isEmpty()) {
@@ -60,14 +59,6 @@ fun SavingSelectAccountScreen(
                 viewModel.updateSavingConnectAccount(firstAccount)
             }
         }
-
-//        if (savingState.withdrawalAccounts.isNotEmpty()) {
-//            val firstAccount = savingState.withdrawalAccounts.first()
-//            viewModel.updateSavingConnectAccount(firstAccount)
-//        } else if (savingState.isLoading == false && savingState.withdrawalAccounts.isEmpty()) {
-//            // 출금 계좌 없을 경우 계좌 연결 페이지로 이동
-//            showAccountDialog.value = true
-//        }
     }
 
     if (showAccountDialog.value) {
@@ -85,6 +76,8 @@ fun SavingSelectAccountScreen(
         savingState.error?.let {
             showDialog.value = true
             dialogContent.value = it.message ?: context.getString(R.string.saving_item_create_fail)
+
+            viewModel.clearError()
         }
     }
 

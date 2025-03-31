@@ -85,9 +85,10 @@ class SavingViewModel @Inject constructor(
 
                 _savingState.update {
                     it.copy(
-                    createAccountId = accountId,
-                    isLoading = false
-                    ) }
+                        createAccountId = accountId,
+                        isLoading = false,
+                    )
+                }
 
             } catch (e: Exception) {
                 _savingState.update {
@@ -100,17 +101,34 @@ class SavingViewModel @Inject constructor(
         }
     }
 
+    fun clearError() {
+        _savingState.update {
+            it.copy(
+                error = null
+            )
+        }
+    }
+
     fun fetchWithdrawalAccount() {
         viewModelScope.launch {
             _savingState.update { it.copy(isLoading = true) }
 
-            val withdrawalAccounts = getWithdrawalAccountUseCase()
+            try {
+                val withdrawalAccounts = getWithdrawalAccountUseCase()
 
-            _savingState.update {
-                it.copy(
-                    isLoading = false,
-                    withdrawalAccounts = withdrawalAccounts
-                )
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        withdrawalAccounts = withdrawalAccounts
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        withdrawalAccounts = emptyList()
+                    )
+                }
             }
         }
     }
