@@ -43,7 +43,6 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.savings.model.SavingAccount
-import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -56,30 +55,6 @@ fun SavingMainScreen(
 ) {
 
     val navController = LocalNavController.current
-
-    val transactions = mutableListOf(
-        Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "이찬원 사랑해",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        ),
-        Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "오늘 너무 귀여워",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        ),
-        Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "진짜 귀엽다",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        ),
-    )
 
     // 적금 계좌 정보, 입금 내역 목록
     LaunchedEffect(Unit) {
@@ -105,7 +80,7 @@ fun SavingMainScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            if (transactions.isEmpty()) {
+            if (savingState.savingInfo.transactions.isEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
 

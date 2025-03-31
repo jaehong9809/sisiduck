@@ -34,7 +34,7 @@ class SavingViewModel @Inject constructor(
             _starState.update { it.copy(isLoading = true) }
 
             try {
-                val stars = getStarsUseCase.invoke()
+                val stars = getStarsUseCase()
 
                 _starState.update {
                     it.copy(
@@ -57,7 +57,7 @@ class SavingViewModel @Inject constructor(
         viewModelScope.launch {
             _savingState.update { it.copy(isLoading = true) }
 
-            val savingInfo = getSavingUseCase.invoke(savingAccountId)
+            val savingInfo = getSavingUseCase(savingAccountId)
 
             _savingState.update {
                 it.copy(

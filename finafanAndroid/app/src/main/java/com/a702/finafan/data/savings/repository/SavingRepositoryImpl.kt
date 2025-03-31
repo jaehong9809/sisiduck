@@ -38,7 +38,7 @@ class SavingRepositoryImpl @Inject constructor(
         val response = api.history(savingAccountId)
 
         return if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
+            response.data.transactions.map { it.toDomain() }
         } else {
             throw Exception(response.message)
         }
