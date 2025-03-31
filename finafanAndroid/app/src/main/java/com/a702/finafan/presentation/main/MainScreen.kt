@@ -50,8 +50,8 @@ fun MainScreen(
         Row {
             MainSquareIconButton(
                 onClick = {
-                    // TODO: 적금계좌 고유번호 pk 넘기기
-                    navController.navigate(NavRoutes.SavingMain.route + "/11")
+                    val accountId = 2
+                    navController.navigate(NavRoutes.SavingMain.route + "/${accountId}")
                 },
                 icon = {
                     Icon(

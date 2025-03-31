@@ -24,7 +24,7 @@ interface SavingApi {
     suspend fun history(savingAccountId: Long): ApiResponse<List<TransactionResponse>>
 
     // 적금 계좌 정보 조회
-    @GET("v1/star/{savingAccountId}")
+    @GET("v1/star/account/{savingAccountId}")
     suspend fun accountInfo(@Path("savingAccountId") savingAccountId: Long): ApiResponse<SavingAccountResponse>
 
     // 적금 계좌 목록 조회

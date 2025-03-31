@@ -1,6 +1,5 @@
 package com.a702.finafan.presentation.navigation
 
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -27,10 +26,10 @@ fun NavGraphBuilder.savingGraph(
         startDestination = NavRoutes.Main.route, route = NavRoutes.Saving.route
     ) {
 
-        composable(NavRoutes.SavingMain.route + "/{savingAccountId}") { backStackEntry ->
-            val savingAccountId = backStackEntry.arguments?.getLong("savingAccountId")
+        composable(NavRoutes.SavingMain.route + "/{accountId}") { backStackEntry ->
+            val savingAccountId = backStackEntry.arguments?.getString("accountId")!!.toLongOrNull()
 
-            SavingMainScreen(savingViewModel, savingAccountId)
+            SavingMainScreen(savingViewModel, savingAccountId ?: 0)
         }
 
         composable(NavRoutes.TransactionDetail.route) { backStackEntry ->

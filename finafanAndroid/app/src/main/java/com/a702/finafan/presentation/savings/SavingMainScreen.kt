@@ -42,8 +42,6 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.utils.StringUtil
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.presentation.navigation.LocalNavController
@@ -58,23 +56,6 @@ fun SavingMainScreen(
 ) {
 
     val navController = LocalNavController.current
-
-    val accountInfo = SavingAccount(
-        savingAccountId = 30,
-        accountNo = "123-456-789000",
-        accountName = "이찬원 적금",
-        amount = 40000,
-        interestRate = "1.80%",
-        duration = 30,
-        createdDt = "2025-03-01",
-        imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg",
-        connectAccount =
-            Account(
-                accountId = 1234,
-                accountNo = "456-789-1000",
-                bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
-            )
-    )
 
     val transactions = mutableListOf(
         Transaction(
