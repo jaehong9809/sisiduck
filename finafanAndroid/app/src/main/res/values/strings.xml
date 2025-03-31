@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">FinAFan</string>
 
+    <!-- Main Screen -->
+    <string name="card_login_button">로그인</string>
+    <string name="card_create_saving_info">아직 가입한 상품이 없어요!</string>
+    <string name="card_create_saving_button">스타적금 시작하기</string>
 
     <!-- Chat Screen -->
     <string name="chatbot_talk_button">덕순이와 대화하기</string>

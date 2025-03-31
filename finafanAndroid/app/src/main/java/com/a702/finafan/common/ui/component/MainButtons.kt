@@ -53,7 +53,7 @@ fun MainSquareIconButton(
     Box(
         modifier = modifier
             .size(156.dp)
-            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp))
+            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(24.dp))
             .background(MainWhite, shape = RoundedCornerShape(24.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },

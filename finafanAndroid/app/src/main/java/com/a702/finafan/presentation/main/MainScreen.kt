@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -70,14 +71,11 @@ fun MainScreen(
         Column() {
 
         }
-        Column(modifier = Modifier.fillMaxWidth()
-            .padding(14.dp),
+        Column(modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            CardCarousel(modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp))
             Row() {
-
-                CardCarousel(modifier = Modifier.fillMaxWidth())
-
                 MainSquareIconButton(
                     onClick = {
                         // TODO: 적금계좌 고유번호 pk 넘기기
