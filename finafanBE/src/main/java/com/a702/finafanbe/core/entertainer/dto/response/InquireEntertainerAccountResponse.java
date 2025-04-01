@@ -17,8 +17,7 @@ public record InquireEntertainerAccountResponse(
         Long duration,
         String imageUrl,
         AccountInfo withdrawalAccount,
-        Bank bank,
-        Entertainer entertainer
+        Bank bank
 ) {
     public static InquireEntertainerAccountResponse of(
         Long accountId,
@@ -31,8 +30,7 @@ public record InquireEntertainerAccountResponse(
         String imageUrl,
         Account withdrawalAccount,
         Bank bank,
-        Bank withdrawalBank,
-        Entertainer entertainer
+        Bank withdrawalBank
     ){
         AccountInfo withdrawalAccountInfo = new AccountInfo(
                 withdrawalAccount.getAccountId(),
@@ -52,8 +50,7 @@ public record InquireEntertainerAccountResponse(
             duration,
             imageUrl,
             withdrawalAccountInfo,
-            bank,
-            entertainer
+            bank
         );
     }
 }

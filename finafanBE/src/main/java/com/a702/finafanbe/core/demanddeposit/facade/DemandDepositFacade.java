@@ -232,7 +232,6 @@ public class DemandDepositFacade {
         Account depositAccount = inquireDemandDepositAccountService.findAccountById(
             savingsAccount.getDepositAccountId());
         Bank bank = bankService.findBankById(depositAccount.getBankId());
-        Entertainer entertainer = entertainerService.findEntertainerById(savingsAccount.getEntertainerId());
         Account withDrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withDrawalAccount.getBankId());
         return InquireEntertainerAccountResponse.of(
@@ -246,8 +245,7 @@ public class DemandDepositFacade {
             savingsAccount.getImageUrl(),
             withDrawalAccount,
             bank,
-            withdrawalBank,
-            entertainer
+            withdrawalBank
         );
     }
 
@@ -260,7 +258,6 @@ public class DemandDepositFacade {
                 Account depositAccount = inquireDemandDepositAccountService.findAccountById(
                     savingsAccount.getDepositAccountId());
                 Bank bank = bankService.findBankById(depositAccount.getBankId());
-                Entertainer entertainer = entertainerService.findEntertainerById(savingsAccount.getEntertainerId());
                 Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
                     savingsAccount.getWithdrawalAccountId());
                 Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
@@ -275,8 +272,7 @@ public class DemandDepositFacade {
                     savingsAccount.getImageUrl(),
                     withdrawalAccount,
                     bank,
-                    withdrawalBank,
-                    entertainer
+                    withdrawalBank
                 );
             })
             .collect(Collectors.toList());
