@@ -42,7 +42,11 @@ public class RankingWebSocketService {
                 .orElse(0.0);
     }
 
-    public void updateAndBroadcastRanking(Long userId, Long entertainerId, double amount) {
+    public void updateAndBroadcastRanking(
+            Long userId,
+            Long entertainerId,
+            double amount
+    ) {
         // 1. 랭킹 업데이트
         rankingService.updateRanking(userId, entertainerId, amount);
 
