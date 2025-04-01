@@ -1,6 +1,5 @@
 package com.a702.finafanbe.core.auth.application;
 
-import com.a702.finafanbe.core.auth.dto.request.TokenRequest;
 import com.a702.finafanbe.core.auth.entity.infrastructure.SSAFYUserInfo;
 import com.a702.finafanbe.core.auth.entity.infrastructure.SsafyOAuthProvider;
 import com.a702.finafanbe.core.auth.entity.AuthTokens;
@@ -19,8 +18,8 @@ public class AuthService {
     private final SsafyOAuthProvider ssafyOAuthProvider;
     private final UserRepository userRepository;
 
-    public AuthTokens login(TokenRequest tokenRequest) {
-        String ssafyAccessToken = ssafyOAuthProvider.fetchSSAFYAccessToken(tokenRequest.code());
+    public AuthTokens login(String code) {
+        String ssafyAccessToken = ssafyOAuthProvider.fetchSSAFYAccessToken(code);
         SSAFYUserInfo userInfo = ssafyOAuthProvider.getUserInfo(ssafyAccessToken);
 
         User user = findOrCreateUser(
