@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
@@ -22,12 +25,21 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 적금 해지 화면
 @Composable
 fun SavingCancelScreen(
+    viewModel: SavingViewModel = viewModel(),
     onComplete: () -> Unit
 ) {
+
+    val savingState by viewModel.savingState.collectAsState()
+    val accountInfo = savingState.savingInfo.savingAccount
+    val withdrawalAccount = accountInfo.withdrawalAccount
+    val bank = accountInfo.withdrawalAccount.bank
+
     SavingScreenLayout(
         isFill = true,
         title = stringResource(R.string.saving_item_cancel_title),
@@ -54,7 +66,7 @@ fun SavingCancelScreen(
                 )
 
                 Text(
-                    text = StringUtil.formatCurrency(1203049),
+                    text = StringUtil.formatCurrency(accountInfo.amount),
                     color = MainBlack,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
@@ -71,7 +83,7 @@ fun SavingCancelScreen(
 
             }
 
-            ProductDetailList()
+            ProductDetailList(accountInfo)
         }
 
         Box(
@@ -96,9 +108,9 @@ fun SavingCancelScreen(
 
             AccountInfoItem(
                 account = Account(
-                    accountId = 1234,
-                    accountNo = "456-789-1000",
-                    bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
+                    accountId = withdrawalAccount.accountId,
+                    accountNo = withdrawalAccount.accountNo,
+                    bank = Bank(bankId = bank.bankId, bankCode = bank.bankCode, bankName = bank.bankName)
                 ),
                 isCancel = true)
         }
@@ -106,14 +118,28 @@ fun SavingCancelScreen(
 }
 
 @Composable
-fun ProductDetailList() {
+fun ProductDetailList(accountInfo: SavingAccount) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        ProductContentItem(stringResource(R.string.saving_item_origin_money), StringUtil.formatCurrency(1200000))
-        ProductContentItem(stringResource(R.string.saving_item_duration), stringResource(R.string.format_duration, "2025.03.18", "2025.03.18"))
-        ProductContentItem(stringResource(R.string.saving_item_interest), StringUtil.formatCurrency(1200000))
-        ProductContentItem(stringResource(R.string.saving_item_total_money), StringUtil.formatCurrency(1200000))
+        ProductContentItem(
+            stringResource(R.string.saving_item_origin_money),
+            StringUtil.formatCurrency(accountInfo.amount)
+        )
+        ProductContentItem(
+            stringResource(R.string.saving_item_duration), stringResource(
+                R.string.format_duration,
+                StringUtil.formatDate(accountInfo.createdDate), StringUtil.getTodayFormattedDate()
+            )
+        )
+        ProductContentItem(
+            stringResource(R.string.saving_item_interest),
+            StringUtil.formatCurrency(0)
+        )
+        ProductContentItem(
+            stringResource(R.string.saving_item_total_money),
+            StringUtil.formatCurrency(accountInfo.amount)
+        )
     }
 }
 

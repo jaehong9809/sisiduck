@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,18 +21,17 @@ import com.a702.finafan.common.ui.theme.MainWhite
 
 @Composable
 fun DialogLayout(
-    isBottom: Boolean = false,
+    showDialog: MutableState<Boolean>,
     isConfirm: Boolean = true,
     confirmBtnText: String = stringResource(R.string.btn_confirm),
     onClickConfirm: () -> Unit,
     btnEnabled: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    var isDialogVisible = remember { mutableStateOf(true) }
 
-    if (isDialogVisible.value) {
+    if (showDialog.value) {
         Dialog(
-            onDismissRequest = { isDialogVisible.value = false },
+            onDismissRequest = { showDialog.value = false },
             properties = DialogProperties(
                 dismissOnBackPress = true,
                 dismissOnClickOutside = true,
@@ -44,9 +42,7 @@ fun DialogLayout(
                     .fillMaxWidth()
                     .background(
                         color = MainWhite
-                        , shape =
-                            if (isBottom) RoundedCornerShape(25.dp, 25.dp, 0.dp, 0.dp)
-                            else RoundedCornerShape(25.dp)),
+                        , shape = RoundedCornerShape(25.dp)),
             ) {
                 Column(
                     modifier = Modifier
@@ -62,7 +58,7 @@ fun DialogLayout(
                         isConfirm,
                         confirmBtnText,
                         onClickConfirm,
-                        isDialogVisible,
+                        showDialog,
                         btnEnabled
                     )
                 }

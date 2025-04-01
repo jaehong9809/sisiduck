@@ -15,7 +15,7 @@ sealed class NavRoutes(val route: String) {
 
     object SavingMain : NavRoutes("saving_main")
     object TransactionDetail : NavRoutes("transaction_detail")
-    object SavingAccountInfo : NavRoutes("saving_account_info")
+    object SavingAccountManage : NavRoutes("saving_account_manage")
     object SavingCancel : NavRoutes("saving_cancel")
 
     object SavingDesc : NavRoutes("saving_desc")
