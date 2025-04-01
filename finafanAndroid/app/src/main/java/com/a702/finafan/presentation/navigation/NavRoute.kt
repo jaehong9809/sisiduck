@@ -15,7 +15,7 @@ sealed class NavRoutes(val route: String) {
 
     object SavingMain : NavRoutes("saving_main")
     object TransactionDetail : NavRoutes("transaction_detail")
-    object SavingAccountInfo : NavRoutes("saving_account_info")
+    object SavingAccountManage : NavRoutes("saving_account_manage")
     object SavingCancel : NavRoutes("saving_cancel")
 
     object SavingDesc : NavRoutes("saving_desc")
@@ -34,6 +34,10 @@ sealed class NavRoutes(val route: String) {
     object AccountCode : NavRoutes("account_code")
     object AccountCodeConfirm : NavRoutes("account_code_confirm")
     object ConnectAccount : NavRoutes("connect_account")
+
+    /* Ranking */
+    object RankingMain : NavRoutes("ranking_main")
+    object RankingHistory : NavRoutes("ranking_history")
 
     /* Funding */
     object Funding : NavRoutes("funding")

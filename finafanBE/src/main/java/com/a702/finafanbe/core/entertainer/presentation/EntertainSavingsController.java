@@ -1,28 +1,19 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
-import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
-import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
-import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.EntertainerSavingsAccountRepository;
+import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
-import com.a702.finafanbe.core.entertainer.dto.request.EntertainerTransactionHistoriesRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
-import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.EntertainerSearchResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.WithdrawalAccountResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.*;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
-import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
+import com.a702.finafanbe.core.ranking.application.RankingWebSocketService;
 import com.a702.finafanbe.core.s3.service.S3Service;
 import com.a702.finafanbe.core.savings.application.SavingsAccountService;
-import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
@@ -34,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/star")
@@ -48,6 +38,8 @@ public class EntertainSavingsController {
     private final S3Service s3Service;
     private final SavingsAccountService savingsAccountService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
+    private final RankingWebSocketService rankingWebSocketService;
+    private final EntertainSavingsService entertainSavingsService;
 
     @GetMapping("/account/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
@@ -57,6 +49,13 @@ public class EntertainSavingsController {
             EMAIL,
             savingAccountId
         ));
+    }
+
+    @GetMapping("/home")
+    public ResponseEntity<ResponseData<List<HomeEntertainerAccountResponse>>> getStarAccountsForHome(
+//            @AuthMember User user
+    ){
+        return ResponseUtil.success(demandDepositFacade.findStarAccountsForHome(EMAIL));
     }
 
     @GetMapping("/accounts")
@@ -78,7 +77,7 @@ public class EntertainSavingsController {
     * TODO scheduler로 한 달 마다 이체가 되도록하면됨.
     *
     * */
-    @PutMapping("/despoit")
+    @PutMapping("/deposit")
     public ResponseEntity<ResponseData<EntertainerDepositResponse>> deposit(
             //@AuthMember User user,
             @ModelAttribute StarTransferRequest starTransferRequest
@@ -88,17 +87,20 @@ public class EntertainSavingsController {
                 starTransferRequest.transactionBalance()
         );
         String depositAccountNo = exchange.getBody().REC().stream()
-            .map(transaction -> transaction.accountNo())
+            .map(transaction -> transaction.transactionAccountNo())
             .findFirst().get();
         String transactionAccountNo = exchange.getBody().REC().stream()
-            .map(transaction -> transaction.transactionAccountNo())
+            .map(transaction -> transaction.accountNo())
             .findFirst().get();
         Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(depositAccountNo);
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountByAccountNo(
             transactionAccountNo);
 
         if(exchange.getStatusCode()== HttpStatus.OK){
-            String image = s3Service.uploadImage(starTransferRequest.imageFile());
+            String image ="";
+            if(starTransferRequest.imageFile()!=null){
+                image = s3Service.uploadImage(starTransferRequest.imageFile());
+            }
             EntertainerDepositResponse response = entertainService.deposit(
                 EMAIL,
                 depositAccount.getAccountId(),
@@ -109,6 +111,17 @@ public class EntertainSavingsController {
                 starTransferRequest.message(),
                 image
             );
+
+            EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(
+                    starTransferRequest.depositAccountId()
+            );
+
+            rankingWebSocketService.updateAndBroadcastRanking(
+                    savingsAccount.getUserId(),
+                    savingsAccount.getEntertainerId(),
+                    starTransferRequest.transactionBalance()
+            );
+
             return ResponseUtil.success(response);
         }
         return ResponseUtil.failure(new BadRequestException(ResponseData.createResponse(ErrorCode.SYSTEM_ERROR)));

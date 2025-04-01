@@ -15,6 +15,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -39,10 +42,7 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.utils.StringUtil
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.SavingAccount
-import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -51,75 +51,42 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 @Composable
 fun SavingMainScreen(
     viewModel: SavingViewModel = viewModel(),
-    savingAccountId: Long? = null
+    savingAccountId: Long
 ) {
 
     val navController = LocalNavController.current
 
-    val accountInfo = SavingAccount(
-        savingAccountId = 30,
-        accountNo = "123-456-789000",
-        accountName = "이찬원 적금",
-        amount = 40000,
-        interestRate = "1.80%",
-        duration = 30,
-        createdDt = "2025-03-01",
-        imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg",
-        connectAccount =
-            Account(
-                accountId = 1234,
-                accountNo = "456-789-1000",
-                bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
-            )
-    )
+    // 적금 계좌 정보, 입금 내역 목록
+    LaunchedEffect(Unit) {
+        viewModel.fetchSavingInfo(savingAccountId)
+    }
 
-//    val transactions = mutableListOf<Transaction>()
-    val transactions = mutableListOf(
-        Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "이찬원 사랑해",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        ),
-        Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "오늘 너무 귀여워",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        ),
-        Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "진짜 귀엽다",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        ),
-    )
-
-    // TODO: 적금 계좌 정보 조회 API 호출
-
-    // TODO: 적금 입금 내역 조회 API 호출
+    val savingState by viewModel.savingState.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        CommonBackTopBar(modifier = Modifier)
+        CommonBackTopBar(
+            modifier = Modifier,
+            text = stringResource(R.string.saving_account_manage_title),
+            textOnClick = {
+                navController.navigate(NavRoutes.SavingAccountManage.route)
+            }
+        )
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = CenterHorizontally
         ) {
             item {
-                SavingHeader(accountInfo)
+                SavingHeader(savingState.savingInfo.savingAccount)
             }
 
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            if (transactions.isEmpty()) {
+            if (savingState.savingInfo.transactions.isEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
 
@@ -132,7 +99,7 @@ fun SavingMainScreen(
                     )
                 }
             } else {
-                items(transactions) { transaction ->
+                items(savingState.savingInfo.transactions) { transaction ->
                     TransactionItem(transaction, onSelect = {
                         viewModel.setTransaction(transaction)
                         navController.navigate(NavRoutes.TransactionDetail.route)
@@ -144,11 +111,11 @@ fun SavingMainScreen(
 }
 
 @Composable
-fun SavingHeader(info: SavingAccount) {
+fun SavingHeader(account: SavingAccount) {
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(info.imageUrl)
+            .data(account.imageUrl)
             .build()
     )
 
@@ -161,7 +128,7 @@ fun SavingHeader(info: SavingAccount) {
 
         Image(
             painter = painter,
-            contentDescription = "Background Image",
+            contentDescription = "Star Image",
             modifier = Modifier
                 .fillMaxSize()
                 .height(560.dp)
@@ -180,7 +147,7 @@ fun SavingHeader(info: SavingAccount) {
         )
 
         Text(
-            text = "DAY ${info.duration}",
+            text = "DAY ${account.duration}",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = MainWhite,
@@ -197,19 +164,19 @@ fun SavingHeader(info: SavingAccount) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = info.accountName,
+                text = stringResource(R.string.saving_item_name, account.accountName),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = MainWhite
             )
             Text(
-                text = StringUtil.formatCurrency(info.amount),
+                text = StringUtil.formatCurrency(account.amount),
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
                 color = MainWhite
             )
             Text(
-                text = info.accountNo,
+                text = account.accountNo,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
                 color = MainWhite
@@ -221,6 +188,6 @@ fun SavingHeader(info: SavingAccount) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewSavingScreen() {
-    SavingMainScreen()
+    SavingMainScreen(savingAccountId = 0)
 }
 

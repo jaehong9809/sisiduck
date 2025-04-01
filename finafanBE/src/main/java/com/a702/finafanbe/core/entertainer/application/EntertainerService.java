@@ -8,6 +8,10 @@ import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
+import com.a702.finafanbe.global.common.response.ResponseData;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -42,5 +46,9 @@ public class EntertainerService {
                         .code(ErrorCode.NotFoundUser.getCode())
                         .message(ErrorCode.NotFoundUser.getMessage())
                         .build()));
+    }
+
+    public Entertainer findEntertainerById(Long entertainerId){
+        return entertainerRepository.findById(entertainerId).orElseThrow(()-> new BadRequestException(ResponseData.createResponse(ErrorCode.NotFoundEntertainer)));
     }
 }

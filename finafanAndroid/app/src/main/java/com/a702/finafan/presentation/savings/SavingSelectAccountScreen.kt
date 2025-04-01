@@ -3,9 +3,13 @@ package com.a702.finafan.presentation.savings
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -14,30 +18,94 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.SelectAccountField
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.data.savings.dto.request.toData
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.SavingCreate
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 적금 출금 계좌 선택 화면
 @Composable
 fun SavingSelectAccountScreen(
     viewModel: SavingViewModel = viewModel(),
-    onComplete: (Int) -> Unit
 ) {
 
+    val navController = LocalNavController.current
+
+    val context = LocalContext.current
     val savingState by viewModel.savingState.collectAsState()
 
-    // TODO: 출금계좌 목록 조회 API 호출 -> 첫 번째 계좌 자동 선택
-    val accounts = mutableListOf(
-        Account(1, "123-456", Bank(1, "123", "NH농협")),
-        Account(2, "456-789", Bank(2, "123", "토스뱅크"))
-    )
+    val showDialog = remember { mutableStateOf(false) }
+    val dialogContent = remember { mutableStateOf("") }
 
-//    viewModel.updateSavingConnectAccount(accounts[1])
+    val showAccountDialog = remember { mutableStateOf(false) }
+
+    // 출금계좌 목록 조회
+    LaunchedEffect(Unit) {
+        viewModel.fetchWithdrawalAccount()
+    }
+
+    LaunchedEffect(savingState.withdrawalAccounts) {
+        if (!savingState.isLoading) {
+            if (savingState.withdrawalAccounts.isEmpty()) {
+                // 출금 계좌가 없으면 계좌 연결 페이지로 이동
+                showAccountDialog.value = true
+            } else {
+                // 출금 계좌가 있으면 첫 번째 계좌를 연결
+                val firstAccount = savingState.withdrawalAccounts.first()
+                viewModel.updateSavingConnectAccount(firstAccount)
+            }
+        }
+    }
+
+    if (showAccountDialog.value) {
+        ConfirmDialog(
+            showAccountDialog,
+            content = context.getString(R.string.saving_item_withdrawal_empty),
+            isConfirm = false,
+            onClickConfirm = {
+                showAccountDialog.value = false
+                navController.navigate(NavRoutes.Account.route)
+            }
+        )
+    }
+
+    LaunchedEffect(savingState.error) {
+        savingState.error?.let {
+            showDialog.value = true
+            dialogContent.value = it.message ?: context.getString(R.string.saving_item_create_fail)
+
+            viewModel.clearError()
+        }
+    }
+
+    if (showDialog.value) {
+        ConfirmDialog(
+            showDialog,
+            content = dialogContent.value,
+            onClickConfirm = {
+                showDialog.value = false
+
+                // 개설 완료 시
+                if (savingState.createAccountId > 0) {
+                    navController.navigate(NavRoutes.SavingMain.route + "/${savingState.createAccountId}") {
+                        popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
+        )
+    }
+
+    LaunchedEffect(savingState.createAccountId) {
+        if (savingState.createAccountId > 0) {
+            showDialog.value = true
+            dialogContent.value = context.getString(R.string.saving_item_start, savingState.accountName)
+        }
+    }
 
     SavingScreenLayout(
         topBarTitle = stringResource(R.string.saving_item_create_top_bar),
@@ -45,7 +113,7 @@ fun SavingSelectAccountScreen(
         buttonText = stringResource(R.string.btn_create),
         isButtonEnabled = savingState.connectAccount.accountNo.isNotEmpty(),
         onButtonClick = {
-            /* TODO: 적금 개설 API 호출, 개설 완료 후에 적금계좌 고유번호 넘기기 */
+            // 적금 개설
             val savingCreate = SavingCreate(
                 savingState.selectStar.entertainerId,
                 savingState.accountName,
@@ -53,8 +121,7 @@ fun SavingSelectAccountScreen(
             )
 
             val request = savingCreate.toData()
-
-            onComplete(1)
+            viewModel.createSaving(request)
         }
     ) {
 
@@ -68,7 +135,7 @@ fun SavingSelectAccountScreen(
             textAlign = TextAlign.Start
         )
 
-        SelectAccountField(viewModel, accounts)
+        SelectAccountField(viewModel, savingState.withdrawalAccounts)
 
     }
 }
@@ -76,5 +143,5 @@ fun SavingSelectAccountScreen(
 @Preview
 @Composable
 fun SavingSelectAccountPreview() {
-    SavingSelectAccountScreen(onComplete = {})
+    SavingSelectAccountScreen()
 }
