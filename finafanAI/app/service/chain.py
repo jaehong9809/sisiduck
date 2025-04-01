@@ -7,8 +7,11 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from app.service.search2 import fast_news_search, youtube_search, search_person_info, duckduckgo_search
 from app.service.prompts2 import get_react_prompt, DUKSUNI_SYSTEM_PROMPT
 
-# ✅ LLM & Memory
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7, streaming=True)
+# ✅ LLM 분리: 스트리밍용 vs 일반용
+llm_streaming = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7, streaming=True)     # Agent용
+llm_non_streaming = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7, streaming=False) # Chat용
+
+# ✅ Memory
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
 # ✅ 도구 정의
@@ -19,15 +22,16 @@ tools = [
     Tool(name="웹검색", func=duckduckgo_search, description="일반 웹 정보, 블로그, 커뮤니티 등 전체 웹 검색이 필요할 때 사용")
 ]
 
-# ✅ ReAct Prompt 세팅
+# ✅ 프롬프트 설정
 prompt = get_react_prompt().partial(
     system_prompt=DUKSUNI_SYSTEM_PROMPT,
     tools="\n".join([f"{t.name}: {t.description}" for t in tools]),
     tool_names=", ".join([t.name for t in tools])
 )
 
-# ✅ Agent 생성
-agent = create_react_agent(llm=llm, tools=tools, prompt=prompt)
+# ✅ Agent 설정
+agent = create_react_agent(llm=llm_streaming, tools=tools, prompt=prompt)
+
 agent_executor = AgentExecutor(
     agent=agent,
     tools=tools,
@@ -36,16 +40,16 @@ agent_executor = AgentExecutor(
     handle_parsing_errors=False
 )
 
-# ✅ 덕순이 말투 후처리
-def to_friendly_tone(answer: str) -> str:
+# ✅ 덕순이 말투 후처리 (비스트리밍용 LLM 사용)
+def to_friendly_tone_non_streaming(answer: str) -> str:
     prompt = f'다음 내용을 친구처럼 반말로 바꿔줘. 살짝 주접 섞어도 좋아~\n\n"{answer}"\n\n변환된 말투:'
-    result = llm.invoke([
+    result = llm_non_streaming.invoke([
         SystemMessage(content=DUKSUNI_SYSTEM_PROMPT.strip()),
         HumanMessage(content=prompt)
     ])
     return result.content
 
-# ✅ LLM이 판단: Agent가 필요한 질문인지?
+# ✅ Agent 판단 함수 (LLM에게 물어보기)
 def needs_agent(input: dict) -> bool:
     question = input["input"].strip()
     check_prompt = f"""
@@ -57,7 +61,7 @@ def needs_agent(input: dict) -> bool:
     질문: "{question}"
     답변:
     """
-    result = llm.invoke(check_prompt)
+    result = llm_non_streaming.invoke(check_prompt)
     response = result.content.strip().upper()
     print(f"[🔍 needs_agent 판단] → {response}")
     return response == "YES"
@@ -67,12 +71,12 @@ needs_agent_chain = RunnableLambda(needs_agent)
 
 # ✅ Agent 체인 (검색 도구 + 덕순이 말투)
 agent_chain = RunnableLambda(lambda x: agent_executor.invoke(x)) | \
-              RunnableLambda(lambda x: {"output": to_friendly_tone(x["output"])})
+              RunnableLambda(lambda x: {"output": to_friendly_tone_non_streaming(x["output"])})
 
-# ✅ Chat 체인 (일상 대화 → LLM 바로 호출 + 덕순이 말투)
+# ✅ Chat 체인 (일상 대화 → 일반 LLM 호출 + 덕순이 말투)
 chat_chain = RunnableLambda(lambda x: {
-    "output": to_friendly_tone(
-        llm.invoke([
+    "output": to_friendly_tone_non_streaming(
+        llm_non_streaming.invoke([
             SystemMessage(content=DUKSUNI_SYSTEM_PROMPT.strip()),
             HumanMessage(content=x["input"])
         ]).content
