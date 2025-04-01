@@ -1,10 +1,15 @@
 package com.a702.finafanbe.core.funding.funding.application;
 
-import com.a702.finafanbe.core.funding.funding.dto.CreateFundingRequest;
-import com.a702.finafanbe.core.funding.funding.dto.FundingSupportRequest;
-import com.a702.finafanbe.core.funding.funding.dto.GetFundingDetailResponse;
-import com.a702.finafanbe.core.funding.funding.dto.GetFundingResponse;
+import com.a702.finafanbe.core.funding.funding.dto.*;
+import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
+import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
+import com.a702.finafanbe.core.funding.group.application.FundingGroupBoardService;
 import com.a702.finafanbe.core.funding.group.application.FundingGroupService;
+import com.a702.finafanbe.core.funding.group.entity.GroupUser;
+import com.a702.finafanbe.core.funding.group.entity.Role;
+import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingGroupRepository;
+import com.a702.finafanbe.core.funding.group.entity.infrastructure.GroupBoardRepository;
+import com.a702.finafanbe.core.funding.group.entity.infrastructure.GroupUserRepository;
 import com.a702.finafanbe.core.savings.application.ApiSavingsAccountService;
 import com.a702.finafanbe.core.funding.funding.entity.FundingSupport;
 import com.a702.finafanbe.core.funding.funding.entity.infrastructure.FundingSupportRepository;
@@ -24,12 +29,14 @@ public class FundingService {
     private final ApiSavingsAccountService apiSavingsAccountService;
 
     private final FundingAccountService fundingAccountService;
-
     private final FundingGroupService fundingGroupService;
-
     private final FundingSupportRepository fundingApplicationRepository;
-
     private final UserRepository userRepository;
+    private final FundingGroupRepository fundingGroupRepository;
+    private final GroupUserRepository groupUserRepository;
+    private final FundingSupportRepository fundingSupportRepository;
+    private final GroupBoardRepository groupBoardRepository;
+    private final FundingGroupBoardService fundingGroupBoardService;
 
     // 펀딩 생성
     @Transactional
@@ -70,4 +77,58 @@ public class FundingService {
         fundingApplicationRepository.save(appliance);
     }
 
+    @Transactional
+    public void updateFundingDescription(UpdateFundingDescriptionRequest request, Long userId, Long fundingGroupId) {
+        FundingGroup group = fundingGroupRepository.findById(fundingGroupId)
+                .orElseThrow(() -> new RuntimeException("펀딩이 존재하지 않습니다."));
+        GroupUser groupUser = groupUserRepository.findByFundingGroupIdAndUserId(fundingGroupId, userId)
+                .orElseThrow(() -> new RuntimeException("해당 펀딩의 유저가 아닙니다."));
+        if (!groupUser.getRole().equals(Role.ADMIN)) {
+            throw new RuntimeException("방장에게만 권한이 있습니다.");
+        }
+        group.updateDescription(request.description());
+    }
+
+    @Transactional
+    public void withdrawFunding(Long userId, Long fundingSupportId) {
+        fundingSupportRepository.deleteById(fundingSupportId);
+    }
+
+    @Transactional
+    public void cancelFunding(Long userId, Long fundingId) {
+        checkAdminUser(userId, fundingId);
+        fundingGroupRepository.deleteById(fundingId);
+        fundingSupportRepository.deleteAllByFundingGroupId(fundingId);
+    }
+
+    @Transactional
+    public void terminateFunding(Long userId, Long fundingId) {
+        checkAdminUser(userId, fundingId);
+        if (!checkFundingStatus(fundingId).equals(FundingStatus.FINISHED)) {
+            throw new RuntimeException("펀딩이 종료되지 않았습니다.");
+        }
+        Long sum = groupBoardRepository.sumByFundingGroupId(fundingId);
+        Long totalAmount = fundingSupportRepository.sumByFundingGroupId(fundingId);
+        if (!sum.equals(totalAmount)) {
+            throw new RuntimeException("게시판에 펀딩 총액을 정확하게 입력해주세요.");
+        }
+        fundingGroupRepository.deleteById(fundingId);
+        fundingSupportRepository.deleteAllByFundingGroupId(fundingId);
+    }
+
+    private FundingStatus checkFundingStatus(Long fundingId) {
+        FundingGroup group = fundingGroupRepository.findById(fundingId)
+                .orElseThrow(() -> new RuntimeException("해당 펀딩이 존재하지 않습니다."));
+        return group.getStatus();
+    }
+
+    private void checkAdminUser(Long userId, Long fundingId) {
+        FundingGroup group = fundingGroupRepository.findById(fundingId)
+                .orElseThrow(() -> new RuntimeException("해당 펀딩이 존재하지 않습니다."));
+        GroupUser groupUser = groupUserRepository.findByUserIdAndFundingGroupId(userId, fundingId)
+                .orElseThrow(() -> new RuntimeException("해당 펀딩에 가입되어 있지 않습니다."));
+        if (!groupUser.getRole().equals(Role.ADMIN)) {
+            throw new RuntimeException("해당 권한은 방장에게 있습니다.");
+        }
+    }
 }

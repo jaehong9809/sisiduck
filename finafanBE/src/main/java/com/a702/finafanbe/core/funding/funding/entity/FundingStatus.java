@@ -1,4 +1,4 @@
-package com.a702.finafanbe.core.funding.group.entity;
+package com.a702.finafanbe.core.funding.funding.entity;
 
 import lombok.Getter;
 

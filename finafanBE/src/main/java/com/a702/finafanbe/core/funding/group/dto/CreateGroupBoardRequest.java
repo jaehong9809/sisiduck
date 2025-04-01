@@ -1,4 +1,4 @@
-package com.a702.finafanbe.core.funding.group.dto.groupboard;
+package com.a702.finafanbe.core.funding.group.dto;
 
 import lombok.Getter;
 

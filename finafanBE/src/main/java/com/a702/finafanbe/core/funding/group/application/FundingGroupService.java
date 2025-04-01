@@ -5,7 +5,7 @@ import com.a702.finafanbe.core.funding.funding.dto.GetFundingDetailResponse;
 import com.a702.finafanbe.core.funding.funding.dto.GetFundingResponse;
 import com.a702.finafanbe.core.funding.funding.dto.UpdateFundingDescriptionRequest;
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
-import com.a702.finafanbe.core.funding.group.entity.FundingStatus;
+import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
 import com.a702.finafanbe.core.funding.group.entity.GroupUser;
 import com.a702.finafanbe.core.funding.group.entity.Role;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingGroupRepository;
@@ -69,16 +69,15 @@ public class FundingGroupService {
     }
 
     // 그룹 중도 삭제 - 펀딩 해지와 관련된 로직
-    public void abortGroup(Long groupId) {
-        FundingGroup funding = fundingGroupRepository.findById(groupId).orElseThrow();
-        List<GroupUser> groupUsers = groupUserRepository.findAllByFundingGroupId(groupId);
-        groupUserRepository.deleteAll(groupUsers);
-        fundingGroupRepository.delete(funding);
+    public void abortGroup(Long fundingId) {
+        fundingCheck(fundingId);
+        groupUserRepository.deleteAllByFundingGroupId(fundingId);
+        fundingGroupRepository.deleteById(fundingId);
     }
 
     private void fundingCheck(Long fundingId) {
         if (!fundingGroupRepository.existsById(fundingId)) {
-            throw new RuntimeException("존재하지 않는 그룹입니다.");
+            throw new RuntimeException("존재하지 않는 펀딩입니다.");
         }
     }
 }

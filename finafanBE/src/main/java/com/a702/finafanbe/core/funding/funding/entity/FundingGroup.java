@@ -1,7 +1,6 @@
 package com.a702.finafanbe.core.funding.funding.entity;
 
 import com.a702.finafanbe.core.funding.funding.dto.CreateFundingRequest;
-import com.a702.finafanbe.core.funding.group.entity.FundingStatus;
 import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 

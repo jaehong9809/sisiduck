@@ -20,10 +20,7 @@ public class FundingAccountService {
 
     public SavingsAccount createFundingAccount(CreateFundingRequest request, Long userId, String accountNo) {
 
-        // 적금 상품 찾아오기
-
         SavingsItem item = savingsItemRepository.findByAccountTypeUniqueNo("2222").orElseThrow(() -> new RuntimeException("존재하지 않는 상품입니다."));
-
         // 생성한 적금 계좌 저장
         SavingsAccount account = SavingsAccount.builder()
                 .userId(userId)

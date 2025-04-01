@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.funding.group.entity;
 
+import com.a702.finafanbe.core.funding.group.dto.UpdateGroupBoardRequest;
 import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "group_boards")
-@SQLDelete(sql = "UPDATE group_boards SET deleted_at = NOW() where group_board_id = ?")
+@SQLDelete(sql = "UPDATE group_boards SET deleted_at = NOW() where id = ?")
 public class GroupBoard extends BaseEntity {
 
     @Id
@@ -60,5 +61,12 @@ public class GroupBoard extends BaseEntity {
                         .amount(amount)
                         .imageUrl(imageUrl)
                         .build();
+    }
+
+    public void updateBoard(UpdateGroupBoardRequest request) {
+        this.title = request.title();
+        this.content = request.content();
+        this.amount = request.amount();
+        this.imageUrl = request.imgUrl();
     }
 }

@@ -1,5 +1,7 @@
 package com.a702.finafanbe.core.funding.funding.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
+
 import java.time.LocalDateTime;
 
 public record FundingSupportResponse (
@@ -21,4 +23,7 @@ public record FundingSupportResponse (
                 createdAt
         );
     }
+
+    @QueryProjection
+    public FundingSupportResponse {}
 }
