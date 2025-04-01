@@ -1,6 +1,7 @@
 package com.a702.finafan.common.utils
 
 import android.Manifest
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,9 +12,15 @@ import android.graphics.Paint
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okio.BufferedSink
 import kotlin.math.roundToInt
 
 object MediaUtil {
@@ -83,4 +90,31 @@ object MediaUtil {
         }
         requestPermissionLauncher.launch(permission)
     }
+
+    fun Uri.asMultipart(name: String, contentResolver: ContentResolver): MultipartBody.Part? {
+        contentResolver.query(this, null, null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                val displayName = if (index != -1) cursor.getString(index) else "temp_file"
+
+                val inputStream = contentResolver.openInputStream(this) ?: return null
+                val byteArray = inputStream.use { it.readBytes() }
+
+                val requestBody = object : RequestBody() {
+                    override fun contentType(): MediaType? {
+                        return contentResolver.getType(this@asMultipart)?.toMediaType()
+                    }
+
+                    override fun writeTo(sink: BufferedSink) {
+                        sink.write(byteArray)
+                    }
+                }
+
+                return MultipartBody.Part.createFormData(name, displayName, requestBody)
+            }
+        }
+        return null
+    }
+
+
 }

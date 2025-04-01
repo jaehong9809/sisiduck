@@ -2,17 +2,21 @@ package com.a702.finafan.data.savings.api
 
 import com.a702.finafan.common.data.dto.ApiResponse
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
-import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.data.savings.dto.response.AccountResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountResponse
 import com.a702.finafan.data.savings.dto.response.SavingCreateResponse
 import com.a702.finafan.data.savings.dto.response.SavingDepositResponse
 import com.a702.finafan.data.savings.dto.response.StarResponse
 import com.a702.finafan.data.savings.dto.response.TransactionInfo
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.PartMap
 import retrofit2.http.Path
 
 interface SavingApi {
@@ -24,9 +28,17 @@ interface SavingApi {
     @GET("v1/star/search")
     suspend fun starSearch(): ApiResponse<List<StarResponse>>
 
+//    // 입금하기
+//    @PUT("v1/star/deposit")
+//    suspend fun deposit(@Part request: SavingDepositRequest): ApiResponse<SavingDepositResponse>
+
     // 입금하기
+    @Multipart
     @PUT("v1/star/deposit")
-    suspend fun deposit(@Body request: SavingDepositRequest): ApiResponse<SavingDepositResponse>
+    suspend fun deposit(
+        @PartMap map: HashMap<String, RequestBody>,
+        @Part imageFile: MultipartBody.Part?
+    ): ApiResponse<SavingDepositResponse>
 
     // 적금 계좌 개설
     @POST("v1/star/savings")

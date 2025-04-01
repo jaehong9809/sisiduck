@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,8 +52,11 @@ import com.a702.finafan.common.utils.MediaUtil
 
 // 이미지 추가 버튼
 @Composable
-fun ImageField(modifier: Modifier = Modifier, label: String,
-               selectImage: MutableState<Uri>) {
+fun ImageField(
+    modifier: Modifier = Modifier,
+    label: String,
+    selectImage: MutableState<Uri>
+) {
 
     val isImageAdd = remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -77,11 +81,11 @@ fun ImageField(modifier: Modifier = Modifier, label: String,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!isImageAdd.value) {
-                ImageAddButton(selectImage, context)
+                ImageAddButton(isImageAdd, selectImage, context)
             }
 
             if (isImageAdd.value) {
-                // TODO: 갤러리에서 선택한 이미지 보여주기
+                // 갤러리에서 선택한 이미지 보여주기
                 ImageInfo(isImageAdd, selectImage)
             }
         }
@@ -89,12 +93,17 @@ fun ImageField(modifier: Modifier = Modifier, label: String,
 }
 
 @Composable
-fun ImageAddButton(selectImage: MutableState<Uri>, context: android.content.Context) {
+fun ImageAddButton(
+    isImageAdd: MutableState<Boolean>,
+    selectImage: MutableState<Uri>,
+    context: android.content.Context
+) {
     val resultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
+                isImageAdd.value = true
                 selectImage.value = uri // 선택한 이미지 업데이트
             }
         }
@@ -115,6 +124,7 @@ fun ImageAddButton(selectImage: MutableState<Uri>, context: android.content.Cont
         contract = ActivityResultContracts.PickVisualMedia(),
     ) { uri ->
         if (uri != null) {
+            isImageAdd.value = true
             selectImage.value = uri
         }
     }
@@ -166,21 +176,25 @@ fun ImageAddButton(selectImage: MutableState<Uri>, context: android.content.Cont
 }
 
 @Composable
-fun ImageInfo(isImageAdd: MutableState<Boolean>, selectImage: MutableState<Uri>) {
+fun ImageInfo(
+    isImageAdd: MutableState<Boolean>,
+    selectImage: MutableState<Uri>
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = rememberAsyncImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("")
+                    .data(selectImage.value)
                     .build()
             ),
             contentDescription = "Selected Image",
             modifier = Modifier
                 .size(120.dp)
                 .clip(RoundedCornerShape(15.dp))
-                .background(MainBgLightGray)
+                .background(MainBgLightGray),
+            contentScale = ContentScale.Crop
         )
 
         Box(
@@ -194,7 +208,7 @@ fun ImageInfo(isImageAdd: MutableState<Boolean>, selectImage: MutableState<Uri>)
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {
-                        /* TODO: 사진 삭제 */
+                        // 사진 삭제
                         isImageAdd.value = false
                         selectImage.value = Uri.EMPTY
                     }

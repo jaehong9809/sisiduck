@@ -1,5 +1,6 @@
 package com.a702.finafan.data.savings.repository
 
+import android.util.Log
 import com.a702.finafan.common.domain.ExceptionHandler
 import com.a702.finafan.data.savings.api.SavingApi
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
@@ -10,6 +11,9 @@ import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.repository.SavingRepository
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class SavingRepositoryImpl @Inject constructor(
@@ -28,7 +32,22 @@ class SavingRepositoryImpl @Inject constructor(
 
     override suspend fun deposit(request: SavingDepositRequest): Long {
         return try {
-            val response = api.deposit(request)
+            val map = HashMap<String, RequestBody>()
+
+            map.put(
+                "depositAccountId",
+                request.depositAccountId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+            )
+
+            map.put(
+                "transactionBalance",
+                request.transactionBalance.toString()
+                    .toRequestBody("text/plain".toMediaTypeOrNull())
+            )
+
+            map.put("message", request.message.toRequestBody("text/plain".toMediaTypeOrNull()))
+
+            val response = api.deposit(map, request.imageFile)
 
             if (response.code == "S0000" && response.data != null) {
                 response.data.depositAccountId
@@ -36,6 +55,7 @@ class SavingRepositoryImpl @Inject constructor(
                 throw Exception(response.message)
             }
         } catch (e: Exception) {
+            Log.d("saving repository", e.toString())
             throw Exception(ExceptionHandler.handle(e))
         }
     }

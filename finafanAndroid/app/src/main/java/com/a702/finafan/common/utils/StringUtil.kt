@@ -17,9 +17,15 @@ object StringUtil {
         return stringResource(R.string.format_money, formattedAmount)
     }
 
-    fun formatEditMoney(amount: Long): String {
+    fun formatNumber(amount: String): Long {
+        return amount.replace(Regex("[^0-9]"), "").toLong()
+    }
+
+    fun formatEditMoney(amount: String): String {
+        val num = formatNumber(amount)
         val formatter = NumberFormat.getNumberInstance(Locale.KOREA)
-        return formatter.format(amount)
+
+        return formatter.format(num)
     }
 
     fun formatPercentage(currentAmount: Long, goalAmount: Long): Int {

@@ -1,6 +1,9 @@
 package com.a702.finafan.presentation.savings
 
+import android.content.ContentResolver
 import android.net.Uri
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +22,8 @@ import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.ImageField
 import com.a702.finafan.common.ui.component.NumberField
 import com.a702.finafan.common.ui.component.StringField
+import com.a702.finafan.common.utils.MediaUtil.asMultipart
+import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.data.savings.dto.request.toData
 import com.a702.finafan.domain.savings.model.SavingDeposit
 import com.a702.finafan.presentation.navigation.LocalNavController
@@ -51,7 +56,7 @@ fun SavingDepositScreen(
 
                 // 입금 완료 시 완료 후에 적금 내역으로 이동
                 if (savingState.depositAccountId > 0) {
-                    navController.navigate(NavRoutes.SavingMain.route + "/${savingState.createAccountId}") {
+                    navController.navigate(NavRoutes.SavingMain.route + "/${savingState.depositAccountId}") {
                         popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
                         launchSingleTop = true
                     }
@@ -71,6 +76,8 @@ fun SavingDepositScreen(
         savingState.error?.let {
             showDialog.value = true
             dialogContent.value = it.message ?: context.getString(R.string.withdraw_server_fail)
+
+            viewModel.clearError()
         }
     }
 
@@ -79,11 +86,15 @@ fun SavingDepositScreen(
         buttonText = stringResource(R.string.btn_deposit),
         isButtonEnabled = message.value.isNotEmpty() && money.value.isNotEmpty(),
         onButtonClick = {
+
+            val contentResolver: ContentResolver = context.contentResolver
+            val imageMultipart = image.value.asMultipart("file", contentResolver)
+
             val savingDeposit = SavingDeposit(
                 savingAccountId = savingAccountId,
                 message = message.value,
-                amount = money.value.toLong(),
-                imageFile = null
+                amount = StringUtil.formatNumber(money.value),
+                imageFile = imageMultipart
             )
 
             val request = savingDeposit.toData()
@@ -116,6 +127,7 @@ fun SavingDepositScreen(
             selectImage = image
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
