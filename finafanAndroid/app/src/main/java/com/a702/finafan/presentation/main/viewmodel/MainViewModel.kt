@@ -31,22 +31,6 @@ class MainViewModel @Inject constructor(
             _mainSavingState.update { it.copy(isLoading = true) }
 
             val savings: List<MainSaving> = getMainSavingUseCase()
-//            val savings: List<MainSaving> = listOf(
-//                MainSaving(
-//                    savingId = 1L,
-//                    starName = "이찬원",
-//                    starImageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/image12.png",
-//                    accountNo = "123-456-789",
-//                    amount = 500_000L
-//                ),
-//                MainSaving(
-//                    savingId = 2L,
-//                    starName = "임영웅",
-//                    starImageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/image12.png",
-//                    accountNo = "987-654-321",
-//                    amount = 1_200_000L
-//                ),
-//            )
 
             _mainSavingState.update {
                 it.copy(

@@ -1,7 +1,5 @@
 package com.a702.finafan.presentation.main
 
-import android.graphics.Paint
-import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,10 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,7 +24,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -36,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.AccountTextGary
-import com.a702.finafan.common.ui.theme.MainBgGray
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainGradBlue
@@ -44,8 +38,6 @@ import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
-import com.a702.finafan.common.ui.theme.Typography
-import com.a702.finafan.common.ui.theme.starThemes
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.main.model.MainSaving
 import com.a702.finafan.presentation.navigation.LocalNavController
@@ -115,7 +107,9 @@ fun CreateSavingContent() {
                 )
                 .fillMaxWidth()
                 .height(60.dp)
-                .clickable { navController.navigate(NavRoutes.SavingDesc.route) },
+                .clickable {
+                    navController.navigate(NavRoutes.SavingDesc.route)
+                           },
             contentAlignment = Alignment.Center
         ) {
             Text(text = stringResource(R.string.card_create_saving_button),
@@ -182,7 +176,10 @@ fun SavingContent(saving: MainSaving) {
                     )
                 )
                 .fillMaxWidth()
-                .height(60.dp),
+                .height(60.dp)
+                .clickable{
+                    navController.navigate(NavRoutes.SavingDeposit.route + "/" + saving.savingId)
+                },
             contentAlignment = Alignment.Center
         ) {
             Text(text = stringResource(R.string.card_saving_deposit_button),

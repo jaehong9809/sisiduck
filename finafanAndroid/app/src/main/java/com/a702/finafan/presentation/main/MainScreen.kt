@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
@@ -28,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -59,7 +63,8 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         viewModel.fetchMainSavings()
-//        viewModel.fetchMainRanking(RankingType.DAILY)
+        // TODO: 랭킹 UI 구현 후 연결
+        // viewModel.fetchMainRanking(RankingType.DAILY)
     }
 
     val mainSavingState by viewModel.mainSavingState.collectAsState()
@@ -78,22 +83,28 @@ fun MainScreen(
         }
     )
 
-    Column(modifier = modifier) {
-        Row {
-            MainSquareIconButton(
-                onClick = {
-                    val accountId = 2
-                    navController.navigate(NavRoutes.SavingMain.route + "/${accountId}")
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = "Home",
-                        tint = MainBlack,
-                        modifier = Modifier.size(48.dp)
-                    )
-                },
-                text = "적금"
+    Column(modifier = modifier
+        .fillMaxSize()
+        .background(color = MainBgLightGray)
+        .verticalScroll(rememberScrollState())
+    ) {
+        Column(modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "....님",
+                modifier = Modifier.fillMaxWidth()
+                    .padding(start = 40.dp, top = 30.dp),
+                textAlign = TextAlign.Left,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold
+            )
+            CardCarousel(mainSavingState.savings,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp))
+
+            MainWideButton(
+                modifier = Modifier.height(60.dp),
+                onClick = {},
+                text = stringResource(R.string.all_acount_button)
             )
 
             Spacer(modifier = Modifier.padding(8.dp))
@@ -126,23 +137,24 @@ fun MainScreen(
                     text = "주변 팬 찾기"
                 )
 
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        Row {
-            MainSquareIconButton(
-                onClick = {
-                    navController.navigate(NavRoutes.SavingDeposit.route)
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = "Home",
-                        tint = MainBlack,
-                        modifier = Modifier.size(48.dp)
-                    )
-                },
-                text = "입금하기"
-            )
+                MainSquareIconButton(
+                    onClick = {
+                        navController.navigate(NavRoutes.FundingMain.route)
+                    },
+                    icon = {
+                        Box(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(CircleShape)
+                                .background(MainBtnLightOrange)
+                                .padding(10.dp)
+                        ) {
+                            ImageItem(Modifier.fillMaxSize(), { }, R.drawable.funding_box)
+                        }
+                    },
+                    text = "모금"
+                )
+            }
 
             Spacer(modifier = Modifier.padding(8.dp))
 
@@ -163,41 +175,15 @@ fun MainScreen(
                 },
                 text = "덕순이랑 놀기"
             )
-
-            Text("이 아래부터는 제거해야 합니다...", fontSize = 30.sp)
-            Row() {
-                MainSquareIconButton(
-                    onClick = {
-                        // TODO: 적금계좌 고유번호 pk 넘기기
-                        navController.navigate(NavRoutes.SavingMain.route + "/11")
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home",
-                            tint = MainBlack,
-                            modifier = Modifier.size(48.dp)
-                        )
-                    },
-                    text = "적금"
-                )
-
-                MainSquareIconButton(
-                    onClick = {
-                        navController.navigate(NavRoutes.SavingDesc.route)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home",
-                            tint = MainBlack,
-                            modifier = Modifier.size(48.dp)
-                        )
-                    },
-                    text = "적금 가입"
-                )
-            }
-
+            Text(
+                text = "스타별 적금 랭킹",
+                modifier = Modifier.fillMaxWidth()
+                    .padding(start = 40.dp, top = 40.dp, bottom = 20.dp),
+                textAlign = TextAlign.Left,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            MainRanking(viewModel, modifier = Modifier.padding(horizontal = 40.dp))
         }
     }
 }

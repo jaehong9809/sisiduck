@@ -1,6 +1,5 @@
 package com.a702.finafan.data.main.repository
 
-import android.util.Log
 import com.a702.finafan.data.main.api.MainApi
 import com.a702.finafan.data.main.dto.toDomain
 import com.a702.finafan.domain.main.model.MainRanking
@@ -42,7 +41,8 @@ class MainRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTotalTop3(): List<MainRanking> {
-        val response = api.getTotalTop3()
+        // TODO: 누적 랭킹 API 구현되면 API 교체
+        val response = api.getWeeklyTop3()
         return if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }
         } else {

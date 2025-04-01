@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
+import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 
 @Composable
 fun ThreeTabRow(
@@ -55,7 +57,17 @@ fun ThreeTabRow(
                         .background(
                             color = if (selectedIndex == index) selectedTabColor else Color.Transparent,
                             shape = RoundedCornerShape(15.dp)
-                        ),
+                        ).then(
+                            if (index == selectedIndex) Modifier.innerShadow(
+                                shape = RoundedCornerShape(15.dp),
+                                color = Color.Black.copy(alpha = 0.25f),
+                                blur = 5.dp,
+                                offsetX = 2.dp,
+                                offsetY = 2.dp,
+                                spread = 3.dp
+                            ) else Modifier
+                        )
+,
                     text = {
                         Text(
                             text = label,
@@ -71,32 +83,4 @@ fun ThreeTabRow(
             }
         }
     }
-}
-
-// 여기부터는 테스트 코드입니다
-@Preview
-@Composable
-fun FundingScreen() {
-    ThreeTabRow(
-        labels = listOf("진행 중 모금", "참여 중 모금", "내가 만든 모금"),
-        containerColor = MainWhite,
-        selectedTabColor = Color.Blue,
-        onTabSelected = listOf(
-            { getAllFundings() },
-            { getParticipatingFundings() },
-            { getMyFundings() }
-        )
-    )
-}
-
-fun getAllFundings() {
-    println("모든 모금 조회 API 호출")
-}
-
-fun getParticipatingFundings() {
-    println("참여 중인 모금 조회 API 호출")
-}
-
-fun getMyFundings() {
-    println("내가 생성한 모금 조회 API 호출")
 }
