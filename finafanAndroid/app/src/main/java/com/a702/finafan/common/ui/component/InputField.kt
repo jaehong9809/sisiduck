@@ -167,8 +167,7 @@ fun CommonTextField(
             onValueChange = { newText ->
                 if (maxLength == 0 || newText.length <= maxLength) {
                     if (isMoney) {
-                        val cleanedText = newText.replace(Regex("[^0-9]"), "")
-                        text.value = StringUtil.formatEditMoney(cleanedText.toLong())
+                        text.value = StringUtil.formatEditMoney(newText)
                     } else {
                         text.value = newText
                     }

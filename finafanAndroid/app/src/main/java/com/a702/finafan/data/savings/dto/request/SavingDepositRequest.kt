@@ -4,17 +4,17 @@ import com.a702.finafan.domain.savings.model.SavingDeposit
 import okhttp3.MultipartBody
 
 data class SavingDepositRequest(
-    val savingAccountId: Long,
-    val message: String,
-    val amount: Long,
-    val imageFile: MultipartBody.Part
+    val depositAccountId: Long = 0,
+    val message: String = "",
+    val transactionBalance: Long = 0,
+    val imageFile: MultipartBody.Part?
 )
 
 fun SavingDeposit.toData(): SavingDepositRequest {
     return SavingDepositRequest(
-        savingAccountId = this.savingAccountId,
+        depositAccountId = this.savingAccountId,
         message = this.message,
-        amount = this.amount,
+        transactionBalance = this.amount,
         imageFile = this.imageFile
     )
 }

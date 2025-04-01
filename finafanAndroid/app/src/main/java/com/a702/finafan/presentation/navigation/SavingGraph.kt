@@ -4,7 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.a702.finafan.presentation.savings.SavingAccountInfoScreen
+import com.a702.finafan.presentation.account.AllAccountScreen
+import com.a702.finafan.presentation.savings.SavingAccountManageScreen
 import com.a702.finafan.presentation.savings.SavingCancelScreen
 import com.a702.finafan.presentation.savings.SavingDepositScreen
 import com.a702.finafan.presentation.savings.SavingDescScreen
@@ -39,12 +40,13 @@ fun NavGraphBuilder.savingGraph(
             )
         }
 
-        composable(NavRoutes.SavingDeposit.route) {
-            SavingDepositScreen(onComplete = {
-                navController.navigate(NavRoutes.SavingMain.route) {
-                    launchSingleTop = true
-                }
-            })
+        composable(NavRoutes.SavingDeposit.route + "/{accountId}") { backStackEntry ->
+            val savingAccountId = backStackEntry.arguments?.getString("accountId")!!.toLongOrNull()
+
+            SavingDepositScreen(
+                savingViewModel,
+                savingAccountId ?: 0
+            )
         }
 
         composable(NavRoutes.SavingDesc.route) {
@@ -71,13 +73,7 @@ fun NavGraphBuilder.savingGraph(
 
         composable(NavRoutes.SavingSelectAccount.route) {
             SavingSelectAccountScreen(
-                savingViewModel,
-                onComplete = { savingId ->
-                    navController.navigate(NavRoutes.SavingMain.route + "/${savingId}") {
-                        popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
+                savingViewModel
             )
         }
 
@@ -86,8 +82,9 @@ fun NavGraphBuilder.savingGraph(
             TermGuideScreen(title, onConfirm = { navController.popBackStack() })
         }
 
-        composable(NavRoutes.SavingAccountInfo.route) {
-            SavingAccountInfoScreen(
+        composable(NavRoutes.SavingAccountManage.route) {
+            SavingAccountManageScreen(
+                savingViewModel,
                 onCancelClick = {
                     navController.navigate(NavRoutes.SavingCancel.route)
                 }
@@ -95,11 +92,14 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.SavingCancel.route) {
-            SavingCancelScreen(onComplete = {
-                navController.navigate(NavRoutes.Main.route) {
-                    popUpTo(NavRoutes.Main.route)
+            SavingCancelScreen(
+                savingViewModel,
+                onComplete = {
+                    navController.navigate(NavRoutes.Main.route) {
+                        popUpTo(NavRoutes.Main.route)
+                    }
                 }
-            })
+            )
         }
 
         composable(NavRoutes.RankingMain.route) {
@@ -110,6 +110,10 @@ fun NavGraphBuilder.savingGraph(
             RankingHistoryScreen(
                 viewModel = savingViewModel
             )
+        }
+
+        composable(NavRoutes.AllAccount.route) {
+            AllAccountScreen(savingViewModel)
         }
 
     }

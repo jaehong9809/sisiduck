@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.AddStarDialog
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.component.SearchField
@@ -51,8 +51,22 @@ fun StarSearchScreen(
 
     val context = LocalContext.current
     val uiState by viewModel.starState.collectAsState()
-    val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
+
+    val showDialog = rememberSaveable { mutableStateOf(false) }
+
+    if (showDialog.value) {
+        // 스타 추가 확인 다이얼로그
+        AddStarDialog(
+            showDialog,
+            selectStar.value,
+            onClickConfirm = {
+                showDialog.value = false
+
+                viewModel.updateSavingStar(selectStar.value)
+                onSelect()
+            }
+        )
+    }
 
     LaunchedEffect(Unit) {
         viewModel.fetchStars()
@@ -85,7 +99,8 @@ fun StarSearchScreen(
                 modifier = Modifier.padding(bottom = 22.dp),
                 text = name,
                 onClick = {
-                    // TODO: 스타 검색 API 호출
+                    // 스타 검색
+                    viewModel.fetchStars(name.value)
                 }
             )
 
@@ -98,7 +113,9 @@ fun StarSearchScreen(
                     item {
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        Text(text = stringResource(R.string.saving_item_empty_star),
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(R.string.saving_item_empty_star),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,
                             color = MainTextGray,
@@ -126,11 +143,7 @@ fun StarSearchScreen(
         PrimaryGradBottomButton(
             modifier = Modifier,
             onClick = {
-                // TODO: 스타 추가 확인 다이얼로그
-                // 여기서 추가 버튼 누르면 적금 이름 페이지로 이동
-                viewModel.updateSavingStar(selectStar.value)
-
-                onSelect()
+                showDialog.value = true
             },
             text = stringResource(R.string.btn_select),
             isEnabled = selectStar.value.entertainerId > 0)

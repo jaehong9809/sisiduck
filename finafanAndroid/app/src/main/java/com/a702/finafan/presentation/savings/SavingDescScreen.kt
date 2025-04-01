@@ -58,12 +58,9 @@ fun SavingDescScreen() {
             SecondDesc()
             ThirdDesc()
 
-            // TODO: 연결된 출금 계좌 있는지 확인하는 API 연결
-            val accountExist = true
-
             PrimaryGradButton(
                 onClick = {
-                    navController.navigate(if(accountExist) NavRoutes.StarSearch.route else NavRoutes.Account.route)
+                    navController.navigate(NavRoutes.StarSearch.route)
                 },
                 text = stringResource(R.string.btn_join),
                 modifier = Modifier

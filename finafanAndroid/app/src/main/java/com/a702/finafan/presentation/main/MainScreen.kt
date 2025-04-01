@@ -50,7 +50,7 @@ fun MainScreen(
         Row {
             MainSquareIconButton(
                 onClick = {
-                    val accountId = 2
+                    val accountId = 5
                     navController.navigate(NavRoutes.SavingMain.route + "/${accountId}")
                 },
                 icon = {
@@ -121,7 +121,7 @@ fun MainScreen(
         Row {
             MainSquareIconButton(
                 onClick = {
-                    navController.navigate(NavRoutes.SavingDeposit.route)
+                    navController.navigate(NavRoutes.SavingDeposit.route + "/5")
                 },
                 icon = {
                     Icon(
@@ -158,7 +158,7 @@ fun MainScreen(
         
         MainSquareIconButton(
             onClick = {
-                navController.navigate(NavRoutes.Account.route)
+                navController.navigate(NavRoutes.AllAccount.route)
             },
             icon = {
                 Icon(
@@ -168,7 +168,7 @@ fun MainScreen(
                     modifier = Modifier.size(48.dp)
                 )
             },
-            text = "1원 인증"
+            text = "전체 계좌"
         )
 
         Spacer(modifier = Modifier.padding(8.dp))

@@ -2,13 +2,19 @@ package com.a702.finafan.presentation.savings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
+import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
+import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
+import com.a702.finafan.domain.savings.usecase.DepositUseCase
+import com.a702.finafan.domain.savings.usecase.GetSavingAccountUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingUseCase
-import com.a702.finafan.domain.savings.usecase.GetStarsUseCase
+import com.a702.finafan.domain.savings.usecase.GetStarUseCase
+import com.a702.finafan.domain.savings.usecase.GetWithdrawalAccountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +25,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SavingViewModel @Inject constructor(
-    private val getStarsUseCase: GetStarsUseCase,
+    private val getStarUseCase: GetStarUseCase,
     private val getSavingUseCase: GetSavingUseCase,
+    private val createSavingUseCase: CreateSavingUseCase,
+    private val getWithdrawalAccountUseCase: GetWithdrawalAccountUseCase,
+    private val depositUseCase: DepositUseCase,
+    private val getSavingAccountUseCase: GetSavingAccountUseCase,
 ): ViewModel() {
 
     private val _savingState = MutableStateFlow(SavingState())
@@ -29,12 +39,12 @@ class SavingViewModel @Inject constructor(
     private val _starState = MutableStateFlow(StarState())
     val starState: StateFlow<StarState> = _starState.asStateFlow()
 
-    fun fetchStars() {
+    fun fetchStars(keyword: String? = null) {
         viewModelScope.launch {
             _starState.update { it.copy(isLoading = true) }
 
             try {
-                val stars = getStarsUseCase.invoke()
+                val stars = getStarUseCase(keyword)
 
                 _starState.update {
                     it.copy(
@@ -57,7 +67,7 @@ class SavingViewModel @Inject constructor(
         viewModelScope.launch {
             _savingState.update { it.copy(isLoading = true) }
 
-            val savingInfo = getSavingUseCase.invoke(savingAccountId)
+            val savingInfo = getSavingUseCase(savingAccountId)
 
             _savingState.update {
                 it.copy(
@@ -65,6 +75,111 @@ class SavingViewModel @Inject constructor(
                     isLoading = false
                 )
             }
+        }
+    }
+
+    fun createSaving(request: SavingCreateRequest) {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val accountId = createSavingUseCase(request)
+
+                _savingState.update {
+                    it.copy(
+                        createAccountId = accountId,
+                        isLoading = false,
+                    )
+                }
+
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
+    fun fetchWithdrawalAccount() {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val withdrawalAccounts = getWithdrawalAccountUseCase()
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        withdrawalAccounts = withdrawalAccounts
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        withdrawalAccounts = emptyList()
+                    )
+                }
+            }
+        }
+    }
+
+    fun depositSaving(request: SavingDepositRequest) {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val accountId = depositUseCase(request)
+
+                _savingState.update {
+                    it.copy(
+                        depositAccountId = accountId,
+                        isLoading = false
+                    ) }
+
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
+    fun fetchSavingAccount() {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val savingAccountInfo = getSavingAccountUseCase()
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        savingAccountInfo = savingAccountInfo
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
+    fun clearError() {
+        _savingState.update {
+            it.copy(
+                error = null
+            )
         }
     }
 
@@ -76,7 +191,7 @@ class SavingViewModel @Inject constructor(
         _savingState.update { it.copy(accountName = accountName) }
     }
 
-    fun updateSavingConnectAccount(account: Account) {
+    fun updateConnectAccount(account: Account) {
         _savingState.update { it.copy(connectAccount = account) }
     }
 

@@ -44,7 +44,7 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 @Composable
 fun SelectAccountField(
     viewModel: SavingViewModel,
-    accounts: MutableList<Account>
+    accounts: List<Account>
 ) {
 
     val savingState by viewModel.savingState.collectAsState()
@@ -106,7 +106,7 @@ fun SelectAccountField(
                         )
                     },
                     onClick = {
-                        viewModel.updateSavingConnectAccount(item)
+                        viewModel.updateConnectAccount(item)
                         expandStatus = false
                     }
                 )
