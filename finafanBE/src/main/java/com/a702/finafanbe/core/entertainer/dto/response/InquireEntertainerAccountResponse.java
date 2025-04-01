@@ -2,6 +2,8 @@ package com.a702.finafanbe.core.entertainer.dto.response;
 
 import com.a702.finafanbe.core.bank.entity.Bank;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
+import com.a702.finafanbe.core.entertainer.entity.Entertainer;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
