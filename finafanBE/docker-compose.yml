@@ -29,7 +29,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_PROFILES_ACTIVE: "local"
+      SPRING_PROFILES_ACTIVE: "local,redis-sentinel"
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
@@ -42,19 +42,9 @@ services:
       mysql:
         condition: service_healthy
 
-#  redis:
-#    image: redis:latest
-#    ports:
-#      - "6379:6379"
-#    volumes:
-#      - redis-data:/data
-#    networks:
-#      - app-network
-
 networks:
   app-network:
     driver: bridge
 
 volumes:
   mysql-data:
-  redis-data:

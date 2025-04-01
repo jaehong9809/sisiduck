@@ -54,9 +54,14 @@
     <string name="saving_item_connect_account">연결계좌</string>
     <string name="saving_item_apply_interest">적용금리</string>
     <string name="saving_item_empty_star">스타 목록이 없습니다.</string>
+    <string name="saving_item_name">%s 적금</string>
+    <string name="saving_item_create_fail">스타 적금 개설에 실패했습니다.</string>
+    <string name="saving_item_product_name_title">스타적금</string>
 
     <string name="format_money">%s원</string>
     <string name="format_duration">%s ~ %s</string>
+
+    <string name="saving_item_media_permission">미디어 권한에 동의하지 않았습니다.</string>
 
     <!-- TextField Label -->
     <string name="saving_item_name_label">적금 이름</string>
@@ -118,12 +123,14 @@
 
     <!-- Dialog -->
     <string name="withdraw_fail">출금계좌에 금액이 충분하지 않습니다.\n출금계좌의 잔액을 확인해 주세요. </string>
-    <string name="saving_item_start">오늘부터\n%s적금을 시작할게요!</string>
+    <string name="withdraw_server_fail">입금에 실패했습니다</string>
+    <string name="saving_item_start">오늘부터\n%s 적금을 시작할게요!</string>
     <string name="saving_item_star_not_exist">입력한 스타가\n존재하지 않습니다.</string>
     <string name="saving_item_exist">이미 가입한\n스타 적금입니다.</string>
     <string name="saving_item_change_name">적금 이름 변경</string>
     <string name="saving_item_cancel_complete">적금 해지가 완료되었어요!</string>
     <string name="saving_item_deposit_complete">입금이 완료되었어요!</string>
+    <string name="saving_item_withdrawal_empty">출금 가능 계좌가 없어요.\n계좌 연결을 해 볼까요?</string>
 
     <!-- Saving Ranking -->
     <string name="ranking_daily_title">일간</string>

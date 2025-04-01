@@ -22,9 +22,20 @@ spring:
     password: ${DATABASE_PASSWORD:test}
   data:
     redis:
+#      sentinel:
+#        master: ${REDIS_SENTINEL_MASTER:mymaster}
+#        nodes: ${REDIS_SENTINEL_NODES:redis-sentinel1:26379,redis-sentinel2:26380,redis-sentinel3:26381}
+      password: ${REDIS_PASSWORD:}
+      timeout: 5000
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PW}
+#      database: 0
+#      lettuce:
+#        pool:
+#          max-active: 8
+#          max-idle: 8
+#          min-idle: 0
+#          max-wait: -1ms
 
 management:
   endpoints:

@@ -22,13 +22,15 @@ import com.a702.finafan.common.ui.theme.MainBlack
 // 공통 바텀시트
 @Composable
 fun ConfirmBottomSheet(
+    showBottomSheet: MutableState<Boolean>,
     title: String? = null,
     content: String,
     isInfo: Boolean = true,
     onClickConfirm: () -> Unit
 ) {
-    DialogLayout(
-        isBottom = true,
+
+    BottomSheetLayout (
+        showBottomSheet = showBottomSheet,
         isConfirm = isInfo,
         onClickConfirm = onClickConfirm
     ) {
@@ -38,17 +40,20 @@ fun ConfirmBottomSheet(
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 color = MainBlack,
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                lineHeight = 30.sp
             )
-            Spacer(modifier = Modifier.height(16.dp))
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = content,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium,
             color = MainBlack,
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            lineHeight = 30.sp
         )
     }
 }
@@ -57,10 +62,11 @@ fun ConfirmBottomSheet(
 @Composable
 fun SavingNameBottomSheet(
     name: MutableState<String>,
-    onClickConfirm: () -> Unit
+    showBottomSheet: MutableState<Boolean>,
+    onClickConfirm: () -> Unit,
 ) {
-    DialogLayout(
-        isBottom = true,
+    BottomSheetLayout(
+        showBottomSheet = showBottomSheet,
         confirmBtnText = stringResource(R.string.btn_change),
         onClickConfirm = onClickConfirm,
         btnEnabled = name.value.isNotEmpty()
@@ -71,7 +77,8 @@ fun SavingNameBottomSheet(
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             color = MainBlack,
-            fontSize = 24.sp
+            fontSize = 24.sp,
+            lineHeight = 30.sp
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -90,6 +97,7 @@ fun SavingNameBottomSheet(
 @Composable
 fun CommonBottomPreview() {
     ConfirmBottomSheet(
+        showBottomSheet = remember { mutableStateOf(true) },
         content = "내용",
         onClickConfirm = {  }
     )
@@ -99,6 +107,7 @@ fun CommonBottomPreview() {
 @Composable
 fun CommonBottomWithTitlePreview() {
     ConfirmBottomSheet(
+        showBottomSheet = remember { mutableStateOf(true) },
         title = "제목",
         content = "내용",
         onClickConfirm = {  }
@@ -109,7 +118,8 @@ fun CommonBottomWithTitlePreview() {
 @Composable
 fun SavingNameBottomPreview() {
     SavingNameBottomSheet(
-        remember { mutableStateOf("이찬원") }
+        name = remember { mutableStateOf("이찬원") },
+        showBottomSheet = remember { mutableStateOf(true) }
     ) {
         // 이름 변경
     }

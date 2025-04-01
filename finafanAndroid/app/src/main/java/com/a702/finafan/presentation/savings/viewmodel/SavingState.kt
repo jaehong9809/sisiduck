@@ -17,7 +17,10 @@ data class SavingState(
     val inputAccountNo: String = "",
     val ranking: Ranking = Ranking(),
     val savingInfo: SavingInfo = SavingInfo(),
-    override val isLoading: Boolean = false,
+    val createAccountId: Long = 0,
+    val withdrawalAccounts: List<Account> = emptyList(),
+    val depositAccountId: Long = 0,
+    override val isLoading: Boolean = true,
     override val error: Throwable? = null,
     override val toastMessage: String? = null
 ): BaseState

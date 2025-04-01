@@ -78,20 +78,22 @@ fun MainScreen(
         }
     )
 
-    Column(modifier = modifier
-        .fillMaxSize()
-        .background(color = MainBgLightGray)
-    ) {
-        Column(modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CardCarousel(mainSavingState.savings,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp))
-
-            MainWideButton(
-                modifier = Modifier.height(60.dp),
-                onClick = {},
-                text = stringResource(R.string.all_acount_button)
+    Column(modifier = modifier) {
+        Row {
+            MainSquareIconButton(
+                onClick = {
+                    val accountId = 2
+                    navController.navigate(NavRoutes.SavingMain.route + "/${accountId}")
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = MainBlack,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                text = "적금"
             )
 
             Spacer(modifier = Modifier.padding(8.dp))
@@ -124,24 +126,23 @@ fun MainScreen(
                     text = "주변 팬 찾기"
                 )
 
-                MainSquareIconButton(
-                    onClick = {
-                        navController.navigate(NavRoutes.FundingMain.route)
-                    },
-                    icon = {
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(CircleShape)
-                                .background(MainBtnLightOrange)
-                                .padding(10.dp)
-                        ) {
-                            ImageItem(Modifier.fillMaxSize(), { }, R.drawable.funding_box)
-                        }
-                    },
-                    text = "모금"
-                )
-            }
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        Row {
+            MainSquareIconButton(
+                onClick = {
+                    navController.navigate(NavRoutes.SavingDeposit.route)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = MainBlack,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                text = "입금하기"
+            )
 
             Spacer(modifier = Modifier.padding(8.dp))
 
