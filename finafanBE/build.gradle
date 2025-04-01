@@ -53,6 +53,8 @@ dependencies {
 
     // Redis Sentinel 및 Cluster 관련 추가 의존성
     implementation 'org.apache.commons:commons-pool2:2.11.1'
+
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 }
 
 tasks.named('test') {
