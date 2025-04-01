@@ -14,7 +14,7 @@ enum class BankEnum(val code: String, val drawableRes: Int) {
     DAEGU("032", R.drawable.icon_dgb_bank),
     GWANGJU("034", R.drawable.icon_kj_bank),
     JEJU("035", R.drawable.icon_jj_bank),
-    JEONBUK("037", R.drawable.icon_jj_bank),
+    JEONBUK("037", R.drawable.icon_jb_bank),
     GYEONGNAM("039", R.drawable.icon_bnk_bank),
     SMG("045", R.drawable.icon_mg_bank),
     HANA("081", R.drawable.icon_hana_bank),

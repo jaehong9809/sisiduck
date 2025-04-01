@@ -43,14 +43,13 @@ fun ConnectAccountLayout(
         LazyColumn (
             modifier = Modifier
                 .weight(1f)
-//                .verticalScroll(rememberScrollState())
                 .background(MainWhite)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
             item {
                 Text(
-                    modifier = Modifier.padding(top = 36.dp),
+                    modifier = Modifier.padding(top = 16.dp),
                     text = title,
                     color = MainBlack,
                     fontSize = 24.sp,

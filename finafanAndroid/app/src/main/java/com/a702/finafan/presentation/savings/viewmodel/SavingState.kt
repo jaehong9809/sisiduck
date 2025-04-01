@@ -22,6 +22,7 @@ data class SavingState(
     val withdrawalAccounts: List<Account> = emptyList(),
     val depositAccountId: Long = 0,
     val savingAccountInfo: SavingAccountInfo = SavingAccountInfo(),
+    val bankList: List<Bank> = emptyList(),
     override val isLoading: Boolean = true,
     override val error: Throwable? = null,
     override val toastMessage: String? = null
