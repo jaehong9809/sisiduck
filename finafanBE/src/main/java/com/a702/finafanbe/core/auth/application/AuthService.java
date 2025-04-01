@@ -20,7 +20,7 @@ public class AuthService {
     private final UserRepository userRepository;
 
     public AuthTokens login(TokenRequest tokenRequest) {
-        String ssafyAccessToken = ssafyOAuthProvider.fetchSSAFyAccessToken(tokenRequest.code());
+        String ssafyAccessToken = ssafyOAuthProvider.fetchSSAFYAccessToken(tokenRequest.code());
         SSAFYUserInfo userInfo = ssafyOAuthProvider.getUserInfo(ssafyAccessToken);
 
         User user = findOrCreateUser(
