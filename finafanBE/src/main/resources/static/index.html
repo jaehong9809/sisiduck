@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>연예인 적금 랭킹</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        .rank-badge {
+            width: 2rem;
+            height: 2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+        .rank-1 { background-color: gold; color: #000; }
+        .rank-2 { background-color: silver; color: #000; }
+        .rank-3 { background-color: #cd7f32; color: #fff; }
+        .entertainer-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .ranking-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .user-ranking {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">연예인 적금 랭킹</h1>
+
+    <div class="row mb-4">
+        <div class="col text-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary active" id="dailyBtn">일간 랭킹</button>
+                <button type="button" class="btn btn-outline-primary" id="weeklyBtn">주간 랭킹</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 연예인 랭킹 -->
+        <div class="col-md-6" id="entertainerRankingContainer">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">연예인 랭킹</h5>
+                </div>
+                <div class="card-body ranking-container">
+                    <ul class="list-group" id="entertainerRanking">
+                        <!-- 연예인 랭킹 항목이 이곳에 동적으로 추가됩니다 -->
+                        <li class="list-group-item text-center">랭킹 데이터를 불러오는 중...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 사용자 랭킹 (특정 연예인 선택 시 표시) -->
+        <div class="col-md-6 user-ranking" id="userRankingContainer">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0"><span id="selectedEntertainerName">연예인</span> 팬 랭킹</h5>
+                </div>
+                <div class="card-body ranking-container">
+                    <ul class="list-group" id="userRanking">
+                        <!-- 사용자 랭킹 항목이 이곳에 동적으로 추가됩니다 -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 서버 설정
+    const API_URL = 'http://localhost:8080/api/v1';
+    const WS_URL = 'http://localhost:8080/ws-finafan';
+
+    // 전역 변수
+    let stompClient = null;
+    let currentRankingType = 'daily';
+    let selectedEntertainerId = null;
+
+    // 페이지 로드 시 실행
+    document.addEventListener('DOMContentLoaded', () => {
+        // 일간/주간 버튼 이벤트 리스너
+        document.getElementById('dailyBtn').addEventListener('click', () => switchRankingType('daily'));
+        document.getElementById('weeklyBtn').addEventListener('click', () => switchRankingType('weekly'));
+
+        // 초기 데이터 로드 (HTTP)
+        loadRankingData();
+
+        // WebSocket 연결
+        connectWebSocket();
+    });
+
+    // HTTP를 통한 랭킹 데이터 로드
+    function loadRankingData() {
+        fetch(`${API_URL}/ranking/${currentRankingType}/entertainers`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 'S0000') {
+                    updateEntertainerRanking(data.data);
+                } else {
+                    console.error('랭킹 데이터 로드 실패:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('API 호출 중 오류 발생:', error);
+            });
+    }
+
+    // 연예인 랭킹 UI 업데이트
+    function updateEntertainerRanking(entertainers) {
+        const rankingList = document.getElementById('entertainerRanking');
+        rankingList.innerHTML = '';
+
+        if (entertainers && entertainers.length > 0) {
+            entertainers.forEach(item => {
+                const rankClass = item.rank <= 3 ? `rank-${item.rank}` : 'bg-secondary text-white';
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex align-items-center';
+                listItem.dataset.id = item.entertainerId;
+                listItem.innerHTML = `
+                        <div class="rank-badge ${rankClass} me-3">${item.rank}</div>
+                        <img src="${item.profileUrl || '/placeholder.jpg'}" class="entertainer-img me-3" alt="${item.entertainerName}">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">${item.entertainerName}</h6>
+                        </div>
+                        <div class="fw-bold text-end">${formatNumber(item.totalAmount)} 원</div>
+                    `;
+                listItem.addEventListener('click', () => loadEntertainerDetail(item.entertainerId, item.entertainerName));
+                rankingList.appendChild(listItem);
+            });
+        } else {
+            rankingList.innerHTML = '<li class="list-group-item text-center">랭킹 데이터가 없습니다</li>';
+        }
+    }
+
+    // 특정 연예인 상세 랭킹 로드
+    function loadEntertainerDetail(entertainerId, entertainerName) {
+        selectedEntertainerId = entertainerId;
+        document.getElementById('selectedEntertainerName').textContent = entertainerName;
+        document.getElementById('userRankingContainer').style.display = 'block';
+
+        fetch(`${API_URL}/ranking/${currentRankingType}/entertainers/${entertainerId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 'S0000') {
+                    updateUserRanking(data.data);
+                } else {
+                    console.error('연예인 상세 랭킹 로드 실패:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('API 호출 중 오류 발생:', error);
+            });
+    }
+
+    // 사용자 랭킹 UI 업데이트
+    function updateUserRanking(detail) {
+        const userRankingList = document.getElementById('userRanking');
+        userRankingList.innerHTML = '';
+
+        if (detail && detail.userRankings && detail.userRankings.length > 0) {
+            detail.userRankings.forEach(item => {
+                const rankClass = item.rank <= 3 ? `rank-${item.rank}` : 'bg-secondary text-white';
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex align-items-center';
+                listItem.innerHTML = `
+                        <div class="rank-badge ${rankClass} me-3">${item.rank}</div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">${item.userName}</h6>
+                        </div>
+                        <div class="fw-bold text-end">${formatNumber(item.amount)} 원</div>
+                    `;
+                userRankingList.appendChild(listItem);
+            });
+        } else {
+            userRankingList.innerHTML = '<li class="list-group-item text-center">참여한 팬이 없습니다</li>';
+        }
+    }
+
+    // 일간/주간 랭킹 전환
+    function switchRankingType(type) {
+        if (currentRankingType === type) return;
+
+        currentRankingType = type;
+
+        // 버튼 활성화 상태 변경
+        if (type === 'daily') {
+            document.getElementById('dailyBtn').classList.add('active');
+            document.getElementById('dailyBtn').classList.remove('btn-outline-primary');
+            document.getElementById('dailyBtn').classList.add('btn-primary');
+            document.getElementById('weeklyBtn').classList.remove('active');
+            document.getElementById('weeklyBtn').classList.add('btn-outline-primary');
+            document.getElementById('weeklyBtn').classList.remove('btn-primary');
+        } else {
+            document.getElementById('weeklyBtn').classList.add('active');
+            document.getElementById('weeklyBtn').classList.remove('btn-outline-primary');
+            document.getElementById('weeklyBtn').classList.add('btn-primary');
+            document.getElementById('dailyBtn').classList.remove('active');
+            document.getElementById('dailyBtn').classList.add('btn-outline-primary');
+            document.getElementById('dailyBtn').classList.remove('btn-primary');
+        }
+
+        // 데이터 갱신
+        loadRankingData();
+
+        // 선택된 연예인이 있으면 해당 상세 정보도 갱신
+        if (selectedEntertainerId) {
+            const entertainerName = document.getElementById('selectedEntertainerName').textContent;
+            loadEntertainerDetail(selectedEntertainerId, entertainerName);
+        }
+    }
+
+    // WebSocket 연결
+    function connectWebSocket() {
+        const socket = new SockJS(WS_URL);
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, frame => {
+            console.log('WebSocket 연결 성공:', frame);
+
+            // 연예인 랭킹 구독 (일간/주간)
+            stompClient.subscribe('/topic/ranking/daily/entertainers', response => {
+                if (currentRankingType === 'daily') {
+                    const data = JSON.parse(response.body);
+                    updateEntertainerRanking(data);
+                }
+            });
+
+            stompClient.subscribe('/topic/ranking/weekly/entertainers', response => {
+                if (currentRankingType === 'weekly') {
+                    const data = JSON.parse(response.body);
+                    updateEntertainerRanking(data);
+                }
+            });
+
+            // 초기 데이터 요청
+            stompClient.send('/app/ranking/daily', {}, {});
+        }, error => {
+            console.error('WebSocket 연결 실패:', error);
+        });
+    }
+
+    // 숫자 포맷팅 (1,000 단위 콤마)
+    function formatNumber(num) {
+        return new Intl.NumberFormat('ko-KR').format(Math.round(num));
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

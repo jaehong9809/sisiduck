@@ -3,6 +3,7 @@ package com.a702.finafanbe.core.entertainer.presentation;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
+import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
@@ -15,6 +16,7 @@ import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccoun
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.WithdrawalAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
+import com.a702.finafanbe.core.ranking.application.RankingWebSocketService;
 import com.a702.finafanbe.core.s3.service.S3Service;
 import com.a702.finafanbe.core.savings.application.SavingsAccountService;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
@@ -41,6 +43,8 @@ public class EntertainSavingsController {
     private final S3Service s3Service;
     private final SavingsAccountService savingsAccountService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
+    private final RankingWebSocketService rankingWebSocketService;
+    private final EntertainSavingsService entertainSavingsService;
 
     @GetMapping("/account/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
@@ -105,6 +109,17 @@ public class EntertainSavingsController {
                 starTransferRequest.message(),
                 image
             );
+
+            EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(
+                    starTransferRequest.depositAccountId()
+            );
+
+            rankingWebSocketService.updateAndBroadcastRanking(
+                    savingsAccount.getUserId(),
+                    savingsAccount.getEntertainerId(),
+                    starTransferRequest.transactionBalance()
+            );
+
             return ResponseUtil.success(response);
         }
         return ResponseUtil.failure(new BadRequestException(ResponseData.createResponse(ErrorCode.SYSTEM_ERROR)));
