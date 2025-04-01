@@ -5,11 +5,13 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 @Table(name = "entertainer_savings_accounts")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE entertainer_savings_accounts SET delete_at = CURRENT_TIMESTAMP WHERE id = ?")
 public class EntertainerSavingsAccount extends BaseEntity {
 
     @Id
@@ -80,5 +82,9 @@ public class EntertainerSavingsAccount extends BaseEntity {
         this.interestRate = interestRate;
         this.duration = duration;
         this.imageUrl = imageUrl;
+    }
+
+    public void updateProductName(String productName) {
+        this.productName = productName;
     }
 }

@@ -2,6 +2,7 @@ package com.a702.finafanbe.core.entertainer.application;
 
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.entity.Bank;
+import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
@@ -12,6 +13,7 @@ import com.a702.finafanbe.core.entertainer.dto.response.EntertainerSearchRespons
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
+import com.a702.finafanbe.core.savings.application.SavingsAccountService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.EntertainerSavingsAccountRepository;
@@ -46,6 +48,7 @@ public class EntertainSavingsService {
     private final AccountRepository accountRepository;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final BankService bankService;
+    private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
 
     @Transactional
     public StarAccountResponse createEntertainerSavings(
@@ -202,5 +205,30 @@ public class EntertainSavingsService {
         return entertainers.stream()
             .map(EntertainerSearchResponse::of)
             .collect(Collectors.toList());
+    }
+
+    public InquireEntertainerAccountResponse putAccountAlias(
+            Long savingAccountId,
+            String newName
+    ) {
+        EntertainerSavingsAccount savingsAccount = findEntertainerAccountByDepositAccountId(savingAccountId);
+        Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
+        Bank bank = bankService.findBankById(account.getBankId());
+        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
+        Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
+        savingsAccount.updateProductName(newName);
+        return InquireEntertainerAccountResponse.of(
+                savingsAccount.getDepositAccountId(),
+                account.getAccountNo(),
+                account.getAccountName(),
+                account.getAmount(),
+                account.getCreatedAt(),
+                savingsAccount.getInterestRate(),
+                savingsAccount.getDuration(),
+                savingsAccount.getImageUrl(),
+                withdrawalAccount,
+                bank,
+                withdrawalBank
+        );
     }
 }
