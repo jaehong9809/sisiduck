@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -19,10 +22,12 @@ import com.a702.finafan.domain.savings.model.Star
 // 스타 추가 다이얼로그
 @Composable
 fun AddStarDialog(
+    showDialog: MutableState<Boolean>,
     star: Star,
     onClickConfirm: () -> Unit
 ) {
     DialogLayout(
+        showDialog = showDialog,
         isConfirm = false,
         confirmBtnText = stringResource(R.string.btn_add),
         onClickConfirm = onClickConfirm
@@ -47,8 +52,6 @@ fun AddStarDialog(
 @Preview
 @Composable
 fun AddStarDialogPreview() {
-    AddStarDialog (
-        Star(entertainerName = "이찬원"),
-        onClickConfirm = {  }
-    )
+    AddStarDialog (showDialog = remember { mutableStateOf(false) },
+        Star(entertainerName = "이찬원"), onClickConfirm = {  })
 }

@@ -63,6 +63,7 @@ fun SavingSelectAccountScreen(
 
     if (showAccountDialog.value) {
         ConfirmDialog(
+            showAccountDialog,
             content = context.getString(R.string.saving_item_withdrawal_empty),
             isConfirm = false,
             onClickConfirm = {
@@ -83,6 +84,7 @@ fun SavingSelectAccountScreen(
 
     if (showDialog.value) {
         ConfirmDialog(
+            showDialog,
             content = dialogContent.value,
             onClickConfirm = {
                 showDialog.value = false

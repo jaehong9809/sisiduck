@@ -50,6 +50,7 @@ fun SavingDepositScreen(
 
     if (showDialog.value) {
         ConfirmDialog(
+            showDialog,
             content = dialogContent.value,
             onClickConfirm = {
                 showDialog.value = false
