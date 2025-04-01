@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -53,8 +51,6 @@ fun StarSearchScreen(
 
     val context = LocalContext.current
     val uiState by viewModel.starState.collectAsState()
-    val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
 
     val showDialog = rememberSaveable { mutableStateOf(false) }
 
@@ -103,7 +99,8 @@ fun StarSearchScreen(
                 modifier = Modifier.padding(bottom = 22.dp),
                 text = name,
                 onClick = {
-                    // TODO: 스타 검색 API 호출
+                    // 스타 검색
+                    viewModel.fetchStars(name.value)
                 }
             )
 
@@ -116,7 +113,9 @@ fun StarSearchScreen(
                     item {
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        Text(text = stringResource(R.string.saving_item_empty_star),
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(R.string.saving_item_empty_star),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,
                             color = MainTextGray,

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetStarUseCase @Inject constructor(
     private val repository: SavingRepository
 ) {
-    suspend operator fun invoke(): List<Star> {
-        return repository.getStars()
+    suspend operator fun invoke(keyword: String?): List<Star> {
+        return repository.getStars(keyword)
     }
 }
