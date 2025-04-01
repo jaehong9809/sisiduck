@@ -4,7 +4,6 @@ import com.a702.finafan.common.data.dto.ApiResponse
 import com.a702.finafan.data.funding.dto.FundingDetailResponse
 import com.a702.finafan.data.funding.dto.FundingResponse
 import retrofit2.http.GET
-import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface FundingApi {

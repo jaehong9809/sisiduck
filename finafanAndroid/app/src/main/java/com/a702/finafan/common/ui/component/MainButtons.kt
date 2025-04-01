@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +53,7 @@ fun MainSquareIconButton(
     Box(
         modifier = modifier
             .size(156.dp)
+            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(24.dp))
             .background(MainWhite, shape = RoundedCornerShape(24.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -85,9 +87,10 @@ fun MainWideIconButton(
 ) {
     Box(
         modifier = modifier
-            .width(312.dp)
-            .height(156.dp)
-            .background(MainWhite, shape = RoundedCornerShape(16.dp))
+            .width(332.dp)
+            .height(120.dp)
+            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp))
+            .background(MainWhite, shape = RoundedCornerShape(20.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -95,8 +98,9 @@ fun MainWideIconButton(
             ),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             icon?.invoke()
+            Spacer(modifier = Modifier.width(25.dp))
             text.let {
                 Text(
                     text = it,
@@ -104,6 +108,37 @@ fun MainWideIconButton(
                     fontWeight = FontWeight.Medium,
                     color = MainBlack,
                     modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MainWideButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String
+) {
+    Box(
+        modifier = modifier
+            .width(332.dp)
+            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp))
+            .background(MainWhite, shape = RoundedCornerShape(20.dp))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onClick() }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            text.let {
+                Text(
+                    text = it,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MainBlack
                 )
             }
         }
