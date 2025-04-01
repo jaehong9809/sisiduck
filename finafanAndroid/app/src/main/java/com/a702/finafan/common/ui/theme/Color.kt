@@ -28,7 +28,7 @@ val EditTextGray = Color(0xFF7C7E87)
 val ErrorTextRed = Color(0xFFF44336)
 
 val BtnBgGray = Color(0xFFADB9D1)
-val E3E6EA = Color(0xFFE3E6EA)
+val AccountBoxGray = Color(0xFFE3E6EA)
 
 /* ------------ Star Color ------------ */
 val starGradGreen = Color(0xFF49DD81)

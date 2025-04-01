@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.ThreeTabRow
-import com.a702.finafan.common.ui.theme.E3E6EA
+import com.a702.finafan.common.ui.theme.AccountBoxGray
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
@@ -196,7 +196,7 @@ fun AllAccountHeader(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(E3E6EA, shape = RoundedCornerShape(15.dp))
+            .background(AccountBoxGray, shape = RoundedCornerShape(15.dp))
     ) {
         Row(
             modifier = Modifier
