@@ -18,15 +18,16 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface SavingApi {
     // 스타 목록
     @GET("v1/star")
     suspend fun getStars(): ApiResponse<List<StarResponse>>
 
-    // 스타 목록
+    // 스타 검색
     @GET("v1/star/search")
-    suspend fun starSearch(): ApiResponse<List<StarResponse>>
+    suspend fun starSearch(@Query(value = "keyword") keyword: String?): ApiResponse<List<StarResponse>>
 
 //    // 입금하기
 //    @PUT("v1/star/deposit")

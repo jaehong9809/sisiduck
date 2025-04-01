@@ -8,7 +8,7 @@ import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 
 interface SavingRepository {
-    suspend fun getStars(): List<Star>
+    suspend fun getStars(keyword: String?): List<Star>
 
     suspend fun deposit(request: SavingDepositRequest): Long
 

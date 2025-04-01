@@ -37,12 +37,12 @@ class SavingViewModel @Inject constructor(
     private val _starState = MutableStateFlow(StarState())
     val starState: StateFlow<StarState> = _starState.asStateFlow()
 
-    fun fetchStars() {
+    fun fetchStars(keyword: String? = null) {
         viewModelScope.launch {
             _starState.update { it.copy(isLoading = true) }
 
             try {
-                val stars = getStarUseCase()
+                val stars = getStarUseCase(keyword)
 
                 _starState.update {
                     it.copy(

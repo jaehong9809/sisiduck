@@ -20,8 +20,8 @@ class SavingRepositoryImpl @Inject constructor(
     private val api: SavingApi
 ): SavingRepository {
 
-    override suspend fun getStars(): List<Star> {
-        val response = api.getStars()
+    override suspend fun getStars(keyword: String?): List<Star> {
+        val response = keyword?.run { api.starSearch(this) } ?: api.getStars()
 
         return if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }
