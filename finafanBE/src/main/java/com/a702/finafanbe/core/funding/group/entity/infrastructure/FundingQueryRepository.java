@@ -79,16 +79,18 @@ public class FundingQueryRepository {
 
 
     public GetFundingDetailResponse findFundingDetail(Long userId, Long fundingId) {
+        // 모임 가입 여부 확인
         boolean participated = queryFactory
                 .selectOne()
                 .from(groupUser)
                 .where(groupUser.fundingGroupId.eq(fundingId), groupUser.userId.eq(userId))
                 .fetchFirst() != null;
 
+        // 모임에서의 adminUser의 pk 찾기
         Long adminUserId = queryFactory
                 .select(groupUser.userId)
                 .from(groupUser)
-                .where(groupUser.fundingGroupId.eq(fundingId), groupUser.userId.eq(userId))
+                .where(groupUser.fundingGroupId.eq(fundingId), groupUser.role.eq(Role.ADMIN))
                 .fetchOne();
 
         String adminName = queryFactory

@@ -8,10 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Table(name = "group_users")
-@SQLDelete(sql = "UPDATE group_user SET deletedAt = NOW()  WHERE id = ?")
+@SQLDelete(sql = "UPDATE group_users SET deleted_at = NOW()  WHERE id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GroupUser extends BaseEntity {
 
@@ -27,6 +29,9 @@ public class GroupUser extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @Builder
     private GroupUser(Long userId, Long fundingGroupId, Role role) {

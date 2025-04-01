@@ -91,7 +91,7 @@ public class FundingController {
             @PathVariable Long fundingSupportId
             //@AuthMember Long userId
     ) {
-        Long userId = 1L;
+        Long userId = 3L;
         fundingService.withdrawFunding(userId, fundingSupportId);
         return ResponseUtil.success();
     }

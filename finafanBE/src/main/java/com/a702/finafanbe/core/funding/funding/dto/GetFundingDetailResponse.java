@@ -12,7 +12,7 @@ public record GetFundingDetailResponse(
         Long goalAmount,
         Long currentAmount,
         LocalDateTime fundingExpiryDate,
-        List<FundingSupportResponse> fundingApplication
+        List<FundingSupportResponse> fundingSupports
 ) {
     public static GetFundingDetailResponse of(
             boolean participated,
@@ -23,7 +23,7 @@ public record GetFundingDetailResponse(
             Long goalAmount,
             Long currentAmount,
             LocalDateTime fundingExpiryDate,
-            List<FundingSupportResponse> fundingApplication
+            List<FundingSupportResponse> fundingSupports
     ) {
         return new GetFundingDetailResponse(
                 participated,
@@ -34,7 +34,7 @@ public record GetFundingDetailResponse(
                 goalAmount,
                 currentAmount,
                 fundingExpiryDate,
-                fundingApplication
+                fundingSupports
         );
     }
 }

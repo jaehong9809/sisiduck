@@ -36,7 +36,6 @@ public class FundingService {
     private final GroupUserRepository groupUserRepository;
     private final FundingSupportRepository fundingSupportRepository;
     private final GroupBoardRepository groupBoardRepository;
-    private final FundingGroupBoardService fundingGroupBoardService;
 
     // 펀딩 생성
     @Transactional
@@ -99,16 +98,19 @@ public class FundingService {
         checkAdminUser(userId, fundingId);
         fundingGroupRepository.deleteById(fundingId);
         fundingSupportRepository.deleteAllByFundingGroupId(fundingId);
+        groupUserRepository.deleteAllByFundingGroupId(fundingId);
     }
 
     @Transactional
     public void terminateFunding(Long userId, Long fundingId) {
         checkAdminUser(userId, fundingId);
-        if (!checkFundingStatus(fundingId).equals(FundingStatus.FINISHED)) {
+        if (checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
             throw new RuntimeException("펀딩이 종료되지 않았습니다.");
         }
         Long sum = groupBoardRepository.sumByFundingGroupId(fundingId);
         Long totalAmount = fundingSupportRepository.sumByFundingGroupId(fundingId);
+        System.out.println(sum);
+        System.out.println(totalAmount);
         if (!sum.equals(totalAmount)) {
             throw new RuntimeException("게시판에 펀딩 총액을 정확하게 입력해주세요.");
         }
