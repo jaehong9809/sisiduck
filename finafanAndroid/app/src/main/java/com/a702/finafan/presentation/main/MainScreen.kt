@@ -98,7 +98,7 @@ fun MainScreen(
             MainWideButton(
                 modifier = Modifier.height(60.dp),
                 onClick = {
-                    navController.navigate(NavRoutes.Account.route)
+                    navController.navigate(NavRoutes.AllAccount.route)
                 },
                 text = stringResource(R.string.all_acount_button)
             )
