@@ -70,19 +70,6 @@ fun AllAccountScreen(
         }
     }
 
-//    val count = when (selectedTabIndex.intValue) {
-//        0 -> savingState.savingAccountInfo.total
-//        1 -> 0 // TODO: 모금 통장 개수
-//        2 -> savingState.withdrawalAccounts.size
-//        else -> 0
-//    }
-//
-//    val accountAmount = when (selectedTabIndex.intValue) {
-//        0 -> savingState.savingAccountInfo.accountAmount
-//        1 -> 0 // TODO: 모금 통장 개수
-//        else -> 0
-//    }
-
     val count by remember(selectedTabIndex, savingState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
