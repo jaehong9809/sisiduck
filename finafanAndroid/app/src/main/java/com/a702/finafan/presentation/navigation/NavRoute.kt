@@ -44,4 +44,7 @@ sealed class NavRoutes(val route: String) {
     object FundingMain : NavRoutes("funding_main")
     object FundingDetail : NavRoutes("funding_detail")
     object FundingJoin : NavRoutes("funding_join")
+
+    /* AllAccount */
+    object AllAccount : NavRoutes("all_account")
 }
