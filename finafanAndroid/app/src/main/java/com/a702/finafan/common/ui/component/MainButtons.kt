@@ -114,6 +114,39 @@ fun MainWideIconButton(
     }
 }
 
+@Composable
+fun MainWideButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String
+) {
+    Box(
+        modifier = modifier
+            .width(332.dp)
+            .height(60.dp)
+            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp))
+            .background(MainWhite, shape = RoundedCornerShape(20.dp))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onClick() }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            text.let {
+                Text(
+                    text = it,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MainBlack,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+    }
+}
+
 /* Radius, drop-shadow 있음 */
 @Composable
 fun PrimaryGradButton(

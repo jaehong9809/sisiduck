@@ -1,15 +1,20 @@
 package com.a702.finafan.presentation.main
 
 import android.graphics.Paint
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,9 +30,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.theme.AccountTextGary
 import com.a702.finafan.common.ui.theme.MainBgGray
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
@@ -36,7 +44,12 @@ import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
+import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.ui.theme.starThemes
+import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.main.model.MainSaving
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 
 @Composable
 fun LoginContent() {
@@ -46,12 +59,14 @@ fun LoginContent() {
     ) {
         Icon(
             painter = painterResource(id = R.drawable.login),
-            contentDescription = "Icon Description",
+            contentDescription = "",
             tint = Color.Unspecified,
             modifier = Modifier.size(120.dp)
         )
+        Spacer(modifier = Modifier.height(10.dp))
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .height(50.dp)
                 .padding(horizontal = 20.dp)
                 .background(MainBgLightGray, shape = RoundedCornerShape(15.dp)),
@@ -69,6 +84,9 @@ fun LoginContent() {
 
 @Composable
 fun CreateSavingContent() {
+
+    val navController = LocalNavController.current
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -76,9 +94,10 @@ fun CreateSavingContent() {
     ) {
         Icon(
                 painter = painterResource(id = R.drawable.opened_box),
-                contentDescription = "Icon Description",
+                contentDescription = "",
                 tint = Color.Unspecified,
-                modifier = Modifier.width(120.dp)
+                modifier = Modifier
+                    .width(120.dp)
                     .padding(top = 25.dp)
             )
         Text(text = stringResource(R.string.card_create_saving_info),
@@ -88,11 +107,15 @@ fun CreateSavingContent() {
             fontFamily = Pretendard,
             modifier = Modifier.padding(top = 20.dp, bottom = 13.dp))
         Box(
-            modifier = Modifier.background(
-                brush = Brush.linearGradient(
-                    colors = listOf(MainGradBlue, MainGradViolet)))
+            modifier = Modifier
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(MainGradBlue, MainGradViolet)
+                    )
+                )
                 .fillMaxWidth()
-                .height(60.dp),
+                .height(60.dp)
+                .clickable { navController.navigate(NavRoutes.SavingDesc.route) },
             contentAlignment = Alignment.Center
         ) {
             Text(text = stringResource(R.string.card_create_saving_button),
@@ -104,36 +127,68 @@ fun CreateSavingContent() {
 }
 
 @Composable
-fun SavingContent(savingName: String) {
+fun SavingContent(saving: MainSaving) {
+
+    val navController = LocalNavController.current
+
     Column(
         modifier = Modifier.fillMaxHeight()
-    ) {
-        Row() {
-            Column() {
-                Text("이찬원 스타적금")
-                Text("123-455-124535")
-                Text("154,000원")
+            .clickable{
+                navController.navigate(NavRoutes.SavingMain.route + "/" + saving.savingId)
             }
-            Icon(
-                painter = painterResource(id = R.drawable.opened_box),
-                contentDescription = "Icon Description",
-                tint = Color.Unspecified,
-                modifier = Modifier.width(120.dp)
-                    .padding(top = 25.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .height(140.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier.padding(top = 20.dp, start = 20.dp)
+            ) {
+                Row(){
+                    Text(text = saving.starName,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 20.sp,
+                        color = MainBlack)
+                    Text(text = stringResource(R.string.card_saving_info),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp,
+                        color = MainBlack)
+                }
+                Text(text = saving.accountNo,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = AccountTextGary,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.padding(vertical = 3.dp)
+                )
+                Text(text = StringUtil.formatCurrency(saving.amount),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp,
+                    color = MainBlack,
+                    modifier = Modifier.padding(vertical = 20.dp))
+            }
+            Image(
+                painter = rememberAsyncImagePainter(saving.starImageUrl),
+                contentDescription = saving.starName,
+                modifier = Modifier
             )
         }
-    }
-    Box(
-        modifier = Modifier.background(
-            brush = Brush.linearGradient(
-                colors = listOf(MainGradBlue, MainGradViolet)))
-            .fillMaxWidth()
-            .height(60.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = stringResource(R.string.card_create_saving_button),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MainWhite)
+        Box(
+            modifier = Modifier
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(MainGradBlue, MainGradViolet)
+                    )
+                )
+                .fillMaxWidth()
+                .height(60.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = stringResource(R.string.card_saving_deposit_button),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite)
+        }
     }
 }

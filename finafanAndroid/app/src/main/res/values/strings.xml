@@ -5,6 +5,9 @@
     <string name="card_login_button">로그인</string>
     <string name="card_create_saving_info">아직 가입한 상품이 없어요!</string>
     <string name="card_create_saving_button">스타적금 시작하기</string>
+    <string name="card_saving_info"> 스타적금</string>
+    <string name="card_saving_deposit_button">입금하기</string>
+    <string name="all_acount_button">전체 계좌 보기</string>
 
     <!-- Chat Screen -->
     <string name="chatbot_talk_button">덕순이와 대화하기</string>

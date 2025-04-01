@@ -17,6 +17,8 @@ val MainTextGray = Color(0xFF5A5A5A)
 val MainTextBlue = Color(0XFF4D92F5)
 val MainBlackWithTransparency = MainBlack.copy(alpha = 0.7f)
 
+val AccountTextGary = Color(0xFFA0A0A0)
+
 val TermTextGray = Color(0xFF7C7E87)
 val TermBoxGray = Color(0xFFF2F3F7)
 
