@@ -8,10 +8,13 @@ import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse.REC;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
+import com.a702.finafanbe.core.entertainer.application.EntertainerService;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
+import com.a702.finafanbe.core.entertainer.dto.response.HomeEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
+import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
@@ -47,6 +50,7 @@ public class DemandDepositFacade {
     private final UserService userService;
     private final BankService bankService;
     private final SavingTransactionService savingTransactionService;
+    private final EntertainerService entertainerService;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -375,4 +379,28 @@ public class DemandDepositFacade {
                     UpdateDemandDepositAccountTransferResponse.class
             );
         }
+
+    public List<HomeEntertainerAccountResponse> findStarAccountsForHome(String userEmail) {
+        User user = userService.findUserByEmail(userEmail);
+        List<EntertainerSavingsAccount> starAccounts = entertainSavingsService.
+                findAccountByUserId(user.getUserId());
+        return starAccounts.stream()
+                .map(savingsAccount -> {
+                    Account depositAccount = inquireDemandDepositAccountService.findAccountById(
+                            savingsAccount.getDepositAccountId());
+                    Bank bank = bankService.findBankById(depositAccount.getBankId());
+                    Entertainer entertainer = entertainerService.findEntertainerById(savingsAccount.getEntertainerId());
+                    Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
+                            savingsAccount.getWithdrawalAccountId());
+                    Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
+                    return HomeEntertainerAccountResponse.of(
+                            depositAccount.getAccountId(),
+                            entertainer.getEntertainerName(),
+                            entertainer.getEntertainerProfileUrl(),
+                            depositAccount.getAccountNo(),
+                            depositAccount.getAmount()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
 }

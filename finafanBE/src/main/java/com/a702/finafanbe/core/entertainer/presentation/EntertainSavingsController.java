@@ -8,12 +8,7 @@ import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
-import com.a702.finafanbe.core.entertainer.dto.response.EntertainerDepositResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.EntertainerResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.EntertainerSearchResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.WithdrawalAccountResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.*;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.s3.service.S3Service;
 import com.a702.finafanbe.core.savings.application.SavingsAccountService;
@@ -50,6 +45,13 @@ public class EntertainSavingsController {
             EMAIL,
             savingAccountId
         ));
+    }
+
+    @GetMapping("/home")
+    public ResponseEntity<ResponseData<List<HomeEntertainerAccountResponse>>> getStarAccountsForHome(
+//            @AuthMember User user
+    ){
+        return ResponseUtil.success(demandDepositFacade.findStarAccountsForHome(EMAIL));
     }
 
     @GetMapping("/accounts")
