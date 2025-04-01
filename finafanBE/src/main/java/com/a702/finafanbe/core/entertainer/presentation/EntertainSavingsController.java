@@ -4,7 +4,7 @@ import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAcc
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
-import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
+import com.a702.finafanbe.core.demanddeposit.facade.*;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
@@ -59,7 +59,7 @@ public class EntertainSavingsController {
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<ResponseData<List<InquireEntertainerAccountResponse>>> getStarAccounts(
+    public ResponseEntity<ResponseData<EntertainerAccountsResponse>> getStarAccounts(
 //            @AuthMember User user
     ){
         return ResponseUtil.success(demandDepositFacade.findStarAccounts(EMAIL));
@@ -167,4 +167,20 @@ public class EntertainSavingsController {
         List<WithdrawalAccountResponse> accounts = savingsAccountService.getWithdrawalAccounts(email);
         return ResponseUtil.success(accounts);
     }
+
+    @PutMapping("/alias/{savingAccountId}")
+    public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> updateAccountAlias(
+            @PathVariable Long savingAccountId,
+            String newName
+    ){
+        return ResponseUtil.success(entertainSavingsService.putAccountAlias(
+                savingAccountId,
+                newName
+        ));
+    }
+
+//    @DeleteMapping("/{savingAccountId}")
+//    public ResponseEntity<ResponseData<Void>> deleteAccountAlias(@PathVariable Long savingAccountId){
+//        return ResponseUtil.success(entertainSavingsService.del)
+//    }
 }

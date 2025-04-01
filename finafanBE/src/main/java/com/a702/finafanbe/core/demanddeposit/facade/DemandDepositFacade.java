@@ -10,6 +10,7 @@ import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.application.EntertainerService;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
+import com.a702.finafanbe.core.entertainer.dto.response.EntertainerAccountsResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.HomeEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -249,33 +251,42 @@ public class DemandDepositFacade {
         );
     }
 
-    public List<InquireEntertainerAccountResponse> findStarAccounts(String userEmail) {
+    public EntertainerAccountsResponse findStarAccounts(String userEmail) {
         User user = userService.findUserByEmail(userEmail);
         List<EntertainerSavingsAccount> starAccounts = entertainSavingsService.
             findAccountByUserId(user.getUserId());
-        return starAccounts.stream()
-            .map(savingsAccount -> {
-                Account depositAccount = inquireDemandDepositAccountService.findAccountById(
-                    savingsAccount.getDepositAccountId());
-                Bank bank = bankService.findBankById(depositAccount.getBankId());
-                Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
-                    savingsAccount.getWithdrawalAccountId());
-                Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
-                return InquireEntertainerAccountResponse.of(
-                    depositAccount.getAccountId(),
-                    depositAccount.getAccountNo(),
-                    depositAccount.getAccountName(),
-                    depositAccount.getAmount(),
-                    depositAccount.getCreatedAt(),
-                    depositAccount.getInterestRate(),
-                    savingsAccount.getDuration(),
-                    savingsAccount.getImageUrl(),
-                    withdrawalAccount,
-                    bank,
-                    withdrawalBank
-                );
-            })
-            .collect(Collectors.toList());
+        BigDecimal totalValue = starAccounts.stream().map(
+                account-> {
+                    Account depositAccount = inquireDemandDepositAccountService.findAccountById(account.getDepositAccountId());
+                    return depositAccount.getAmount();
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return EntertainerAccountsResponse.of(
+                totalValue,
+                starAccounts.stream()
+                        .map(savingsAccount -> {
+                            Account depositAccount = inquireDemandDepositAccountService.findAccountById(
+                                    savingsAccount.getDepositAccountId());
+                            Bank bank = bankService.findBankById(depositAccount.getBankId());
+                            Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
+                                    savingsAccount.getWithdrawalAccountId());
+                            Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
+                            return InquireEntertainerAccountResponse.of(
+                                    depositAccount.getAccountId(),
+                                    depositAccount.getAccountNo(),
+                                    depositAccount.getAccountName(),
+                                    depositAccount.getAmount(),
+                                    depositAccount.getCreatedAt(),
+                                    depositAccount.getInterestRate(),
+                                    savingsAccount.getDuration(),
+                                    savingsAccount.getImageUrl(),
+                                    withdrawalAccount,
+                                    bank,
+                                    withdrawalBank
+                            );
+                        })
+                        .collect(Collectors.toList())
+        );
     }
 
     public InquireEntertainerHistoriesResponse inquireEntertainerHistories(
