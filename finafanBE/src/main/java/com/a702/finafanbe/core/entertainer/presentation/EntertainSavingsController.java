@@ -1,14 +1,10 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
-import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
-import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
-import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.EntertainerSavingsAccountRepository;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
-import com.a702.finafanbe.core.entertainer.dto.request.EntertainerTransactionHistoriesRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
@@ -19,10 +15,8 @@ import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccoun
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.WithdrawalAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
-import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.s3.service.S3Service;
 import com.a702.finafanbe.core.savings.application.SavingsAccountService;
-import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
@@ -34,7 +28,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/star")
@@ -98,7 +91,10 @@ public class EntertainSavingsController {
             transactionAccountNo);
 
         if(exchange.getStatusCode()== HttpStatus.OK){
-            String image = s3Service.uploadImage(starTransferRequest.imageFile());
+            String image ="";
+            if(starTransferRequest.imageFile()!=null){
+                image = s3Service.uploadImage(starTransferRequest.imageFile());
+            }
             EntertainerDepositResponse response = entertainService.deposit(
                 EMAIL,
                 depositAccount.getAccountId(),
