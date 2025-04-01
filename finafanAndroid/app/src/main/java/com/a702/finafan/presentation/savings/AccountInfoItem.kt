@@ -15,10 +15,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.presentation.account.BankEnum
 
 // 계좌번호 정보 아이템 (은행 사진 + 은행명 + 계좌번호)
 @Composable
@@ -31,11 +31,10 @@ fun AccountInfoItem(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // TODO: 은행명에 해당하는 은행 사진
         Image(
             modifier = Modifier
                 .size(if (isCancel) 34.dp else 44.dp),
-            painter = painterResource(id = R.drawable.info_circle),
+            painter = painterResource(id = BankEnum.getDrawable(account.bank.bankCode)),
             contentDescription = "info",
         )
 

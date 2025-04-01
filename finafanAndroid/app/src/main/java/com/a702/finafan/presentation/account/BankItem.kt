@@ -18,13 +18,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.gradientBlue
+import com.a702.finafan.domain.savings.model.Bank
 
 @Composable
-fun BankItem(bankName: String, isSelected: Boolean, onSelect: (String) -> Unit) {
+fun BankItem(
+    bank: Bank,
+    isSelected: Boolean,
+    onSelect: (Long) -> Unit
+) {
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -37,7 +41,7 @@ fun BankItem(bankName: String, isSelected: Boolean, onSelect: (String) -> Unit) 
                 }
             )
             .clickable {
-                onSelect(bankName)
+                onSelect(bank.bankId)
             },
     ) {
         Column(
@@ -45,17 +49,16 @@ fun BankItem(bankName: String, isSelected: Boolean, onSelect: (String) -> Unit) 
                 .padding(vertical = 16.dp, horizontal = 42.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // TODO: 은행 이미지 추가
             Image(
                 modifier = Modifier
                     .size(68.dp),
-                painter = painterResource(id = R.drawable.info_circle),
+                painter = painterResource(id = BankEnum.getDrawable(bank.bankCode)),
                 contentDescription = "bankImage",
             )
 
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                text = bankName,
+                text = bank.bankName,
                 color = MainBlack ,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
@@ -70,8 +73,5 @@ fun BankItem(bankName: String, isSelected: Boolean, onSelect: (String) -> Unit) 
 fun BankItemPreview() {
     var selectedBank = "NH농협"
 
-    BankItem(bankName = "NH농협", isSelected = selectedBank == "NH농협", onSelect = { selected ->
-        selectedBank = selected
-        println("Selected bank: $selected")
-    })
+    BankItem(Bank(bankId = 12, bankCode = "011", bankName = "NH농협"), false, onSelect = {})
 }
