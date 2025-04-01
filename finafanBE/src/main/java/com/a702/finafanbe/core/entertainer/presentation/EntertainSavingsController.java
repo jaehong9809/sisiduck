@@ -71,7 +71,7 @@ public class EntertainSavingsController {
     * TODO scheduler로 한 달 마다 이체가 되도록하면됨.
     *
     * */
-    @PutMapping("/despoit")
+    @PutMapping("/deposit")
     public ResponseEntity<ResponseData<EntertainerDepositResponse>> deposit(
             //@AuthMember User user,
             @ModelAttribute StarTransferRequest starTransferRequest
