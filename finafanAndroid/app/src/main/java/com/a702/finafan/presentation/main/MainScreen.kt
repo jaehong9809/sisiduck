@@ -137,60 +137,24 @@ fun MainScreen(
                     text = "주변 팬 찾기"
                 )
 
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        Row {
-            MainSquareIconButton(
-                onClick = {
-                    navController.navigate(NavRoutes.SavingDeposit.route + "/5")
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = "Home",
-                        tint = MainBlack,
-                        modifier = Modifier.size(48.dp)
-                    )
-                },
-                text = "입금하기"
-            )
-
-            Spacer(modifier = Modifier.padding(8.dp))
-
-            MainSquareIconButton(
-                onClick = {
-                    navController.navigate(NavRoutes.RankingMain.route)
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = "Home",
-                        tint = MainBlack,
-                        modifier = Modifier.size(48.dp)
-                    )
-                },
-                text = "랭킹"
-            )
-
-            Spacer(modifier = Modifier.padding(8.dp))
-        }
-
-        Spacer(modifier = Modifier.padding(8.dp))
-        
-        MainSquareIconButton(
-            onClick = {
-                navController.navigate(NavRoutes.Account.route)
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    contentDescription = "Home",
-                    tint = MainBlack,
-                    modifier = Modifier.size(48.dp)
+                MainSquareIconButton(
+                    onClick = {
+                        navController.navigate(NavRoutes.FundingMain.route)
+                    },
+                    icon = {
+                        Box(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(CircleShape)
+                                .background(MainBtnLightOrange)
+                                .padding(10.dp)
+                        ) {
+                            ImageItem(Modifier.fillMaxSize(), { }, R.drawable.funding_box)
+                        }
+                    },
+                    text = "모금"
                 )
-            },
-            text = "1원 인증"
-        )
+            }
 
             Spacer(modifier = Modifier.padding(8.dp))
 
