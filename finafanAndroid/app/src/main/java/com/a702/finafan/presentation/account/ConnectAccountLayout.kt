@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,43 +32,52 @@ fun ConnectAccountLayout(
     onButtonClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .imePadding()
-            .windowInsetsPadding(WindowInsets.ime)
-    ) {
-        // 공통 상단 바
-        CommonBackTopBar(modifier = Modifier, text = topBarTitle, isTextCentered = true)
-
-        LazyColumn (
-            modifier = Modifier
-                .weight(1f)
-                .background(MainWhite)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            item {
-                Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text = title,
-                    color = MainBlack,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 36.sp,
-                    textAlign = TextAlign.Start
-                )
-            }
-
-            item { content() }
+    Scaffold(
+        topBar = {
+            CommonBackTopBar(
+                modifier = Modifier,
+                text = topBarTitle,
+                isTextCentered = true
+            )
+        },
+        bottomBar = {
+            PrimaryGradBottomButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding(),
+                onClick = onButtonClick,
+                text = buttonText,
+                isEnabled = isButtonEnabled
+            )
         }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MainWhite)
+                .imePadding()
+                .windowInsetsPadding(WindowInsets.ime)
+        ) {
+            LazyColumn (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                item {
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = title,
+                        color = MainBlack,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 36.sp,
+                        textAlign = TextAlign.Start
+                    )
+                }
 
-        // 공통 하단 버튼
-        PrimaryGradBottomButton(
-            modifier = Modifier.fillMaxWidth().imePadding(),
-            onClick = onButtonClick,
-            text = buttonText,
-            isEnabled = isButtonEnabled
-        )
+                item { content() }
+            }
+        }
     }
 }

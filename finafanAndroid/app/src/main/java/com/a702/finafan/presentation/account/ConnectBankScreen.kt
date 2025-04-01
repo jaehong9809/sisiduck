@@ -107,6 +107,7 @@ fun ConnectBankScreen(
             LazyVerticalGrid (
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
+                    .padding(horizontal = 16.dp)
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),

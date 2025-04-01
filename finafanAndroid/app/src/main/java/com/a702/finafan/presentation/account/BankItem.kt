@@ -8,7 +8,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.gradientBlue
 import com.a702.finafan.domain.savings.model.Bank
 
@@ -33,8 +35,12 @@ fun BankItem(
 ) {
     Column(
         modifier = Modifier
-            .wrapContentSize()
-            .background(MainBgLightGray, shape = RoundedCornerShape(15.dp))
+            .wrapContentHeight()
+            .width(150.dp)
+            .background(
+                color = if (isSelected) MainWhite else MainBgLightGray,
+                shape = RoundedCornerShape(15.dp)
+            )
             .then(
                 if (isSelected) {
                     Modifier.border(2.dp, brush = gradientBlue, shape = RoundedCornerShape(15.dp))
@@ -52,7 +58,8 @@ fun BankItem(
     ) {
         Column(
             modifier = Modifier
-                .padding(vertical = 16.dp, horizontal = 42.dp),
+                .padding(vertical = 16.dp)
+                .align(Alignment.CenterHorizontally),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
@@ -63,7 +70,8 @@ fun BankItem(
             )
 
             Text(
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier
+                    .padding(top = 8.dp, start = 16.dp, end = 16.dp),
                 text = bank.bankName,
                 color = MainBlack ,
                 fontSize = 18.sp,
