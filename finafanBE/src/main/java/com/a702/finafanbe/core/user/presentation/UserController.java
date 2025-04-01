@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/star")
-    public ResponseEntity<?> getUserStarId(
+    public ResponseEntity<ResponseData<Long>> getUserStarId(
             @AuthMember User user
     ) {
         Long starId = userService.getUserStarId(user.getUserId());
@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/star")
-    public ResponseEntity<?> updateUserStarId(
+    public ResponseEntity<ResponseData<Long>> updateUserStarId(
             @AuthMember User user,
             @RequestBody UpdateStarIdRequest updateStarIdRequest
     ) {
