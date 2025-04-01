@@ -1,7 +1,7 @@
 package com.a702.finafanbe.core.savings.application;
 
 import com.a702.finafanbe.core.savings.dto.apidto.ApiCreateSavingAccountResponse;
-import com.a702.finafanbe.core.savings.dto.fundingDto.CreateFundingRequest;
+import com.a702.finafanbe.core.funding.funding.dto.CreateFundingRequest;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
