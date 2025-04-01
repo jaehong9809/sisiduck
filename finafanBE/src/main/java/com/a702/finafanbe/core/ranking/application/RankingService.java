@@ -22,7 +22,7 @@ public class RankingService {
 
     private final RedisTemplate<String, String> redisTemplate;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private static final int RANKING_LIMIT = 10;
+    private static final int RANKING_LIMIT = 3;
 
     private String getDailyEntertainerRankingKey() {
         LocalDate today = LocalDate.now();
