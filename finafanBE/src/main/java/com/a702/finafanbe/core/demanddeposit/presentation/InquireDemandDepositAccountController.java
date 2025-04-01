@@ -2,12 +2,13 @@ package com.a702.finafanbe.core.demanddeposit.presentation;
 
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountBalanceResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountHolderNameResponse;
+import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse.REC;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
-import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountResponse;
 
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,10 +33,12 @@ public class InquireDemandDepositAccountController {
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<ResponseData<InquireDemandDepositAccountListResponse>> getDemandDepositAccountList(
-            @RequestParam String userEmail
+    public ResponseEntity<ResponseData<List<REC>>> getDemandDepositAccountList(
     ) {
-        return ResponseUtil.success(demandDepositFacade.getDemandDepositListAccount(userEmail).getBody());
+        List<REC> rec = demandDepositFacade.getDemandDepositListAccount(
+            "lsc7134@naver.com").getBody().REC();
+
+        return ResponseUtil.success(rec);
 
     }
 

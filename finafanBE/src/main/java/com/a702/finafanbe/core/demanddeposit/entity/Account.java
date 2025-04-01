@@ -19,24 +19,23 @@ public class Account extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
-    @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(name = "account_no", nullable = false)
     private String accountNo;
 
-    /*precision : 소수점을 포함한 전체 자리 수*/
-    @Column(name = "balance", nullable = false, precision = 50)
-    private BigDecimal balance;
+    @Column(name = "amount", nullable = false, precision = 50)
+    private BigDecimal amount;
 
     @Column(name = "interest_rate", nullable = false)
-    private BigDecimal interestRate;
+    private Double interestRate;
 
     @Column(name = "status", nullable = false, length = 20)
     private String status;
 
-    @Column(name = "bank_code", nullable = false, length = 3)
-    private String bankCode;
+    @Column(name = "bank_id", nullable = false)
+    private Long bankId;
 
     @Column(name = "account_pw", nullable = false)
     private int accountPw;
@@ -79,4 +78,49 @@ public class Account extends BaseEntity {
 
     @Column(name = "subscription_period")
     private LocalDateTime subscriptionPeriod;
+
+    public BigDecimal addAmount(BigDecimal amount) {
+        return this.amount.add(amount);
+    }
+
+    public static Account of(
+        Long userId,
+        String accountNo,
+        String currency,
+        String accountName,
+        String accountTypeUniqueNo,
+        Long bankId
+    ) {
+        Account account = new Account(userId, accountNo, currency,accountName, accountTypeUniqueNo,bankId);
+        account.accountDescription = "기본 계좌 설명";
+        account.accountExpiryDate = LocalDateTime.now().plusYears(5);
+        account.accountPw = 1234;
+        account.accountTypeCode = "1";
+        account.amount = BigDecimal.ZERO;
+        account.interestRate = 0.01;
+        account.status = "ACTIVE";
+        account.dailyTransferLimit = new BigDecimal("5000000");
+        account.oneTimeTransferLimit = new BigDecimal("1000000");
+        account.lastTransactionDate = LocalDateTime.now();
+        account.minSubscriptionBalance = new BigDecimal("1000");
+        account.maxSubscriptionBalance = new BigDecimal("10000000");
+
+        return account;
+    }
+
+    private Account(
+            Long userId,
+            String accountNo,
+            String currency,
+            String accountName,
+            String accountTypeUniqueNo,
+            Long bankId
+    ){
+        this.userId = userId;
+        this.accountNo = accountNo;
+        this.currency = currency;
+        this.accountName = accountName;
+        this.accountTypeUniqueNo = accountTypeUniqueNo;
+        this.bankId = bankId;
+    }
 }
