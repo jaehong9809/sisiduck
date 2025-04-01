@@ -8,6 +8,7 @@ import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.data.savings.dto.response.toDomain
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.domain.savings.model.SavingAccountInfo
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.repository.SavingRepository
@@ -94,11 +95,11 @@ class SavingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun accountList(): List<SavingAccount> {
-        val response = api.accountList()
+    override suspend fun savingAccounts(): SavingAccountInfo {
+        val response = api.savingAccounts()
 
         return if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
+            response.data.toDomain()
         } else {
             throw Exception(response.message)
         }

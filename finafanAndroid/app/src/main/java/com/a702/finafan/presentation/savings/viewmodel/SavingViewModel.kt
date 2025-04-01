@@ -156,19 +156,19 @@ class SavingViewModel @Inject constructor(
             _savingState.update { it.copy(isLoading = true) }
 
             try {
-                val savingAccounts = getSavingAccountUseCase()
+                val savingAccountInfo = getSavingAccountUseCase()
 
                 _savingState.update {
                     it.copy(
                         isLoading = false,
-                        savingAccounts = savingAccounts
+                        savingAccountInfo = savingAccountInfo
                     )
                 }
             } catch (e: Exception) {
                 _savingState.update {
                     it.copy(
                         isLoading = false,
-                        savingAccounts = emptyList()
+                        error = e
                     )
                 }
             }
@@ -191,7 +191,7 @@ class SavingViewModel @Inject constructor(
         _savingState.update { it.copy(accountName = accountName) }
     }
 
-    fun updateSavingConnectAccount(account: Account) {
+    fun updateConnectAccount(account: Account) {
         _savingState.update { it.copy(connectAccount = account) }
     }
 

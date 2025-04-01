@@ -2,6 +2,8 @@ package com.a702.finafan.presentation.account
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +21,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +48,8 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 전체 계좌 목록 화면
@@ -51,86 +58,154 @@ fun AllAccountScreen(
     savingViewModel: SavingViewModel = viewModel()
 ) {
 
+    val navController = LocalNavController.current
+
     val savingState by savingViewModel.savingState.collectAsState()
     var selectedTabIndex = remember { mutableIntStateOf(0) }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .background(MainBgLightGray)
-    ) {
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Text(
-                    modifier = Modifier.padding(top = 20.dp, bottom = 12.dp),
-                    text = stringResource(R.string.all_account_title),
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MainBlack,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 34.sp
-                )
+    // 맨 처음 적금 계좌 목록 호출
+    LaunchedEffect(Unit) {
+        if (selectedTabIndex.value == 0) {
+            savingViewModel.fetchSavingAccount()
+        }
+    }
 
-                ThreeTabRow(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    labels = listOf(
-                        stringResource(R.string.all_account_saving_title),
-                        stringResource(R.string.all_account_funding_title),
-                        stringResource(R.string.all_account_other_title)
-                    ),
-                    containerColor = MainWhite,
-                    selectedTabColor = MainBlack,
-                    onTabSelected = listOf(
-                        {
-                            selectedTabIndex.intValue = 0
-                            // 적금 계좌 목록
-                            savingViewModel.fetchSavingAccount()
-                        },
-                        {
-                            selectedTabIndex.intValue = 1
-                            // TODO: 모금 계좌 목록 API 호출
-                        },
-                        {
-                            selectedTabIndex.intValue = 2
-                            // 출금 계좌 목록
-                            savingViewModel.fetchWithdrawalAccount()
-                        }
-                    ),
-                )
+//    val count = when (selectedTabIndex.intValue) {
+//        0 -> savingState.savingAccountInfo.total
+//        1 -> 0 // TODO: 모금 통장 개수
+//        2 -> savingState.withdrawalAccounts.size
+//        else -> 0
+//    }
+//
+//    val accountAmount = when (selectedTabIndex.intValue) {
+//        0 -> savingState.savingAccountInfo.accountAmount
+//        1 -> 0 // TODO: 모금 통장 개수
+//        else -> 0
+//    }
 
-                AllAccountHeader()
-
-                Spacer(modifier = Modifier.height(20.dp))
+    val count by remember(selectedTabIndex, savingState) {
+        derivedStateOf {
+            when (selectedTabIndex.intValue) {
+                0 -> savingState.savingAccountInfo.total
+                1 -> 0 // TODO: 모금 통장 개수
+                2 -> savingState.withdrawalAccounts.size
+                else -> 0
             }
         }
+    }
 
-        val accountList = when (selectedTabIndex.intValue) {
-            0 -> savingState.savingAccounts
-            1 -> emptyList() // TODO: 모금 통장 리스트
-            2 -> savingState.withdrawalAccounts
-            else -> emptyList()
+    val accountAmount by remember(selectedTabIndex, savingState) {
+        derivedStateOf {
+            when (selectedTabIndex.intValue) {
+                0 -> savingState.savingAccountInfo.accountAmount
+                1 -> 0 // TODO: 모금 통장 총액
+                else -> 0
+            }
         }
+    }
 
-        if (accountList.isNotEmpty()) {
-            items(accountList) { account ->
-                when (selectedTabIndex.intValue) {
-                    0 -> AccountItem(account as SavingAccount)
-                    1 -> AccountItem(account as SavingAccount) // TODO: 모금통장 타입으로 변경 필요
-                    2 -> WithdrawalAccountItem(account as Account)
+    val accountList = when (selectedTabIndex.intValue) {
+        0 -> savingState.savingAccountInfo.accounts
+        1 -> emptyList() // TODO: 모금 통장 리스트
+        2 -> savingState.withdrawalAccounts
+        else -> emptyList()
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MainBgLightGray)
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 20.dp, bottom = 12.dp),
+                        text = stringResource(R.string.all_account_title),
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MainBlack,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 34.sp
+                    )
+
+                    ThreeTabRow(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        labels = listOf(
+                            stringResource(R.string.all_account_saving_title),
+                            stringResource(R.string.all_account_funding_title),
+                            stringResource(R.string.all_account_other_title)
+                        ),
+                        containerColor = MainWhite,
+                        selectedTabColor = MainBlack,
+                        onTabSelected = listOf(
+                            {
+                                selectedTabIndex.intValue = 0
+                                // 적금 계좌 목록
+                                savingViewModel.fetchSavingAccount()
+                            },
+                            {
+                                selectedTabIndex.intValue = 1
+                                // TODO: 모금 계좌 목록 API 호출
+                            },
+                            {
+                                selectedTabIndex.intValue = 2
+                                // 출금 계좌 목록
+                                savingViewModel.fetchWithdrawalAccount()
+                            }
+                        ),
+                    )
+
+                    AllAccountHeader(selectedTabIndex, count, accountAmount)
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+
+            if (accountList.isNotEmpty()) {
+                items(accountList) { account ->
+                    when (selectedTabIndex.intValue) {
+                        0 -> SavingAccountItem(
+                            account as SavingAccount,
+                            onSelect = {
+                                navController.navigate(NavRoutes.SavingMain.route + "/${account.accountId}")
+                            }
+                        )
+                        1 -> SavingAccountItem(
+                            account as SavingAccount,
+                            onSelect = {
+                                // TODO: 모금통장 타입으로 변경 필요, 모금 통장 상세 화면으로 이동
+                            }
+                        )
+                        2 -> WithdrawalAccountItem(
+                            account as Account,
+                            onSelect = {
+                                savingViewModel.updateConnectAccount(account)
+                                navController.navigate(NavRoutes.ConnectAccount.route)
+                            }
+                        )
+                    }
                 }
             }
         }
     }
 
-
 }
 
 @Composable
-fun AllAccountHeader() {
+fun AllAccountHeader(
+    selectedTabIndex: MutableIntState,
+    count: Int,
+    accountAmount: Long
+) {
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -157,13 +232,14 @@ fun AllAccountHeader() {
 
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = "8",
+                    text = count.toString(),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MainBlack,
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp
                 )
+
 
                 Text(
                     text = stringResource(R.string.all_account_count_content),
@@ -178,25 +254,34 @@ fun AllAccountHeader() {
             Spacer(modifier = Modifier.width(8.dp))
 
             // 계좌 총 잔액
-            Text(
-                text = StringUtil.formatCurrency(1000000),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                color = MainBlack,
-                textAlign = TextAlign.Center,
-                lineHeight = 24.sp
-            )
+            if (selectedTabIndex.intValue < 2) {
+                Text(
+                    text = StringUtil.formatCurrency(accountAmount),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MainBlack,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 24.sp
+                )
+            }
         }
     }
 }
 
 @Composable
-fun WithdrawalAccountItem(account: Account) {
+fun WithdrawalAccountItem(account: Account, onSelect: () -> Unit) {
     Column {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MainWhite, RoundedCornerShape(20.dp)),
+                .background(MainWhite, RoundedCornerShape(20.dp))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        onSelect()
+                    }
+                ),
         ) {
             Row(
                 modifier = Modifier
@@ -227,12 +312,35 @@ fun WithdrawalAccountItem(account: Account) {
 }
 
 @Composable
-fun AccountItem(account: SavingAccount) {
+fun SavingAccountItem(account: SavingAccount, onSelect: () -> Unit) {
+    CommonAccountItem(
+        accountName = account.accountName,
+        accountNo = account.accountNo,
+        amount = account.amount,
+        onSelect = onSelect
+    )
+}
+
+@Composable
+fun CommonAccountItem(
+    accountName: String,
+    accountNo: String,
+    amount: Long,
+    onSelect: () -> Unit
+) {
+
     Column {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MainWhite, RoundedCornerShape(20.dp)),
+                .background(MainWhite, RoundedCornerShape(20.dp))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        onSelect()
+                    }
+                ),
         ) {
             Row(
                 modifier = Modifier
@@ -243,7 +351,7 @@ fun AccountItem(account: SavingAccount) {
             ) {
                 Column {
                     Text(
-                        text = stringResource(R.string.saving_item_name, account.accountName),
+                        text = stringResource(R.string.saving_item_name, accountName),
                         color = MainBlack,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -252,7 +360,7 @@ fun AccountItem(account: SavingAccount) {
 
                     Text(
                         modifier = Modifier.padding(top = 4.dp),
-                        text = stringResource(R.string.all_account_saving_account_no, account.accountNo),
+                        text = stringResource(R.string.all_account_saving_account_no, accountNo),
                         color = MainTextGray,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
@@ -264,7 +372,7 @@ fun AccountItem(account: SavingAccount) {
 
                 Text(
                     modifier = Modifier.padding(start = 16.dp),
-                    text = StringUtil.formatCurrency(account.amount),
+                    text = StringUtil.formatCurrency(amount),
                     color = MainBlack,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
@@ -280,7 +388,7 @@ fun AccountItem(account: SavingAccount) {
 @Preview
 @Composable
 fun AllAccountPreview() {
-    AccountItem(SavingAccount())
+    SavingAccountItem(SavingAccount(), onSelect = {})
 
 //    WithdrawalAccountItem(
 //        account = Account(

@@ -106,7 +106,7 @@ fun SelectAccountField(
                         )
                     },
                     onClick = {
-                        viewModel.updateSavingConnectAccount(item)
+                        viewModel.updateConnectAccount(item)
                         expandStatus = false
                     }
                 )
