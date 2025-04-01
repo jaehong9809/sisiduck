@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "accounts")
+@SQLDelete(sql = "UPDATE accounts SET delete_at = CURRENT_TIMESTAMP WHERE id = ?")
 public class Account extends BaseEntity {
 
     @Id
@@ -79,6 +81,9 @@ public class Account extends BaseEntity {
     @Column(name = "subscription_period")
     private LocalDateTime subscriptionPeriod;
 
+    @Column(name = "delete_at", nullable = false)
+    private LocalDateTime deleteAt;
+
     public BigDecimal addAmount(BigDecimal amount) {
         return this.amount.add(amount);
     }
@@ -122,5 +127,9 @@ public class Account extends BaseEntity {
         this.accountName = accountName;
         this.accountTypeUniqueNo = accountTypeUniqueNo;
         this.bankId = bankId;
+    }
+
+    public void updateName(String newName) {
+        this.accountName = newName;
     }
 }

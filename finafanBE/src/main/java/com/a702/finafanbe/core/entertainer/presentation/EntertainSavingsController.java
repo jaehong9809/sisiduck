@@ -171,7 +171,7 @@ public class EntertainSavingsController {
     @PutMapping("/alias/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> updateAccountAlias(
             @PathVariable Long savingAccountId,
-            String newName
+            @RequestBody  String newName
     ){
         return ResponseUtil.success(entertainSavingsService.putAccountAlias(
                 savingAccountId,

@@ -217,6 +217,7 @@ public class EntertainSavingsService {
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
         savingsAccount.updateProductName(newName);
+        account.updateName(newName);
         return InquireEntertainerAccountResponse.of(
                 savingsAccount.getDepositAccountId(),
                 account.getAccountNo(),

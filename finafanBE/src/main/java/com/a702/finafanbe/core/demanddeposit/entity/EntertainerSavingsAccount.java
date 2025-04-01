@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import java.time.LocalDateTime;
+
 @Table(name = "entertainer_savings_accounts")
 @Entity
 @Getter
@@ -41,6 +43,9 @@ public class EntertainerSavingsAccount extends BaseEntity {
 
     @Column(nullable = false, name = "image_url")
     private String imageUrl;
+
+    @Column(nullable = false, name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public static EntertainerSavingsAccount of(
         Long userId,
