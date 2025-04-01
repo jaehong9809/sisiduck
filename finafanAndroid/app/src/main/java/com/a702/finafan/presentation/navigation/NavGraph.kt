@@ -28,6 +28,10 @@ fun NavGraph(
                 MainScreen(navController, modifier)
             }
 
+            composable(NavRoutes.Login.route) {
+
+            }
+
             composable(NavRoutes.Chat.route) {
                 val chatViewModel: ChatViewModel = hiltViewModel()
                 ChatScreen(viewModel = chatViewModel)
