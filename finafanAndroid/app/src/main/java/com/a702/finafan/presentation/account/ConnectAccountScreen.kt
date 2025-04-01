@@ -24,11 +24,11 @@ fun ConnectAccountScreen(
 ) {
 
     val savingState by viewModel.savingState.collectAsState()
-    val selectBank = savingState.selectBank
+    val account = savingState.connectAccount
 
     ConnectAccountLayout (
         topBarTitle = stringResource(R.string.saving_account_connect_bank_title),
-        title = stringResource(R.string.connect_account_verification_code_confirm_title, selectBank.bankName),
+        title = stringResource(R.string.connect_account_confirm_title),
         buttonText = stringResource(R.string.btn_delete),
         isButtonEnabled = true,
         onButtonClick = { /* TODO: 연결 계좌 삭제 다이얼로그 띄우기 */ }
@@ -38,11 +38,11 @@ fun ConnectAccountScreen(
             AccountInfoItem(
                 modifier = Modifier.padding(top = 34.dp),
                 account = Account(
-                    accountNo = savingState.inputAccountNo,
+                    accountNo = account.accountNo,
                     bank = Bank(
-                        bankId = selectBank.bankId,
-                        bankCode = selectBank.bankCode,
-                        bankName = selectBank.bankName
+                        bankId = account.bank.bankId,
+                        bankCode = account.bank.bankCode,
+                        bankName = account.bank.bankName
                     )
                 ),
                 fontColor = MainTextGray

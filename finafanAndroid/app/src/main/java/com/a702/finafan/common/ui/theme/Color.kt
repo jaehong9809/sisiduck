@@ -30,6 +30,7 @@ val EditTextGray = Color(0xFF7C7E87)
 val ErrorTextRed = Color(0xFFF44336)
 
 val BtnBgGray = Color(0xFFADB9D1)
+val AccountBoxGray = Color(0xFFE3E6EA)
 
 val MainBtnLightBlue = Color(0xFFEDEEFF)
 val MainBtnLightOrange = Color(0xFFFFEDDC)

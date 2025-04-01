@@ -3,6 +3,7 @@ package com.a702.finafan.data.savings.api
 import com.a702.finafan.common.data.dto.ApiResponse
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.response.AccountResponse
+import com.a702.finafan.data.savings.dto.response.SavingAccountInfoResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountResponse
 import com.a702.finafan.data.savings.dto.response.SavingCreateResponse
 import com.a702.finafan.data.savings.dto.response.SavingDepositResponse
@@ -18,19 +19,16 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface SavingApi {
     // 스타 목록
     @GET("v1/star")
     suspend fun getStars(): ApiResponse<List<StarResponse>>
 
-    // 스타 목록
+    // 스타 검색
     @GET("v1/star/search")
-    suspend fun starSearch(): ApiResponse<List<StarResponse>>
-
-//    // 입금하기
-//    @PUT("v1/star/deposit")
-//    suspend fun deposit(@Part request: SavingDepositRequest): ApiResponse<SavingDepositResponse>
+    suspend fun starSearch(@Query(value = "keyword") keyword: String?): ApiResponse<List<StarResponse>>
 
     // 입금하기
     @Multipart
@@ -54,7 +52,7 @@ interface SavingApi {
 
     // 적금 계좌 목록 조회
     @GET("v1/star/accounts")
-    suspend fun accountList(): ApiResponse<List<SavingAccountResponse>>
+    suspend fun savingAccounts(): ApiResponse<SavingAccountInfoResponse>
 
     // 출금 계좌 목록 조회
     @GET("v1/star/withdrawal-accounts")

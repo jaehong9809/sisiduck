@@ -148,4 +148,14 @@
     <string name="ble_find_user">주변 팬 찾기</string>
     <string name="ble_finding_user">주변 탐색 중...</string>
 
+    <!-- All Account -->
+    <string name="all_account_title">내 계좌</string>
+    <string name="all_account_saving_title">적금</string>
+    <string name="all_account_funding_title">모금</string>
+    <string name="all_account_other_title">다른 금융</string>
+    <string name="all_account_count_header">총</string>
+    <string name="all_account_count_content">개</string>
+    <string name="all_account_saving_account_no">스타적금 %s</string>
+    <string name="all_account_funding_account_no">모금통장 %s</string>
+
 </resources>
