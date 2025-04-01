@@ -81,10 +81,10 @@ public class EntertainSavingsController {
                 starTransferRequest.transactionBalance()
         );
         String depositAccountNo = exchange.getBody().REC().stream()
-            .map(transaction -> transaction.accountNo())
+            .map(transaction -> transaction.transactionAccountNo())
             .findFirst().get();
         String transactionAccountNo = exchange.getBody().REC().stream()
-            .map(transaction -> transaction.transactionAccountNo())
+            .map(transaction -> transaction.accountNo())
             .findFirst().get();
         Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(depositAccountNo);
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountByAccountNo(
