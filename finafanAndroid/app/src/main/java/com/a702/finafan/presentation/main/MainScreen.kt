@@ -158,7 +158,7 @@ fun MainScreen(
         
         MainSquareIconButton(
             onClick = {
-                navController.navigate(NavRoutes.Account.route)
+                navController.navigate(NavRoutes.AllAccount.route)
             },
             icon = {
                 Icon(
@@ -168,7 +168,7 @@ fun MainScreen(
                     modifier = Modifier.size(48.dp)
                 )
             },
-            text = "1원 인증"
+            text = "전체 계좌"
         )
 
         Spacer(modifier = Modifier.padding(8.dp))

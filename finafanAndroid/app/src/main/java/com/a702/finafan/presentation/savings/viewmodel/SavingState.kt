@@ -4,6 +4,7 @@ import com.a702.finafan.common.presentation.BaseState
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
+import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.SavingInfo
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
@@ -20,6 +21,7 @@ data class SavingState(
     val createAccountId: Long = 0,
     val withdrawalAccounts: List<Account> = emptyList(),
     val depositAccountId: Long = 0,
+    val savingAccounts: List<SavingAccount> = emptyList(),
     override val isLoading: Boolean = true,
     override val error: Throwable? = null,
     override val toastMessage: String? = null

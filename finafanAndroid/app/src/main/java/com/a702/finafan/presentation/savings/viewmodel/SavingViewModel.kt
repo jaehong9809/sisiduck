@@ -11,6 +11,7 @@ import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
 import com.a702.finafan.domain.savings.usecase.DepositUseCase
+import com.a702.finafan.domain.savings.usecase.GetSavingAccountUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingUseCase
 import com.a702.finafan.domain.savings.usecase.GetStarUseCase
 import com.a702.finafan.domain.savings.usecase.GetWithdrawalAccountUseCase
@@ -29,6 +30,7 @@ class SavingViewModel @Inject constructor(
     private val createSavingUseCase: CreateSavingUseCase,
     private val getWithdrawalAccountUseCase: GetWithdrawalAccountUseCase,
     private val depositUseCase: DepositUseCase,
+    private val getSavingAccountUseCase: GetSavingAccountUseCase,
 ): ViewModel() {
 
     private val _savingState = MutableStateFlow(SavingState())
@@ -101,14 +103,6 @@ class SavingViewModel @Inject constructor(
         }
     }
 
-    fun clearError() {
-        _savingState.update {
-            it.copy(
-                error = null
-            )
-        }
-    }
-
     fun fetchWithdrawalAccount() {
         viewModelScope.launch {
             _savingState.update { it.copy(isLoading = true) }
@@ -154,6 +148,38 @@ class SavingViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun fetchSavingAccount() {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val savingAccounts = getSavingAccountUseCase()
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        savingAccounts = savingAccounts
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        savingAccounts = emptyList()
+                    )
+                }
+            }
+        }
+    }
+
+    fun clearError() {
+        _savingState.update {
+            it.copy(
+                error = null
+            )
         }
     }
 

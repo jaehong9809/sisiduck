@@ -29,10 +29,6 @@ interface SavingApi {
     @GET("v1/star/search")
     suspend fun starSearch(@Query(value = "keyword") keyword: String?): ApiResponse<List<StarResponse>>
 
-//    // 입금하기
-//    @PUT("v1/star/deposit")
-//    suspend fun deposit(@Part request: SavingDepositRequest): ApiResponse<SavingDepositResponse>
-
     // 입금하기
     @Multipart
     @PUT("v1/star/deposit")
