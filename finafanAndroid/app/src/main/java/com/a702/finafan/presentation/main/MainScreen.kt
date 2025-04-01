@@ -50,7 +50,7 @@ fun MainScreen(
         Row {
             MainSquareIconButton(
                 onClick = {
-                    val accountId = 2
+                    val accountId = 5
                     navController.navigate(NavRoutes.SavingMain.route + "/${accountId}")
                 },
                 icon = {
@@ -121,7 +121,7 @@ fun MainScreen(
         Row {
             MainSquareIconButton(
                 onClick = {
-                    navController.navigate(NavRoutes.SavingDeposit.route)
+                    navController.navigate(NavRoutes.SavingDeposit.route + "/5")
                 },
                 icon = {
                     Icon(

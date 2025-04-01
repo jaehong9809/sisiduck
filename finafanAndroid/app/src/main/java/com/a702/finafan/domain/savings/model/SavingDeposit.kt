@@ -6,5 +6,5 @@ data class SavingDeposit(
     val savingAccountId: Long = 0,
     val message: String = "",
     val amount: Long = 0,
-    val imageFile: MultipartBody.Part
+    val imageFile: MultipartBody.Part?
 )
