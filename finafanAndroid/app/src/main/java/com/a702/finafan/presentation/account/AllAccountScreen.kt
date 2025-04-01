@@ -26,7 +26,6 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,18 +54,26 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 // 전체 계좌 목록 화면
 @Composable
 fun AllAccountScreen(
+    selectedTabIndex: MutableIntState,
     savingViewModel: SavingViewModel = viewModel()
 ) {
 
     val navController = LocalNavController.current
 
     val savingState by savingViewModel.savingState.collectAsState()
-    var selectedTabIndex = remember { mutableIntStateOf(0) }
 
+    // TODO: API 두 번 호출되지 않는지 확인 필요
     // 맨 처음 적금 계좌 목록 호출
     LaunchedEffect(Unit) {
-        if (selectedTabIndex.value == 0) {
-            savingViewModel.fetchSavingAccount()
+//        if (selectedTabIndex.intValue == 0) {
+//            savingViewModel.fetchSavingAccount()
+//        }
+
+        // TODO: 선택된 탭에 맞게 호출되게 수정 필요
+        when (selectedTabIndex.intValue) {
+            0 -> savingViewModel.fetchSavingAccount()
+            1 -> 0 // TODO: 모금 통장 API
+            2 -> savingViewModel.fetchWithdrawalAccount()
         }
     }
 

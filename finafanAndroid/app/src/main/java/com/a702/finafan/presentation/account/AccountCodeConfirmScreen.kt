@@ -14,6 +14,8 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.AccountInfoItem
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
@@ -23,6 +25,8 @@ fun AccountCodeConfirmScreen(
     viewModel: SavingViewModel = viewModel()
 ) {
 
+    val navController = LocalNavController.current
+
     val savingState by viewModel.savingState.collectAsState()
     val selectBank = savingState.selectBank
 
@@ -30,7 +34,10 @@ fun AccountCodeConfirmScreen(
         title = stringResource(R.string.connect_account_verification_code_confirm_title, selectBank.bankName),
         buttonText = stringResource(R.string.btn_confirm),
         isButtonEnabled = true,
-        onButtonClick = { /* TODO: 연결 계좌 목록 화면으로 넘어가기 */ }
+        onButtonClick = {
+            // 연결 계좌 목록 화면으로 이동
+            navController.navigate(NavRoutes.AllAccount.route + "/2")
+        }
     ) {
 
         Column {

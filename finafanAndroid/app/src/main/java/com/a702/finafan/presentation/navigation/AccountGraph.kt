@@ -1,5 +1,7 @@
 package com.a702.finafan.presentation.navigation
 
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -8,6 +10,7 @@ import com.a702.finafan.presentation.account.AccountCodeConfirmScreen
 import com.a702.finafan.presentation.account.AccountCodeScreen
 import com.a702.finafan.presentation.account.AccountInputScreen
 import com.a702.finafan.presentation.account.AccountSendScreen
+import com.a702.finafan.presentation.account.AllAccountScreen
 import com.a702.finafan.presentation.account.ConnectAccountScreen
 import com.a702.finafan.presentation.account.ConnectBankScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -57,5 +60,14 @@ fun NavGraphBuilder.accountGraph(
             ConnectAccountScreen(savingViewModel)
         }
 
+        composable(NavRoutes.AllAccount.route + "/{selectedTabIndex}") { backStackEntry ->
+            val selectedTabIndex = remember {
+                mutableIntStateOf(
+                    backStackEntry.arguments?.getString("selectedTabIndex")?.toIntOrNull() ?: 0
+                )
+            }
+
+            AllAccountScreen(selectedTabIndex, savingViewModel)
+        }
     }
 }
