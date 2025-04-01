@@ -179,8 +179,9 @@ public class EntertainSavingsController {
         ));
     }
 
-//    @DeleteMapping("/{savingAccountId}")
-//    public ResponseEntity<ResponseData<Void>> deleteAccountAlias(@PathVariable Long savingAccountId){
-//        return ResponseUtil.success(entertainSavingsService.del)
-//    }
+    @DeleteMapping("/{savingAccountId}")
+    public ResponseEntity<ResponseData<Void>> deleteAccountAlias(@PathVariable Long savingAccountId){
+        demandDepositFacade.deleteStarAccount(savingAccountId);
+        return ResponseUtil.success();
+    }
 }

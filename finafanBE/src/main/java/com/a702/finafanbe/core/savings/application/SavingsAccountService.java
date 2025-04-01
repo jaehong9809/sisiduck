@@ -4,7 +4,6 @@ import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.entity.Bank;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
-import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.WithdrawalAccountResponse;
 import com.a702.finafanbe.core.savings.dto.request.*;
 import com.a702.finafanbe.core.savings.dto.response.*;
@@ -30,7 +29,6 @@ public class SavingsAccountService {
     private final UserService userService;
     private final BankService bankService;
     private final AccountRepository accountRepository;
-    private final SavingsAccountRepository savingsAccountRepository;
 
 
     public RegisterSavingProductResponse createSavingsProduct(
@@ -135,7 +133,9 @@ public class SavingsAccountService {
     public List<WithdrawalAccountResponse> getWithdrawalAccounts(String email) {
         User user = userService.findUserByEmail(email);
 
-        List<Account> accounts = findUser(user);
+        List<Account> accounts = accountRepository.findByUserId(
+                user.getUserId())
+            .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_ACCOUNT)));
 
         return accounts.stream()
             .map(account -> {
@@ -143,12 +143,5 @@ public class SavingsAccountService {
                 return WithdrawalAccountResponse.of(account, bank);
             })
             .collect(Collectors.toList());
-    }
-
-    private List<Account> findUser(User user) {
-        List<Account> accounts = accountRepository.findByUserId(
-                user.getUserId())
-            .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_ACCOUNT)));
-        return accounts;
     }
 }

@@ -7,7 +7,7 @@ public record DeleteAccountResponse(
     REC REC
 ) {
 
-    private record REC(
+    public record REC(
         String status,
         String accountNo,
         String refundAccountNo,

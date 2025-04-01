@@ -231,4 +231,9 @@ public class EntertainSavingsService {
                 withdrawalBank
         );
     }
+
+
+    public void deleteByAccountId(Long accountId) {
+        entertainerSavingsAccountRepository.deleteById(accountId);
+    }
 }

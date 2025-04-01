@@ -2,11 +2,13 @@ package com.a702.finafanbe.core.demanddeposit.facade;
 
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.entity.Bank;
+import com.a702.finafanbe.core.demanddeposit.application.DeleteAccountService;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse.REC;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
+import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.application.EntertainerService;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
@@ -16,6 +18,7 @@ import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccoun
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
+import com.a702.finafanbe.core.savings.application.SavingsAccountService;
 import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
@@ -53,6 +56,9 @@ public class DemandDepositFacade {
     private final BankService bankService;
     private final SavingTransactionService savingTransactionService;
     private final EntertainerService entertainerService;
+    private final SavingsAccountService savingsAccountService;
+    private final DeleteAccountService deleteAccountService;
+    private final AccountRepository accountRepository;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -413,5 +419,23 @@ public class DemandDepositFacade {
                     );
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void deleteStarAccount(Long savingAccountId) {
+        Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
+        EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(savingAccountId);
+        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
+        DeleteAccountResponse.REC deleteResponse = deleteAccountService.deleteAccount(
+                "/demandDeposit/deleteDemandDepositAccount",
+                financialRequestFactory.deleteAccountRequest(
+                        EMAIL,
+                        account.getAccountNo(),
+                        "deleteDemandDepositAccount",
+                        withdrawalAccount.getAccountNo()
+                )
+        ).getBody().REC();
+        Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(deleteResponse.accountNo());
+        entertainSavingsService.deleteByAccountId(depositAccount.getAccountId());
+        accountRepository.deleteById(account.getAccountId());
     }
 }
