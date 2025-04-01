@@ -276,10 +276,9 @@ fun WithdrawalAccountItem(account: Account, onSelect: () -> Unit) {
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // TODO: 은행명에 해당하는 은행 사진
                 Image(
                     modifier = Modifier.size(34.dp),
-                    painter = painterResource(id = R.drawable.info_circle),
+                    painter = painterResource(id = BankEnum.getDrawable(account.bank.bankCode)),
                     contentDescription = "info",
                 )
 
