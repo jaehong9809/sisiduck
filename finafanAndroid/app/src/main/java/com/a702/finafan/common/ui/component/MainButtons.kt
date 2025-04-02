@@ -33,14 +33,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.BtnBgGray
-import com.a702.finafan.common.ui.theme.MainBgGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
-import kotlin.collections.List
 
 /* 메인 메뉴용 IconButton */
 @Composable
@@ -365,6 +363,36 @@ fun GradSelectBottomButton(
         ) {
             Text(
                 text = right,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite
+            )
+        }
+    }
+}
+
+@Composable
+fun BlackButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String? = null,
+) {
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onClick() }
+            )
+            .background(MainBlack, shape = RoundedCornerShape(20.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        text?.let {
+            Text(
+                text = it,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MainWhite

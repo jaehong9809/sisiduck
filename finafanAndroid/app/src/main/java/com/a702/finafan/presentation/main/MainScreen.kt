@@ -17,9 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.ImageItem
@@ -44,11 +40,9 @@ import com.a702.finafan.common.ui.component.MainSquareIconButton
 import com.a702.finafan.common.ui.component.MainWideButton
 import com.a702.finafan.common.ui.component.MainWideIconButton
 import com.a702.finafan.common.ui.theme.MainBgLightGray
-import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainBtnLightBlue
 import com.a702.finafan.common.ui.theme.MainBtnLightOrange
 import com.a702.finafan.common.ui.theme.MainBtnLightYellow
-import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.infrastructure.android.BleForegroundService
 import com.a702.finafan.presentation.ble.rememberBlePermissionLauncher
 import com.a702.finafan.presentation.main.viewmodel.MainViewModel
@@ -103,7 +97,9 @@ fun MainScreen(
 
             MainWideButton(
                 modifier = Modifier.height(60.dp),
-                onClick = {},
+                onClick = {
+                    navController.navigate(NavRoutes.AllAccount.route)
+                },
                 text = stringResource(R.string.all_acount_button)
             )
 
