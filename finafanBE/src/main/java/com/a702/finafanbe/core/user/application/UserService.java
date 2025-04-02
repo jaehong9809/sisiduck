@@ -29,6 +29,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final FinancialNetworkUtil financialNetworkUtil;
 
+    public User getUser(Long userId) {
+        return findUserOrThrow(userId);
+    }
+
 //    public User signUp(UserRequest userRequest) {
 //        getUser(userRequest);
 //        return userRepository.save(User.of(userRequest));
@@ -120,5 +124,4 @@ public class UserService {
                                 .message(ErrorCode.NotFoundUser.getMessage())
                                 .build()));
     }
-
 }
