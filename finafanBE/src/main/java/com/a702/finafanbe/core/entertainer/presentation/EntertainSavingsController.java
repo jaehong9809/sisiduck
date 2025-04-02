@@ -171,11 +171,11 @@ public class EntertainSavingsController {
     @PutMapping("/alias/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> updateAccountAlias(
             @PathVariable Long savingAccountId,
-            @RequestBody  String newName
+            @RequestBody  UpdateSavingsRequest updateSavingsRequest
     ){
         return ResponseUtil.success(entertainSavingsService.putAccountAlias(
                 savingAccountId,
-                newName
+                updateSavingsRequest.newName()
         ));
     }
 
@@ -185,9 +185,9 @@ public class EntertainSavingsController {
         return ResponseUtil.success();
     }
 
-    @DeleteMapping("/{savingAccountId}/withdrawal")
-    public ResponseEntity<ResponseData<Void>> deleteAccountConnect(@PathVariable Long savingAccountId){
-        demandDepositFacade.deleteStarAccountWithdrawal(savingAccountId);
-        return ResponseUtil.success();
-    }
+//    @DeleteMapping("/{accountId}/withdrawal")
+//    public ResponseEntity<ResponseData<Void>> deleteAccountConnect(@PathVariable Long accountId){
+//        demandDepositFacade.deleteAccount(accountId);
+//        return ResponseUtil.success();
+//    }
 }

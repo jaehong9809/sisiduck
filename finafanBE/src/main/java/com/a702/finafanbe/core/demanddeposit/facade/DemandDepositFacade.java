@@ -89,7 +89,6 @@ public class DemandDepositFacade {
     }
 
     public ResponseEntity<DeleteAccountResponse> deleteAccount(
-            String userEmail,
             String accountNo,
             String refundAccountNo
     ) {
@@ -97,7 +96,7 @@ public class DemandDepositFacade {
         return apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/deleteDemandDepositAccount",
                 financialRequestFactory.deleteAccountRequest(
-                        userEmail,
+                        EMAIL,
                         accountNo,
                         "deleteDemandDepositAccount",
                         refundAccountNo
@@ -441,11 +440,5 @@ public class DemandDepositFacade {
         Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(deleteResponse.accountNo());
         entertainSavingsService.deleteByAccountId(depositAccount.getAccountId());
         accountRepository.deleteById(account.getAccountId());
-    }
-
-    public void deleteStarAccountWithdrawal(Long savingAccountId) {
-        Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
-        EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(savingAccountId);
-        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
     }
 }
