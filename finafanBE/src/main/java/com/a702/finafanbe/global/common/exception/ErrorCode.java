@@ -52,7 +52,9 @@ public enum ErrorCode {
     EXIST_SAVINGS_PRODUCT("E8002", "해당 연예인 적금 상품을 이미 보유중입니다."),
     NOT_FOUND_DEMAND_DEPOSIT_PRODUCT("E8003", "수시입출금 상품을 찾을 수 없습니다."),
     NOT_FOUND_ACCOUNT("E8004", "계좌를 찾을 수 없습니다"),
-    NOT_FOUND_BANK("E8005", "은행을 찾을 수 없습니다");
+    NOT_FOUND_BANK("E8005", "은행을 찾을 수 없습니다"),
+    ENTERTAINER_SAVINGS_CONSTRAINT("E8006", "연예인 적금과 연결된 계좌는 해제할 수 없습니다."),
+    ENTERTAINER_SAVINGS("E8007", "연예인 적금은 이곳에서 삭제할 수 없습니다.");
 
     private final String code;
     private final String message;

@@ -13,7 +13,6 @@ import com.a702.finafanbe.core.entertainer.dto.response.EntertainerSearchRespons
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
-import com.a702.finafanbe.core.savings.application.SavingsAccountService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.EntertainerSavingsAccountRepository;
@@ -23,6 +22,7 @@ import com.a702.finafanbe.core.transaction.deposittransaction.entity.infrastruct
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import java.math.BigDecimal;
 import java.util.stream.Collectors;
@@ -116,7 +116,7 @@ public class EntertainSavingsService {
             Long userId,
             Long entertainerId
     ) {
-        return entertainerSavingsAccountRepository.existsByUserIdAndEntertainerId(
+        return entertainerSavingsAccountRepository.existsByUserIdAndEntertainerIdAndDeletedAtNotNull(
                 userId,
                 entertainerId
         );
@@ -191,6 +191,10 @@ public class EntertainSavingsService {
             () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
+    public boolean existsEntertainerAccountByWithdrawalAccountId(Long savingAccountId) {
+        return entertainerSavingsAccountRepository.existsByWithdrawalAccountId(savingAccountId);
+    }
+
     public List<EntertainerSavingsAccount> findAccountByUserId(Long userId) {
         return entertainerSavingsAccountRepository.findByUserId(userId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundUser)));
     }
@@ -207,6 +211,7 @@ public class EntertainSavingsService {
             .collect(Collectors.toList());
     }
 
+    @Transactional
     public InquireEntertainerAccountResponse putAccountAlias(
             Long savingAccountId,
             String newName
@@ -216,7 +221,7 @@ public class EntertainSavingsService {
         Bank bank = bankService.findBankById(account.getBankId());
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
-        savingsAccount.updateProductName(newName);
+        account.updateName(newName);
         return InquireEntertainerAccountResponse.of(
                 savingsAccount.getDepositAccountId(),
                 account.getAccountNo(),
@@ -230,5 +235,14 @@ public class EntertainSavingsService {
                 bank,
                 withdrawalBank
         );
+    }
+
+
+    public void deleteByAccountId(Long accountId) {
+        entertainerSavingsAccountRepository.deleteById(accountId);
+    }
+
+    public boolean existsEntertainerAccountByDepositAccountId(Long accountId) {
+        return entertainerSavingsAccountRepository.existsByDepositAccountId(accountId);
     }
 }

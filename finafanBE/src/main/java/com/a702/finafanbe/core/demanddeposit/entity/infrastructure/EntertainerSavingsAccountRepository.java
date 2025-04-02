@@ -8,11 +8,15 @@ import java.util.List;
 
 public interface EntertainerSavingsAccountRepository extends JpaRepository<EntertainerSavingsAccount, Long> {
 
-    boolean existsByUserIdAndEntertainerId(Long userId, Long entertainerId);
-
     Optional<List<EntertainerSavingsAccount>> findByUserId(Long userId);
 
     Optional<EntertainerSavingsAccount> findByDepositAccountId(Long savingAccountId);
 
     Optional<EntertainerSavingsAccount> findByWithdrawalAccountId(Long savingAccountId);
+
+    boolean existsByUserIdAndEntertainerIdAndDeletedAtNotNull(Long userId, Long entertainerId);
+
+    boolean existsByWithdrawalAccountId(Long savingAccountId);
+
+    boolean existsByDepositAccountId(Long accountId);
 }
