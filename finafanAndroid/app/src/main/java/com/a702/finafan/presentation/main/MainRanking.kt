@@ -39,7 +39,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.ThreeTabRow
-import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainTextBlue
