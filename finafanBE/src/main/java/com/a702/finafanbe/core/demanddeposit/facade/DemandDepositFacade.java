@@ -32,6 +32,7 @@ import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DemandDepositFacade {
 
     private static final String EMAIL = "lsc7134@naver.com";
@@ -425,6 +427,8 @@ public class DemandDepositFacade {
         Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(savingAccountId);
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
+        log.info("account {}" , account.getAccountNo());
+        log.info("Waccount {}" , withdrawalAccount.getAccountNo());
         DeleteAccountResponse.REC deleteResponse = deleteAccountService.deleteAccount(
                 "/demandDeposit/deleteDemandDepositAccount",
                 financialRequestFactory.deleteAccountRequest(

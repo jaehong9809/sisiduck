@@ -44,7 +44,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(nullable = false, name = "image_url")
     private String imageUrl;
 
-    @Column(nullable = false, name = "deleted_at")
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     public static EntertainerSavingsAccount of(

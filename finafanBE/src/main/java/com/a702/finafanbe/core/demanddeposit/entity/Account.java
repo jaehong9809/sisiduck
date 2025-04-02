@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "accounts")
-@SQLDelete(sql = "UPDATE accounts SET delete_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE accounts SET deleted_at = CURRENT_TIMESTAMP WHERE account_id = ?")
 public class Account extends BaseEntity {
 
     @Id
@@ -81,8 +81,8 @@ public class Account extends BaseEntity {
     @Column(name = "subscription_period")
     private LocalDateTime subscriptionPeriod;
 
-    @Column(name = "delete_at", nullable = false)
-    private LocalDateTime deleteAt;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public BigDecimal addAmount(BigDecimal amount) {
         return this.amount.add(amount);
