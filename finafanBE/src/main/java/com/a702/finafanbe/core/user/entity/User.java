@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE user SET delete_at = CURRENT_TIMESTAMP WHERE id = ?")
-//@SQLRestriction("deleted_at = false")
+@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE user_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class User extends BaseEntity {
     private static final int MAX_SOCIAL_EMAIL_LENGTH = 255;
 
@@ -59,6 +59,9 @@ public class User extends BaseEntity {
 
     @Column(name = "represent_account_id")
     private Long representAccountId;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public void updateFavoriteEntertainer(Long entertainerId) {
         this.entertainerId = entertainerId;
