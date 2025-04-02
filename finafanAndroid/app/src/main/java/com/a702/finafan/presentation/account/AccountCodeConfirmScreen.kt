@@ -36,7 +36,7 @@ fun AccountCodeConfirmScreen(
         isButtonEnabled = true,
         onButtonClick = {
             // 연결 계좌 목록 화면으로 이동
-            navController.navigate(NavRoutes.AllAccount.route + "/2")
+            navController.navigate(NavRoutes.AllAccount.route + "?selectedTabIndex=2")
         }
     ) {
 

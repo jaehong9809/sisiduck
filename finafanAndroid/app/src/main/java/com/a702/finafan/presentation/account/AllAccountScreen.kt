@@ -62,14 +62,7 @@ fun AllAccountScreen(
 
     val savingState by savingViewModel.savingState.collectAsState()
 
-    // TODO: API 두 번 호출되지 않는지 확인 필요
-    // 맨 처음 적금 계좌 목록 호출
     LaunchedEffect(Unit) {
-//        if (selectedTabIndex.intValue == 0) {
-//            savingViewModel.fetchSavingAccount()
-//        }
-
-        // TODO: 선택된 탭에 맞게 호출되게 수정 필요
         when (selectedTabIndex.intValue) {
             0 -> savingViewModel.fetchSavingAccount()
             1 -> 0 // TODO: 모금 통장 API
@@ -139,6 +132,7 @@ fun AllAccountScreen(
                         ),
                         containerColor = MainWhite,
                         selectedTabColor = MainBlack,
+                        selectedIndex = selectedTabIndex,
                         onTabSelected = listOf(
                             {
                                 selectedTabIndex.intValue = 0

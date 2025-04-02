@@ -4,8 +4,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.a702.finafan.presentation.account.AccountCodeConfirmScreen
 import com.a702.finafan.presentation.account.AccountCodeScreen
 import com.a702.finafan.presentation.account.AccountInputScreen
@@ -60,10 +62,16 @@ fun NavGraphBuilder.accountGraph(
             ConnectAccountScreen(savingViewModel)
         }
 
-        composable(NavRoutes.AllAccount.route + "/{selectedTabIndex}") { backStackEntry ->
+        composable(
+            NavRoutes.AllAccount.route + "?selectedTabIndex={selectedTabIndex}",
+            arguments = listOf(navArgument("selectedTabIndex") {
+                type = NavType.IntType
+                defaultValue = 0
+            })
+        ) { backStackEntry ->
             val selectedTabIndex = remember {
                 mutableIntStateOf(
-                    backStackEntry.arguments?.getString("selectedTabIndex")?.toIntOrNull() ?: 0
+                    backStackEntry.arguments?.getInt("selectedTabIndex") ?: 0
                 )
             }
 
