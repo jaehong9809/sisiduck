@@ -165,5 +165,9 @@
     <string name="all_account_count_content">개</string>
     <string name="all_account_saving_account_no">스타적금 %s</string>
     <string name="all_account_funding_account_no">모금통장 %s</string>
+    <string name="all_account_list_empty">계좌가 존재하지 않습니다.</string>
+    <string name="all_account_create_saving">적금 개설하기</string>
+    <string name="all_account_create_funding">모금통장 개설하기</string>
+    <string name="all_account_connect_bank">다른 계좌 연결하기</string>
 
 </resources>
