@@ -85,6 +85,7 @@ fun MainScreen(
         Column(modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // TODO: 로그인 구현 후 상태에서 유저 이름 가져오기
             Text(text = "....님",
                 modifier = Modifier.fillMaxWidth()
                     .padding(start = 40.dp, top = 30.dp),
@@ -179,6 +180,7 @@ fun MainScreen(
                 fontSize = 26.sp,
                 fontWeight = FontWeight.SemiBold
             )
+
             MainRanking(viewModel, modifier = Modifier.padding(horizontal = 40.dp))
         }
     }
