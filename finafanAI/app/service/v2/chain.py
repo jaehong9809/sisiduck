@@ -11,7 +11,7 @@ memory = ConversationBufferMemory(memory_key="chat_history", return_messages=Tru
 
 # ✅ 도구 정의
 tools = [
-    Tool(name="뉴스검색", func=fast_news_search, description="연예인, 사회 인물, 이슈 등 최신 뉴스나 기사를 찾을 때 사용"),
+    Tool(name="뉴스검색", func=fast_news_search, description="최신 뉴스, 연예인 기사 등 외부 정보를 찾을 때 사용"),
     Tool(name="동영상검색", func=youtube_search, description="YouTube에서 영상이나 방송 클립을 보고 싶을 때 사용"),
     #Tool(name="인물정보검색", func=search_person_info, description="생일, 학력, 가족관계 등 기본 정보가 필요할 때 사용"),
     Tool(name="웹검색", func=duckduckgo_search, description="일반 연예인 정보, 블로그, 커뮤니티 등 전체 웹 검색이 필요할 때 사용"),
