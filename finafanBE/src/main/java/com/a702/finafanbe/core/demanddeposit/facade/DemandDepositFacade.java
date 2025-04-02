@@ -84,7 +84,6 @@ public class DemandDepositFacade {
     }
 
     public ResponseEntity<DeleteAccountResponse> deleteAccount(
-            String userEmail,
             String accountNo,
             String refundAccountNo
     ) {
@@ -92,7 +91,7 @@ public class DemandDepositFacade {
         return apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/deleteDemandDepositAccount",
                 financialRequestFactory.deleteAccountRequest(
-                        userEmail,
+                        EMAIL,
                         accountNo,
                         "deleteDemandDepositAccount",
                         refundAccountNo
@@ -153,7 +152,7 @@ public class DemandDepositFacade {
             String email
     ) {
         User user = userService.findUserByEmail(email);
-        RetrieveProductsResponse.REC rec = getProducts().getBody()
+        RetrieveProductsResponse.REC rec = getProducts()
                 .REC()
                 .stream()
                 .filter(product -> product.getAccountName().equals("연예인 적금"))
@@ -208,14 +207,14 @@ public class DemandDepositFacade {
         );
     }
 
-    public ResponseEntity<RetrieveProductsResponse> getProducts() {
+    public RetrieveProductsResponse getProducts() {
         return apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/inquireDemandDepositList",
                 financialRequestFactory.inquireProducts(
                         "inquireDemandDepositList"
                 ),
                 RetrieveProductsResponse.class
-        );
+        ).getBody();
     }
 
     public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){

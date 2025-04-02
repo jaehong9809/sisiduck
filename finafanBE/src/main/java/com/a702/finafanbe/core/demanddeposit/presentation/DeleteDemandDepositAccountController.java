@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class DeleteDemandDepositAccountController {
 
     private final DemandDepositFacade demandDepositFacade;
-    private final DeleteAccountService deleteAccountService;
 
     @DeleteMapping("/account")
     public ResponseEntity<DeleteAccountResponse> deleteAccount(
