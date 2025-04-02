@@ -57,12 +57,9 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         viewModel.fetchMainSavings()
-        // TODO: 랭킹 UI 구현 후 연결
-        // viewModel.fetchMainRanking(RankingType.DAILY)
     }
 
     val mainSavingState by viewModel.mainSavingState.collectAsState()
-    val mainRankingState by viewModel.mainRankingState.collectAsState()
 
     val context = LocalContext.current
 
@@ -181,7 +178,7 @@ fun MainScreen(
                 fontWeight = FontWeight.SemiBold
             )
 
-            MainRanking(viewModel, modifier = Modifier.padding(horizontal = 40.dp))
+            MainRanking(viewModel)
         }
     }
 }

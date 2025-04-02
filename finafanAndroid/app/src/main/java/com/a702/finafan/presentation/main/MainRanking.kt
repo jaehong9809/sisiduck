@@ -12,23 +12,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,8 +48,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MainRanking(
-    viewModel: MainViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    viewModel: MainViewModel = hiltViewModel()
 ) {
     var selectedTab by remember { mutableStateOf(RankingType.DAILY) }
 
@@ -89,14 +84,18 @@ fun MainRanking(
 fun AutoScrollingRankList(
     rankings: List<MainRanking>,
     rankingType: RankingType,
-    intervalMillis: Long = 2000 // 2초마다 변경
+    intervalMillis: Long = 3000 // 3초마다 변경
 ) {
-    var currentIndex by remember { mutableStateOf(0) }
+    var currentIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(rankings) {
-        while (rankings.isNotEmpty()) {
-            delay(intervalMillis)
-            currentIndex = (currentIndex + 1) % rankings.size
+        if (rankings.isNotEmpty() && rankings.size > 1) {
+            while (true) {
+                delay(intervalMillis)
+                currentIndex = (currentIndex + 1) % rankings.size
+            }
+        } else {
+            currentIndex = 0
         }
     }
 

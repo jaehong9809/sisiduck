@@ -1,4 +1,4 @@
-package com.a702.finafan.presentation.funding
+package com.a702.finafan.presentation.funding.screen
 
 import android.util.Log
 import androidx.compose.foundation.background

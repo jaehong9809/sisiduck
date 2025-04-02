@@ -1,7 +1,6 @@
-package com.a702.finafan.presentation.funding
+package com.a702.finafan.presentation.funding.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,8 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,10 +40,12 @@ import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.ui.theme.starThemes
 import com.a702.finafan.domain.funding.model.Star
+import com.a702.finafan.presentation.funding.component.DepositHistoryList
+import com.a702.finafan.presentation.funding.component.FundingDetailHeader
+import com.a702.finafan.presentation.funding.component.MenuTitle
 import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
-import java.time.LocalDate
 
 @Composable
 fun FundingDetailScreen(
@@ -101,9 +100,11 @@ fun FundingDetailScreen(
                         text = "모금 상세",
                         gradientColor = listOf(colorSet[0], colorSet[2])
                     )
-                    MenuTitle(content = "모금 내역", modifier = Modifier.padding(
-                        horizontal = 6.dp
-                    ))
+                    MenuTitle(
+                        content = "모금 내역", modifier = Modifier.padding(
+                            horizontal = 6.dp
+                        )
+                    )
                     ThreeTabRow(
                         labels = listOf("전체", "나의 내역"),
                         containerColor = MainWhite,

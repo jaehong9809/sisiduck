@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -18,6 +19,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -256,6 +259,57 @@ fun CommonTextField(
         )
     }
 }
+
+@Composable
+fun CommonTextArea(
+    description: MutableState<String>,
+    placeholder: String? = null,
+    charLimit: Int? = null,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+       TextField(
+            value = description.value,
+            onValueChange = {
+                if (charLimit == null || it.length <= charLimit) {
+                    description.value = it
+                }
+            },
+            placeholder = { Text(text = placeholder?:"", color = Color.Gray, fontSize = 20.sp, fontWeight = FontWeight.Medium) },
+           textStyle = TextStyle(
+               fontSize = 20.sp,
+               fontWeight = FontWeight.Medium,
+               color = MainBlack
+           ),
+           modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+                .background(MainBgLightGray, shape = RoundedCornerShape(18.dp)),
+            shape = RoundedCornerShape(18.dp),
+           colors = TextFieldDefaults.colors(
+               focusedContainerColor = MainBgLightGray,
+               unfocusedContainerColor = MainBgLightGray,
+               disabledContainerColor = MainBgLightGray,
+               errorContainerColor = MainBgLightGray,
+               focusedIndicatorColor = Color.Transparent,
+               unfocusedIndicatorColor = Color.Transparent,
+               disabledIndicatorColor = Color.Transparent,
+               errorIndicatorColor = Color.Transparent
+           )
+        )
+
+        // 글자 수 제한이 있을 경우만 카운트 표시
+        charLimit?.let {
+            Text(
+                text = "${description.value.length} / $charLimit",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 4.dp, start = 4.dp)
+            )
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
