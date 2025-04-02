@@ -12,18 +12,12 @@ import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountReposi
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.application.EntertainerService;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
-import com.a702.finafanbe.core.entertainer.dto.response.EntertainerAccountsResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.HomeEntertainerAccountResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
-import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
+import com.a702.finafanbe.core.entertainer.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.ranking.application.RankingService;
-import com.a702.finafanbe.core.savings.application.SavingsAccountService;
 import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
-import com.a702.finafanbe.core.transaction.deposittransaction.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
-import com.a702.finafanbe.core.transaction.savingtransaction.application.SavingTransactionService;
 import com.a702.finafanbe.core.user.application.UserService;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
@@ -41,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,15 +50,12 @@ public class DemandDepositFacade {
     private final EntertainSavingsService entertainSavingsService;
     private final DepositTransactionService depositTransactionService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
-    private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final UserService userService;
     private final BankService bankService;
-    private final SavingTransactionService savingTransactionService;
     private final EntertainerService entertainerService;
-    private final SavingsAccountService savingsAccountService;
-    private final DeleteAccountService deleteAccountService;
     private final AccountRepository accountRepository;
     private final RankingService rankingService;
+    private final DeleteAccountService deleteAccountService;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -92,6 +84,7 @@ public class DemandDepositFacade {
     }
 
     public ResponseEntity<DeleteAccountResponse> deleteAccount(
+            String userEmail,
             String accountNo,
             String refundAccountNo
     ) {
@@ -99,7 +92,7 @@ public class DemandDepositFacade {
         return apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/deleteDemandDepositAccount",
                 financialRequestFactory.deleteAccountRequest(
-                        EMAIL,
+                        userEmail,
                         accountNo,
                         "deleteDemandDepositAccount",
                         refundAccountNo
@@ -160,7 +153,7 @@ public class DemandDepositFacade {
             String email
     ) {
         User user = userService.findUserByEmail(email);
-        RetrieveProductsResponse.REC rec = getProducts()
+        RetrieveProductsResponse.REC rec = getProducts().getBody()
                 .REC()
                 .stream()
                 .filter(product -> product.getAccountName().equals("연예인 적금"))
@@ -215,14 +208,14 @@ public class DemandDepositFacade {
         );
     }
 
-    public RetrieveProductsResponse getProducts() {
+    public ResponseEntity<RetrieveProductsResponse> getProducts() {
         return apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/inquireDemandDepositList",
                 financialRequestFactory.inquireProducts(
                         "inquireDemandDepositList"
                 ),
                 RetrieveProductsResponse.class
-        ).getBody();
+        );
     }
 
     public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
@@ -420,6 +413,30 @@ public class DemandDepositFacade {
                             entertainer.getEntertainerProfileUrl(),
                             depositAccount.getAccountNo(),
                             depositAccount.getAmount()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<EntertainerResponse> getPossessionEntertainer() {
+        String userEmail = EMAIL; // 인증 사용자로 대체 필요
+        User user = userService.findUserByEmail(userEmail);
+
+        List<EntertainerSavingsAccount> accounts =
+                entertainSavingsService.findAccountByUserId(user.getUserId());
+
+        Set<Long> entertainerIds = accounts.stream()
+                .map(EntertainerSavingsAccount::getEntertainerId)
+                .collect(Collectors.toSet());
+
+        return entertainerIds.stream()
+                .map(id -> {
+                    Entertainer entertainer = entertainerService.findEntertainerById(id);
+
+                    return new EntertainerResponse(
+                            entertainer.getEntertainerName(),
+                            entertainer.getEntertainerProfileUrl(),
+                            entertainer.getFandomName()
                     );
                 })
                 .collect(Collectors.toList());

@@ -151,6 +151,11 @@ public class EntertainSavingsController {
         return ResponseUtil.success(entertainService.findStars());
     }
 
+    @GetMapping("/favorite")
+    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers() {
+        return ResponseUtil.success(demandDepositFacade.getPossessionEntertainer());
+    }
+
     @GetMapping("/search")
     public ResponseEntity<ResponseData<List<EntertainerSearchResponse>>> searchEntertainers(
         @RequestParam(required = false) String keyword
