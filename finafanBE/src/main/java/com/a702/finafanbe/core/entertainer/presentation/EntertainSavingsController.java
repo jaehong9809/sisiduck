@@ -180,8 +180,14 @@ public class EntertainSavingsController {
     }
 
     @DeleteMapping("/{savingAccountId}")
-    public ResponseEntity<ResponseData<Void>> deleteAccountAlias(@PathVariable Long savingAccountId){
+    public ResponseEntity<ResponseData<Void>> deleteAccount(@PathVariable Long savingAccountId){
         demandDepositFacade.deleteStarAccount(savingAccountId);
+        return ResponseUtil.success();
+    }
+
+    @DeleteMapping("/{savingAccountId}/withdrawal")
+    public ResponseEntity<ResponseData<Void>> deleteAccountConnect(@PathVariable Long savingAccountId){
+        demandDepositFacade.deleteStarAccountWithdrawal(savingAccountId);
         return ResponseUtil.success();
     }
 }

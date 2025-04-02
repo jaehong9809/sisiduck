@@ -207,6 +207,7 @@ public class EntertainSavingsService {
             .collect(Collectors.toList());
     }
 
+    @Transactional
     public InquireEntertainerAccountResponse putAccountAlias(
             Long savingAccountId,
             String newName
@@ -216,7 +217,6 @@ public class EntertainSavingsService {
         Bank bank = bankService.findBankById(account.getBankId());
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
-        savingsAccount.updateProductName(newName);
         account.updateName(newName);
         return InquireEntertainerAccountResponse.of(
                 savingsAccount.getDepositAccountId(),

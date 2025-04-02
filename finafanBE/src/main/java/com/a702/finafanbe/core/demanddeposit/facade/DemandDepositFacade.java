@@ -442,4 +442,10 @@ public class DemandDepositFacade {
         entertainSavingsService.deleteByAccountId(depositAccount.getAccountId());
         accountRepository.deleteById(account.getAccountId());
     }
+
+    public void deleteStarAccountWithdrawal(Long savingAccountId) {
+        Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
+        EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(savingAccountId);
+        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
+    }
 }
