@@ -116,7 +116,7 @@ public class EntertainSavingsService {
             Long userId,
             Long entertainerId
     ) {
-        return entertainerSavingsAccountRepository.existsByUserIdAndEntertainerIdAndDeletedAtNotNull(
+        return entertainerSavingsAccountRepository.existsByUserIdAndEntertainerIdAndDeletedAtNull(
                 userId,
                 entertainerId
         );
