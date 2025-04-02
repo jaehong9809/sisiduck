@@ -126,4 +126,35 @@ class SavingRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun changeSavingName(savingAccountId: Long, name: String): String {
+        return try {
+            val request = HashMap<String, String>()
+            request.put("newName", name)
+
+            val response = api.updateSavingName(savingAccountId, request)
+
+            if (response.code == "S0000" && response.data != null) {
+                return response.data.accountName
+            } else {
+                throw Exception(response.message)
+            }
+        } catch (e: Exception) {
+            throw Exception(ExceptionHandler.handle(e))
+        }
+    }
+
+    override suspend fun deleteSavingAccount(savingAccountId: Long): Boolean {
+        return try {
+            val response = api.deleteSavingAccount(savingAccountId)
+
+            if (response.code == "S0000" && response.data != null) {
+                return true
+            } else {
+                throw Exception(response.message)
+            }
+        } catch (e: Exception) {
+            throw Exception(ExceptionHandler.handle(e))
+        }
+    }
+
 }

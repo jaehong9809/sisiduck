@@ -1,5 +1,6 @@
 package com.a702.finafan.common.domain
 
+import android.util.Log
 import com.a702.finafan.common.data.dto.ErrorResponse
 import com.google.gson.Gson
 import retrofit2.HttpException
@@ -7,6 +8,8 @@ import java.io.IOException
 
 object ExceptionHandler {
     fun handle(e: Exception): String {
+        Log.d("exception handler", e.toString())
+
         return when (e) {
             is IOException -> "인터넷 연결을 확인해주세요."
             is HttpException -> {

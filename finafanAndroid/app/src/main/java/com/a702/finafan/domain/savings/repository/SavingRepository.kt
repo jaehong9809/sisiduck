@@ -25,4 +25,8 @@ interface SavingRepository {
     suspend fun withdrawAccount(): List<Account>
 
     suspend fun bankList(): List<Bank>
+
+    suspend fun changeSavingName(savingAccountId: Long, name: String): String
+
+    suspend fun deleteSavingAccount(savingAccountId: Long): Boolean
 }
