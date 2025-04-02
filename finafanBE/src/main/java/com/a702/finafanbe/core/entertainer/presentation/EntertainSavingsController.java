@@ -151,6 +151,11 @@ public class EntertainSavingsController {
         return ResponseUtil.success(entertainService.findStars());
     }
 
+    @GetMapping("/favorite")
+    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers() {
+        return ResponseUtil.success(demandDepositFacade.getPossessionEntertainer());
+    }
+
     @GetMapping("/search")
     public ResponseEntity<ResponseData<List<EntertainerSearchResponse>>> searchEntertainers(
         @RequestParam(required = false) String keyword
@@ -171,16 +176,23 @@ public class EntertainSavingsController {
     @PutMapping("/alias/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> updateAccountAlias(
             @PathVariable Long savingAccountId,
-            String newName
+            @RequestBody  UpdateSavingsRequest updateSavingsRequest
     ){
         return ResponseUtil.success(entertainSavingsService.putAccountAlias(
                 savingAccountId,
-                newName
+                updateSavingsRequest.newName()
         ));
     }
 
-//    @DeleteMapping("/{savingAccountId}")
-//    public ResponseEntity<ResponseData<Void>> deleteAccountAlias(@PathVariable Long savingAccountId){
-//        return ResponseUtil.success(entertainSavingsService.del)
-//    }
+    @DeleteMapping("/{savingAccountId}")
+    public ResponseEntity<ResponseData<Void>> deleteAccount(@PathVariable Long savingAccountId){
+        demandDepositFacade.deleteStarAccount(savingAccountId);
+        return ResponseUtil.success();
+    }
+
+    @DeleteMapping("/{depositAccountId}/withdrawal-connection")
+    public ResponseEntity<ResponseData<Void>> disconnectWithdrawalAccount(@PathVariable Long depositAccountId) {
+        demandDepositFacade.deleteStarWithdrawalAccount(depositAccountId);
+        return ResponseUtil.success();
+    }
 }
