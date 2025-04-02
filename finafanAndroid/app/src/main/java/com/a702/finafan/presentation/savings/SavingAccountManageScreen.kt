@@ -7,23 +7,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +40,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
+import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.SavingNameBottomSheet
 import com.a702.finafan.common.ui.component.SubButton
 import com.a702.finafan.common.ui.theme.MainBgLightGray
@@ -61,122 +61,157 @@ fun SavingAccountManageScreen(
     val accountInfo = savingState.savingInfo.savingAccount
 
     val showBottomSheet = rememberSaveable { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
+    val dialogContent = remember { mutableStateOf("") }
+
     val changeName = rememberSaveable { mutableStateOf(accountInfo.accountName) }
+    val originName = rememberSaveable { mutableStateOf(accountInfo.accountName) }
 
     if (showBottomSheet.value) {
         SavingNameBottomSheet(changeName, showBottomSheet) {
-            showBottomSheet.value = false
-
-            // TODO: 적금 이름 변경 API 호출
+            viewModel.changeSavingName(accountInfo.accountId, changeName.value)
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .imePadding()
-            .windowInsetsPadding(WindowInsets.ime)
-    ) {
-        CommonBackTopBar(
-            modifier = Modifier,
-            text = stringResource(R.string.saving_account_manage_title),
-            isTextCentered = true
+    if (showDialog.value) {
+        ConfirmDialog(
+            showDialog,
+            content = dialogContent.value,
+            onClickConfirm = {
+                showDialog.value = false
+            }
         )
+    }
 
+    // 이름 변경 완료 후에 기존 이름 변경
+    LaunchedEffect(savingState.accountName) {
+        showBottomSheet.value = false
+
+        if (savingState.accountName.isNotEmpty()) {
+            originName.value = savingState.accountName
+        }
+    }
+
+    LaunchedEffect(savingState.error) {
+        savingState.error?.let {
+            showDialog.value = true
+            dialogContent.value = savingState.error?.message.toString()
+
+            viewModel.clearError()
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            CommonBackTopBar(
+                modifier = Modifier,
+                text = stringResource(R.string.saving_account_manage_title),
+                isTextCentered = true
+            )
+        },
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .background(MainWhite)
-                .fillMaxWidth()
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
+
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .background(MainWhite)
+                    .fillMaxWidth()
             ) {
-                val painter = rememberAsyncImagePainter(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(accountInfo.imageUrl)
-                        .build()
-                )
-
-                Image(
-                    modifier = Modifier
-                        .padding(top = 20.dp)
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(LightGray),
-                    painter = painter,
-                    contentDescription = "Background Image",
-                    contentScale = ContentScale.Crop
-                )
-
-                Row(
-                    modifier = Modifier.padding(top = 54.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.saving_item_name, accountInfo.accountName),
-                            color = MainBlack,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            lineHeight = 24.sp,
-                        )
+                    val painter = rememberAsyncImagePainter(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(accountInfo.imageUrl)
+                            .build()
+                    )
 
-                        Text(
-                            modifier = Modifier.padding(top = 8.dp),
-                            text = accountInfo.accountNo,
-                            color = MainTextGray,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Normal,
-                            lineHeight = 24.sp,
+                    Image(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .background(LightGray),
+                        painter = painter,
+                        contentDescription = "Background Image",
+                        contentScale = ContentScale.Crop
+                    )
+
+                    Row(
+                        modifier = Modifier.padding(top = 54.dp).fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Column {
+                            Text(
+                                text = stringResource(R.string.saving_item_name, originName.value),
+                                color = MainBlack,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                lineHeight = 24.sp,
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(top = 8.dp),
+                                text = accountInfo.accountNo,
+                                color = MainTextGray,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Normal,
+                                lineHeight = 24.sp,
+                            )
+                        }
+
+                        SubButton(
+                            text = stringResource(R.string.saving_item_change_name_label),
+                            onButtonClick = {
+                                showBottomSheet.value = true
+                            }
                         )
                     }
 
-                    SubButton(
-                        text = stringResource(R.string.saving_item_change_name_label),
-                        onButtonClick = {
-                            showBottomSheet.value = true
-                        }
+                    Box(
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MainBgLightGray)
                     )
+
+                    AccountDetailList(accountInfo)
                 }
 
                 Box(
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(top = 34.dp)
                         .fillMaxWidth()
-                        .height(1.dp)
+                        .height(18.dp)
                         .background(MainBgLightGray)
                 )
 
-                AccountDetailList(accountInfo)
+                Text(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clickable {
+                            onCancelClick()
+                        },
+                    text = stringResource(R.string.btn_account_cancel),
+                    color = MainTextGray,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 24.sp,
+                )
             }
 
-            Box(
-                modifier = Modifier
-                    .padding(top = 34.dp)
-                    .fillMaxWidth()
-                    .height(18.dp)
-                    .background(MainBgLightGray)
-            )
-
-            Text(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .clickable {
-                        onCancelClick()
-                    },
-                text = stringResource(R.string.btn_account_cancel),
-                color = MainTextGray,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                lineHeight = 24.sp,
-            )
         }
-
     }
+
 }
 
 @Composable
