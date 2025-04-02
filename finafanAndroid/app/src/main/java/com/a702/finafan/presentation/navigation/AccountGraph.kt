@@ -59,7 +59,12 @@ fun NavGraphBuilder.accountGraph(
         }
 
         composable(NavRoutes.ConnectAccount.route) {
-            ConnectAccountScreen(savingViewModel)
+            ConnectAccountScreen(
+                savingViewModel,
+                onComplete = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(

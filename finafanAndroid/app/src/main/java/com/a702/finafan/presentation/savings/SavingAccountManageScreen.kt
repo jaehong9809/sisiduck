@@ -62,6 +62,7 @@ fun SavingAccountManageScreen(
 
     val showBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showDialog = remember { mutableStateOf(false) }
+    val dialogContent = remember { mutableStateOf("") }
 
     val changeName = rememberSaveable { mutableStateOf(accountInfo.accountName) }
     val originName = rememberSaveable { mutableStateOf(accountInfo.accountName) }
@@ -75,7 +76,7 @@ fun SavingAccountManageScreen(
     if (showDialog.value) {
         ConfirmDialog(
             showDialog,
-            content = savingState.error?.message.toString(),
+            content = dialogContent.value,
             onClickConfirm = {
                 showDialog.value = false
             }
@@ -94,6 +95,8 @@ fun SavingAccountManageScreen(
     LaunchedEffect(savingState.error) {
         savingState.error?.let {
             showDialog.value = true
+            dialogContent.value = savingState.error?.message.toString()
+
             viewModel.clearError()
         }
     }

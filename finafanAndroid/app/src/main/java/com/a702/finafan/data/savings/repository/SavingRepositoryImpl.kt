@@ -157,4 +157,18 @@ class SavingRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteConnectAccount(accountId: Long): Boolean {
+        return try {
+            val response = api.deleteConnectAccount(accountId)
+
+            if (response.code == "S0000") {
+                return true
+            } else {
+                throw Exception(response.message)
+            }
+        } catch (e: Exception) {
+            throw Exception(ExceptionHandler.handle(e))
+        }
+    }
+
 }

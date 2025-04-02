@@ -10,6 +10,7 @@ import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
+import com.a702.finafan.domain.savings.usecase.DeleteConnectAccountUseCase
 import com.a702.finafan.domain.savings.usecase.DeleteSavingAccountUseCase
 import com.a702.finafan.domain.savings.usecase.DepositUseCase
 import com.a702.finafan.domain.savings.usecase.GetBankUseCase
@@ -37,6 +38,7 @@ class SavingViewModel @Inject constructor(
     private val getBankUseCase: GetBankUseCase,
     private val updateSavingNameUseCase: UpdateSavingNameUseCase,
     private val deleteSavingAccountUseCase: DeleteSavingAccountUseCase,
+    private val deleteConnectAccountUseCase: DeleteConnectAccountUseCase,
 ): ViewModel() {
 
     private val _savingState = MutableStateFlow(SavingState())
@@ -235,6 +237,30 @@ class SavingViewModel @Inject constructor(
 
             try {
                 val result = deleteSavingAccountUseCase(savingAccountId)
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        isCancel = result,
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
+    fun deleteConnectAccount(accountId: Long) {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val result = deleteConnectAccountUseCase(accountId)
 
                 _savingState.update {
                     it.copy(

@@ -29,4 +29,6 @@ interface SavingRepository {
     suspend fun changeSavingName(savingAccountId: Long, name: String): String
 
     suspend fun deleteSavingAccount(savingAccountId: Long): Boolean
+
+    suspend fun deleteConnectAccount(accountId: Long): Boolean
 }

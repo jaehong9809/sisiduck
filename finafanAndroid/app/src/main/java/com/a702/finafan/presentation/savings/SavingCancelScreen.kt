@@ -48,16 +48,12 @@ fun SavingCancelScreen(
     val bank = withdrawalAccount.bank
 
     val showDialog = remember { mutableStateOf(false) }
+    val dialogContent = remember { mutableStateOf("") }
 
     if (showDialog.value) {
         ConfirmDialog(
             showDialog,
-            content =
-                if (savingState.isCancel) {
-                    context.getString(R.string.saving_item_cancel_complete)
-                } else {
-                    savingState.error?.message.toString()
-                },
+            content = dialogContent.value,
             onClickConfirm = {
                 showDialog.value = false
 
@@ -68,8 +64,20 @@ fun SavingCancelScreen(
         )
     }
 
-    LaunchedEffect(savingState.isCancel, savingState.isLoading) {
-        showDialog.value = true
+    LaunchedEffect(savingState.isCancel) {
+        if (savingState.isCancel) {
+            showDialog.value = true
+            dialogContent.value = context.getString(R.string.saving_item_saving_cancel_complete)
+        }
+    }
+
+    LaunchedEffect(savingState.error) {
+        savingState.error?.let {
+            showDialog.value = true
+            dialogContent.value = savingState.error?.message.toString()
+
+            viewModel.clearError()
+        }
     }
 
     SavingScreenLayout(

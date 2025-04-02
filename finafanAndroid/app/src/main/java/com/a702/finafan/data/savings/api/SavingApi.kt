@@ -76,4 +76,8 @@ interface SavingApi {
     @DELETE("v1/star/account/{savingAccountId}")
     suspend fun deleteSavingAccount(@Path("savingAccountId") savingAccountId: Long): ApiResponse<Unit>
 
+    // 연결 계좌 삭제
+    @DELETE("v1/star/{depositAccountId}/withdrawal-connection")
+    suspend fun deleteConnectAccount(@Path("depositAccountId") depositAccountId: Long): ApiResponse<Unit>
+
 }
