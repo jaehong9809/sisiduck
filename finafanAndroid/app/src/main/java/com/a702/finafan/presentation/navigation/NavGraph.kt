@@ -29,7 +29,6 @@ fun NavGraph(
             }
 
             composable(NavRoutes.Login.route) {
-
             }
 
             composable(NavRoutes.Chat.route) {

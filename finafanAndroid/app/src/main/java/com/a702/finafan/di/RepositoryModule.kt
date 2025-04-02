@@ -5,6 +5,7 @@ import com.a702.finafan.data.chatbot.repository.ChatRepositoryImpl
 import com.a702.finafan.domain.ble.repository.BleScanRepository
 import com.a702.finafan.data.funding.repository.FundingRepositoryImpl
 import com.a702.finafan.data.savings.repository.SavingRepositoryImpl
+import com.a702.finafan.domain.auth.repository.AuthRepository
 import com.a702.finafan.domain.chatbot.repository.ChatRepository
 import com.a702.finafan.domain.funding.repository.FundingRepository
 import com.a702.finafan.domain.savings.repository.SavingRepository
@@ -49,4 +50,9 @@ internal abstract class RepositoryModule {
         userRepositoryImpl: UserRepository
     ) : UserRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        authRepository: AuthRepository
+    ) : AuthRepository
 }
