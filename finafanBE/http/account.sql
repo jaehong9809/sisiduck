@@ -21,7 +21,7 @@ INSERT INTO accounts (
     modified_at
 ) VALUES (
              1, -- user_id
-             '0013509698246275', -- account_no
+             '0010047340147585', -- account_no
              10000.00, -- amount
              0.015, -- interest_rate (1.5%)
              'ACTIVE', -- status
