@@ -13,7 +13,6 @@ import com.a702.finafanbe.core.entertainer.dto.response.EntertainerSearchRespons
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
-import com.a702.finafanbe.core.savings.application.SavingsAccountService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.EntertainerSavingsAccountRepository;
@@ -191,6 +190,10 @@ public class EntertainSavingsService {
             () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
+    public boolean existsEntertainerAccountByWithdrawalAccountId(Long savingAccountId) {
+        return entertainerSavingsAccountRepository.existsByWithdrawalAccountId(savingAccountId);
+    }
+
     public List<EntertainerSavingsAccount> findAccountByUserId(Long userId) {
         return entertainerSavingsAccountRepository.findByUserId(userId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundUser)));
     }
@@ -236,5 +239,9 @@ public class EntertainSavingsService {
 
     public void deleteByAccountId(Long accountId) {
         entertainerSavingsAccountRepository.deleteById(accountId);
+    }
+
+    public boolean existsEntertainerAccountByDepositAccountId(Long accountId) {
+        return entertainerSavingsAccountRepository.existsByDepositAccountId(accountId);
     }
 }

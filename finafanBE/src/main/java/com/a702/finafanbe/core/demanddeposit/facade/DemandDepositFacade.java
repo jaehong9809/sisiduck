@@ -157,7 +157,7 @@ public class DemandDepositFacade {
             String email
     ) {
         User user = userService.findUserByEmail(email);
-        RetrieveProductsResponse.REC rec = getProducts().getBody()
+        RetrieveProductsResponse.REC rec = getProducts()
                 .REC()
                 .stream()
                 .filter(product -> product.getAccountName().equals("연예인 적금"))
@@ -212,14 +212,14 @@ public class DemandDepositFacade {
         );
     }
 
-    public ResponseEntity<RetrieveProductsResponse> getProducts() {
+    public RetrieveProductsResponse getProducts() {
         return apiClientUtil.callFinancialNetwork(
                 "/demandDeposit/inquireDemandDepositList",
                 financialRequestFactory.inquireProducts(
                         "inquireDemandDepositList"
                 ),
                 RetrieveProductsResponse.class
-        );
+        ).getBody();
     }
 
     public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
@@ -440,5 +440,15 @@ public class DemandDepositFacade {
         Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(deleteResponse.accountNo());
         entertainSavingsService.deleteByAccountId(depositAccount.getAccountId());
         accountRepository.deleteById(account.getAccountId());
+    }
+
+    public void deleteStarWithdrawalAccount(Long accountId) {
+        if(entertainSavingsService.existsEntertainerAccountByWithdrawalAccountId(accountId)){
+            throw new BadRequestException(ResponseData.createResponse(ErrorCode.ENTERTAINER_SAVINGS_CONSTRAINT));
+        }
+        if(entertainSavingsService.existsEntertainerAccountByDepositAccountId(accountId)){
+            throw new BadRequestException(ResponseData.createResponse(ErrorCode.ENTERTAINER_SAVINGS));
+        }
+        accountRepository.deleteById(accountId);
     }
 }

@@ -3,7 +3,9 @@ package com.a702.finafanbe.core.savings.application;
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.entity.Bank;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
+import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
+import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.WithdrawalAccountResponse;
 import com.a702.finafanbe.core.savings.dto.request.*;
@@ -17,6 +19,7 @@ import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,7 @@ public class SavingsAccountService {
     private final BankService bankService;
     private final AccountRepository accountRepository;
     private final SavingsAccountRepository savingsAccountRepository;
+    private final EntertainSavingsService entertainSavingsService;
 
 
     public RegisterSavingProductResponse createSavingsProduct(
@@ -149,6 +153,14 @@ public class SavingsAccountService {
         List<Account> accounts = accountRepository.findByUserId(
                 user.getUserId())
             .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_ACCOUNT)));
-        return accounts;
+
+        List<EntertainerSavingsAccount> entertainerSavingsAccounts = entertainSavingsService.findAccountByUserId(user.getUserId());
+        Set<Long> entertainerSavingAccountIds = entertainerSavingsAccounts.stream()
+                        .map(EntertainerSavingsAccount::getEntertainerId)
+                                .collect(Collectors.toSet());
+
+        return accounts.stream()
+                .filter(account -> !entertainerSavingAccountIds.contains(account.getAccountId()))
+                .collect(Collectors.toList());
     }
 }

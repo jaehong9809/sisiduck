@@ -185,9 +185,9 @@ public class EntertainSavingsController {
         return ResponseUtil.success();
     }
 
-//    @DeleteMapping("/{accountId}/withdrawal")
-//    public ResponseEntity<ResponseData<Void>> deleteAccountConnect(@PathVariable Long accountId){
-//        demandDepositFacade.deleteAccount(accountId);
-//        return ResponseUtil.success();
-//    }
+    @DeleteMapping("/{depositAccountId}/withdrawal-connection")
+    public ResponseEntity<ResponseData<Void>> disconnectWithdrawalAccount(@PathVariable Long depositAccountId) {
+        demandDepositFacade.deleteStarWithdrawalAccount(depositAccountId);
+        return ResponseUtil.success();
+    }
 }
