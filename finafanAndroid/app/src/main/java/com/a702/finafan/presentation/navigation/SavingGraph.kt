@@ -4,7 +4,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.a702.finafan.presentation.account.AllAccountScreen
 import com.a702.finafan.presentation.savings.SavingAccountManageScreen
 import com.a702.finafan.presentation.savings.SavingCancelScreen
 import com.a702.finafan.presentation.savings.SavingDepositScreen
@@ -110,10 +109,6 @@ fun NavGraphBuilder.savingGraph(
             RankingHistoryScreen(
                 viewModel = savingViewModel
             )
-        }
-
-        composable(NavRoutes.AllAccount.route) {
-            AllAccountScreen(savingViewModel)
         }
 
     }
