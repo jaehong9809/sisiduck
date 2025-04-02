@@ -136,7 +136,9 @@
     <string name="saving_item_star_not_exist">입력한 스타가\n존재하지 않습니다.</string>
     <string name="saving_item_exist">이미 가입한\n스타 적금입니다.</string>
     <string name="saving_item_change_name">적금 이름 변경</string>
-    <string name="saving_item_cancel_complete">적금 해지가 완료되었어요!</string>
+    <string name="saving_item_saving_cancel_complete">적금 해지가 완료되었어요!</string>
+    <string name="saving_item_connect_cancel_complete">연결 계좌 삭제가 완료되었어요!</string>
+    <string name="saving_item_connect_cancel_confirm">연결된 계좌를 삭제하시겠어요?</string>
     <string name="saving_item_deposit_complete">입금이 완료되었어요!</string>
     <string name="saving_item_withdrawal_empty">출금 가능 계좌가 없어요.\n계좌 연결을 해 볼까요?</string>
 
