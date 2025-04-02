@@ -44,22 +44,6 @@ public class RankingService {
         return String.format("weekly:user:ranking:%d:%s", entertainerId, monday.format(DATE_FORMATTER));
     }
 
-    public void updateRanking(Long userId, Long entertainerId, double amount) {
-        String dailyEntertainerKey = getDailyEntertainerRankingKey();
-        redisTemplate.opsForZSet().incrementScore(dailyEntertainerKey, entertainerId.toString(), amount);
-
-        String weeklyEntertainerKey = getWeeklyEntertainerRankingKey();
-        redisTemplate.opsForZSet().incrementScore(weeklyEntertainerKey, entertainerId.toString(), amount);
-
-        String dailyUserKey = getDailyUserRankingKey(entertainerId);
-        redisTemplate.opsForZSet().incrementScore(dailyUserKey, userId.toString(), amount);
-
-        String weeklyUserKey = getWeeklyUserRankingKey(entertainerId);
-        redisTemplate.opsForZSet().incrementScore(weeklyUserKey, userId.toString(), amount);
-
-        log.info("User {} contributed {} to entertainer {}, updated rankings", userId, amount, entertainerId);
-    }
-
     /**
      * 연예인 일간 랭킹 조회 (전체 연예인 적금 총액 기준)
      */
@@ -88,12 +72,23 @@ public class RankingService {
         return getUserRanking(getWeeklyUserRankingKey(entertainerId));
     }
 
-    /**
-     * 연예인 랭킹 조회 (공통 로직)
-     */
     private List<EntertainerRankingEntry> getEntertainerRanking(String key) {
+        return getEntertainerRanking(key, RANKING_LIMIT);
+    }
+
+    /**
+     * Top N 메서드는 이렇게 구현
+     */
+    public List<EntertainerRankingEntry> getTopNTotalEntertainerRanking(int n) {
+        return getEntertainerRanking(getTotalEntertainerRankingKey(), n);
+    }
+
+    /**
+     * 연예인 랭킹 조회 (공통 로직, 조회 범위 지정 가능)
+     */
+    private List<EntertainerRankingEntry> getEntertainerRanking(String key, int limit) {
         Set<ZSetOperations.TypedTuple<String>> rankingSet =
-                redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, RANKING_LIMIT - 1);
+                redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, limit - 1);
 
         List<EntertainerRankingEntry> result = new ArrayList<>();
         if (rankingSet != null) {
@@ -203,6 +198,48 @@ public class RankingService {
         }
 
         return result;
+    }
+
+    /**
+     * 누적 랭킹 키 (전체 기간 랭킹)
+     */
+    private String getTotalEntertainerRankingKey() {
+        return "total:entertainer:ranking";
+    }
+
+    /**
+     * 누적 랭킹에 금액 업데이트
+     * 일간/주간 랭킹 외에도 누적 랭킹 추가 업데이트
+     */
+    public void updateRanking(Long userId, Long entertainerId, double amount) {
+        // 연예인 일간 랭킹 업데이트 (entertainerId를 key로 사용하여 총액 누적)
+        String dailyEntertainerKey = getDailyEntertainerRankingKey();
+        redisTemplate.opsForZSet().incrementScore(dailyEntertainerKey, entertainerId.toString(), amount);
+
+        // 연예인 주간 랭킹 업데이트 (entertainerId를 key로 사용하여 총액 누적)
+        String weeklyEntertainerKey = getWeeklyEntertainerRankingKey();
+        redisTemplate.opsForZSet().incrementScore(weeklyEntertainerKey, entertainerId.toString(), amount);
+
+        // 연예인 누적 랭킹 업데이트 (전체 기간)
+        String totalEntertainerKey = getTotalEntertainerRankingKey();
+        redisTemplate.opsForZSet().incrementScore(totalEntertainerKey, entertainerId.toString(), amount);
+
+        // 특정 연예인 내 사용자 일간 랭킹 업데이트
+        String dailyUserKey = getDailyUserRankingKey(entertainerId);
+        redisTemplate.opsForZSet().incrementScore(dailyUserKey, userId.toString(), amount);
+
+        // 특정 연예인 내 사용자 주간 랭킹 업데이트
+        String weeklyUserKey = getWeeklyUserRankingKey(entertainerId);
+        redisTemplate.opsForZSet().incrementScore(weeklyUserKey, userId.toString(), amount);
+
+        log.info("User {} contributed {} to entertainer {}, updated all rankings", userId, amount, entertainerId);
+    }
+
+    /**
+     * 연예인 누적 랭킹 조회 (전체 기간)
+     */
+    public List<EntertainerRankingEntry> getTotalEntertainerRanking() {
+        return getEntertainerRanking(getTotalEntertainerRankingKey());
     }
 
     /**
