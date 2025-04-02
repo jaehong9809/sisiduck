@@ -42,6 +42,71 @@ public class RankingController {
     }
 
     /**
+     * 모든 연예인 랭킹 조회 (일간)
+     */
+    @GetMapping("/daily/all-entertainers")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getAllEntertainerDailyRanking() {
+        log.info("Getting all entertainer daily ranking");
+
+        // 모든 연예인 조회
+        List<Entertainer> allEntertainers = entertainerRepository.findAll();
+
+        // 모든 연예인 랭킹 조회
+        List<RankingService.EntertainerRankingEntry> entries =
+                rankingService.getAllEntertainerDailyRanking(allEntertainers);
+
+        // 응답 변환
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    /**
+     * 모든 연예인 랭킹 조회 (주간)
+     */
+    @GetMapping("/weekly/all-entertainers")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getAllEntertainerWeeklyRanking() {
+        log.info("Getting all entertainer weekly ranking");
+
+        // 모든 연예인 조회
+        List<Entertainer> allEntertainers = entertainerRepository.findAll();
+
+        // 모든 연예인 랭킹 조회
+        List<RankingService.EntertainerRankingEntry> entries =
+                rankingService.getAllEntertainerWeeklyRanking(allEntertainers);
+
+        // 응답 변환
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    @GetMapping("/total/top3")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getTopThreeTotalRanking() {
+        log.info("Getting top 3 total entertainer ranking");
+
+        // 상위 3명의 누적 랭킹 조회
+        List<RankingService.EntertainerRankingEntry> entries = rankingService.getTopNTotalEntertainerRanking(3);
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    /**
+     * 연예인 누적 랭킹 조회 API (전체 기간 전체 랭킹)
+     * 전체 기간 동안의 누적 금액 기준 모든 연예인 랭킹 조회
+     */
+    @GetMapping("/total/entertainers")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getTotalRanking() {
+        log.info("Getting total entertainer ranking");
+
+        List<RankingService.EntertainerRankingEntry> entries = rankingService.getTotalEntertainerRanking();
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    /**
      * 연예인 주간 랭킹 조회 (적금 총액 기준)
      */
     @GetMapping("/weekly/entertainers")
