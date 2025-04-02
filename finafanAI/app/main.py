@@ -1,21 +1,17 @@
 from typing import Union
 from fastapi import FastAPI
-from .router import chatbot_router, chatbot_router2
+from .router import v1_chatbot_router, v2_chatbot_router
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-api_key  = os.getenv("OPENAI_API_KEY")
-
-
-
 app = FastAPI(root_path="/ai")
 
-app.include_router(chatbot_router.router, prefix="/chatbot", tags=["Chatbot"])
-app.include_router(chatbot_router2.router, prefix="/chatbot2", tags=["Chatbot2"])
+app.include_router(v1_chatbot_router.router, prefix="/chatbot", tags=["ChainRouter"])
+app.include_router(v2_chatbot_router.router, prefix="/chatbot2", tags=["Agent"])
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"Hello": "Ducksun"}
 
