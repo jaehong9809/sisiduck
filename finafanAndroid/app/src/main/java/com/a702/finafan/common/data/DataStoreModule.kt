@@ -1,4 +1,4 @@
-package com.a702.finafan.data
+package com.a702.finafan.common.data
 
 import android.content.Context
 import androidx.datastore.core.DataStore

@@ -3,7 +3,7 @@ package com.a702.finafan.data.auth
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.a702.finafan.data.dataStore
+import com.a702.finafan.common.data.dataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
