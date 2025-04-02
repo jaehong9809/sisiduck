@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class DeleteAccountService {
 
     private final ApiClientUtil apiClientUtil;
+    private final AccountRepository accountRepository;
 
     public ResponseEntity<DeleteAccountResponse> deleteAccount(String path,
         DeleteAccountRequest deleteAccountRequest) {
@@ -21,5 +22,9 @@ public class DeleteAccountService {
             deleteAccountRequest,
             DeleteAccountResponse.class
         );
+    }
+
+    public void deleteById(Long accountId) {
+        accountRepository.deleteById(accountId);
     }
 }

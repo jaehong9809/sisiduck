@@ -3,12 +3,12 @@ package com.a702.finafanbe.core.demanddeposit.facade;
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.entity.Bank;
 import com.a702.finafanbe.core.demanddeposit.application.DeleteAccountService;
+import com.a702.finafanbe.core.demanddeposit.application.ExternalDemandDepositApiService;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse.REC;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
-import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
 import com.a702.finafanbe.core.entertainer.application.EntertainerService;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
@@ -24,7 +24,6 @@ import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
-import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,40 +44,33 @@ public class DemandDepositFacade {
 
     private static final String EMAIL = "lsc7134@naver.com";
 
-    private final FinancialRequestFactory financialRequestFactory;
-    private final ApiClientUtil apiClientUtil;
+    private final ExternalDemandDepositApiService externalDemandDepositApiService;
     private final EntertainSavingsService entertainSavingsService;
     private final DepositTransactionService depositTransactionService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
     private final UserService userService;
     private final BankService bankService;
     private final EntertainerService entertainerService;
-    private final AccountRepository accountRepository;
     private final RankingService rankingService;
     private final DeleteAccountService deleteAccountService;
+    private final FinancialRequestFactory financialRequestFactory;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
             String accountNo
     ) {
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequest(
                 "/demandDeposit/inquireDemandDepositAccount",
-                financialRequestFactory.UserKeyAccountNoRequest(
-                        userEmail,
-                        accountNo,
-                        "inquireDemandDepositAccount"
-                ),
-                InquireDemandDepositAccountResponse.class
+                userEmail,
+                accountNo,"inquireDemandDepositAccount"
         );
     }
 
     public ResponseEntity<InquireDemandDepositAccountListResponse> getDemandDepositListAccount(String userEmail) {
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/inquireDemandDepositAccountList",
-                financialRequestFactory.userKeyRequest(
-                        userEmail,
-                        "inquireDemandDepositAccountList"
-                ),
+                apiName -> financialRequestFactory.userKeyRequest(userEmail, apiName),
+                "inquireDemandDepositAccountList",
                 InquireDemandDepositAccountListResponse.class
         );
     }
@@ -87,15 +79,15 @@ public class DemandDepositFacade {
             String accountNo,
             String refundAccountNo
     ) {
-
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/deleteDemandDepositAccount",
-                financialRequestFactory.deleteAccountRequest(
+                apiName -> financialRequestFactory.deleteAccountRequest(
                         EMAIL,
                         accountNo,
-                        "deleteDemandDepositAccount",
+                        apiName,
                         refundAccountNo
                 ),
+                "deleteDemandDepositAccount",
                 DeleteAccountResponse.class
         );
     }
@@ -103,21 +95,22 @@ public class DemandDepositFacade {
     public ResponseEntity<AccountTransactionHistoriesResponse> inquireHistories(
             TransactionHistoriesRequest transactionHistoriesRequest
     ) {
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/inquireTransactionHistoryList",
-                financialRequestFactory.inquireHistories(
+                apiName -> financialRequestFactory.inquireHistories(
                         transactionHistoriesRequest.email(),
-                        "inquireTransactionHistoryList",
+                        apiName,
                         transactionHistoriesRequest.accountNo(),
                         transactionHistoriesRequest.startDate(),
                         transactionHistoriesRequest.endDate(),
                         transactionHistoriesRequest.transactionType(),
                         transactionHistoriesRequest.orderByType()
                 ),
+                "inquireTransactionHistoryList",
                 AccountTransactionHistoriesResponse.class
         );
     }
-
+//TODO
     public ResponseEntity<InquireAccountHolderNameResponse> inquireAccountHolderName(
             String userEmail,
             String accountNo
@@ -471,7 +464,7 @@ public class DemandDepositFacade {
         }
 
         entertainSavingsService.deleteByAccountId(depositAccount.getAccountId());
-        accountRepository.deleteById(account.getAccountId());
+        deleteAccountService.deleteById(account.getAccountId());
     }
 
     public void deleteStarWithdrawalAccount(Long accountId) {
@@ -481,6 +474,6 @@ public class DemandDepositFacade {
         if(entertainSavingsService.existsEntertainerAccountByDepositAccountId(accountId)){
             throw new BadRequestException(ResponseData.createResponse(ErrorCode.ENTERTAINER_SAVINGS));
         }
-        accountRepository.deleteById(accountId);
+        deleteAccountService.deleteById(accountId);
     }
 }
