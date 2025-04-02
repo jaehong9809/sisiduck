@@ -42,6 +42,46 @@ public class RankingController {
     }
 
     /**
+     * 모든 연예인 랭킹 조회 (일간)
+     */
+    @GetMapping("/daily/all-entertainers")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getAllEntertainerDailyRanking() {
+        log.info("Getting all entertainer daily ranking");
+
+        // 모든 연예인 조회
+        List<Entertainer> allEntertainers = entertainerRepository.findAll();
+
+        // 모든 연예인 랭킹 조회
+        List<RankingService.EntertainerRankingEntry> entries =
+                rankingService.getAllEntertainerDailyRanking(allEntertainers);
+
+        // 응답 변환
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    /**
+     * 모든 연예인 랭킹 조회 (주간)
+     */
+    @GetMapping("/weekly/all-entertainers")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getAllEntertainerWeeklyRanking() {
+        log.info("Getting all entertainer weekly ranking");
+
+        // 모든 연예인 조회
+        List<Entertainer> allEntertainers = entertainerRepository.findAll();
+
+        // 모든 연예인 랭킹 조회
+        List<RankingService.EntertainerRankingEntry> entries =
+                rankingService.getAllEntertainerWeeklyRanking(allEntertainers);
+
+        // 응답 변환
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    /**
      * 연예인 주간 랭킹 조회 (적금 총액 기준)
      */
     @GetMapping("/weekly/entertainers")

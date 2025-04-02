@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.ranking.application;
 
+import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,9 +12,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.DayOfWeek;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -127,6 +127,81 @@ public class RankingService {
                 }
             }
         }
+        return result;
+    }
+
+    /**
+     * 모든 연예인의 랭킹 조회 (일간 기준)
+     * 랭킹 데이터가 없는 연예인도 포함
+     */
+    public List<EntertainerRankingEntry> getAllEntertainerDailyRanking(List<Entertainer> allEntertainers) {
+        List<EntertainerRankingEntry> existingRankings = getDailyEntertainerRanking();
+
+        Map<Long, EntertainerRankingEntry> rankingMap = existingRankings.stream()
+                .collect(Collectors.toMap(
+                        EntertainerRankingEntry::getEntertainerId,
+                        entry -> entry
+                ));
+
+        List<EntertainerRankingEntry> result = new ArrayList<>();
+
+        int rank = existingRankings.size() + 1; // 기존 랭킹 다음부터 순위 부여
+        for (Entertainer entertainer : allEntertainers) {
+            Long entertainerId = entertainer.getEntertainerId();
+
+            if (rankingMap.containsKey(entertainerId)) {
+                result.add(rankingMap.get(entertainerId));
+            } else {
+                result.add(new EntertainerRankingEntry(rank++, entertainerId, 0.0));
+            }
+        }
+
+        result.sort(Comparator.comparing(EntertainerRankingEntry::getTotalAmount, Comparator.reverseOrder())
+                .thenComparing(EntertainerRankingEntry::getEntertainerId));
+
+        for (int i = 0; i < result.size(); i++) {
+            EntertainerRankingEntry entry = result.get(i);
+            result.set(i, new EntertainerRankingEntry(i+1, entry.getEntertainerId(), entry.getTotalAmount()));
+        }
+
+        return result;
+    }
+
+    /**
+     * 모든 연예인의 랭킹 조회 (주간 기준)
+     * 랭킹 데이터가 없는 연예인도 포함
+     */
+    public List<EntertainerRankingEntry> getAllEntertainerWeeklyRanking(List<Entertainer> allEntertainers) {
+        List<EntertainerRankingEntry> existingRankings = getWeeklyEntertainerRanking();
+
+        Map<Long, EntertainerRankingEntry> rankingMap = existingRankings.stream()
+                .collect(Collectors.toMap(
+                        EntertainerRankingEntry::getEntertainerId,
+                        entry -> entry
+                ));
+
+        List<EntertainerRankingEntry> result = new ArrayList<>();
+
+        int rank = existingRankings.size() + 1; // 기존 랭킹 다음부터 순위 부여
+        for (Entertainer entertainer : allEntertainers) {
+            Long entertainerId = entertainer.getEntertainerId();
+
+            if (rankingMap.containsKey(entertainerId)) {
+                result.add(rankingMap.get(entertainerId));
+            } else {
+                result.add(new EntertainerRankingEntry(rank++, entertainerId, 0.0));
+            }
+        }
+
+        result.sort(Comparator.comparing(EntertainerRankingEntry::getTotalAmount, Comparator.reverseOrder())
+                .thenComparing(EntertainerRankingEntry::getEntertainerId));
+
+        for (int i = 0; i < result.size(); i++) {
+            EntertainerRankingEntry entry = result.get(i);
+            // i가 0부터 시작하므로 랭킹은 i+1로 설정
+            result.set(i, new EntertainerRankingEntry(i+1, entry.getEntertainerId(), entry.getTotalAmount()));
+        }
+
         return result;
     }
 
