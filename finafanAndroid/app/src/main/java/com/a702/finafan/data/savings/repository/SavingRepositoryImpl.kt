@@ -8,6 +8,7 @@ import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.data.savings.dto.response.toDomain
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.SavingAccountInfo
 import com.a702.finafan.domain.savings.model.Star
@@ -168,6 +169,36 @@ class SavingRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             throw Exception(ExceptionHandler.handle(e))
+        }
+    }
+
+    override suspend fun dailyStarRanking(): List<Ranking> {
+        val response = api.dailyStarRanking()
+
+        return if (response.code == "S0000" && response.data != null) {
+            response.data.map { it.toDomain() }
+        } else {
+            throw Exception(response.message)
+        }
+    }
+
+    override suspend fun weeklyStarRanking(): List<Ranking> {
+        val response = api.weeklyStarRanking()
+
+        return if (response.code == "S0000" && response.data != null) {
+            response.data.map { it.toDomain() }
+        } else {
+            throw Exception(response.message)
+        }
+    }
+
+    override suspend fun totalStarRanking(): List<Ranking> {
+        val response = api.totalStarRanking()
+
+        return if (response.code == "S0000" && response.data != null) {
+            response.data.map { it.toDomain() }
+        } else {
+            throw Exception(response.message)
         }
     }
 

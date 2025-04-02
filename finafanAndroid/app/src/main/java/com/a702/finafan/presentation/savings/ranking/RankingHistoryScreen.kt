@@ -106,7 +106,7 @@ fun RankingHistoryScreen(
                     ) {
                         // 스타 이름
                         Text(
-                            text = stringResource(R.string.ranking_star_name, ranking.rankingIdx, ranking.star.entertainerName),
+                            text = stringResource(R.string.ranking_star_name, ranking.rank, ranking.starName),
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             lineHeight = 30.sp,
@@ -117,7 +117,7 @@ fun RankingHistoryScreen(
 
                         // 총 금액
                         Text(
-                            text = StringUtil.formatCurrency(ranking.amount),
+                            text = StringUtil.formatCurrency(ranking.totalAmount),
                             fontWeight = FontWeight.Medium,
                             fontSize = 18.sp,
                             lineHeight = 24.sp,

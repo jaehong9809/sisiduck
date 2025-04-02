@@ -24,6 +24,7 @@ data class SavingState(
     val savingAccountInfo: SavingAccountInfo = SavingAccountInfo(),
     val bankList: List<Bank> = emptyList(),
     val isCancel: Boolean = false,
+    val rankingList: List<Ranking> = emptyList(),
     override val isLoading: Boolean = true,
     override val error: Throwable? = null,
     override val toastMessage: String? = null
