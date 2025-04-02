@@ -2,21 +2,20 @@ from langchain.memory import ConversationBufferMemory
 from langchain.agents import Tool, AgentExecutor, create_react_agent
 from langchain_core.runnables import RunnableLambda
 from langchain_core.messages import HumanMessage, SystemMessage
-
-from app.service.v2.search2 import fast_news_search, youtube_search, search_person_info, duckduckgo_search, get_weather
-from app.service.v2.prompts2 import DUKSUNI_SYSTEM_PROMPT, react_prompt_kr
+import re
+from app.service.v2.search import fast_news_search, youtube_search, search_person_info, duckduckgo_search, get_weather
+from app.service.v2.prompts import DUKSUNI_SYSTEM_PROMPT, react_prompt_kr
 from app.service.v2.llm import get_llm, get_hard_llm
 # ✅ 메모리
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="output")
 
 # ✅ 도구 정의
 tools = [
-    Tool(name="뉴스검색", func=fast_news_search, description="뉴스, 기사, 이슈 등 외부 정보를 찾을 때 사용"),
+    Tool(name="뉴스검색", func=fast_news_search, description="연예인, 사회 인물, 이슈 등 최신 뉴스나 기사를 찾을 때 사용"),
     Tool(name="동영상검색", func=youtube_search, description="YouTube에서 영상이나 방송 클립을 보고 싶을 때 사용"),
-    Tool(name="인물정보검색", func=search_person_info, description="생일, MBTI, 고향 등 기본 정보가 필요할 때 사용"),
-    Tool(name="웹검색", func=duckduckgo_search, description="일반 웹 연예인 정보, 블로그, 커뮤니티 등 전체 웹 검색이 필요할 때 사용"),
-    Tool(name="날씨검색", func=get_weather, description="현재 날씨, 기온, 습도 등 날씨 정보가 필요할 때 사용"
-)
+    #Tool(name="인물정보검색", func=search_person_info, description="생일, 학력, 가족관계 등 기본 정보가 필요할 때 사용"),
+    Tool(name="웹검색", func=duckduckgo_search, description="일반 연예인 정보, 블로그, 커뮤니티 등 전체 웹 검색이 필요할 때 사용"),
+    Tool(name="날씨검색", func=get_weather, description="현재 날씨, 기온, 습도 등 날씨 정보가 필요할 때 사용")
 ]
 
 # ✅ 말투 변환
@@ -24,7 +23,7 @@ async def to_friendly_tone(answer: str) -> str:
     llm = get_hard_llm(streaming=False)
     prompt = [
         SystemMessage(content=DUKSUNI_SYSTEM_PROMPT.strip()),
-        HumanMessage(content=f'다음 내용을 친구처럼 반말로 바꿔줘. 살짝 주접 섞어도 좋아~\n\n"{answer}"\n\n변환된 말투:')
+        HumanMessage(content=f'다음 내용을 친구처럼 반말로 바꿔줘. \n\n"{answer}"\n\n변환된 말투:')
     ]
     result = await llm.ainvoke(prompt)
     return result.content.strip()
@@ -38,6 +37,11 @@ def extract_final_answer(text: str) -> str:
 # ✅ Agent 판단 함수
 def needs_agent(input: dict) -> bool:
     question = input["input"].strip()
+
+    keywords = ["날씨", "온도", "습도", "추워", "더워"]
+    if any(keyword in question for keyword in keywords):
+        return True
+
     check_prompt = f"""
         다음 질문은 검색 도구(뉴스, 유튜브, 인물정보, 날씨 등)를 사용해야 하나요?
 
@@ -69,11 +73,7 @@ def get_chat_chain(callback):
         print("\n🧩 [Chat 원본 출력]")
         print(result.content)
 
-        friendly = await to_friendly_tone(result.content)
-        print("\n💬 [덕순이 말투 변환 결과]")
-        print(friendly)
-
-        return {"output": friendly}
+        return {"output": result.content}
 
     return RunnableLambda(_chat)
 
@@ -92,8 +92,8 @@ def get_agent_chain(callback):
             agent=agent,
             tools=tools,
             memory=memory,
-            verbose=True,
             handle_parsing_errors=True,
+            verbose=True,
             max_iterations=4,
             return_intermediate_steps=True,
             output_key="output"
@@ -102,24 +102,42 @@ def get_agent_chain(callback):
         result = await executor.ainvoke(x)
         intermediate_steps = result.get("intermediate_steps", [])
 
-        # 전체 Tool 출력만 리스트로 추출
-        tool_outputs = [step[1] for step in intermediate_steps]
+        seen = set()
+        unique_tool_outputs = []
+
+        for step in intermediate_steps:
+            action = step[0]  # AgentAction
+            output = step[1]  # Tool output (observation)
+
+            # Exception은 무시
+            if action.tool == "_Exception":
+                continue
+
+            key = (action.tool, str(action.tool_input))
+            if key not in seen:
+                seen.add(key)
+                unique_tool_outputs.append(output)
+
+        for i in unique_tool_outputs:
+            print(i)
+            print("------")
 
         # 문자열 하나로 병합
-        search_summary = "\n".join(tool_outputs)
+        print(unique_tool_outputs)
+        search_summary = "\n".join(unique_tool_outputs)
         final_answer = extract_final_answer(result["output"])
-
+        if final_answer =="Agent stopped due to iteration limit or time limit.":
+            final_answer = ""
         # 전체 맥락 연결
-        full_context = search_summary + "\n\n" + final_answer
+        full_context = final_answer + "\n\n" + search_summary
 
         print("\n🧩 [Agent 원본 출력]")
         print(result["output"])
 
-        final_answer = extract_final_answer(result["output"])
         print("\n🪄 [Final Answer 추출 결과]")
         print(full_context)
+
         friendly = await to_friendly_tone(full_context)
-        
         print("\n💬 [덕순이 말투 변환 결과]")
         print(friendly)
 

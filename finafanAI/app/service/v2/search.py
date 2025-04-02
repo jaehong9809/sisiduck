@@ -10,7 +10,12 @@ from duckduckgo_search import DDGS
 import warnings
 from langchain_core._api.deprecation import LangChainDeprecationWarning
 import requests
+import re
 warnings.filterwarnings("ignore", category=LangChainDeprecationWarning)
+
+def extract_topic(text: str) -> str:
+    # 가장 단순한 예: "XXX 최근 소식", "XXX 뉴스", "XXX 근황" 등의 패턴 제거
+    return re.sub(r"(의\s*)?(최근\s*소식|뉴스|근황|활동)\s*(알려줘|전해줘|없어\?|좀 알려줄래)?", "", text).strip()
 
 # 웹 검색
 def duckduckgo_search(query: str, max_results: int = 3) -> str:
@@ -22,7 +27,9 @@ def duckduckgo_search(query: str, max_results: int = 3) -> str:
 
 # 뉴스 검색
 def fast_news_search(query: str) -> str:
+    query = extract_topic(query)
     encoded_query = quote(query)  # 공백 및 한글 인코딩
+
     url = f"https://news.google.com/rss/search?q={encoded_query}&hl=ko&gl=KR&ceid=KR:ko"
 
     feed = feedparser.parse(url)
@@ -72,7 +79,6 @@ def get_weather(city="Seoul"):
     url = f"https://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=c03977953046419f6c73010097b1cbfa&units=metric&lang=kr"
     response = requests.get(url)
     data = response.json()
-    print(data)
 
     if response.status_code != 200:
         return "날씨 정보를 가져오지 못했습니다."
