@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -43,34 +44,44 @@ fun SavingDescScreen() {
 
     val navController = LocalNavController.current
 
-    Column(
-        modifier = Modifier.fillMaxSize().background(MainWhite)
-    ) {
-        CommonBackTopBar(text = stringResource(R.string.saving_item_title), isTextCentered = true)
-
+    Scaffold(
+        topBar = {
+            CommonBackTopBar(
+                text = stringResource(R.string.saving_item_title),
+                isTextCentered = true
+            )
+        },
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = CenterHorizontally,
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MainWhite)
         ) {
-            FirstDesc()
-            SecondDesc()
-            ThirdDesc()
-
-            PrimaryGradButton(
-                onClick = {
-                    navController.navigate(NavRoutes.StarSearch.route)
-                },
-                text = stringResource(R.string.btn_join),
+            Column(
                 modifier = Modifier
-                    .align(CenterHorizontally)
-                    .padding(top = 32.dp, bottom = 32.dp, start = 16.dp, end = 16.dp)
-                    .fillMaxWidth()
-            )
-        }
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = CenterHorizontally,
+            ) {
+                FirstDesc()
+                SecondDesc()
+                ThirdDesc()
 
+                PrimaryGradButton(
+                    onClick = {
+                        navController.navigate(NavRoutes.StarSearch.route)
+                    },
+                    text = stringResource(R.string.btn_join),
+                    modifier = Modifier
+                        .align(CenterHorizontally)
+                        .padding(top = 32.dp, bottom = 32.dp, start = 16.dp, end = 16.dp)
+                        .fillMaxWidth()
+                )
+            }
+        }
     }
+
 }
 
 // 첫 번째 설명

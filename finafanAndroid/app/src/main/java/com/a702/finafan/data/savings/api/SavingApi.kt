@@ -3,6 +3,7 @@ package com.a702.finafan.data.savings.api
 import com.a702.finafan.common.data.dto.ApiResponse
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.response.AccountResponse
+import com.a702.finafan.data.savings.dto.response.BankResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountInfoResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountResponse
 import com.a702.finafan.data.savings.dto.response.SavingCreateResponse
@@ -57,4 +58,8 @@ interface SavingApi {
     // 출금 계좌 목록 조회
     @GET("v1/star/withdrawal-accounts")
     suspend fun withdrawAccount(): ApiResponse<List<AccountResponse>>
+
+    // 은행 목록 조회
+    @GET("v1/code/bank")
+    suspend fun bankList(): ApiResponse<List<BankResponse>>
 }

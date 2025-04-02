@@ -11,6 +11,7 @@ import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
 import com.a702.finafan.domain.savings.usecase.DepositUseCase
+import com.a702.finafan.domain.savings.usecase.GetBankUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingAccountUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingUseCase
 import com.a702.finafan.domain.savings.usecase.GetStarUseCase
@@ -31,6 +32,7 @@ class SavingViewModel @Inject constructor(
     private val getWithdrawalAccountUseCase: GetWithdrawalAccountUseCase,
     private val depositUseCase: DepositUseCase,
     private val getSavingAccountUseCase: GetSavingAccountUseCase,
+    private val getBankUseCase: GetBankUseCase,
 ): ViewModel() {
 
     private val _savingState = MutableStateFlow(SavingState())
@@ -162,6 +164,30 @@ class SavingViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         savingAccountInfo = savingAccountInfo
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
+    fun fetchBankList() {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val bankList = getBankUseCase()
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        bankList = bankList
                     )
                 }
             } catch (e: Exception) {

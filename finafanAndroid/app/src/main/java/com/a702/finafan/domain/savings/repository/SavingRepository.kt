@@ -3,6 +3,7 @@ package com.a702.finafan.domain.savings.repository
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.SavingAccountInfo
 import com.a702.finafan.domain.savings.model.Star
@@ -22,4 +23,6 @@ interface SavingRepository {
     suspend fun savingAccounts(): SavingAccountInfo
 
     suspend fun withdrawAccount(): List<Account>
+
+    suspend fun bankList(): List<Bank>
 }
