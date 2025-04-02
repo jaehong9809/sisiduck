@@ -238,7 +238,8 @@ class SavingViewModel @Inject constructor(
 
                 _savingState.update {
                     it.copy(
-                        isLoading = result,
+                        isLoading = false,
+                        isCancel = result,
                     )
                 }
             } catch (e: Exception) {

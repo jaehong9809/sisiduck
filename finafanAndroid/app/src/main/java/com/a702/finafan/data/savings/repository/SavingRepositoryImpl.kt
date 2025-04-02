@@ -147,7 +147,7 @@ class SavingRepositoryImpl @Inject constructor(
         return try {
             val response = api.deleteSavingAccount(savingAccountId)
 
-            if (response.code == "S0000" && response.data != null) {
+            if (response.code == "S0000") {
                 return true
             } else {
                 throw Exception(response.message)
