@@ -34,7 +34,7 @@ public class FundingService {
     private final UserRepository userRepository;
     private final FundingGroupRepository fundingGroupRepository;
     private final GroupUserRepository groupUserRepository;
-    private final FundingPendingTransactionRepository fundingSupportRepository;
+    private final FundingPendingTransactionRepository fundingPendingTransactionRepository;
     private final GroupBoardRepository groupBoardRepository;
     private final FundingQueryRepository fundingQueryRepository;
 
@@ -82,8 +82,8 @@ public class FundingService {
         if(!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
             throw new RuntimeException("펀딩이 진행 중일 때만 입금할 수 있습니다.");
         }
-        FundingPendingTransaction support = FundingPendingTransaction.create(request, userId, fundingId, user.getName());
-        fundingApplicationRepository.save(support);
+        FundingPendingTransaction transaction = FundingPendingTransaction.create(request, userId, fundingId, user.getName());
+        fundingApplicationRepository.save(transaction);
     }
 
     // 펕딩 안내 설명 글 변경
@@ -105,7 +105,7 @@ public class FundingService {
         if(!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
             throw new RuntimeException("펀딩이 진행 중일 때만 입금을 취소할 수 있습니다.");
         }
-        fundingSupportRepository.deleteById(fundingSupportId);
+        fundingPendingTransactionRepository.deleteById(fundingSupportId);
     }
 
     // 펀딩 중도 해지
@@ -115,8 +115,11 @@ public class FundingService {
         if (!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
             throw new RuntimeException("펀딩이 진행 중일 때만 중단할 수 있습니다.");
         }
-        fundingGroupRepository.deleteById(fundingId);
-        fundingSupportRepository.deleteAllByFundingId(fundingId);
+        FundingGroup funding = fundingGroupRepository.findById(fundingId)
+                .orElseThrow(() -> new RuntimeException("펀딩이 존재하지 않습니다."));
+
+        funding.updateFundingStatus(FundingStatus.CANCELED);
+        fundingPendingTransactionRepository.deleteAllByFundingId(fundingId);
         groupUserRepository.deleteAllByFundingGroupId(fundingId);
     }
 
@@ -128,14 +131,19 @@ public class FundingService {
             throw new RuntimeException("펀딩이 종료되지 않았습니다.");
         }
         Long sum = groupBoardRepository.sumByFundingGroupId(fundingId);
-        Long totalAmount = fundingSupportRepository.sumByFundingId(fundingId);
+        Long totalAmount = fundingPendingTransactionRepository.sumByFundingId(fundingId);
         System.out.println(sum);
         System.out.println(totalAmount);
         if (!sum.equals(totalAmount)) {
             throw new RuntimeException("게시판에 펀딩 총액을 정확하게 입력해주세요.");
         }
-        fundingGroupRepository.deleteById(fundingId);
-        fundingSupportRepository.deleteAllByFundingId(fundingId);
+        findFundingGroup(fundingId).updateFundingStatus(FundingStatus.TERMINATED);
+        fundingPendingTransactionRepository.deleteAllByFundingId(fundingId);
+    }
+
+    private FundingGroup findFundingGroup(Long fundingId) {
+        return fundingGroupRepository.findById(fundingId)
+                .orElseThrow(() -> new RuntimeException("해당 펀딩이 존재하지 않습니다."));
     }
 
     // 펀딩 입금 신청, 입금신청취소, 중도해지는 펀딩 INPROGRESS에만 가능

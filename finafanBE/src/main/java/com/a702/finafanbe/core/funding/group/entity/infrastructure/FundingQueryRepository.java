@@ -12,7 +12,9 @@ import com.a702.finafanbe.core.savings.entity.QSavingsAccount;
 import com.a702.finafanbe.core.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +33,7 @@ public class FundingQueryRepository {
     QEntertainer entertainer = QEntertainer.entertainer;
     QFundingPendingTransaction fundingPendingTransaction = QFundingPendingTransaction.fundingPendingTransaction;
     QUser user = QUser.user;
-    QSavingsAccount account = QSavingsAccount.savingsAccount;
+    QSavingsAccount savingsAccount = QSavingsAccount.savingsAccount;
 
     public List<GetFundingResponse> findFundings(Long userId, String filter) {
         BooleanBuilder where = new BooleanBuilder();
@@ -67,6 +69,7 @@ public class FundingQueryRepository {
                         ),
                         fundingGroup.id,
                         fundingGroup.name,
+                        filter.equalsIgnoreCase("my") ? savingsAccount.accountNo : Expressions.constant(""),
                         fundingGroup.status,
                         JPAExpressions.select(fundingPendingTransaction.balance.sum().coalesce(0L))
                                 .from(fundingPendingTransaction)
@@ -76,6 +79,7 @@ public class FundingQueryRepository {
                 ))
                 .from(fundingGroup)
                 .join(entertainer).on(fundingGroup.entertainerId.eq(entertainer.entertainerId))
+                .leftJoin(savingsAccount).on(fundingGroup.accountId.eq(savingsAccount.id))
                 .where(where)
                 .fetch();
     }

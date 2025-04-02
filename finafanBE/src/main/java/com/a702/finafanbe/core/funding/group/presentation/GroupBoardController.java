@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/fundings/groups")
+@RequestMapping("api/v1/fundings")
 @RequiredArgsConstructor
 public class GroupBoardController {
 
     private final FundingGroupBoardService fundingGroupBoardService;
 
     // 펀딩 글 생성
-    @PostMapping("/{fundingId}/create")
+    @PostMapping("/{fundingId}/boards/create")
     public ResponseEntity<?> createGroupBoard(
             @RequestBody CreateGroupBoardRequest request,
             @PathVariable Long fundingId
@@ -32,7 +32,7 @@ public class GroupBoardController {
     }
 
     // 펀딩 게시판 글 목록 조회
-    @GetMapping("/{fundingId}/board")
+    @GetMapping("/{fundingId}/boards")
     public ResponseEntity<ResponseData<List<GetGroupBoardDetailResponse>>> getGroupBoardDetail(
             @PathVariable Long fundingId
     ) {
@@ -40,7 +40,7 @@ public class GroupBoardController {
     }
 
     // 펀딩 게시판 글 수정
-    @PutMapping("/{fundingId}/board/{boardId}")
+    @PutMapping("/{fundingId}/boards/{boardId}")
     public ResponseEntity<?> updateGroupBoard(
             @RequestBody UpdateGroupBoardRequest request,
             @PathVariable Long fundingId,
@@ -53,14 +53,14 @@ public class GroupBoardController {
     }
 
     // 펀딩 게시판 글 삭제
-    @DeleteMapping("/{fundingId}/board/{fundingBoardId}/delete")
+    @DeleteMapping("/{fundingId}/boards/{boardId}/delete")
     public ResponseEntity<?> deleteGroupBoard(
             @PathVariable Long fundingId,
-            @PathVariable Long fundingBoardId
+            @PathVariable Long boardId
             //@AuthMember Long userId
     ) {
         Long userId = 1L;
-        fundingGroupBoardService.deleteGroupBoard(userId, fundingId, fundingBoardId);
+        fundingGroupBoardService.deleteGroupBoard(userId, fundingId, boardId);
         return ResponseUtil.success();
 
     }

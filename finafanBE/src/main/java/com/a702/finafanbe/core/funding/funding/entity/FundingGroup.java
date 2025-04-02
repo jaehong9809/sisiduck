@@ -44,6 +44,15 @@ public class FundingGroup extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
 
+    @PrePersist
+    private void prePersist() {
+        this.status = FundingStatus.INPROGRESS;
+    }
+
+    public void updateFundingStatus(FundingStatus status) {
+        this.status = status;
+    }
+
     public void updateDescription(String description) {
         this.description = description;
     }
