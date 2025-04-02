@@ -94,6 +94,21 @@ fun MainScreen(
             text = "모금"
         )
 
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        // 로그인 기능 확인을 위한 임시 button
+        MainSquareIconButton(
+            onClick = {
+                navController.navigate(NavRoutes.Login.route)
+            },
+            icon = {
+                ImageItem(Modifier.padding(5.dp), { }, R.drawable.login)
+            },
+            text = "로그인"
+        )
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
         MainSquareIconButton(
             onClick = {
                 blePermissionLauncher.launch(

@@ -17,7 +17,7 @@ class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val SSAFY_OAUTH_URL = "";
+    private val ssafyOauthUrl = "https://project.ssafy.com/oauth/sso-check";
     private val _uiState = MutableStateFlow(AuthState())
     val uiState = _uiState.asStateFlow()
 
@@ -26,7 +26,7 @@ class LoginViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             try {
-                val url = SSAFY_OAUTH_URL
+                val url = ssafyOauthUrl
                 _uiState.update {
                     it.copy(
                         isLoading = false,

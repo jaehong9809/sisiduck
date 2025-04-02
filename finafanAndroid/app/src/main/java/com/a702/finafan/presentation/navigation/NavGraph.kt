@@ -6,6 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.a702.finafan.presentation.auth.LoginScreen
 import com.a702.finafan.presentation.ble.UuidListScreen
 import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.chatbot.ChatViewModel
@@ -29,6 +30,7 @@ fun NavGraph(
             }
 
             composable(NavRoutes.Login.route) {
+                LoginScreen()
             }
 
             composable(NavRoutes.Chat.route) {
