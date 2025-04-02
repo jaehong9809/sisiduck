@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">FinAFan</string>
 
+    <!-- Main Screen -->
+    <string name="card_login_button">로그인</string>
+    <string name="card_create_saving_info">아직 가입한 상품이 없어요!</string>
+    <string name="card_create_saving_button">스타적금 시작하기</string>
+    <string name="card_saving_info"> 스타적금</string>
+    <string name="card_saving_deposit_button">입금하기</string>
+    <string name="all_acount_button">전체 계좌 보기</string>
 
     <!-- Chat Screen -->
     <string name="chatbot_talk_button">덕순이와 대화하기</string>
@@ -140,5 +147,15 @@
     <!-- BLUETOOTH -->
     <string name="ble_find_user">주변 팬 찾기</string>
     <string name="ble_finding_user">주변 탐색 중...</string>
+
+    <!-- All Account -->
+    <string name="all_account_title">내 계좌</string>
+    <string name="all_account_saving_title">적금</string>
+    <string name="all_account_funding_title">모금</string>
+    <string name="all_account_other_title">다른 금융</string>
+    <string name="all_account_count_header">총</string>
+    <string name="all_account_count_content">개</string>
+    <string name="all_account_saving_account_no">스타적금 %s</string>
+    <string name="all_account_funding_account_no">모금통장 %s</string>
 
 </resources>
