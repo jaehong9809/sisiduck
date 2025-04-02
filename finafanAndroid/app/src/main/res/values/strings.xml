@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">FinAFan</string>
 
+    <!-- Login Screen -->
+    <string name="ssafy_login">SSAFY 금융망 로그인</string>
+    <string name="login">로그인</string>
+
 
     <!-- Chat Screen -->
     <string name="chatbot_talk_button">덕순이와 대화하기</string>
