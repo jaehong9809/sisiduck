@@ -18,6 +18,7 @@ import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccoun
 import com.a702.finafanbe.core.entertainer.dto.response.StarAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
+import com.a702.finafanbe.core.ranking.application.RankingService;
 import com.a702.finafanbe.core.savings.application.SavingsAccountService;
 import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
@@ -35,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -61,6 +63,7 @@ public class DemandDepositFacade {
     private final SavingsAccountService savingsAccountService;
     private final DeleteAccountService deleteAccountService;
     private final AccountRepository accountRepository;
+    private final RankingService rankingService;
 
     public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
             String userEmail,
@@ -422,6 +425,7 @@ public class DemandDepositFacade {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteStarAccount(Long savingAccountId) {
         Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(savingAccountId);
@@ -437,7 +441,19 @@ public class DemandDepositFacade {
                         withdrawalAccount.getAccountNo()
                 )
         ).getBody().REC();
+
         Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(deleteResponse.accountNo());
+        if (account.getAmount() != null && account.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+            if (savingsAccount.isPresent()) {
+                double amountToDeduct = account.getAmount().negate().doubleValue();
+                rankingService.updateRanking(
+                        savingsAccount.getUserId(),
+                        savingsAccount.getEntertainerId(),
+                        amountToDeduct
+                );
+            }
+        }
+
         entertainSavingsService.deleteByAccountId(depositAccount.getAccountId());
         accountRepository.deleteById(account.getAccountId());
     }

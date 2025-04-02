@@ -94,4 +94,8 @@ public class EntertainerSavingsAccount extends BaseEntity {
     public void updateProductName(String productName) {
         this.productName = productName;
     }
+
+    public boolean isPresent() {
+        return id != null;
+    }
 }
