@@ -25,7 +25,6 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.savings.model.Ranking
-import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -42,18 +41,20 @@ fun RankingScreen(
 
     val tabTitle = remember { mutableStateOf(dailyTitle) }
 
-    val list = mutableListOf(
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 1, 2345),
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 2, 2345),
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 3, 3456),
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 4, 3456),
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 5, 3456),
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 6, 3456),
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 7, 3456),
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 8, 3456),
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 9, 3456),
-        Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 10, 3456)
-    )
+//    val list = mutableListOf(
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 1, 2345),
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 2, 2345),
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 3, 3456),
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 4, 3456),
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 5, 3456),
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 6, 3456),
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 7, 3456),
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 8, 3456),
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 9, 3456),
+//        Ranking(Star(starId = 1, starName = "이찬원", starImageUrl = ""), 10, 3456)
+//    )
+
+    val list = emptyList<Ranking>()
 
     Column(
         modifier = Modifier

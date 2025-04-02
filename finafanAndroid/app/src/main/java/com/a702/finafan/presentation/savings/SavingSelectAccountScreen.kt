@@ -115,7 +115,7 @@ fun SavingSelectAccountScreen(
         onButtonClick = {
             // 적금 개설
             val savingCreate = SavingCreate(
-                savingState.selectStar.entertainerId,
+                savingState.selectStar.starId,
                 savingState.accountName,
                 savingState.connectAccount
             )

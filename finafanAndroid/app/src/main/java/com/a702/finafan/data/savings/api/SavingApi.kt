@@ -80,4 +80,12 @@ interface SavingApi {
     @DELETE("v1/star/{depositAccountId}/withdrawal-connection")
     suspend fun deleteConnectAccount(@Path("depositAccountId") depositAccountId: Long): ApiResponse<Unit>
 
+    // 적금 일간 랭킹 조회
+    @GET("/daily/all-entertainers")
+    suspend fun dailyStarRanking()
+
+    // 적금 주간 랭킹 조회
+    @GET("/weekly/all-entertainers")
+    suspend fun weeklyStarRanking()
+
 }
