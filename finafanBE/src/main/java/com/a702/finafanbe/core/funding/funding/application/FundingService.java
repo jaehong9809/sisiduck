@@ -3,16 +3,16 @@ package com.a702.finafanbe.core.funding.funding.application;
 import com.a702.finafanbe.core.funding.funding.dto.*;
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
-import com.a702.finafanbe.core.funding.group.application.FundingGroupBoardService;
 import com.a702.finafanbe.core.funding.group.application.FundingGroupService;
 import com.a702.finafanbe.core.funding.group.entity.GroupUser;
 import com.a702.finafanbe.core.funding.group.entity.Role;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingGroupRepository;
+import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingQueryRepository;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.GroupBoardRepository;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.GroupUserRepository;
 import com.a702.finafanbe.core.savings.application.ApiSavingsAccountService;
-import com.a702.finafanbe.core.funding.funding.entity.FundingSupport;
-import com.a702.finafanbe.core.funding.funding.entity.infrastructure.FundingSupportRepository;
+import com.a702.finafanbe.core.funding.funding.entity.FundingPendingTransaction;
+import com.a702.finafanbe.core.funding.funding.entity.infrastructure.FundingPendingTransactionRepository;
 import com.a702.finafanbe.core.savings.entity.SavingsAccount;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
@@ -30,12 +30,13 @@ public class FundingService {
 
     private final FundingAccountService fundingAccountService;
     private final FundingGroupService fundingGroupService;
-    private final FundingSupportRepository fundingApplicationRepository;
+    private final FundingPendingTransactionRepository fundingApplicationRepository;
     private final UserRepository userRepository;
     private final FundingGroupRepository fundingGroupRepository;
     private final GroupUserRepository groupUserRepository;
-    private final FundingSupportRepository fundingSupportRepository;
+    private final FundingPendingTransactionRepository fundingSupportRepository;
     private final GroupBoardRepository groupBoardRepository;
+    private final FundingQueryRepository fundingQueryRepository;
 
     // 펀딩 생성
     @Transactional
@@ -62,6 +63,11 @@ public class FundingService {
         return fundingGroupService.getFundingDetail(fundingId, userId);
     }
 
+    @Transactional(readOnly = true)
+    public List<GetFundingPendingTransactionResponse> getFundingPendingTransaction (Long userId, Long fundingId, String filter) {
+        return fundingQueryRepository.getFundingPendingTransaction(userId, fundingId, filter);
+    }
+
     // 펀딩 가입
     @Transactional
     public void joinFunding(Long userId, Long groupId) {
@@ -70,17 +76,22 @@ public class FundingService {
 
     // 펀딩 입금
     @Transactional
-    public void supportFunding(FundingSupportRequest request, Long userId, Long fundingGroupId) {
-        User user = userRepository.findById(userId).orElseThrow();
-        FundingSupport appliance = FundingSupport.create(request, userId, fundingGroupId, user.getName());
-        fundingApplicationRepository.save(appliance);
+    public void supportFunding(FundingPendingTransactionRequest request, Long userId, Long fundingId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+        if(!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
+            throw new RuntimeException("펀딩이 진행 중일 때만 입금할 수 있습니다.");
+        }
+        FundingPendingTransaction support = FundingPendingTransaction.create(request, userId, fundingId, user.getName());
+        fundingApplicationRepository.save(support);
     }
 
+    // 펕딩 안내 설명 글 변경
     @Transactional
-    public void updateFundingDescription(UpdateFundingDescriptionRequest request, Long userId, Long fundingGroupId) {
-        FundingGroup group = fundingGroupRepository.findById(fundingGroupId)
+    public void updateFundingDescription(UpdateFundingDescriptionRequest request, Long userId, Long fundingId) {
+        FundingGroup group = fundingGroupRepository.findById(fundingId)
                 .orElseThrow(() -> new RuntimeException("펀딩이 존재하지 않습니다."));
-        GroupUser groupUser = groupUserRepository.findByFundingGroupIdAndUserId(fundingGroupId, userId)
+        GroupUser groupUser = groupUserRepository.findByFundingGroupIdAndUserId(fundingId, userId)
                 .orElseThrow(() -> new RuntimeException("해당 펀딩의 유저가 아닙니다."));
         if (!groupUser.getRole().equals(Role.ADMIN)) {
             throw new RuntimeException("방장에게만 권한이 있습니다.");
@@ -88,36 +99,46 @@ public class FundingService {
         group.updateDescription(request.description());
     }
 
+    // 펀딩 입금 취소
     @Transactional
-    public void withdrawFunding(Long userId, Long fundingSupportId) {
+    public void withdrawFunding(Long userId, Long fundingId, Long fundingSupportId) {
+        if(!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
+            throw new RuntimeException("펀딩이 진행 중일 때만 입금을 취소할 수 있습니다.");
+        }
         fundingSupportRepository.deleteById(fundingSupportId);
     }
 
+    // 펀딩 중도 해지
     @Transactional
     public void cancelFunding(Long userId, Long fundingId) {
         checkAdminUser(userId, fundingId);
+        if (!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
+            throw new RuntimeException("펀딩이 진행 중일 때만 중단할 수 있습니다.");
+        }
         fundingGroupRepository.deleteById(fundingId);
-        fundingSupportRepository.deleteAllByFundingGroupId(fundingId);
+        fundingSupportRepository.deleteAllByFundingId(fundingId);
         groupUserRepository.deleteAllByFundingGroupId(fundingId);
     }
 
+    // 펀딩 공식 종료
     @Transactional
     public void terminateFunding(Long userId, Long fundingId) {
         checkAdminUser(userId, fundingId);
-        if (checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
+        if (!checkFundingStatus(fundingId).equals(FundingStatus.SUCCESS)) {
             throw new RuntimeException("펀딩이 종료되지 않았습니다.");
         }
         Long sum = groupBoardRepository.sumByFundingGroupId(fundingId);
-        Long totalAmount = fundingSupportRepository.sumByFundingGroupId(fundingId);
+        Long totalAmount = fundingSupportRepository.sumByFundingId(fundingId);
         System.out.println(sum);
         System.out.println(totalAmount);
         if (!sum.equals(totalAmount)) {
             throw new RuntimeException("게시판에 펀딩 총액을 정확하게 입력해주세요.");
         }
         fundingGroupRepository.deleteById(fundingId);
-        fundingSupportRepository.deleteAllByFundingGroupId(fundingId);
+        fundingSupportRepository.deleteAllByFundingId(fundingId);
     }
 
+    // 펀딩 입금 신청, 입금신청취소, 중도해지는 펀딩 INPROGRESS에만 가능
     private FundingStatus checkFundingStatus(Long fundingId) {
         FundingGroup group = fundingGroupRepository.findById(fundingId)
                 .orElseThrow(() -> new RuntimeException("해당 펀딩이 존재하지 않습니다."));

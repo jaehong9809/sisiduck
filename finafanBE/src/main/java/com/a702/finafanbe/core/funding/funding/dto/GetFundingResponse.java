@@ -1,11 +1,14 @@
 package com.a702.finafanbe.core.funding.funding.dto;
 
+import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
+
 import java.time.LocalDateTime;
 
 public record GetFundingResponse (
         EntertainerResponse entertainer,
         Long fundingId,
         String fundingName,
+        FundingStatus status,
         Long currentAmount,
         Long goalAmount,
         LocalDateTime fundingExpiryDate
@@ -14,6 +17,7 @@ public record GetFundingResponse (
             EntertainerResponse entertainer,
             Long fundingId,
             String fundingName,
+            FundingStatus status,
             Long currentAmount,
             Long goalAmount,
             LocalDateTime fundingExpiryDate
@@ -22,6 +26,7 @@ public record GetFundingResponse (
                 entertainer,
                 fundingId,
                 fundingName,
+                status,
                 currentAmount,
                 goalAmount,
                 fundingExpiryDate

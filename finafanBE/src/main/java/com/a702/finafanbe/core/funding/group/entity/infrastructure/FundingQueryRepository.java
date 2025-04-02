@@ -4,10 +4,11 @@ import com.a702.finafanbe.core.entertainer.entity.QEntertainer;
 import com.a702.finafanbe.core.funding.funding.dto.*;
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
 import com.a702.finafanbe.core.funding.funding.entity.QFundingGroup;
-import com.a702.finafanbe.core.funding.funding.entity.QFundingSupport;
+import com.a702.finafanbe.core.funding.funding.entity.QFundingPendingTransaction;
 import com.a702.finafanbe.core.funding.group.entity.QGroupUser;
 import com.a702.finafanbe.core.funding.group.entity.Role;
 
+import com.a702.finafanbe.core.savings.entity.QSavingsAccount;
 import com.a702.finafanbe.core.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -28,13 +29,12 @@ public class FundingQueryRepository {
     QFundingGroup fundingGroup = QFundingGroup.fundingGroup;
     QGroupUser groupUser = QGroupUser.groupUser;
     QEntertainer entertainer = QEntertainer.entertainer;
-    QFundingSupport fundingSupport = QFundingSupport.fundingSupport;
+    QFundingPendingTransaction fundingPendingTransaction = QFundingPendingTransaction.fundingPendingTransaction;
     QUser user = QUser.user;
+    QSavingsAccount account = QSavingsAccount.savingsAccount;
 
     public List<GetFundingResponse> findFundings(Long userId, String filter) {
         BooleanBuilder where = new BooleanBuilder();
-        where.and(fundingGroup.deletedAt.isNull());
-        where.and(fundingGroup.status.eq(FundingStatus.INPROGRESS));
 
         if ("participated".equalsIgnoreCase(filter)) {
             where.and(fundingGroup.id.in(
@@ -52,6 +52,8 @@ public class FundingQueryRepository {
                                     groupUser.userId.eq(userId).and(groupUser.role.eq(Role.ADMIN))
                             )
             ));
+        } else {
+            where.and(fundingGroup.status.eq(FundingStatus.INPROGRESS));
         }
 
         return queryFactory
@@ -65,9 +67,10 @@ public class FundingQueryRepository {
                         ),
                         fundingGroup.id,
                         fundingGroup.name,
-                        JPAExpressions.select(fundingSupport.balance.sum().coalesce(0L))
-                                .from(fundingSupport)
-                                .where(fundingSupport.fundingGroupId.eq(fundingGroup.id), fundingSupport.deletedAt.isNull()),
+                        fundingGroup.status,
+                        JPAExpressions.select(fundingPendingTransaction.balance.sum().coalesce(0L))
+                                .from(fundingPendingTransaction)
+                                .where(fundingPendingTransaction.fundingId.eq(fundingGroup.id), fundingPendingTransaction.deletedAt.isNull()),
                         fundingGroup.goalAmount,
                         fundingGroup.createdAt
                 ))
@@ -80,11 +83,7 @@ public class FundingQueryRepository {
 
     public GetFundingDetailResponse findFundingDetail(Long userId, Long fundingId) {
         // 모임 가입 여부 확인
-        boolean participated = queryFactory
-                .selectOne()
-                .from(groupUser)
-                .where(groupUser.fundingGroupId.eq(fundingId), groupUser.userId.eq(userId))
-                .fetchFirst() != null;
+        boolean participated = isUserParticipatedInFunding(userId, fundingId);
 
         // 모임에서의 adminUser의 pk 찾기
         Long adminUserId = queryFactory
@@ -122,35 +121,23 @@ public class FundingQueryRepository {
                 .select(
                         fundingGroup.name,
                         fundingGroup.description,
+                        fundingGroup.status,
                         fundingGroup.goalAmount,
                         fundingGroup.fundingExpiryDate,
                         entertainer.entertainerId,
                         entertainer.entertainerName,
                         entertainer.entertainerProfileUrl,
-                        fundingSupport.balance.sum().coalesce(0L)
+                        fundingPendingTransaction.balance.sum().coalesce(0L)
                 )
                 .from(fundingGroup)
                 .join(entertainer).on(fundingGroup.entertainerId.eq(entertainer.entertainerId))
-                .leftJoin(fundingSupport).on(fundingSupport.fundingGroupId.eq(fundingGroup.id), fundingSupport.deletedAt.isNull())
-                .where(fundingGroup.id.eq(fundingId).and(fundingGroup.deletedAt.isNull()))
+                .leftJoin(fundingPendingTransaction).on(fundingPendingTransaction.fundingId.eq(fundingGroup.id))
+                .where(fundingGroup.id.eq(fundingId))
                 .groupBy(fundingGroup.id, entertainer.entertainerId, entertainer.entertainerName, entertainer.entertainerProfileUrl)
                 .fetchOne();
         if (result == null) {
             throw new RuntimeException("펀딩 정보를 찾을 수 없습니다.");
         }
-
-        // 펀딩 참여 리스트
-        List<FundingSupportResponse> supports = queryFactory
-                .select(new QFundingSupportResponse(
-                        user.name,
-                        fundingSupport.balance,
-                        fundingSupport.content,
-                        fundingSupport.createdAt
-                ))
-                .from(fundingSupport)
-                .join(user).on(fundingSupport.userId.eq(user.userId))
-                .where(fundingSupport.fundingGroupId.eq(fundingId), fundingSupport.deletedAt.isNull())
-                .fetch();
 
         return new GetFundingDetailResponse(
                 participated,
@@ -166,12 +153,50 @@ public class FundingQueryRepository {
                 ),
                 result.get(fundingGroup.name),
                 result.get(fundingGroup.description),
+                result.get(fundingGroup.status),
                 result.get(fundingGroup.goalAmount),
-                result.get(fundingSupport.balance.sum().coalesce(0L)),
-                result.get(fundingGroup.fundingExpiryDate),
-                supports
+                result.get(fundingPendingTransaction.balance.sum().coalesce(0L)),
+                result.get(fundingGroup.fundingExpiryDate)
         );
 
     }
 
+    public List<GetFundingPendingTransactionResponse> getFundingPendingTransaction(Long userId, Long fundingId, String filter) {
+        boolean participated = isUserParticipatedInFunding(userId, fundingId);
+        if (!participated) {
+            return List.of();
+        }
+        BooleanBuilder where = new BooleanBuilder()
+                .and(fundingPendingTransaction.fundingId.eq(fundingId))
+                .and(fundingPendingTransaction.deletedAt.isNull());
+
+        if ("my".equalsIgnoreCase(filter)) {
+            where.and(fundingPendingTransaction.userId.eq(userId));
+        }
+
+        return queryFactory
+                .select(new QGetFundingPendingTransactionResponse(
+                        fundingPendingTransaction.id,
+                        user.name,
+                        fundingPendingTransaction.balance,
+                        fundingPendingTransaction.content,
+                        fundingPendingTransaction.createdAt
+                ))
+                .from(fundingPendingTransaction)
+                .join(user).on(fundingPendingTransaction.userId.eq(user.userId))
+                .where(where)
+                .orderBy(fundingPendingTransaction.createdAt.desc())
+                .fetch();
+    }
+
+    public boolean isUserParticipatedInFunding(Long userId, Long fundingGroupId) {
+        return queryFactory
+                .selectOne()
+                .from(groupUser)
+                .where(
+                        groupUser.fundingGroupId.eq(fundingGroupId),
+                        groupUser.userId.eq(userId)
+                )
+                .fetchFirst() != null;
+    }
 }

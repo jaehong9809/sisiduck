@@ -1,6 +1,6 @@
 package com.a702.finafanbe.core.funding.funding.entity;
 
-import com.a702.finafanbe.core.funding.funding.dto.FundingSupportRequest;
+import com.a702.finafanbe.core.funding.funding.dto.FundingPendingTransactionRequest;
 import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE funding_supports SET deleted_at = NOW() WHERE id = ?")
-@Table(name = "funding_supports")
-public class FundingSupport extends BaseEntity {
+@SQLDelete(sql = "UPDATE funding_pending_transactions SET deleted_at = NOW() WHERE id = ?")
+@Table(name = "funding_pending_transactions")
+public class FundingPendingTransaction extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +25,8 @@ public class FundingSupport extends BaseEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "funding_group_id", nullable = false)
-    private Long fundingGroupId;
+    @Column(name = "funding_id", nullable = false)
+    private Long fundingId;
 
     @Column(name = "account_id", nullable = false)
     private Long accountId;
@@ -49,19 +49,19 @@ public class FundingSupport extends BaseEntity {
     }
 
     @Builder
-    private FundingSupport(Long userId, Long fundingGroupId, Long accountId, Long balance, String content, String depositUserName) {
+    private FundingPendingTransaction(Long userId, Long fundingId, Long accountId, Long balance, String content, String depositUserName) {
         this.userId = userId;
-        this.fundingGroupId = fundingGroupId;
+        this.fundingId = fundingId;
         this.accountId = accountId;
         this.balance = balance;
         this.content = content;
         this.depositUserName = depositUserName;
     }
 
-    public static FundingSupport create(FundingSupportRequest request, Long userId, Long fundingGroupId, String depositUserName) {
-        return FundingSupport.builder()
+    public static FundingPendingTransaction create(FundingPendingTransactionRequest request, Long userId, Long fundingId, String depositUserName) {
+        return FundingPendingTransaction.builder()
                 .userId(userId)
-                .fundingGroupId(fundingGroupId)
+                .fundingId(fundingId)
                 .accountId(request.accountId())
                 .balance(request.balance())
                 .content(request.content())

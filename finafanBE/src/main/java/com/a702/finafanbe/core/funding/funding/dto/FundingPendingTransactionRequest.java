@@ -1,16 +1,16 @@
 package com.a702.finafanbe.core.funding.funding.dto;
 
-public record FundingSupportRequest(
+public record FundingPendingTransactionRequest(
         Long accountId,
         Long balance,
         String content
 ) {
-    public static FundingSupportRequest of (
+    public static FundingPendingTransactionRequest of (
             Long accountId,
             Long balance,
             String content
     ) {
-        return new FundingSupportRequest(
+        return new FundingPendingTransactionRequest(
                 accountId,
                 balance,
                 content

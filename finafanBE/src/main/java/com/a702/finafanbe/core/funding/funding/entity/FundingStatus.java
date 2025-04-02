@@ -5,6 +5,8 @@ import lombok.Getter;
 @Getter
 public enum FundingStatus {
     INPROGRESS,
-    FINISHED,
-    SUCCESS
+    CANCELED,
+    FAILED,
+    SUCCESS,
+    TERMINATED
 }

@@ -4,19 +4,22 @@ import com.querydsl.core.annotations.QueryProjection;
 
 import java.time.LocalDateTime;
 
-public record FundingSupportResponse (
+public record GetFundingPendingTransactionResponse(
+        Long id,
         String name,
         Long balance,
         String content,
         LocalDateTime createdAt
 ) {
-    public static FundingSupportResponse of(
+    public static GetFundingPendingTransactionResponse of(
+            Long id,
             String name,
             Long balance,
             String content,
             LocalDateTime createdAt
     ) {
-        return new FundingSupportResponse(
+        return new GetFundingPendingTransactionResponse(
+                id,
                 name,
                 balance,
                 content,
@@ -25,5 +28,5 @@ public record FundingSupportResponse (
     }
 
     @QueryProjection
-    public FundingSupportResponse {}
+    public GetFundingPendingTransactionResponse {}
 }

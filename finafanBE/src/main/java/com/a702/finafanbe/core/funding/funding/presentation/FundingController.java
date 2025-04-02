@@ -1,6 +1,5 @@
 package com.a702.finafanbe.core.funding.funding.presentation;
 
-import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.funding.funding.application.FundingService;
 import com.a702.finafanbe.core.funding.funding.dto.*;
 import com.a702.finafanbe.global.common.response.ResponseData;
@@ -24,7 +23,7 @@ public class FundingController {
             @RequestBody CreateFundingRequest request
             //@AuthMember Long userId
     ) {
-        Long userId = 1L;
+        Long userId = 2L;
         fundingService.createFunding(request, userId);
         return ResponseUtil.success();
     }
@@ -40,13 +39,24 @@ public class FundingController {
     }
 
     // 펀딩 상세 조회
-    @GetMapping("/{fundingGroupId}")
+    @GetMapping("/{fundingId}")
     public ResponseEntity<ResponseData<GetFundingDetailResponse>> getFunding(
-            @PathVariable Long fundingGroupId
+            @PathVariable Long fundingId
             //@AuthMember Long userId
     ) {
         Long userId = 1L;
-        return ResponseUtil.success(fundingService.getFundingDetail(fundingGroupId, userId));
+        return ResponseUtil.success(fundingService.getFundingDetail(fundingId, userId));
+    }
+
+    // 펀딩 상세 조회 - 입금내역
+    @GetMapping("/{fundingId}/transaction")
+    public ResponseEntity<ResponseData<List<GetFundingPendingTransactionResponse>>> getFundingPendingTransactions(
+            @PathVariable Long fundingId,
+            @RequestParam(defaultValue = "all") String filter
+            //@AuthMember Long userId
+    ) {
+        Long userId = 1L;
+        return ResponseUtil.success(fundingService.getFundingPendingTransaction(userId, fundingId, filter));
     }
 
     // 펀딩 가입
@@ -64,7 +74,7 @@ public class FundingController {
     @PostMapping("/{fundingGroupId}/deposit")
     public ResponseEntity<?> participateFunding(
             @PathVariable Long fundingGroupId,
-            @RequestBody FundingSupportRequest request
+            @RequestBody FundingPendingTransactionRequest request
             //@AuthMember Long userId
     ) {
         Long userId = 1L;
@@ -92,7 +102,7 @@ public class FundingController {
             //@AuthMember Long userId
     ) {
         Long userId = 3L;
-        fundingService.withdrawFunding(userId, fundingSupportId);
+        fundingService.withdrawFunding(userId, fundingId, fundingSupportId);
         return ResponseUtil.success();
     }
 

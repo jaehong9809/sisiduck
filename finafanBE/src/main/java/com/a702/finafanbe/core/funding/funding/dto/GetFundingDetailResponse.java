@@ -1,7 +1,8 @@
 package com.a702.finafanbe.core.funding.funding.dto;
 
+import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
+
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record GetFundingDetailResponse(
         boolean participated,
@@ -9,10 +10,10 @@ public record GetFundingDetailResponse(
         GetFundingAdminResponse adminUser,
         String fundingName,
         String description,
+        FundingStatus status,
         Long goalAmount,
         Long currentAmount,
-        LocalDateTime fundingExpiryDate,
-        List<FundingSupportResponse> fundingSupports
+        LocalDateTime fundingExpiryDate
 ) {
     public static GetFundingDetailResponse of(
             boolean participated,
@@ -20,10 +21,10 @@ public record GetFundingDetailResponse(
             GetFundingAdminResponse adminUser,
             String fundingName,
             String description,
+            FundingStatus status,
             Long goalAmount,
             Long currentAmount,
-            LocalDateTime fundingExpiryDate,
-            List<FundingSupportResponse> fundingSupports
+            LocalDateTime fundingExpiryDate
     ) {
         return new GetFundingDetailResponse(
                 participated,
@@ -31,10 +32,10 @@ public record GetFundingDetailResponse(
                 adminUser,
                 fundingName,
                 description,
+                status,
                 goalAmount,
                 currentAmount,
-                fundingExpiryDate,
-                fundingSupports
+                fundingExpiryDate
         );
     }
 }

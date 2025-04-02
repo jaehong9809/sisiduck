@@ -44,14 +44,6 @@ public class FundingGroup extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
-    @PrePersist
-    private void prePersist() {
-        this.deletedAt = null;
-    }
-
     public void updateDescription(String description) {
         this.description = description;
     }
