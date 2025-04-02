@@ -59,7 +59,6 @@ fun AllAccountScreen(
 ) {
 
     val navController = LocalNavController.current
-
     val savingState by savingViewModel.savingState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -91,11 +90,15 @@ fun AllAccountScreen(
         }
     }
 
-    val accountList = when (selectedTabIndex.intValue) {
-        0 -> savingState.savingAccountInfo.accounts
-        1 -> emptyList() // TODO: 모금 통장 리스트
-        2 -> savingState.withdrawalAccounts
-        else -> emptyList()
+    val accountList by remember(selectedTabIndex, savingState) {
+        derivedStateOf {
+            when (selectedTabIndex.intValue) {
+                0 -> savingState.savingAccountInfo.accounts
+                1 -> emptyList() // TODO: 모금 통장 리스트
+                2 -> savingState.withdrawalAccounts
+                else -> emptyList()
+            }
+        }
     }
 
     Box(

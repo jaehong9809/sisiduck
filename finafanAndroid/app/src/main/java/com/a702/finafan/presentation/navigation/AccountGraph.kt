@@ -1,7 +1,7 @@
 package com.a702.finafan.presentation.navigation
 
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -69,7 +69,7 @@ fun NavGraphBuilder.accountGraph(
                 defaultValue = 0
             })
         ) { backStackEntry ->
-            val selectedTabIndex = remember {
+            val selectedTabIndex = rememberSaveable  {
                 mutableIntStateOf(
                     backStackEntry.arguments?.getInt("selectedTabIndex") ?: 0
                 )
