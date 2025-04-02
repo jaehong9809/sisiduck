@@ -171,7 +171,7 @@ fun RestStar(
             // 스타 이름
             Text(
                 modifier = Modifier,
-                text = "이찬원",
+                text = ranking.starName,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 lineHeight = 30.sp,
@@ -181,7 +181,7 @@ fun RestStar(
             // 총 금액
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = StringUtil.formatCurrency(2300450),
+                text = StringUtil.formatCurrency(ranking.totalAmount),
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp,
                 lineHeight = 24.sp,

@@ -16,6 +16,7 @@ import com.a702.finafan.domain.savings.usecase.DepositUseCase
 import com.a702.finafan.domain.savings.usecase.GetBankUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingAccountUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingUseCase
+import com.a702.finafan.domain.savings.usecase.GetStarRankingUseCase
 import com.a702.finafan.domain.savings.usecase.GetStarUseCase
 import com.a702.finafan.domain.savings.usecase.GetWithdrawalAccountUseCase
 import com.a702.finafan.domain.savings.usecase.UpdateSavingNameUseCase
@@ -39,6 +40,7 @@ class SavingViewModel @Inject constructor(
     private val updateSavingNameUseCase: UpdateSavingNameUseCase,
     private val deleteSavingAccountUseCase: DeleteSavingAccountUseCase,
     private val deleteConnectAccountUseCase: DeleteConnectAccountUseCase,
+    private val getStarRankingUseCase: GetStarRankingUseCase,
 ): ViewModel() {
 
     private val _savingState = MutableStateFlow(SavingState())
@@ -266,6 +268,30 @@ class SavingViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         isCancel = result,
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
+    fun fetchStarRanking(type: Int) {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val rankingList = getStarRankingUseCase(type)
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        rankingList = rankingList
                     )
                 }
             } catch (e: Exception) {

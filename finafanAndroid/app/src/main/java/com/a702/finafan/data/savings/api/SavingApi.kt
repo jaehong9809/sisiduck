@@ -8,6 +8,7 @@ import com.a702.finafan.data.savings.dto.response.SavingAccountInfoResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountResponse
 import com.a702.finafan.data.savings.dto.response.SavingCreateResponse
 import com.a702.finafan.data.savings.dto.response.SavingDepositResponse
+import com.a702.finafan.data.savings.dto.response.SavingRankingResponse
 import com.a702.finafan.data.savings.dto.response.StarResponse
 import com.a702.finafan.data.savings.dto.response.TransactionInfo
 import com.a702.finafan.domain.savings.model.SavingAccount
@@ -81,11 +82,15 @@ interface SavingApi {
     suspend fun deleteConnectAccount(@Path("depositAccountId") depositAccountId: Long): ApiResponse<Unit>
 
     // 적금 일간 랭킹 조회
-    @GET("/daily/all-entertainers")
-    suspend fun dailyStarRanking()
+    @GET("v1/ranking/daily/all-entertainers")
+    suspend fun dailyStarRanking(): ApiResponse<List<SavingRankingResponse>>
 
     // 적금 주간 랭킹 조회
-    @GET("/weekly/all-entertainers")
-    suspend fun weeklyStarRanking()
+    @GET("v1/ranking/weekly/all-entertainers")
+    suspend fun weeklyStarRanking(): ApiResponse<List<SavingRankingResponse>>
+
+    // 적금 누적 랭킹 조회
+    @GET("v1/ranking/total/entertainers")
+    suspend fun totalStarRanking(): ApiResponse<List<SavingRankingResponse>>
 
 }
