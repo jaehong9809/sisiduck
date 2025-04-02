@@ -36,7 +36,6 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.savings.model.Ranking
-import com.a702.finafan.domain.savings.model.Star
 
 @Composable
 fun RankingItem(
@@ -44,7 +43,7 @@ fun RankingItem(
     onSelect: (Ranking) -> Unit
 ) {
 
-    if (ranking.rankingIdx == 1) {
+    if (ranking.rank == 1) {
         FirstStar(ranking, onSelect)
     } else {
         RestStar(ranking, onSelect)
@@ -72,7 +71,7 @@ fun FirstStar(
 
             val painter = rememberAsyncImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(ranking.star.entertainerProfileUrl)
+                    .data(ranking.starImageUrl)
                     .build()
             )
 
@@ -103,7 +102,7 @@ fun FirstStar(
                 // 스타 이름
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
-                    text = ranking.star.entertainerName,
+                    text = ranking.starName,
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
                     lineHeight = 30.sp,
@@ -113,7 +112,7 @@ fun FirstStar(
                 // 총 금액
                 Text(
                     modifier = Modifier.padding(top = 12.dp),
-                    text = StringUtil.formatCurrency(ranking.amount),
+                    text = StringUtil.formatCurrency(ranking.totalAmount),
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     lineHeight = 30.sp,
@@ -156,7 +155,7 @@ fun RestStar(
         // 순위
         Text(
             modifier = Modifier,
-            text = ranking.rankingIdx.toString(),
+            text = ranking.rank.toString(),
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
             lineHeight = 30.sp,
@@ -172,7 +171,7 @@ fun RestStar(
             // 스타 이름
             Text(
                 modifier = Modifier,
-                text = "이찬원",
+                text = ranking.starName,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 lineHeight = 30.sp,
@@ -182,7 +181,7 @@ fun RestStar(
             // 총 금액
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = StringUtil.formatCurrency(2300450),
+                text = StringUtil.formatCurrency(ranking.totalAmount),
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp,
                 lineHeight = 24.sp,
@@ -204,7 +203,7 @@ fun RestStar(
 @Preview
 @Composable
 fun ItemPreView() {
-    val ranking = Ranking(Star(entertainerId = 1, entertainerName = "이찬원", entertainerProfileUrl = ""), 2)
+    val ranking = Ranking(rank = 2, starId = 1, starName = "이찬원", starImageUrl = "", 2)
 
     Column(
         modifier = Modifier

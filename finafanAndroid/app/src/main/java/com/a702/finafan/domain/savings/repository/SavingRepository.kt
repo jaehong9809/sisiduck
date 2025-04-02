@@ -4,6 +4,7 @@ import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.SavingAccountInfo
 import com.a702.finafan.domain.savings.model.Star
@@ -31,4 +32,10 @@ interface SavingRepository {
     suspend fun deleteSavingAccount(savingAccountId: Long): Boolean
 
     suspend fun deleteConnectAccount(accountId: Long): Boolean
+
+    suspend fun dailyStarRanking(): List<Ranking>
+
+    suspend fun weeklyStarRanking(): List<Ranking>
+
+    suspend fun totalStarRanking(): List<Ranking>
 }

@@ -84,7 +84,7 @@ fun StarSearchScreen(
                     showDialog.value = true
                 },
                 text = stringResource(R.string.btn_select),
-                isEnabled = selectStar.value.entertainerId > 0
+                isEnabled = selectStar.value.starId > 0
             )
         }
     ) { innerPadding ->
@@ -139,7 +139,7 @@ fun StarSearchScreen(
                                 modifier = Modifier.padding(bottom = 16.dp)
                             ) {
                                 StarItem(starItem,
-                                    isSelected = starItem.entertainerId == selectStar.value.entertainerId,
+                                    isSelected = starItem.starId == selectStar.value.starId,
                                     onSelect = { select ->
                                         selectStar.value = select
                                     })
