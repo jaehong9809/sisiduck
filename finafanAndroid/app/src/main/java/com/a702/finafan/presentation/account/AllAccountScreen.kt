@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.BlackButton
 import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.AccountBoxGray
 import com.a702.finafan.common.ui.theme.MainBgLightGray
@@ -59,6 +62,7 @@ fun AllAccountScreen(
 ) {
 
     val navController = LocalNavController.current
+    val context = LocalContext.current
     val savingState by savingViewModel.savingState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -101,89 +105,139 @@ fun AllAccountScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MainBgLightGray)
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    Text(
-                        modifier = Modifier.padding(top = 20.dp, bottom = 12.dp),
-                        text = stringResource(R.string.all_account_title),
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MainBlack,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 34.sp
-                    )
-
-                    ThreeTabRow(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                        labels = listOf(
-                            stringResource(R.string.all_account_saving_title),
-                            stringResource(R.string.all_account_funding_title),
-                            stringResource(R.string.all_account_other_title)
-                        ),
-                        containerColor = MainWhite,
-                        selectedTabColor = MainBlack,
-                        selectedIndex = selectedTabIndex,
-                        onTabSelected = listOf(
-                            {
-                                selectedTabIndex.intValue = 0
-                                // 적금 계좌 목록
-                                savingViewModel.fetchSavingAccount()
-                            },
-                            {
-                                selectedTabIndex.intValue = 1
-                                // TODO: 모금 계좌 목록 API 호출
-                            },
-                            {
-                                selectedTabIndex.intValue = 2
-                                // 출금 계좌 목록
-                                savingViewModel.fetchWithdrawalAccount()
-                            }
-                        ),
-                    )
-
-                    AllAccountHeader(selectedTabIndex, count, accountAmount)
-
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+    val buttonText by remember(selectedTabIndex) {
+        derivedStateOf {
+            when (selectedTabIndex.intValue) {
+                0 -> context.getString(R.string.all_account_create_saving)
+                1 -> context.getString(R.string.all_account_create_funding)
+                else -> context.getString(R.string.all_account_connect_bank)
             }
+        }
+    }
 
-            if (accountList.isNotEmpty()) {
-                items(accountList) { account ->
-                    when (selectedTabIndex.intValue) {
-                        0 -> SavingAccountItem(
-                            account as SavingAccount,
-                            onSelect = {
-                                navController.navigate(NavRoutes.SavingMain.route + "/${account.accountId}")
-                            }
-                        )
-                        1 -> SavingAccountItem(
-                            account as SavingAccount,
-                            onSelect = {
-                                // TODO: 모금통장 타입으로 변경 필요, 모금 통장 상세 화면으로 이동
-                            }
-                        )
-                        2 -> WithdrawalAccountItem(
-                            account as Account,
-                            onSelect = {
-                                savingViewModel.updateConnectAccount(account)
-                                navController.navigate(NavRoutes.ConnectAccount.route)
-                            }
+    Scaffold(
+        topBar = {
+            Column(
+                modifier = Modifier
+                    .background(MainBgLightGray)
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(
+                    modifier = Modifier.padding(top = 20.dp, bottom = 12.dp),
+                    text = stringResource(R.string.all_account_title),
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MainBlack,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 34.sp
+                )
+
+                ThreeTabRow(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    labels = listOf(
+                        stringResource(R.string.all_account_saving_title),
+                        stringResource(R.string.all_account_funding_title),
+                        stringResource(R.string.all_account_other_title)
+                    ),
+                    containerColor = MainWhite,
+                    selectedTabColor = MainBlack,
+                    selectedIndex = selectedTabIndex,
+                    onTabSelected = listOf(
+                        {
+                            selectedTabIndex.intValue = 0
+                            // 적금 계좌 목록
+                            savingViewModel.fetchSavingAccount()
+                        },
+                        {
+                            selectedTabIndex.intValue = 1
+                            // TODO: 모금 계좌 목록 API 호출
+                        },
+                        {
+                            selectedTabIndex.intValue = 2
+                            // 출금 계좌 목록
+                            savingViewModel.fetchWithdrawalAccount()
+                        }
+                    ),
+                )
+
+                AllAccountHeader(selectedTabIndex, count, accountAmount)
+
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier
+                    .background(MainBgLightGray)
+                    .padding(16.dp)
+            ) {
+                BlackButton(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    onClick = {
+                        when (selectedTabIndex.intValue) {
+                            0 -> navController.navigate(NavRoutes.SavingDesc.route)
+                            1 -> "" // TODO: 모금통장 가입 화면으로 이동
+                            2 -> navController.navigate(NavRoutes.Account.route)
+                        }
+                    },
+                    text = buttonText.toString(),
+                )
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .background(MainBgLightGray)
+        ) {
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+
+                if (accountList.isEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(R.string.all_account_list_empty),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MainTextGray,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 30.sp
                         )
                     }
+                } else {
+                    items(accountList) { account ->
+                        when (selectedTabIndex.intValue) {
+                            0 -> SavingAccountItem(
+                                account as SavingAccount,
+                                onSelect = {
+                                    navController.navigate(NavRoutes.SavingMain.route + "/${account.accountId}")
+                                }
+                            )
+                            1 -> SavingAccountItem(
+                                account as SavingAccount,
+                                onSelect = {
+                                    // TODO: 모금통장 타입으로 변경 필요, 모금 통장 상세 화면으로 이동
+                                }
+                            )
+                            2 -> WithdrawalAccountItem(
+                                account as Account,
+                                onSelect = {
+                                    savingViewModel.updateConnectAccount(account)
+                                    navController.navigate(NavRoutes.ConnectAccount.route)
+                                }
+                            )
+                        }
+                    }
                 }
+
             }
         }
     }
