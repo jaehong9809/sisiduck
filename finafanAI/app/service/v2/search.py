@@ -27,7 +27,7 @@ def duckduckgo_search(query: str, max_results: int = 3) -> str:
 
 # 뉴스 검색
 def fast_news_search(query: str) -> str:
-    query = extract_topic(query)
+    #query = extract_topic(query)
     encoded_query = quote(query)  # 공백 및 한글 인코딩
 
     url = f"https://news.google.com/rss/search?q={encoded_query}&hl=ko&gl=KR&ceid=KR:ko"

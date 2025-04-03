@@ -1,5 +1,6 @@
 from langchain.memory import ConversationBufferMemory
 from langchain.agents import Tool, AgentExecutor, create_react_agent
+from langchain.agents.react.base import ReActPrompt
 from langchain_core.runnables import RunnableLambda
 from langchain_core.messages import HumanMessage, SystemMessage
 import re
@@ -54,7 +55,7 @@ def needs_agent(input: dict) -> bool:
         답변:
         """
     
-    result = get_llm(streaming=False).invoke(check_prompt)
+    result = get_hard_llm(streaming=False).invoke(check_prompt)
     response = result.content.strip().upper()
     
     print(f"[🔍 needs_agent 판단] → {response}")
@@ -86,8 +87,9 @@ def get_agent_chain(callback):
             tools="\n".join([f"{t.name}: {t.description}" for t in tools]),
             tool_names=", ".join([t.name for t in tools])
         )
-
+        # prompt = ReActPrompt().get_prompt(tools)
         agent = create_react_agent(llm=llm, tools=tools, prompt=prompt)
+
         executor = AgentExecutor(
             agent=agent,
             tools=tools,

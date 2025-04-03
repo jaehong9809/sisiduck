@@ -2,7 +2,7 @@ from langchain_openai import ChatOpenAI
 
 def get_llm(streaming=False, callback=None):
     return ChatOpenAI(
-        model="gpt-3.5-turbo",
+        model="gpt-4-turbo",
         temperature=0.7,
         streaming=streaming,
         callbacks=[callback] if callback else None
