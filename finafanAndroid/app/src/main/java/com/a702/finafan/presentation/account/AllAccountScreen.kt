@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.BlackButton
+import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.AccountBoxGray
 import com.a702.finafan.common.ui.theme.MainBgLightGray
@@ -198,42 +199,48 @@ fun AllAccountScreen(
                     .padding(horizontal = 16.dp)
             ) {
 
-                if (accountList.isEmpty()) {
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = stringResource(R.string.all_account_list_empty),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MainTextGray,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 30.sp
-                        )
+                when {
+                    savingState.isLoading -> {
+                        item { CommonProgress() }
                     }
-                } else {
-                    items(accountList) { account ->
-                        when (selectedTabIndex.intValue) {
-                            0 -> SavingAccountItem(
-                                account as SavingAccount,
-                                onSelect = {
-                                    navController.navigate(NavRoutes.SavingMain.route + "/${account.accountId}")
-                                }
+                    accountList.isEmpty() -> {
+                        item {
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = stringResource(R.string.all_account_list_empty),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MainTextGray,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 30.sp
                             )
-                            1 -> SavingAccountItem(
-                                account as SavingAccount,
-                                onSelect = {
-                                    // TODO: 모금통장 타입으로 변경 필요, 모금 통장 상세 화면으로 이동
-                                }
-                            )
-                            2 -> WithdrawalAccountItem(
-                                account as Account,
-                                onSelect = {
-                                    savingViewModel.updateConnectAccount(account)
-                                    navController.navigate(NavRoutes.ConnectAccount.route)
-                                }
-                            )
+                        }
+                    }
+                    else -> {
+                        items(accountList) { account ->
+                            when (selectedTabIndex.intValue) {
+                                0 -> SavingAccountItem(
+                                    account as SavingAccount,
+                                    onSelect = {
+                                        navController.navigate(NavRoutes.SavingMain.route + "/${account.accountId}")
+                                    }
+                                )
+                                1 -> SavingAccountItem(
+                                    account as SavingAccount,
+                                    onSelect = {
+                                        // TODO: 모금통장 타입으로 변경 필요, 모금 통장 상세 화면으로 이동
+                                    }
+                                )
+                                2 -> WithdrawalAccountItem(
+                                    account as Account,
+                                    onSelect = {
+                                        savingViewModel.updateConnectAccount(account)
+                                        navController.navigate(NavRoutes.ConnectAccount.route)
+                                    }
+                                )
+                            }
                         }
                     }
                 }

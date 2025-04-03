@@ -39,6 +39,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
+import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.theme.MainBlackWithTransparency
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -93,26 +94,33 @@ fun SavingMainScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                 }
 
-                if (savingState.savingInfo.transactions.isEmpty()) {
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Text(text = stringResource(R.string.saving_item_empty_transaction),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MainTextGray,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 30.sp
-                        )
+                when {
+                    savingState.isLoading -> {
+                        item { CommonProgress() }
                     }
-                } else {
-                    items(savingState.savingInfo.transactions) { transaction ->
-                        TransactionItem(transaction, onSelect = {
-                            viewModel.setTransaction(transaction)
-                            navController.navigate(NavRoutes.TransactionDetail.route)
-                        })
+                    savingState.savingInfo.transactions.isEmpty() -> {
+                        item {
+                            Spacer(modifier = Modifier.height(18.dp))
+
+                            Text(text = stringResource(R.string.saving_item_empty_transaction),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MainTextGray,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 30.sp
+                            )
+                        }
+                    }
+                    else -> {
+                        items(savingState.savingInfo.transactions) { transaction ->
+                            TransactionItem(transaction, onSelect = {
+                                viewModel.setTransaction(transaction)
+                                navController.navigate(NavRoutes.TransactionDetail.route)
+                            })
+                        }
                     }
                 }
+
             }
         }
     }
@@ -131,7 +139,7 @@ fun SavingHeader(account: SavingAccount) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(560.dp)
+            .height(530.dp)
             .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
     ) {
 
@@ -140,7 +148,7 @@ fun SavingHeader(account: SavingAccount) {
             contentDescription = "Star Image",
             modifier = Modifier
                 .fillMaxSize()
-                .height(560.dp)
+                .height(530.dp)
                 .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
                 .background(LightGray)
                 .align(Alignment.Center)

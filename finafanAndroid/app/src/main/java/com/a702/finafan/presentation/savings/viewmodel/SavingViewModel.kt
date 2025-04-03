@@ -65,7 +65,6 @@ class SavingViewModel @Inject constructor(
             } catch (e: Exception) {
                 _starState.update {
                     it.copy(
-                        isLoading = false,
                         error = e
                     )
                 }
@@ -77,14 +76,23 @@ class SavingViewModel @Inject constructor(
         viewModelScope.launch {
             _savingState.update { it.copy(isLoading = true) }
 
-            val savingInfo = getSavingUseCase(savingAccountId)
+            try {
+                val savingInfo = getSavingUseCase(savingAccountId)
 
-            _savingState.update {
-                it.copy(
-                    savingInfo = savingInfo,
-                    isLoading = false
-                )
+                _savingState.update {
+                    it.copy(
+                        savingInfo = savingInfo,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        error = e
+                    )
+                }
             }
+
         }
     }
 
@@ -129,8 +137,7 @@ class SavingViewModel @Inject constructor(
             } catch (e: Exception) {
                 _savingState.update {
                     it.copy(
-                        isLoading = false,
-                        withdrawalAccounts = emptyList()
+                        error = e
                     )
                 }
             }
@@ -177,7 +184,6 @@ class SavingViewModel @Inject constructor(
             } catch (e: Exception) {
                 _savingState.update {
                     it.copy(
-                        isLoading = false,
                         error = e
                     )
                 }
@@ -201,7 +207,6 @@ class SavingViewModel @Inject constructor(
             } catch (e: Exception) {
                 _savingState.update {
                     it.copy(
-                        isLoading = false,
                         error = e
                     )
                 }
@@ -297,7 +302,6 @@ class SavingViewModel @Inject constructor(
             } catch (e: Exception) {
                 _savingState.update {
                     it.copy(
-                        isLoading = false,
                         error = e
                     )
                 }
