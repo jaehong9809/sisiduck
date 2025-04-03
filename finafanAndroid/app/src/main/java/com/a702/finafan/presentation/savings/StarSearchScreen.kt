@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.AddStarDialog
 import com.a702.finafan.common.ui.component.CommonBackTopBar
+import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.component.SearchField
 import com.a702.finafan.common.ui.theme.MainBgLightGray
@@ -47,9 +48,10 @@ fun StarSearchScreen(
     viewModel: SavingViewModel = viewModel()
 ) {
 
+    val starState by viewModel.starState.collectAsState()
+
     val selectStar = remember { mutableStateOf(Star()) }
     val showDialog = rememberSaveable { mutableStateOf(false) }
-    val starState by viewModel.starState.collectAsState()
 
     if (showDialog.value) {
         // 스타 추가 확인 다이얼로그
@@ -119,33 +121,36 @@ fun StarSearchScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    if (starState.stars.isEmpty()) {
-                        item {
-                            Spacer(modifier = Modifier.height(24.dp))
 
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = stringResource(R.string.saving_item_empty_star),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MainTextGray,
-                                textAlign = TextAlign.Center,
-                                lineHeight = 24.sp
-                            )
+                    when {
+                        starState.isLoading -> {
+                            item { CommonProgress() }
                         }
-                    } else {
-                        items(starState.stars) { starItem ->
-                            Column(
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            ) {
-                                StarItem(starItem,
+                        starState.stars.isEmpty() -> {
+                            item {
+                                Spacer(modifier = Modifier.height(24.dp))
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = stringResource(R.string.saving_item_empty_star),
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MainTextGray,
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = 24.sp
+                                )
+                            }
+                        }
+                        else -> {
+                            items(starState.stars) { starItem ->
+                                StarItem(
+                                    starItem,
                                     isSelected = starItem.starId == selectStar.value.starId,
-                                    onSelect = { select ->
-                                        selectStar.value = select
-                                    })
+                                    onSelect = { selectStar.value = it }
+                                )
                             }
                         }
                     }
+
                 }
             }
         }
