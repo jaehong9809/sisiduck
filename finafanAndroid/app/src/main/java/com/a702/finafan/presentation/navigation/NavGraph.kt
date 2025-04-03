@@ -31,7 +31,7 @@ fun NavGraph(
         val currentRoute = currentBackStackEntry?.destination?.route
 
         val statusBarColor = when (currentRoute) {
-            NavRoutes.Main.route, NavRoutes.AllAccount.route, NavRoutes.FundingMain.route -> MainBgLightGray
+            NavRoutes.Main.route, NavRoutes.AllAccountParam.route, NavRoutes.FundingMain.route -> MainBgLightGray
             else -> MainWhite
         }
 
