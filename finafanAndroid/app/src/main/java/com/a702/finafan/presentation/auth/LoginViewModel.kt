@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.auth
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.domain.auth.repository.AuthRepository
@@ -13,20 +14,35 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val ssafyOauthUrl = "https://project.ssafy.com/oauth/sso-check";
     private val _uiState = MutableStateFlow(AuthState())
     val uiState = _uiState.asStateFlow()
 
+    private fun buildOAuthUrl(
+        clientId: String,
+        redirectUri: String
+    ): String {
+        return Uri.parse(ssafyOauthUrl)
+            .buildUpon()
+            .appendQueryParameter("client_id", clientId)
+            .appendQueryParameter("redirect_uri", redirectUri)
+            .appendQueryParameter("response_type", "code")
+            .build()
+            .toString()
+    }
+
     fun onLoginClicked() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             try {
-                val url = ssafyOauthUrl
+                val clientId = "0d62ba8e-d889-4fd7-91a7-90a27e517499"
+                val redirectUri = "https://j12a702.p.ssafy.io/api/v1/auth/login/ssafy"
+                val url = buildOAuthUrl(clientId, redirectUri)
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -64,5 +80,4 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
 }

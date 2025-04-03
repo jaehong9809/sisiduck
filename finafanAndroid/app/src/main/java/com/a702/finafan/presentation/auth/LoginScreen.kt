@@ -26,8 +26,7 @@ import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel = hiltViewModel(),
-    onLoginClick: () -> Unit = {}
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val uiState = loginViewModel.uiState.collectAsState()

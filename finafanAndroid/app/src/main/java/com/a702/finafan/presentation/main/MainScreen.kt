@@ -2,6 +2,7 @@ package com.a702.finafan.presentation.main
 
 import android.Manifest
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -100,9 +102,15 @@ fun MainScreen(
         MainSquareIconButton(
             onClick = {
                 navController.navigate(NavRoutes.Login.route)
+                Log.d("Login Button_ ", "clicked")
             },
             icon = {
-                ImageItem(Modifier.padding(5.dp), { }, R.drawable.login)
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "Login",
+                    tint = MainBlack,
+                    modifier = Modifier.size(48.dp)
+                )
             },
             text = "로그인"
         )
