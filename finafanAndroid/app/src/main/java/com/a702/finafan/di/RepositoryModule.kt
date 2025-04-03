@@ -1,10 +1,12 @@
 package com.a702.finafan.di
 
+import com.a702.finafan.data.auth.repository.AuthRepositoryImpl
 import com.a702.finafan.data.ble.repository.BleScanRepositoryImpl
 import com.a702.finafan.data.chatbot.repository.ChatRepositoryImpl
 import com.a702.finafan.domain.ble.repository.BleScanRepository
 import com.a702.finafan.data.funding.repository.FundingRepositoryImpl
 import com.a702.finafan.data.savings.repository.SavingRepositoryImpl
+import com.a702.finafan.data.user.repository.UserRepositoryImpl
 import com.a702.finafan.domain.auth.repository.AuthRepository
 import com.a702.finafan.domain.chatbot.repository.ChatRepository
 import com.a702.finafan.domain.funding.repository.FundingRepository
@@ -29,7 +31,7 @@ internal abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindBleScanRepository(
-        impl: BleScanRepositoryImpl
+        bleScanRepositoryImpl: BleScanRepositoryImpl
     ): BleScanRepository
 
     @Binds
@@ -46,13 +48,7 @@ internal abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindUserRepository(
-        userRepositoryImpl: UserRepository
-    ) : UserRepository
-
-    @Binds
-    @Singleton
     abstract fun bindAuthRepository(
-        authRepository: AuthRepository
+        authRepositoryImpl: AuthRepositoryImpl
     ) : AuthRepository
 }

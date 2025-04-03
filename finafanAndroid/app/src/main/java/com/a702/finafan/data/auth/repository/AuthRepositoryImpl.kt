@@ -6,10 +6,12 @@ import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.auth.TokenDataStore
 import com.a702.finafan.domain.auth.repository.AuthRepository
 import com.a702.finafan.domain.user.model.User
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class AuthRepositoryImpl(
-    private val context: Context
+class AuthRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context
 ) : AuthRepository {
 
     override fun login(token: String): Flow<DataResource<User>> {
