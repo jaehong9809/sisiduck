@@ -3,9 +3,7 @@ package com.a702.finafanbe.core.ranking.presentation;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
 import com.a702.finafanbe.core.ranking.application.RankingService;
-import com.a702.finafanbe.core.ranking.application.UserTransactionDetailService;
 import com.a702.finafanbe.core.ranking.dto.response.*;
-import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
@@ -24,106 +22,7 @@ import java.util.stream.Collectors;
 public class RankingController {
 
     private final RankingService rankingService;
-    private final UserRepository userRepository;
-    private final UserTransactionDetailService userTransactionDetailService;
     private final EntertainerRepository entertainerRepository;
-
-    /**
-     * 연예인 일간 랭킹 상세 정보 조회 (특정 연예인 적금의 사용자 랭킹 포함) - 향상된 버전
-     */
-    @GetMapping("/daily/entertainers/{entertainerId}/details")
-    public ResponseEntity<ResponseData<EnhancedRankingDetailResponse>> getEnhancedDailyRankingDetail(
-            @PathVariable Long entertainerId) {
-        log.info("Getting enhanced daily ranking detail for entertainer: {}", entertainerId);
-
-        // 먼저 기본 랭킹 정보 조회
-        RankingDetailResponse basicDetail = getDailyRankingDetailData(entertainerId);
-
-        // 사용자 랭킹에 트랜잭션 상세 정보 추가
-        List<EnhancedUserRankingResponse> enhancedUserRankings =
-                userTransactionDetailService.getEnhancedUserRankings(
-                        entertainerId,
-                        basicDetail.userRankings());
-
-        // 향상된 응답 생성
-        EnhancedRankingDetailResponse enhancedResponse =
-                EnhancedRankingDetailResponse.from(basicDetail, enhancedUserRankings);
-
-        return ResponseUtil.success(enhancedResponse);
-    }
-
-    /**
-     * 연예인 주간 랭킹 상세 정보 조회 (특정 연예인 적금의 사용자 랭킹 포함) - 향상된 버전
-     */
-    @GetMapping("/weekly/entertainers/{entertainerId}/details")
-    public ResponseEntity<ResponseData<EnhancedRankingDetailResponse>> getEnhancedWeeklyRankingDetail(
-            @PathVariable Long entertainerId) {
-        log.info("Getting enhanced weekly ranking detail for entertainer: {}", entertainerId);
-
-        // 먼저 기본 랭킹 정보 조회
-        RankingDetailResponse basicDetail = getWeeklyRankingDetailData(entertainerId);
-
-        // 사용자 랭킹에 트랜잭션 상세 정보 추가
-        List<EnhancedUserRankingResponse> enhancedUserRankings =
-                userTransactionDetailService.getEnhancedUserRankings(
-                        entertainerId,
-                        basicDetail.userRankings());
-
-        // 향상된 응답 생성
-        EnhancedRankingDetailResponse enhancedResponse =
-                EnhancedRankingDetailResponse.from(basicDetail, enhancedUserRankings);
-
-        return ResponseUtil.success(enhancedResponse);
-    }
-
-    // Helper methods to get basic ranking data
-    private RankingDetailResponse getDailyRankingDetailData(Long entertainerId) {
-        // 연예인 기본 정보 조회
-        Entertainer entertainer = entertainerRepository.findById(entertainerId)
-                .orElseThrow(() -> new IllegalArgumentException("Entertainer not found: " + entertainerId));
-
-        // 연예인 적금 총액 조회 (일간)
-        Double totalAmount = getTotalAmountFromRanking(
-                rankingService.getDailyEntertainerRanking(),
-                entertainerId);
-
-        // 연예인 적금 내 사용자 랭킹 조회 (일간)
-        List<RankingService.UserRankingEntry> userEntries = rankingService.getDailyUserRanking(entertainerId);
-        List<UserRankingResponse> userResponses = RankingConverterUtil.convertToUserRankingResponses(userEntries);
-
-        // 랭킹 상세 정보 응답 생성
-        return new RankingDetailResponse(
-                entertainerId,
-                entertainer.getEntertainerName(),
-                entertainer.getEntertainerProfileUrl(),
-                totalAmount,
-                userResponses
-        );
-    }
-
-    private RankingDetailResponse getWeeklyRankingDetailData(Long entertainerId) {
-        // 연예인 기본 정보 조회
-        Entertainer entertainer = entertainerRepository.findById(entertainerId)
-                .orElseThrow(() -> new IllegalArgumentException("Entertainer not found: " + entertainerId));
-
-        // 연예인 적금 총액 조회 (주간)
-        Double totalAmount = getTotalAmountFromRanking(
-                rankingService.getWeeklyEntertainerRanking(),
-                entertainerId);
-
-        // 연예인 적금 내 사용자 랭킹 조회 (주간)
-        List<RankingService.UserRankingEntry> userEntries = rankingService.getWeeklyUserRanking(entertainerId);
-        List<UserRankingResponse> userResponses = RankingConverterUtil.convertToUserRankingResponses(userEntries);
-
-        // 랭킹 상세 정보 응답 생성
-        return new RankingDetailResponse(
-                entertainerId,
-                entertainer.getEntertainerName(),
-                entertainer.getEntertainerProfileUrl(),
-                totalAmount,
-                userResponses
-        );
-    }
 
     /**
      * 연예인 일간 랭킹 조회 (적금 총액 기준)
@@ -241,37 +140,4 @@ public class RankingController {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * UserRankingEntry 목록을 UserRankingResponse 목록으로 변환
-     */
-    private List<UserRankingResponse> convertToUserRankingResponses(
-            List<RankingService.UserRankingEntry> entries) {
-        return entries.stream()
-                .map(entry -> {
-                    // 사용자 정보 조회
-                    User user = userRepository.findById(entry.getUserId()).orElse(null);
-                    String userName = user != null ? user.getName() : "Unknown";
-
-                    return new UserRankingResponse(
-                            entry.getRank(),
-                            entry.getUserId(),
-                            userName,
-                            entry.getAmount()
-                    );
-                })
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 연예인 ID로 랭킹 목록에서 총액 조회
-     */
-    private Double getTotalAmountFromRanking(
-            List<RankingService.EntertainerRankingEntry> entries,
-            Long entertainerId) {
-        return entries.stream()
-                .filter(entry -> entry.getEntertainerId().equals(entertainerId))
-                .findFirst()
-                .map(RankingService.EntertainerRankingEntry::getTotalAmount)
-                .orElse(0.0);
-    }
 }
