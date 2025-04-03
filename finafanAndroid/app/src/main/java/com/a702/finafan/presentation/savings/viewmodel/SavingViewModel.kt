@@ -345,4 +345,8 @@ class SavingViewModel @Inject constructor(
         _savingState.update { it.copy(ranking = ranking) }
     }
 
+    fun resetCancelState() {
+        _savingState.update { it.copy(isCancel = false) }
+    }
+
 }
