@@ -45,7 +45,7 @@ public class SsafyOAuthProvider {
     }
 
 
-    public String fetchSSAFyAccessToken(String code) {
+    public String fetchSSAFYAccessToken(String code) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
