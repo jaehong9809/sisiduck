@@ -6,6 +6,7 @@ import com.a702.finafan.data.funding.dto.toDomain
 import com.a702.finafan.domain.funding.model.Deposit
 import com.a702.finafan.domain.funding.model.Funding
 import com.a702.finafan.domain.funding.model.FundingDetail
+import com.a702.finafan.domain.funding.model.FundingFilter
 import com.a702.finafan.domain.funding.repository.FundingRepository
 import javax.inject.Inject
 
@@ -25,34 +26,10 @@ class FundingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllFundingList(): List<Funding> {
-        val response = api.getAllFundingList()
+    override suspend fun getFundingList(filter: FundingFilter): List<Funding> {
+        val response = api.getFundingList(filter.toString())
 
-        Log.d("getAllFundingList: ", "${response.data}")
-
-        return if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
-    }
-
-    override suspend fun getParticipatingFundingList(): List<Funding> {
-        val response = api.getParticipatingFundingList()
-
-        Log.d("getParticipatingFundingList: ", "${response.data}")
-
-        return if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
-    }
-
-    override suspend fun getMyFundingList(): List<Funding> {
-        val response = api.getMyFundingList()
-
-        Log.d("getMyFundingList: ", "${response.data}")
+        Log.d("getFundingList: ", "${response.data}")
 
         return if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }

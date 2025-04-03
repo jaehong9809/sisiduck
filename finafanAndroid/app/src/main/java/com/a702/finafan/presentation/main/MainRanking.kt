@@ -73,7 +73,7 @@ fun MainRanking(
                 { selectedTab = RankingType.WEEKLY },
                 { selectedTab = RankingType.TOTAL }
             ),
-            modifier = Modifier.padding(horizontal = 30.dp)
+            modifier = Modifier.padding(horizontal = 14.dp)
         )
 
         AutoScrollingRankList(rankings = rankingState.rankings, rankingType = selectedTab)
@@ -139,7 +139,7 @@ fun RankingCard(ranking: MainRanking, rankingType: RankingType) {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(vertical = 20.dp, horizontal = 30.dp)
+            .padding(vertical = 20.dp, horizontal = 14.dp)
             .dropShadow(
                 shape = RoundedCornerShape(25.dp),
                 offsetX = 2.dp

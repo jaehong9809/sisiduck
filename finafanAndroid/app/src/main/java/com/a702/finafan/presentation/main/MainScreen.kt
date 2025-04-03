@@ -172,7 +172,7 @@ fun MainScreen(
             Text(
                 text = "스타별 적금 랭킹",
                 modifier = Modifier.fillMaxWidth()
-                    .padding(start = 40.dp, top = 40.dp, bottom = 20.dp),
+                    .padding(start = 20.dp, top = 40.dp, bottom = 20.dp),
                 textAlign = TextAlign.Left,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.SemiBold

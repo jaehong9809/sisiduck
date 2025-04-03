@@ -19,6 +19,7 @@ import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.domain.funding.model.FundingFilter
 import com.a702.finafan.domain.funding.model.Star
 import com.a702.finafan.presentation.funding.component.FundingCreateButton
 import com.a702.finafan.presentation.funding.component.FundingList
@@ -36,7 +37,7 @@ fun FundingScreen(
     val myStars: List<Star> = getMyStars()
 
     LaunchedEffect(Unit) {
-        fundingViewModel.fetchAllFundings()
+        fundingViewModel.fetchFundings(FundingFilter.ALL)
     }
 
     Column (
@@ -59,9 +60,9 @@ fun FundingScreen(
             containerColor = MainWhite,
             selectedTabColor = MainBlack,
             onTabSelected = listOf(
-                { fundingViewModel.fetchAllFundings() },
-                { fundingViewModel.fetchParticipatingFundings() },
-                { fundingViewModel.fetchMyFundings() }
+                { fundingViewModel.fetchFundings(FundingFilter.ALL) },
+                { fundingViewModel.fetchFundings(FundingFilter.PARTICIPATED) },
+                { fundingViewModel.fetchFundings(FundingFilter.MY) }
             ),
             modifier = Modifier.padding(vertical = 10.dp)
         )

@@ -3,6 +3,7 @@ package com.a702.finafan.presentation.funding.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.domain.funding.model.FundingFilter
 import com.a702.finafan.domain.funding.repository.FundingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,52 +20,12 @@ class FundingViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FundingState())
     val uiState: StateFlow<FundingState> = _uiState.asStateFlow()
 
-    fun fetchAllFundings() {
+    fun fetchFundings(filter: FundingFilter) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val fundings = repository.getAllFundingList()
+                val fundings = repository.getFundingList(FundingFilter.ALL)
                 Log.d("FundingViewModel - feachAllfundings: ", "${fundings}")
-                _uiState.value = _uiState.value.copy(
-                    fundings = fundings,
-                    isLoading = false
-                )
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e
-                )
-            }
-        }
-    }
-
-    fun fetchParticipatingFundings() {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-
-            try {
-                val fundings = repository.getParticipatingFundingList()
-
-                _uiState.value = _uiState.value.copy(
-                    fundings = fundings,
-                    isLoading = false
-                )
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e
-                )
-            }
-        }
-    }
-
-    fun fetchMyFundings() {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-
-            try {
-                val fundings = repository.getMyFundingList()
-
                 _uiState.value = _uiState.value.copy(
                     fundings = fundings,
                     isLoading = false
