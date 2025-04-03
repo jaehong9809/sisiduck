@@ -48,7 +48,9 @@ public class RankingService {
      * 연예인 일간 랭킹 조회 (전체 연예인 적금 총액 기준)
      */
     public List<EntertainerRankingEntry> getDailyEntertainerRanking() {
-        return getEntertainerRanking(getDailyEntertainerRankingKey());
+        String key = getDailyEntertainerRankingKey();
+        log.info("Retrieving daily entertainer ranking with key: {}", key);
+        return getEntertainerRanking(key);
     }
 
     /**

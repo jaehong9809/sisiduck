@@ -318,8 +318,18 @@ public class DemandDepositFacade {
                         (existingValue, newValue) -> existingValue
                 )
         );
+        log.info("Transaction history total count: {}", inquireTransactionHistoryList.totalCount());
+        log.info("Transaction history list size: {}", inquireTransactionHistoryList.list().size());
+        log.info("Transaction image map size: {}", transactionImageMap.size());
+
 
         List<TransactionWithImageResponse> transactionsWithImages = inquireTransactionHistoryList.list().stream()
+                .peek(transaction -> {
+                    if (transactionImageMap.get(transaction.transactionUniqueNo()) == null) {
+                        log.info("Transaction {} was filtered out - no matching detail record",
+                                transaction.transactionUniqueNo());
+                    }
+                })
             .filter(transaction ->{
                 EntertainerSavingsTransactionDetail detail = transactionImageMap.get(transaction.transactionUniqueNo());
                 return detail != null;

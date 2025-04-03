@@ -61,7 +61,7 @@ public class UserTransactionDetailService {
 
             if (depositAccountId == null) {
                 // User has ranking but no deposit account found (shouldn't happen)
-                log.warn("User {} has ranking but no deposit account for entertainer {}",
+                log.warn("User {} convertToUserRankingResponses account for entertainer {}",
                         userId, entertainerId);
                 result.add(EnhancedUserRankingResponse.from(
                         basicRanking,

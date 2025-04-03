@@ -107,7 +107,7 @@ public class EntertainSavingsController {
                 withdrawalAccount.getAccountId(),
                 depositAccount.addAmount(new BigDecimal(starTransferRequest.transactionBalance())),
                 new BigDecimal(starTransferRequest.transactionBalance()),
-                exchange.getBody().REC().get(0).transactionUniqueNo(),
+                exchange.getBody().REC().get(1).transactionUniqueNo(),
                 starTransferRequest.message(),
                 image
             );
