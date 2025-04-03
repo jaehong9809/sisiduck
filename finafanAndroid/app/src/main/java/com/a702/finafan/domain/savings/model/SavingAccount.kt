@@ -1,8 +1,7 @@
 package com.a702.finafan.domain.savings.model
 
 data class SavingAccountInfo(
-    val total: Int = 0,
-    val accountAmount: Long = 0,
+    val total: Long = 0,
     val accounts: List<SavingAccount> = emptyList()
 )
 

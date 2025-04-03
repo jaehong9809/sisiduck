@@ -141,6 +141,7 @@
     <string name="saving_item_connect_cancel_confirm">연결된 계좌를 삭제하시겠어요?</string>
     <string name="saving_item_deposit_complete">입금이 완료되었어요!</string>
     <string name="saving_item_withdrawal_empty">출금 가능 계좌가 없어요.\n계좌 연결을 해 볼까요?</string>
+    <string name="saving_item_limit">적금은 3개까지 가입이 가능해요!</string>
 
     <!-- Saving Ranking -->
     <string name="ranking_daily_title">일간</string>
