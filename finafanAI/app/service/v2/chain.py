@@ -1,12 +1,12 @@
 from langchain.memory import ConversationBufferMemory
 from langchain.agents import Tool, AgentExecutor, create_react_agent
-from langchain.agents.react.base import ReActPrompt
 from langchain_core.runnables import RunnableLambda
 from langchain_core.messages import HumanMessage, SystemMessage
 import re
 from app.service.v2.search import fast_news_search, youtube_search, search_person_info, duckduckgo_search, get_weather
 from app.service.v2.prompts import DUKSUNI_SYSTEM_PROMPT, react_prompt_kr
 from app.service.v2.llm import get_llm, get_hard_llm
+from langchain import hub
 # ✅ 메모리
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="output")
 
@@ -87,8 +87,9 @@ def get_agent_chain(callback):
             tools="\n".join([f"{t.name}: {t.description}" for t in tools]),
             tool_names=", ".join([t.name for t in tools])
         )
+        prompt2 = hub.pull("hwchase17/react")
         # prompt = ReActPrompt().get_prompt(tools)
-        agent = create_react_agent(llm=llm, tools=tools, prompt=prompt)
+        agent = create_react_agent(llm=llm, tools=tools, prompt=prompt2)
 
         executor = AgentExecutor(
             agent=agent,
@@ -103,14 +104,12 @@ def get_agent_chain(callback):
 
         result = await executor.ainvoke(x)
         intermediate_steps = result.get("intermediate_steps", [])
-
         seen = set()
         unique_tool_outputs = []
 
         for step in intermediate_steps:
             action = step[0]  # AgentAction
             output = step[1]  # Tool output (observation)
-
             # Exception은 무시
             if action.tool == "_Exception":
                 continue
@@ -120,22 +119,15 @@ def get_agent_chain(callback):
                 seen.add(key)
                 unique_tool_outputs.append(output)
 
-        for i in unique_tool_outputs:
-            print(i)
-            print("------")
-
         # 문자열 하나로 병합
-        print(unique_tool_outputs)
         search_summary = "\n".join(unique_tool_outputs)
         final_answer = extract_final_answer(result["output"])
         if final_answer =="Agent stopped due to iteration limit or time limit.":
             final_answer = ""
         # 전체 맥락 연결
-        full_context = final_answer + "\n\n" + search_summary
-
-        print("\n🧩 [Agent 원본 출력]")
-        print(result["output"])
-
+        full_context = final_answer
+        #full_context = final_answer + "\n\n" + search_summary
+        
         print("\n🪄 [Final Answer 추출 결과]")
         print(full_context)
 
