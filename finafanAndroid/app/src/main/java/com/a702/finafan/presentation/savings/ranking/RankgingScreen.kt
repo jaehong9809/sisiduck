@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
+import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
@@ -48,7 +49,7 @@ fun RankingScreen(
 
     val tabTitle = remember {
         mutableStateOf(
-            when (selectedTabIndex.value) {
+            when (selectedTabIndex.intValue) {
                 0 -> context.getString(R.string.ranking_daily_star)
                 1 -> context.getString(R.string.ranking_weekly_star)
                 2 -> context.getString(R.string.ranking_total_star)
@@ -138,11 +139,18 @@ fun RankingScreen(
                     }
                 }
 
-                items(rankingList) { ranking ->
-                    RankingItem(ranking, onSelect = {
-                        viewModel.setRanking(ranking)
-                        navController.navigate(NavRoutes.RankingHistory.route)
-                    })
+                when {
+                    savingState.isLoading -> {
+                        item { CommonProgress() }
+                    }
+                    else -> {
+                        items(rankingList) { ranking ->
+                            RankingItem(ranking, onSelect = {
+                                viewModel.setRanking(ranking)
+                                navController.navigate(NavRoutes.RankingHistory.route)
+                            })
+                        }
+                    }
                 }
 
             }

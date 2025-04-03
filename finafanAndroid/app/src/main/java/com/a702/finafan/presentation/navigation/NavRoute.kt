@@ -47,4 +47,5 @@ sealed class NavRoutes(val route: String) {
 
     /* AllAccount */
     object AllAccount : NavRoutes("all_account")
+    object AllAccountParam : NavRoutes("all_account?selectedTabIndex={selectedTabIndex}")
 }

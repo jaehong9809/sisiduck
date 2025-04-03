@@ -101,4 +101,5 @@ dependencies {
     implementation(libs.coil)
     implementation ("androidx.palette:palette:1.0.0")
     implementation(libs.androidx.compose.runtime)
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
 }
