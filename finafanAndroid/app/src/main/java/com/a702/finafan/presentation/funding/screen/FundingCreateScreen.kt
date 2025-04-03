@@ -2,6 +2,7 @@ package com.a702.finafan.presentation.funding.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -63,8 +64,10 @@ fun FundingCreateScreen(
             MenuTitle(stringResource(R.string.funding_create_goal_date_label))
             DatePicker { }
 
-            MenuTitle(stringResource(R.string.funding_create_caution_title))
-            MenuDescription(stringResource(R.string.funding_create_caution_description))
+            Box() {
+                MenuTitle(stringResource(R.string.funding_create_caution_title))
+                MenuDescription(stringResource(R.string.funding_create_caution_description))
+            }
 
             MenuTitle(stringResource(R.string.funding_create_content_label))
             MenuDescription(stringResource(R.string.funding_create_content_description))

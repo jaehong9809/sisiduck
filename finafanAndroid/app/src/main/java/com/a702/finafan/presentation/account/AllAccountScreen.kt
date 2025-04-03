@@ -48,8 +48,10 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.funding.model.FundingFilter
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -58,7 +60,8 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 @Composable
 fun AllAccountScreen(
     selectedTabIndex: MutableIntState,
-    savingViewModel: SavingViewModel = viewModel()
+    savingViewModel: SavingViewModel = viewModel(),
+    fundingViewModel: FundingViewModel = viewModel()
 ) {
 
     val navController = LocalNavController.current
@@ -68,7 +71,7 @@ fun AllAccountScreen(
     LaunchedEffect(Unit) {
         when (selectedTabIndex.intValue) {
             0 -> savingViewModel.fetchSavingAccount()
-            1 -> 0 // TODO: 모금 통장 API
+            1 -> fundingViewModel.fetchFundings(FundingFilter.MY)
             2 -> savingViewModel.fetchWithdrawalAccount()
         }
     }

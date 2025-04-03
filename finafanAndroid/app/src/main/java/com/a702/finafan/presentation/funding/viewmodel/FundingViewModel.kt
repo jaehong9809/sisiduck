@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.domain.funding.model.FundingFilter
-import com.a702.finafan.domain.funding.repository.FundingRepository
+import com.a702.finafan.domain.funding.usecase.GetFundingListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FundingViewModel @Inject constructor(
-    private val repository: FundingRepository
+    private val getFundingListUseCase: GetFundingListUseCase
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(FundingState())
@@ -24,7 +24,7 @@ class FundingViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val fundings = repository.getFundingList(FundingFilter.ALL)
+                val fundings = getFundingListUseCase(filter)
                 Log.d("FundingViewModel - feachAllfundings: ", "${fundings}")
                 _uiState.value = _uiState.value.copy(
                     fundings = fundings,
