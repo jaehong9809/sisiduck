@@ -48,10 +48,8 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
-import com.a702.finafan.domain.funding.model.FundingFilter
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.SavingAccount
-import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -60,8 +58,7 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 @Composable
 fun AllAccountScreen(
     selectedTabIndex: MutableIntState,
-    savingViewModel: SavingViewModel = viewModel(),
-    fundingViewModel: FundingViewModel = viewModel()
+    savingViewModel: SavingViewModel = viewModel()
 ) {
 
     val navController = LocalNavController.current
@@ -71,7 +68,7 @@ fun AllAccountScreen(
     LaunchedEffect(Unit) {
         when (selectedTabIndex.intValue) {
             0 -> savingViewModel.fetchSavingAccount()
-            1 -> fundingViewModel.fetchFundings(FundingFilter.MY)
+            1 -> savingViewModel.fetchFundingAsSavingAccounts()
             2 -> savingViewModel.fetchWithdrawalAccount()
         }
     }
@@ -80,7 +77,7 @@ fun AllAccountScreen(
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.total
-                1 -> 0 // TODO: 모금 통장 개수
+                1 -> savingState.savingAccountInfo.total
                 2 -> savingState.withdrawalAccounts.size
                 else -> 0
             }
@@ -91,7 +88,7 @@ fun AllAccountScreen(
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accountAmount
-                1 -> 0 // TODO: 모금 통장 총액
+                1 -> savingState.savingAccountInfo.accountAmount
                 else -> 0
             }
         }
@@ -101,7 +98,7 @@ fun AllAccountScreen(
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accounts
-                1 -> emptyList() // TODO: 모금 통장 리스트
+                1 -> savingState.savingAccountInfo.accounts
                 2 -> savingState.withdrawalAccounts
                 else -> emptyList()
             }
@@ -153,7 +150,8 @@ fun AllAccountScreen(
                         },
                         {
                             selectedTabIndex.intValue = 1
-                            // TODO: 모금 계좌 목록 API 호출
+                            // 모금 계좌 목록
+                            savingViewModel.fetchFundingAsSavingAccounts()
                         },
                         {
                             selectedTabIndex.intValue = 2
@@ -227,7 +225,7 @@ fun AllAccountScreen(
                             1 -> SavingAccountItem(
                                 account as SavingAccount,
                                 onSelect = {
-                                    // TODO: 모금통장 타입으로 변경 필요, 모금 통장 상세 화면으로 이동
+                                    navController.navigate(NavRoutes.FundingDetail.route + "/${account.accountId}")
                                 }
                             )
                             2 -> WithdrawalAccountItem(

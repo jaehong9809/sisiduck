@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import com.a702.finafan.presentation.ble.UuidListScreen
 import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.chatbot.ChatViewModel
-import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 import com.a702.finafan.presentation.main.MainScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
@@ -20,7 +19,6 @@ fun NavGraph(
 ) {
     NavControllerProvider(navController = navController) {
         val savingViewModel: SavingViewModel = hiltViewModel()
-        val fundingViewModel: FundingViewModel = hiltViewModel()
 
         NavHost(
             navController = navController,
@@ -41,7 +39,7 @@ fun NavGraph(
 
             savingGraph(navController = navController, savingViewModel = savingViewModel)
 
-            accountGraph(navController = navController, savingViewModel = savingViewModel, fundingViewModel = fundingViewModel)
+            accountGraph(navController = navController, savingViewModel = savingViewModel)
 
             fundingGraph(navController)
 

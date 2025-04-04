@@ -15,12 +15,10 @@ import com.a702.finafan.presentation.account.AccountSendScreen
 import com.a702.finafan.presentation.account.AllAccountScreen
 import com.a702.finafan.presentation.account.ConnectAccountScreen
 import com.a702.finafan.presentation.account.ConnectBankScreen
-import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 fun NavGraphBuilder.accountGraph(
     savingViewModel: SavingViewModel,
-    fundingViewModel: FundingViewModel,
     navController: NavHostController
 ) {
     navigation(
@@ -77,7 +75,7 @@ fun NavGraphBuilder.accountGraph(
                 )
             }
 
-            AllAccountScreen(selectedTabIndex, savingViewModel, fundingViewModel)
+            AllAccountScreen(selectedTabIndex, savingViewModel)
         }
     }
 }

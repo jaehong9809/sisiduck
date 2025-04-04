@@ -1,20 +1,20 @@
-package com.a702.finafan.data.funding.dto
+package com.a702.finafan.data.funding.dto.response
 
-import com.a702.finafan.domain.funding.model.Deposit
 import com.a702.finafan.domain.funding.model.Funding
 import com.a702.finafan.domain.funding.model.FundingDetail
 import com.a702.finafan.domain.funding.model.Star
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 data class FundingDetailResponse(
     val participated: Boolean,
     val entertainer: Entertainer,
     val adminUser: AdminUser,
     val fundingName: String,
+    val description: String,
+    val status: String,
     val goalAmount: Long,
     val currentAmount: Long,
-    val fundingExpiryDate: LocalDateTime,
-    val fundingApplication: List<FundingApplication>
+    val fundingExpiryDate: LocalDate,
 )
 
 data class Entertainer(
@@ -25,16 +25,8 @@ data class Entertainer(
 
 data class AdminUser(
     val adminName: String,
-    val description: String,
     val fundingCount: Int,
     val fundingSuccessCount: Int
-)
-
-data class FundingApplication(
-    val name: String,
-    val balance: Long,
-    val content: String,
-    val createdAt: LocalDateTime
 )
 
 fun FundingDetailResponse.toDomain(id: Long): FundingDetail {
@@ -49,22 +41,16 @@ fun FundingDetailResponse.toDomain(id: Long): FundingDetail {
             ),
             id = id,
             title = fundingName,
+            accountNo = "",
+            status = status,
             currentAmount = currentAmount,
             goalAmount = goalAmount,
             fundingExpiryDate = fundingExpiryDate
         ),
+        description = description,
         host = adminUser.adminName,
-        description = adminUser.description,
         hostFundingCount = adminUser.fundingCount,
         hostSuccessCount = adminUser.fundingSuccessCount,
-        depositHistory = fundingApplication.map {
-            Deposit(
-                name = it.name,
-                balance = it.balance,
-                message = it.content,
-                createdAt = it.createdAt
-            )
-        },
         participated = participated
     )
 }

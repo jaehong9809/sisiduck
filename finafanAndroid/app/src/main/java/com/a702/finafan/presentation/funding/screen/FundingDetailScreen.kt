@@ -39,6 +39,7 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.ui.theme.starThemes
+import com.a702.finafan.domain.funding.model.DepositFilter
 import com.a702.finafan.domain.funding.model.Star
 import com.a702.finafan.presentation.funding.component.DepositHistoryList
 import com.a702.finafan.presentation.funding.component.FundingDetailHeader
@@ -110,8 +111,8 @@ fun FundingDetailScreen(
                         containerColor = MainWhite,
                         selectedTabColor = MainBlack,
                         onTabSelected = listOf(
-                        { viewModel.fetchAllDeposits(fundingId) },
-                        { viewModel.fetchMyDeposits(fundingId) }
+                        { viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL) },
+                        { viewModel.fetchDepositHistory(fundingId, DepositFilter.MY) }
                     ),
                     modifier = Modifier
                         .fillMaxWidth()

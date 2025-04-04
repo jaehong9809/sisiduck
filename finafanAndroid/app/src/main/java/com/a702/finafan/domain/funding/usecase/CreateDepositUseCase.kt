@@ -3,10 +3,7 @@ package com.a702.finafan.domain.funding.usecase
 import com.a702.finafan.domain.funding.repository.FundingRepository
 import javax.inject.Inject
 
-class JoinFundingUseCase @Inject constructor(
+class CreateDepositUseCase @Inject constructor(
     private val repository: FundingRepository
 ) {
-    suspend operator fun invoke(fundingId: Long) {
-        repository.joinFunding(fundingId)
-    }
 }

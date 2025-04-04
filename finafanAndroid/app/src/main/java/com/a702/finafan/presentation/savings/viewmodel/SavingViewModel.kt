@@ -2,11 +2,15 @@ package com.a702.finafan.presentation.savings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.data.funding.dto.response.toSavingAccount
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
+import com.a702.finafan.domain.funding.model.FundingFilter
+import com.a702.finafan.domain.funding.repository.FundingRepository
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
+import com.a702.finafan.domain.savings.model.SavingAccountInfo
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
@@ -33,6 +37,7 @@ class SavingViewModel @Inject constructor(
     private val depositUseCase: DepositUseCase,
     private val getSavingAccountUseCase: GetSavingAccountUseCase,
     private val getBankUseCase: GetBankUseCase,
+    private val fundingRepository: FundingRepository
 ): ViewModel() {
 
     private val _savingState = MutableStateFlow(SavingState())
@@ -176,6 +181,38 @@ class SavingViewModel @Inject constructor(
             }
         }
     }
+
+    fun fetchFundingAsSavingAccounts() {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val fundingList = fundingRepository.getFundingList(FundingFilter.MY)
+                val fundingAsSavingAccounts = fundingList.map { it.toSavingAccount() }
+
+                val fundingAsSavingAccountInfo = SavingAccountInfo(
+                    total = fundingAsSavingAccounts.size,
+                    accountAmount = fundingAsSavingAccounts.sumOf { it.amount },
+                    accounts = fundingAsSavingAccounts
+                )
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        savingAccountInfo = fundingAsSavingAccountInfo
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
 
     fun fetchBankList() {
         viewModelScope.launch {

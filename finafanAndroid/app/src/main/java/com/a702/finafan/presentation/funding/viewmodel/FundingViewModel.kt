@@ -25,7 +25,7 @@ class FundingViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
                 val fundings = getFundingListUseCase(filter)
-                Log.d("FundingViewModel - feachAllfundings: ", "${fundings}")
+                Log.d("FundingViewModel - fetchfundings: ", "${fundings}")
                 _uiState.value = _uiState.value.copy(
                     fundings = fundings,
                     isLoading = false
