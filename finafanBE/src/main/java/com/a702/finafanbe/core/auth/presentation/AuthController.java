@@ -28,6 +28,7 @@ public class AuthController {
     public ResponseEntity<Void> ssafyOauthCallback(
             @RequestParam("code") String code
     ) throws IOException {
+        log.info("Request Param: {}", code);
         AuthTokens authTokens = authService.login(code);
 
         // Server Callback 받은 후 -> Android Client에 redirectUri 던지는 방식으로 수정
