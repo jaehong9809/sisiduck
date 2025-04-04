@@ -1,10 +1,12 @@
-package com.a702.finafan.presentation.savings
+package com.a702.finafan.presentation.account
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,10 +17,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
-import com.a702.finafan.presentation.account.BankEnum
 
 // 계좌번호 정보 아이템 (은행 사진 + 은행명 + 계좌번호)
 @Composable
@@ -26,10 +29,21 @@ fun AccountInfoItem(
     modifier: Modifier = Modifier,
     account: Account,
     isCancel: Boolean = false,
-    fontColor: Color = MainBlack) {
+    isSelect: Boolean = false,
+    fontColor: Color = MainBlack,
+    selectedAccounts: List<Long> = emptyList(),
+    onToggleSelect: (Long) -> Unit?
+) {
+
+    val isSelected = selectedAccounts.any { it == account.accountId }
+
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier
+            .background(
+                color = if (isSelect) MainWhite else MainBgLightGray,
+                shape = RoundedCornerShape(15.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
             modifier = Modifier
@@ -57,12 +71,12 @@ fun AccountInfoItemPreview() {
             accountId = 1234,
             accountNo = "456-789-1000",
             bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
-        ))
+        ), onToggleSelect = {})
 
         AccountInfoItem(account = Account(
             accountId = 1234,
             accountNo = "456-789-1000",
             bank = Bank(bankId = 12, bankCode = "345", bankName = "NH농협")
-        ), isCancel = true)
+        ), isCancel = true, onToggleSelect = {})
     }
 }

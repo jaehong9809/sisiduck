@@ -370,8 +370,4 @@ class SavingViewModel @Inject constructor(
         _savingState.update { it.copy(isCancel = false) }
     }
 
-    fun updateBankList(banks: List<Long>) {
-        _savingState.update { it.copy(selectBankIds = banks) }
-    }
-
 }

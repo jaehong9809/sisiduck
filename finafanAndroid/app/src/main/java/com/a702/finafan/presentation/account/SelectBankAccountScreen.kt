@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -22,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,22 +29,19 @@ import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
-// 은행 선택 화면
+// 계좌 선택 화면
 @Composable
-fun ConnectBankScreen(
+fun SelectBankAccountScreen(
     viewModel: SavingViewModel = viewModel(),
     onComplete: () -> Unit
 ) {
 
-    val selectedBankIds = remember { mutableStateListOf<Long>() }
+    val selectedAccountIds = remember { mutableStateListOf<Long>() }
     val savingState by viewModel.savingState.collectAsState()
-
-    // 은행 목록
-    LaunchedEffect(Unit) {
-        viewModel.fetchBankList()
-    }
 
     Scaffold(
         topBar = {
@@ -59,11 +53,11 @@ fun ConnectBankScreen(
                     .fillMaxWidth()
                     .imePadding(),
                 onClick = {
-                    // TODO: 다음 누르면 은행 선택 API 호출 -> 계좌 목록 화면으로 이동
+                    // TODO: 다음 누르면 계좌 선택 API 호출 -> 다이얼로그 띄우고 연결 계좌 목록 화면으로 이동하기
                     onComplete()
                 },
                 text = stringResource(R.string.btn_next),
-                isEnabled = selectedBankIds.isNotEmpty()
+                isEnabled = selectedAccountIds.isNotEmpty()
             )
         }
     ) { innerPadding ->
@@ -79,7 +73,7 @@ fun ConnectBankScreen(
             ) {
                 Text(
                     modifier = Modifier.padding(top = 16.dp),
-                    text = stringResource(R.string.connect_account_select_back_title),
+                    text = stringResource(R.string.connect_account_select_account_title),
                     color = MainBlack,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
@@ -89,7 +83,7 @@ fun ConnectBankScreen(
 
                 Text(
                     modifier = Modifier.padding(start = 12.dp, top = 34.dp, bottom = 12.dp),
-                    text = stringResource(R.string.select_bank_label),
+                    text = stringResource(R.string.select_account_label),
                     color = MainBlack,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
@@ -98,14 +92,11 @@ fun ConnectBankScreen(
                 )
             }
 
-            LazyVerticalGrid (
-                columns = GridCells.Fixed(2),
+            LazyColumn (
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
 
                 if (savingState.isLoading) {
@@ -113,33 +104,25 @@ fun ConnectBankScreen(
                         CommonProgress()
                     }
                 } else {
-                    items(savingState.bankList.size) { index ->
-                        val bank = savingState.bankList[index]
-                        val isSelected = selectedBankIds.any { it == bank.bankId }
+                    items(savingState.withdrawalAccounts) { index ->
+                        val account = savingState.withdrawalAccounts[index]
+                        val isSelected = selectedAccountIds.any { it == account.accountId }
 
-                        BankItem(
-                            bank = bank,
-                            selectedBanks = selectedBankIds,
-                            onToggleSelect = { clickedBankId ->
-                                if (isSelected) {
-                                    selectedBankIds.removeAll { it == clickedBankId }
-                                } else {
-                                    selectedBankIds.add(clickedBankId)
-                                }
-                            }
-                        )
+//                        AccountInfoItem(
+//                            account = account,
+//                            isSelect = true,
+//                            selectedAccounts = selectedAccountIds,
+//                            onToggleSelect = { clickedAccountId ->
+//                                if (isSelected) {
+//                                    selectedAccountIds.removeAll { it == clickedAccountId }
+//                                } else {
+//                                    selectedAccountIds.add(clickedAccountId)
+//                                }
+//                            }
+//                        )
                     }
                 }
-
-            }
         }
     }
 
-}
-
-@Preview
-@Composable
-fun ConnectBankPreview() {
-    val bankList = mutableListOf("NH농협", "우리은행", "하나은행", "국민은행", "신한은행", "카카오뱅크", "토스", "기업은행")
-    ConnectBankScreen(onComplete = {})
 }

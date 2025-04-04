@@ -28,9 +28,8 @@ import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.utils.StringUtil
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.presentation.account.AccountInfoItem
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 적금 해지 화면
@@ -45,7 +44,6 @@ fun SavingCancelScreen(
     val savingState by viewModel.savingState.collectAsState()
     val accountInfo = savingState.savingInfo.savingAccount
     val withdrawalAccount = accountInfo.withdrawalAccount
-    val bank = withdrawalAccount.bank
 
     val showDialog = remember { mutableStateOf(false) }
     val dialogContent = remember { mutableStateOf("") }
@@ -148,12 +146,9 @@ fun SavingCancelScreen(
             )
 
             AccountInfoItem(
-                account = Account(
-                    accountId = withdrawalAccount.accountId,
-                    accountNo = withdrawalAccount.accountNo,
-                    bank = Bank(bankId = bank.bankId, bankCode = bank.bankCode, bankName = bank.bankName)
-                ),
-                isCancel = true)
+                account = withdrawalAccount,
+                isCancel = true
+            )
         }
     }
 }
