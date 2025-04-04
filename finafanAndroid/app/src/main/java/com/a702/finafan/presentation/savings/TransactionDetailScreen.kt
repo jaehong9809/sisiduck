@@ -102,7 +102,7 @@ fun TransactionDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = StringUtil.formatDate(transaction.date),
+                        text = StringUtil.formatDetailDate(transaction.date),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
                         color = MainWhite, lineHeight = 24.sp,
