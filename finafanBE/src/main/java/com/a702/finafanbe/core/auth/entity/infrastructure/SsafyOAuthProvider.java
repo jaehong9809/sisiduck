@@ -13,6 +13,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class SsafyOAuthProvider {
 
     public String fetchSSAFYAccessToken(String code) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setContentType(new MediaType("application", "x-www-form-urlencoded", StandardCharsets.UTF_8));
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
