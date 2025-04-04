@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FinAFan</string>
+    <string name="app_name">시시덕</string>
 
     <!-- Main Screen -->
     <string name="card_login_button">로그인</string>
