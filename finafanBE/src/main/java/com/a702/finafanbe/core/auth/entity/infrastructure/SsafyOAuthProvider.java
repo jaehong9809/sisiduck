@@ -73,7 +73,10 @@ public class SsafyOAuthProvider {
                 requestEntity,
                 String.class
         );
-        log.info("Debug Response: {}", debugResponse.getBody());
+        log.info("Status Code: {}", debugResponse.getStatusCode());
+        log.info("Response Headers: {}", debugResponse.getHeaders());
+        log.info("Debug Response Body: {}", debugResponse.getBody());
+
 
         //TODO : httpClient[주호]
         ResponseEntity<TokenResponse> response = restTemplate.exchange(
