@@ -86,27 +86,6 @@ public class RankingService {
     }
 
     /**
-     * 연예인 랭킹 조회 (공통 로직, 조회 범위 지정 가능)
-     */
-    private List<EntertainerRankingEntry> getEntertainerRanking(String key, int limit) {
-        Set<ZSetOperations.TypedTuple<String>> rankingSet =
-                redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, limit - 1);
-
-        List<EntertainerRankingEntry> result = new ArrayList<>();
-        if (rankingSet != null) {
-            int rank = 1;
-            for (ZSetOperations.TypedTuple<String> tuple : rankingSet) {
-                String entertainerId = tuple.getValue();
-                Double totalAmount = tuple.getScore();
-                if (entertainerId != null && totalAmount != null) {
-                    result.add(new EntertainerRankingEntry(rank++, Long.parseLong(entertainerId), totalAmount));
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
      * 사용자 랭킹 조회 (공통 로직)
      */
     private List<UserRankingEntry> getUserRanking(String key) {
@@ -121,6 +100,27 @@ public class RankingService {
                 Double amount = tuple.getScore();
                 if (userId != null && amount != null) {
                     result.add(new UserRankingEntry(rank++, Long.parseLong(userId), amount));
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 연예인 랭킹 조회 (공통 로직, 조회 범위 지정 가능)
+     */
+    private List<EntertainerRankingEntry> getEntertainerRanking(String key, int limit) {
+        Set<ZSetOperations.TypedTuple<String>> rankingSet =
+                redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, limit - 1);
+
+        List<EntertainerRankingEntry> result = new ArrayList<>();
+        if (rankingSet != null) {
+            int rank = 1;
+            for (ZSetOperations.TypedTuple<String> tuple : rankingSet) {
+                String entertainerId = tuple.getValue();
+                Double totalAmount = tuple.getScore();
+                if (entertainerId != null && totalAmount != null) {
+                    result.add(new EntertainerRankingEntry(rank++, Long.parseLong(entertainerId), totalAmount));
                 }
             }
         }

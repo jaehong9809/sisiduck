@@ -7,12 +7,14 @@ import com.a702.finafanbe.core.entertainer.dto.response.TopTransactionResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.TopTransactionsResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
+import com.a702.finafanbe.core.ranking.application.RankingService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
+import com.a702.finafanbe.global.common.exception.NotFoundException;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.DayOfWeek;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +40,7 @@ public class TopTransactionsService {
     private final EntertainerSavingsAccountRepository savingsAccountRepository;
     private final EntertainerSavingsTransactionDetailRepository transactionDetailRepository;
     private final UserRepository userRepository;
+    private final RankingService rankingService;
 
     private static final int TOP_TRANSACTIONS_LIMIT = 10;
 
@@ -47,6 +51,20 @@ public class TopTransactionsService {
 
         LocalDateTime filterFromTime = getFilterTimeByPeriod(period);
 
+        List<RankingService.EntertainerRankingEntry> entertainerRanking = new ArrayList<>();
+        if(period.equals("weekly")) {
+            entertainerRanking = rankingService.getWeeklyEntertainerRanking();
+        }else if (period.equals("daily")){
+            entertainerRanking = rankingService.getDailyEntertainerRanking();
+        }else if (period.equals("total")){
+            entertainerRanking = rankingService.getTotalEntertainerRanking();
+        }
+
+        RankingService.EntertainerRankingEntry entertainerRankingEntry = entertainerRanking.stream()
+                .filter(ranking -> entertainer.getEntertainerId().equals(ranking.getEntertainerId()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(ResponseData.createResponse(ErrorCode.NotFoundEntertainer)));
+
         List<EntertainerSavingsAccount> savingsAccounts =
             savingsAccountRepository.findByEntertainerId(entertainerId);
 
@@ -55,7 +73,12 @@ public class TopTransactionsService {
             .collect(Collectors.toList());
 
         if (depositAccountIds.isEmpty()) {
-            return TopTransactionsResponse.of(entertainer, List.of());
+            return TopTransactionsResponse.of(
+                    entertainerRankingEntry.getRank(),
+                    entertainer,
+                    entertainerRankingEntry.getTotalAmount(),
+                    List.of()
+            );
         }
 
         List<EntertainerSavingsTransactionDetail> allTransactions = depositAccountIds.stream()
@@ -105,7 +128,12 @@ public class TopTransactionsService {
             })
             .collect(Collectors.toList());
 
-        return TopTransactionsResponse.of(entertainer, topTransactionResponses);
+        return TopTransactionsResponse.of(
+                entertainerRankingEntry.getRank(),
+                entertainer,
+                entertainerRankingEntry.getTotalAmount(),
+                topTransactionResponses
+        );
     }
 
     private LocalDateTime getFilterTimeByPeriod(String period) {
