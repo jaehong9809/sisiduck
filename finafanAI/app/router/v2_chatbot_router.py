@@ -13,7 +13,9 @@ router = APIRouter()
 async def ask_question(request: QuestionRequest, req: Request):
     question = request.question
     question = re.sub(r'\s*덕순[이가아]?\s*', ' ', question).strip()
+
     user_id = req.headers.get("X-User-Id", "test")
+    print("접속한 유저 : ", user_id)
     cache_key = make_cache_key(question)
 
     # ✅ 1. 캐시 확인
