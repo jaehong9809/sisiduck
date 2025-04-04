@@ -13,6 +13,7 @@ import com.a702.finafan.data.savings.dto.response.SavingRankingResponse
 import com.a702.finafan.data.savings.dto.response.StarResponse
 import com.a702.finafan.data.savings.dto.response.TransactionInfo
 import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.domain.savings.model.Transaction
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -94,10 +95,23 @@ interface SavingApi {
     @GET("v1/ranking/total/entertainers")
     suspend fun totalStarRanking(): ApiResponse<List<SavingRankingResponse>>
 
+    // 스타별 적금 내역 조회
     @GET("v1/star/{entertainerId}/top-transactions")
     suspend fun starSavingHistory(
         @Path("entertainerId") starId: Long,
         @Query("period") type: String
     ): ApiResponse<RankingDetailResponse>
+
+    // 1원 인증 코드 전송
+    @POST("v1/account-auth/certification")
+    suspend fun certificateAccount(): ApiResponse<Unit>
+
+    // 1원 인증 코드 확인
+    @POST("v1/account-auth/verification")
+    suspend fun verifyAccount(): ApiResponse<Unit>
+
+    // 연결 계좌 입금 목록 확인
+    @GET("v1/demand-deposit/transaction-histories")
+    suspend fun connectTransactionHistory(): ApiResponse<List<Transaction>>
 
 }

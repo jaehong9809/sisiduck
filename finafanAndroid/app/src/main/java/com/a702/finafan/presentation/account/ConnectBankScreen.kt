@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,7 +35,6 @@ import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
-import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 은행 선택 화면
@@ -45,7 +44,7 @@ fun ConnectBankScreen(
     onComplete: () -> Unit
 ) {
 
-    val selectBank = remember { mutableStateOf(Bank()) }
+    val selectedBankIds = remember { mutableStateListOf<Long>() }
     val savingState by viewModel.savingState.collectAsState()
 
     // 은행 목록
@@ -64,11 +63,13 @@ fun ConnectBankScreen(
                     .fillMaxWidth()
                     .imePadding(),
                 onClick = {
-                    viewModel.updateBank(selectBank.value)
+                    // TODO: 다음 누르면 은행 선택 API 호출
+
+                    viewModel.updateBankList(selectedBankIds)
                     onComplete()
                 },
                 text = stringResource(R.string.btn_next),
-                isEnabled = selectBank.value.bankCode.isNotEmpty()
+                isEnabled = selectedBankIds.isNotEmpty()
             )
         }
     ) { innerPadding ->
@@ -122,13 +123,17 @@ fun ConnectBankScreen(
                 } else {
                     items(savingState.bankList.size) { index ->
                         val bank = savingState.bankList[index]
-                        val isSelected = selectBank.value.bankCode == bank.bankCode
+                        val isSelected = selectedBankIds.any { it == bank.bankId }
 
                         BankItem(
                             bank = bank,
-                            isSelected = isSelected,
-                            onSelect = {
-                                selectBank.value = it
+                            selectedBanks = selectedBankIds,
+                            onToggleSelect = { clickedBankId ->
+                                if (isSelected) {
+                                    selectedBankIds.removeAll { it == clickedBankId }
+                                } else {
+                                    selectedBankIds.add(clickedBankId)
+                                }
                             }
                         )
                     }

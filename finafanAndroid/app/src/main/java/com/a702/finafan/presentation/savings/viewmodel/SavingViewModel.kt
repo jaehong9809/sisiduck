@@ -7,7 +7,6 @@ import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
-import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
@@ -367,12 +366,12 @@ class SavingViewModel @Inject constructor(
         _savingState.update { it.copy(inputAccountNo = accountNo) }
     }
 
-    fun setRanking(ranking: Ranking) {
-        _savingState.update { it.copy(ranking = ranking) }
-    }
-
     fun resetCancelState() {
         _savingState.update { it.copy(isCancel = false) }
+    }
+
+    fun updateBankList(banks: List<Long>) {
+        _savingState.update { it.copy(selectBankIds = banks) }
     }
 
 }
