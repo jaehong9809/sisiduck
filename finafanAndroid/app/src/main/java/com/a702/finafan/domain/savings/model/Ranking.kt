@@ -5,5 +5,6 @@ data class Ranking(
     val starId: Long = 0,
     val starName: String = "",
     val starImageUrl: String = "",
-    val totalAmount: Long = 0
+    val totalAmount: Long = 0,
+    val transactions: List<Transaction> = emptyList()
 )

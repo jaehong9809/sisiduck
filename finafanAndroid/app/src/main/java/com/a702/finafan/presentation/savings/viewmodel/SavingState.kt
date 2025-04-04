@@ -16,7 +16,6 @@ data class SavingState(
     val transaction: Transaction = Transaction(),
     val selectBank: Bank = Bank(),
     val inputAccountNo: String = "",
-    val ranking: Ranking = Ranking(),
     val savingInfo: SavingInfo = SavingInfo(),
     val createAccountId: Long = 0,
     val withdrawalAccounts: List<Account> = emptyList(),
@@ -25,6 +24,7 @@ data class SavingState(
     val bankList: List<Bank> = emptyList(),
     val isCancel: Boolean = false,
     val rankingList: List<Ranking> = emptyList(),
+    val ranking: Ranking = Ranking(),
     override val isLoading: Boolean = true,
     override val error: Throwable? = null,
     override val toastMessage: String? = null
