@@ -31,8 +31,10 @@ public class AuthController {
         log.info("Request Param: {}", code);
         AuthTokens authTokens = authService.login(code);
 
-        // Server Callback 받은 후 -> Android Client에 redirectUri 던지는 방식으로 수정
+        // Server Callback 받은 후 -> Android Client에 redirectUri 던지기
         String redirectUri = DEEPLINK_URL + URLEncoder.encode(authTokens.accessToken(), "UTF-8");
+        log.info("Redirect URI: {}", redirectUri);
+
         return ResponseEntity
                 .status(HttpStatus.FOUND)
                 .location(URI.create(redirectUri))
