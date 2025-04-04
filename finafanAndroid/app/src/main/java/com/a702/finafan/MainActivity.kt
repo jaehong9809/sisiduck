@@ -2,6 +2,7 @@ package com.a702.finafan
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -28,7 +29,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             val navController = rememberNavController()
 
@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
     private fun handleDeepLink(intent: Intent?) {
         intent?.data?.let { uri ->
             val token = uri.getQueryParameter("token")
+            Log.d("✅ DeepLinkToken", "Received token: $token")
             token?.let {
                 loginViewModel.onOAuthCallbackReceived(it)
             }
