@@ -18,7 +18,7 @@ import com.a702.finafan.presentation.savings.SavingSelectAccountScreen
 import com.a702.finafan.presentation.savings.StarSearchScreen
 import com.a702.finafan.presentation.savings.TermGuideScreen
 import com.a702.finafan.presentation.savings.TransactionDetailScreen
-import com.a702.finafan.presentation.savings.ranking.RankingHistoryScreen
+import com.a702.finafan.presentation.savings.ranking.RankingDetailScreen
 import com.a702.finafan.presentation.savings.ranking.RankingScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
@@ -110,7 +110,7 @@ fun NavGraphBuilder.savingGraph(
                 type = NavType.IntType
                 defaultValue = 0
             })
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             val selectedTabIndex = rememberSaveable  {
                 mutableIntStateOf(
                     backStackEntry.arguments?.getInt("selectedTabIndex") ?: 0
@@ -120,9 +120,14 @@ fun NavGraphBuilder.savingGraph(
             RankingScreen(selectedTabIndex, savingViewModel)
         }
 
-        composable(NavRoutes.RankingHistory.route) { backStackEntry ->
-            RankingHistoryScreen(
-                viewModel = savingViewModel
+        composable(NavRoutes.RankingDetail.route + "/{starId}/{type}") { backStackEntry ->
+            val starId = backStackEntry.arguments?.getString("starId")?.toLongOrNull()
+            val type = backStackEntry.arguments?.getString("type")
+
+            RankingDetailScreen(
+                viewModel = savingViewModel,
+                starId = starId ?: 0,
+                type = type ?: ""
             )
         }
 

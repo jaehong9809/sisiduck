@@ -425,6 +425,7 @@ public class DemandDepositFacade {
                     Entertainer entertainer = entertainerService.findEntertainerById(id);
 
                     return new EntertainerResponse(
+                            entertainer.getEntertainerId(),
                             entertainer.getEntertainerName(),
                             entertainer.getEntertainerProfileUrl(),
                             entertainer.getFandomName()
