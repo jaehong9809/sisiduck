@@ -104,6 +104,7 @@ public class SsafyOAuthProvider {
                 params
         );
         if(response.getStatusCode().is2xxSuccessful()) {
+            log.info("Response Body Check: {}", response.getBody().toString());
             return response.getBody();
         }
         throw new BadRequestException(ResponseData.<Void>builder()
