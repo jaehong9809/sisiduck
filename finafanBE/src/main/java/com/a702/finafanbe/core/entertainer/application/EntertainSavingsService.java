@@ -140,6 +140,7 @@ public class EntertainSavingsService {
         user.updateFavoriteEntertainer(findEntertainerId(selectStarRequest.entertainerId()));
         Entertainer entertainer = entertainRepository.findByEntertainerId(selectStarRequest.entertainerId()).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
         return EntertainerResponse.of(
+                entertainer.getEntertainerId(),
                 entertainer.getEntertainerName(),
                 entertainer.getEntertainerProfileUrl(),
                 entertainer.getFandomName()
