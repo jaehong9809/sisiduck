@@ -81,45 +81,46 @@ fun RankingDetailScreen(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             ) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // 스타 이름
-                        Text(
-                            text = stringResource(
-                                R.string.ranking_star_name,
-                                savingState.ranking.rank,
-                                savingState.ranking.starName
-                            ),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            lineHeight = 30.sp,
-                            color = MainBlack
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        // 총 금액
-                        Text(
-                            text = StringUtil.formatCurrency(savingState.ranking.totalAmount),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            lineHeight = 24.sp,
-                            color = MainBlack
-                        )
-                    }
-                }
 
                 when {
                     savingState.isLoading -> {
                         item { CommonProgress() }
                     }
                     else -> {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // 스타 이름
+                                Text(
+                                    text = stringResource(
+                                        R.string.ranking_star_name,
+                                        savingState.ranking.rank,
+                                        savingState.ranking.starName
+                                    ),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    lineHeight = 30.sp,
+                                    color = MainBlack
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                // 총 금액
+                                Text(
+                                    text = StringUtil.formatCurrency(savingState.ranking.totalAmount),
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 18.sp,
+                                    lineHeight = 24.sp,
+                                    color = MainBlack
+                                )
+                            }
+                        }
+
                         items(savingState.ranking.transactions) { item ->
                             HistoryItem(item, onSelect = {
                                 viewModel.setTransaction(item)

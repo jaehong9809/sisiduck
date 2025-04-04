@@ -314,7 +314,7 @@ class SavingViewModel @Inject constructor(
 
     fun fetchStarRankingDetail(starId: Long, type: RankingType) {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = false) }
+            _savingState.update { it.copy(isLoading = true) }
 
             try {
                 val ranking = getRankingDetailUseCase(starId, type)
