@@ -58,6 +58,7 @@ fun SavingCancelScreen(
                 showDialog.value = false
 
                 if (savingState.isCancel) {
+                    viewModel.resetCancelState() // 상태 초기화
                     onComplete()
                 }
             }

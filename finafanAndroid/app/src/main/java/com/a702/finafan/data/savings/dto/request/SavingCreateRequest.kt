@@ -10,7 +10,7 @@ data class SavingCreateRequest(
 
 fun SavingCreate.toData(): SavingCreateRequest {
     return SavingCreateRequest(
-        entertainerId = this.entertainerId,
+        entertainerId = this.starId,
         productName = this.accountName,
         withdrawalAccountId = this.connectAccount.accountId
     )

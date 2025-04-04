@@ -33,7 +33,6 @@ public class SavingsAccountService {
     private final UserService userService;
     private final BankService bankService;
     private final AccountRepository accountRepository;
-    private final SavingsAccountRepository savingsAccountRepository;
     private final EntertainSavingsService entertainSavingsService;
 
 

@@ -20,7 +20,6 @@ public class EntertainerService {
 
     private final EntertainerRepository entertainerRepository;
 
-    // 캐시 register (Spring Cache Redis)
     @Cacheable(
             value = "entertainerProfile",
             key = "'entertainer:' + #entertainerId"
@@ -30,7 +29,6 @@ public class EntertainerService {
         return entertainer.getEntertainerProfileUrl();
     }
 
-    // 캐시 update
     @CacheEvict(
             value = "entertainerProfile",
             key = "'entertainer:' + #entertainerId"

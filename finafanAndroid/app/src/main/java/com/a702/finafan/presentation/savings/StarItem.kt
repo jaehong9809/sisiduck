@@ -60,11 +60,11 @@ fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
 
             CircleBorderImage(
                 modifier = Modifier.size(50.dp),
-                imageUrl = star.entertainerProfileUrl
+                imageUrl = star.starImageUrl
             )
 
             Text(
-                text = star.entertainerName,
+                text = star.starName,
                 fontSize = 24.sp,
                 color = MainBlack,
                 fontWeight = FontWeight.Normal

@@ -4,7 +4,6 @@ import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountTransferLi
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferLimitResponse;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +12,7 @@ public class UpdateTransferLimitService {
 
     private final ApiClientUtil apiClientUtil;
 
-    public ResponseEntity<UpdateDemandDepositAccountTransferLimitResponse> updateLimit(
+    public UpdateDemandDepositAccountTransferLimitResponse updateLimit(
         String path,
         UpdateAccountTransferLimitRequest updateDemandDepositAccountTransferLimitRequest
     ) {
@@ -21,6 +20,6 @@ public class UpdateTransferLimitService {
             path,
             updateDemandDepositAccountTransferLimitRequest,
             UpdateDemandDepositAccountTransferLimitResponse.class
-        );
+        ).getBody();
     }
 }

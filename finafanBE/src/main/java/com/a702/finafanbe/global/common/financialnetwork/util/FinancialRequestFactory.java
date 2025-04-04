@@ -1,13 +1,12 @@
 package com.a702.finafanbe.global.common.financialnetwork.util;
 
 import com.a702.finafanbe.core.demanddeposit.dto.request.*;
-import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeaderIncludeUserKey;
-import com.a702.finafanbe.global.common.financialnetwork.header.BaseRequestHeader;
+import com.a702.finafanbe.global.common.financialnetwork.header.*;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -87,7 +86,7 @@ public class FinancialRequestFactory {
                 .build();
     }
 
-    private BaseRequestHeaderIncludeUserKey createRequestHeaderWithUserKey(
+    public BaseRequestHeaderIncludeUserKey createRequestHeaderWithUserKey(
             String email,
             String apiName
     ){

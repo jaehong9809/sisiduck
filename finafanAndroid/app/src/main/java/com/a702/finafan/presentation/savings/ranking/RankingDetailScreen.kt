@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -32,63 +34,46 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
+import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 @Composable
-fun RankingHistoryScreen(
+fun RankingDetailScreen(
     viewModel: SavingViewModel = viewModel(),
+    starId: Long,
+    type: String
 ) {
 
     val navController = LocalNavController.current
-
     val savingState by viewModel.savingState.collectAsState()
-    val ranking = savingState.ranking
 
-    val transactions = mutableListOf(
-        Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "이찬원 사랑해",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        ),
-        Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "오늘 너무 귀여워",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        ),
-        Transaction(
-            amount = 40000,
-            balance = 10000,
-            message = "진짜 귀엽다",
-            date = "2025-03-14",
-            imageUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/test_star.jpg"
-        ),
-    )
+    LaunchedEffect(Unit) {
+        viewModel.fetchStarRankingDetail(starId, RankingType.fromValue(type) ?: RankingType.DAILY)
+    }
 
-    // TODO: 스타별 적금 내역 조회 API 호출 (entertainerId 이용)
-
-    Column {
-        CommonBackTopBar(
-            modifier = Modifier,
-            text = stringResource(R.string.saving_ranking_history_title),
-            textOnClick = {
-                navController.popBackStack()
-            }
-        )
-
+    Scaffold(
+        topBar = {
+            CommonBackTopBar(
+                modifier = Modifier,
+                text = stringResource(R.string.saving_ranking_history_title),
+                textOnClick = {
+                    navController.popBackStack()
+                }
+            )
+        },
+    ) { innerPadding ->
         Box(
             modifier = Modifier
+                .padding(innerPadding)
                 .background(MainBgLightGray)
                 .fillMaxSize()
         ) {
@@ -96,45 +81,57 @@ fun RankingHistoryScreen(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             ) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // 스타 이름
-                        Text(
-                            text = stringResource(R.string.ranking_star_name, ranking.rankingIdx, ranking.star.entertainerName),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            lineHeight = 30.sp,
-                            color = MainBlack
-                        )
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                when {
+                    savingState.isLoading -> {
+                        item { CommonProgress() }
+                    }
+                    else -> {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // 스타 이름
+                                Text(
+                                    text = stringResource(
+                                        R.string.ranking_star_name,
+                                        savingState.ranking.rank,
+                                        savingState.ranking.starName
+                                    ),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    lineHeight = 30.sp,
+                                    color = MainBlack
+                                )
 
-                        // 총 금액
-                        Text(
-                            text = StringUtil.formatCurrency(ranking.amount),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            lineHeight = 24.sp,
-                            color = MainBlack
-                        )
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                // 총 금액
+                                Text(
+                                    text = StringUtil.formatCurrency(savingState.ranking.totalAmount),
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 18.sp,
+                                    lineHeight = 24.sp,
+                                    color = MainBlack
+                                )
+                            }
+                        }
+
+                        items(savingState.ranking.transactions) { item ->
+                            HistoryItem(item, onSelect = {
+                                viewModel.setTransaction(item)
+                                navController.navigate(NavRoutes.TransactionDetail.route)
+                            })
+                        }
                     }
                 }
 
-                items(transactions) { item ->
-                    HistoryItem(item, onSelect = {
-                        viewModel.setTransaction(item)
-                        navController.navigate(NavRoutes.TransactionDetail.route)
-                    })
-                }
             }
         }
-
     }
 
 }
@@ -187,7 +184,7 @@ fun HistoryItem(
 @Preview
 @Composable
 fun RankingHistoryPreview() {
-    RankingHistoryScreen()
+    RankingDetailScreen(starId = 0, type = "total")
 
 //    HistoryItem(Transaction(
 //        amount = 40000,

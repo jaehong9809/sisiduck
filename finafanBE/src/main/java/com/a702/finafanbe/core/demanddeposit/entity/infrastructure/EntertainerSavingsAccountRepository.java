@@ -12,11 +12,11 @@ public interface EntertainerSavingsAccountRepository extends JpaRepository<Enter
 
     Optional<EntertainerSavingsAccount> findByDepositAccountId(Long savingAccountId);
 
-    Optional<EntertainerSavingsAccount> findByWithdrawalAccountId(Long savingAccountId);
-
     boolean existsByWithdrawalAccountId(Long savingAccountId);
 
     boolean existsByDepositAccountId(Long accountId);
 
     boolean existsByUserIdAndEntertainerIdAndDeletedAtNull(Long userId, Long entertainerId);
+
+    List<EntertainerSavingsAccount> findByEntertainerId(Long entertainerId);
 }

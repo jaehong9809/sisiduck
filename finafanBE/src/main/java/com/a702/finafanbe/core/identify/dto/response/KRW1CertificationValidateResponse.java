@@ -7,7 +7,7 @@ public record KRW1CertificationValidateResponse(
     REC REC
 ) {
 
-    private record REC(
+    public record REC(
         String status,
         Long transactionUniqueNo,
         String accountNo

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
+import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
@@ -14,8 +15,10 @@ import com.a702.finafan.domain.savings.usecase.DeleteConnectAccountUseCase
 import com.a702.finafan.domain.savings.usecase.DeleteSavingAccountUseCase
 import com.a702.finafan.domain.savings.usecase.DepositUseCase
 import com.a702.finafan.domain.savings.usecase.GetBankUseCase
+import com.a702.finafan.domain.savings.usecase.GetRankingDetailUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingAccountUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingUseCase
+import com.a702.finafan.domain.savings.usecase.GetStarRankingUseCase
 import com.a702.finafan.domain.savings.usecase.GetStarUseCase
 import com.a702.finafan.domain.savings.usecase.GetWithdrawalAccountUseCase
 import com.a702.finafan.domain.savings.usecase.UpdateSavingNameUseCase
@@ -39,6 +42,8 @@ class SavingViewModel @Inject constructor(
     private val updateSavingNameUseCase: UpdateSavingNameUseCase,
     private val deleteSavingAccountUseCase: DeleteSavingAccountUseCase,
     private val deleteConnectAccountUseCase: DeleteConnectAccountUseCase,
+    private val getStarRankingUseCase: GetStarRankingUseCase,
+    private val getRankingDetailUseCase: GetRankingDetailUseCase,
 ): ViewModel() {
 
     private val _savingState = MutableStateFlow(SavingState())
@@ -63,7 +68,6 @@ class SavingViewModel @Inject constructor(
             } catch (e: Exception) {
                 _starState.update {
                     it.copy(
-                        isLoading = false,
                         error = e
                     )
                 }
@@ -75,14 +79,23 @@ class SavingViewModel @Inject constructor(
         viewModelScope.launch {
             _savingState.update { it.copy(isLoading = true) }
 
-            val savingInfo = getSavingUseCase(savingAccountId)
+            try {
+                val savingInfo = getSavingUseCase(savingAccountId)
 
-            _savingState.update {
-                it.copy(
-                    savingInfo = savingInfo,
-                    isLoading = false
-                )
+                _savingState.update {
+                    it.copy(
+                        savingInfo = savingInfo,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        error = e
+                    )
+                }
             }
+
         }
     }
 
@@ -127,8 +140,7 @@ class SavingViewModel @Inject constructor(
             } catch (e: Exception) {
                 _savingState.update {
                     it.copy(
-                        isLoading = false,
-                        withdrawalAccounts = emptyList()
+                        error = e
                     )
                 }
             }
@@ -175,7 +187,6 @@ class SavingViewModel @Inject constructor(
             } catch (e: Exception) {
                 _savingState.update {
                     it.copy(
-                        isLoading = false,
                         error = e
                     )
                 }
@@ -199,7 +210,6 @@ class SavingViewModel @Inject constructor(
             } catch (e: Exception) {
                 _savingState.update {
                     it.copy(
-                        isLoading = false,
                         error = e
                     )
                 }
@@ -279,6 +289,52 @@ class SavingViewModel @Inject constructor(
         }
     }
 
+    fun fetchStarRanking(type: RankingType) {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val rankingList = getStarRankingUseCase(type)
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        rankingList = rankingList
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
+    fun fetchStarRankingDetail(starId: Long, type: RankingType) {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val ranking = getRankingDetailUseCase(starId, type)
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        ranking = ranking
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
     fun clearError() {
         _savingState.update {
             it.copy(
@@ -313,6 +369,10 @@ class SavingViewModel @Inject constructor(
 
     fun setRanking(ranking: Ranking) {
         _savingState.update { it.copy(ranking = ranking) }
+    }
+
+    fun resetCancelState() {
+        _savingState.update { it.copy(isCancel = false) }
     }
 
 }

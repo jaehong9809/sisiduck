@@ -28,7 +28,7 @@ class ChatRemoteDataSource @Inject constructor(
         """.trimIndent().toRequestBody("application/json".toMediaType())
 
         val request = Request.Builder()
-            .url("${BuildConfig.AI_URL}/chatbot")
+            .url("${BuildConfig.AI_URL}/chatbot2")
             .post(requestBody)
             .build()
 
