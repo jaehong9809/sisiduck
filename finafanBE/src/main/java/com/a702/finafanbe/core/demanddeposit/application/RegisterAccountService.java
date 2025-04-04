@@ -13,9 +13,8 @@ import org.springframework.stereotype.Service;
 public class RegisterAccountService {
 
     private final ApiClientUtil apiClientUtil;
-    private final AccountRepository accountRepository;
 
-    public ResponseEntity<RegisterProductResponse> registerDemandDeposit(
+    public RegisterProductResponse registerDemandDeposit(
             String path,
             RegisterProductRequest registerDemandDepositRequest
     ) {
@@ -23,6 +22,6 @@ public class RegisterAccountService {
                 path,
                 registerDemandDepositRequest,
                 RegisterProductResponse.class
-        );
+        ).getBody();
     }
 }

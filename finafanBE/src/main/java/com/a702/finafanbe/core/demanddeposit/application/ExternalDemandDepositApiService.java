@@ -17,7 +17,7 @@ public class ExternalDemandDepositApiService {
     private final FinancialRequestFactory financialRequestFactory;
     private final ApiClientUtil apiClientUtil;
 
-    public ResponseEntity<InquireDemandDepositAccountResponse> DemandDepositRequest(String path, String userEmail, String accountNo, String apiname) {
+    public InquireDemandDepositAccountResponse DemandDepositRequest(String path, String userEmail, String accountNo, String apiname) {
         return apiClientUtil.callFinancialNetwork(
                 path,
                 financialRequestFactory.UserKeyAccountNoRequest(
@@ -26,7 +26,7 @@ public class ExternalDemandDepositApiService {
                         apiname
                 ),
                 InquireDemandDepositAccountResponse.class
-        );
+        ).getBody();
     }
 
     public <T, R> ResponseEntity<R> DemandDepositRequestWithFactory(

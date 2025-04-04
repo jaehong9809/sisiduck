@@ -25,6 +25,7 @@ import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
+import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class DemandDepositFacade {
     private final DeleteAccountService deleteAccountService;
     private final FinancialRequestFactory financialRequestFactory;
 
-    public ResponseEntity<InquireDemandDepositAccountResponse> getDemandDepositAccount(
+    public InquireDemandDepositAccountResponse getDemandDepositAccount(
             String userEmail,
             String accountNo
     ) {
@@ -110,18 +111,19 @@ public class DemandDepositFacade {
                 AccountTransactionHistoriesResponse.class
         );
     }
-//TODO
+
     public ResponseEntity<InquireAccountHolderNameResponse> inquireAccountHolderName(
             String userEmail,
             String accountNo
     ) {
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/inquireDemandDepositAccountHolderName",
-                financialRequestFactory.UserKeyAccountNoRequest(
+                apiName ->financialRequestFactory.UserKeyAccountNoRequest(
                         userEmail,
                         accountNo,
-                        "inquireDemandDepositAccountHolderName"
+                        apiName
                 ),
+                "inquireDemandDepositAccountHolderName",
                 InquireAccountHolderNameResponse.class
         );
     }
@@ -130,13 +132,14 @@ public class DemandDepositFacade {
             String userEmail,
             String accountNo
     ) {
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/inquireDemandDepositAccountBalance",
-                financialRequestFactory.UserKeyAccountNoRequest(
+                apiName->financialRequestFactory.UserKeyAccountNoRequest(
                         userEmail,
                         accountNo,
-                        "inquireDemandDepositAccountBalance"
+                        apiName
                 ),
+                "inquireDemandDepositAccountBalance",
                 InquireAccountBalanceResponse.class
         );
     }
@@ -145,22 +148,8 @@ public class DemandDepositFacade {
             String email
     ) {
         User user = userService.findUserByEmail(email);
-        RetrieveProductsResponse.REC rec = getProducts()
-                .REC()
-                .stream()
-                .filter(product -> product.getAccountName().equals("연예인 적금"))
-                .findFirst()
-                .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_DEMAND_DEPOSIT_PRODUCT)));
-        String productUniqueNo = rec.getAccountTypeUniqueNo();
-        REC createDemandDepositAccount = apiClientUtil.callFinancialNetwork(
-                "/demandDeposit/createDemandDepositAccount",
-                financialRequestFactory.UserKeyAccountTypeUniqueNoRequest(
-                        email,
-                        rec.getAccountTypeUniqueNo(),
-                        "createDemandDepositAccount"
-                ),
-                CreateAccountResponse.class
-        ).getBody().REC();
+        String productUniqueNo = getEntertainerProductUniqueNo();
+        REC createDemandDepositAccount = createEntertainerAccount(email, productUniqueNo);
         return ApiCreateAccountResponse.of(
             user.getUserId(),
             createDemandDepositAccount.getAccountNo(),
@@ -171,14 +160,15 @@ public class DemandDepositFacade {
     }
 
     public ResponseEntity<InquireDemandDepositAccountTransactionHistoryResponse> inquireHistory(TransactionHistoryRequest transactionHistoryRequest) {
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/inquireTransactionHistory",
-                financialRequestFactory.inquireHistory(
+                apiName->financialRequestFactory.inquireHistory(
                         transactionHistoryRequest.email(),
-                        "inquireTransactionHistory",
+                        apiName,
                         transactionHistoryRequest.accountNo(),
                         transactionHistoryRequest.transactionUniqueNo()
                 ),
+                "inquireTransactionHistory",
                 InquireDemandDepositAccountTransactionHistoryResponse.class
         );
     }
@@ -187,31 +177,32 @@ public class DemandDepositFacade {
             String userEmail,
             DepositRequest depositRequest
     ) {
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/updateDemandDepositAccountDeposit",
-                financialRequestFactory.depositAccount(
+                apiName -> financialRequestFactory.depositAccount(
                         userEmail,
-                        "updateDemandDepositAccountDeposit",
+                        apiName,
                         depositRequest.accountNo(),
                         depositRequest.transactionBalance(),
                         depositRequest.transactionSummary()
                 ),
+                "updateDemandDepositAccountDeposit",
                 UpdateDemandDepositAccountDepositResponse.class
         );
     }
 
     public RetrieveProductsResponse getProducts() {
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/inquireDemandDepositList",
-                financialRequestFactory.inquireProducts(
-                        "inquireDemandDepositList"
+                apiName->financialRequestFactory.inquireProducts(
+                        apiName
                 ),
+                "inquireDemandDepositList",
                 RetrieveProductsResponse.class
         ).getBody();
     }
 
     public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
-
         ApiCreateAccountResponse response = createEntertainerAccount(
             EMAIL
         );
@@ -222,7 +213,6 @@ public class DemandDepositFacade {
     }
 
     public InquireEntertainerAccountResponse getEntertainerAccount(
-            String userEmail,
             Long savingAccountId
     ) {
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(savingAccountId);
@@ -288,22 +278,9 @@ public class DemandDepositFacade {
             Long savingAccountId
     ) {
         Account depositAccount = inquireDemandDepositAccountService.findAccountById(savingAccountId);
-        AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = apiClientUtil.callFinancialNetwork(
-                "/demandDeposit/inquireTransactionHistoryList",
-                financialRequestFactory.inquireHistories(
-                    EMAIL,
-                    "inquireTransactionHistoryList",
-                    depositAccount.getAccountNo(),
-                    "00000101",
-                    DateUtil.getTransmissionDate(),
-                    "A",
-                    "DESC"
-                ),
-                AccountTransactionHistoriesResponse.class
-        ).getBody().REC();
-        Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
+        AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = EntertainerAccountHistories(depositAccount);
         List<EntertainerSavingsTransactionDetail> transactionDetails = depositTransactionService.getEntertainerAccountTransactionsByAccountId(
-            account.getAccountId());
+            depositAccount.getAccountId());
         Map<Long, EntertainerSavingsTransactionDetail> transactionImageMap = transactionDetails.stream().collect(
                 Collectors.toMap(
                         EntertainerSavingsTransactionDetail::getTransactionUniqueNo,
@@ -338,21 +315,40 @@ public class DemandDepositFacade {
         );
     }
 
+    private AccountTransactionHistoriesResponse.REC EntertainerAccountHistories(Account depositAccount) {
+        AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = externalDemandDepositApiService.DemandDepositRequestWithFactory(
+                "/demandDeposit/inquireTransactionHistoryList",
+                apiName -> financialRequestFactory.inquireHistories(
+                        EMAIL,
+                        apiName,
+                        depositAccount.getAccountNo(),
+                        "00000101",
+                        DateUtil.getTransmissionDate(),
+                        "A",
+                        "DESC"
+                ),
+                "inquireTransactionHistoryList",
+                AccountTransactionHistoriesResponse.class
+        ).getBody().REC();
+        return inquireTransactionHistoryList;
+    }
+
     public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transferAccount(
             String userEmail,
             TransferRequest transferRequest
     ) {
-        return apiClientUtil.callFinancialNetwork(
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/updateDemandDepositAccountTransfer",
-                financialRequestFactory.transferAccount(
+                apiName->financialRequestFactory.transferAccount(
                         userEmail,
-                        "updateDemandDepositAccountTransfer",
+                        apiName,
                         transferRequest.depositAccountNo(),
                         transferRequest.depositTransactionSummary(),
                         transferRequest.transactionBalance(),
                         transferRequest.withdrawalAccountNo(),
                         transferRequest.withdrawalTransactionSummary()
                 ),
+                "updateDemandDepositAccountTransfer",
                 UpdateDemandDepositAccountTransferResponse.class
         );
     }
@@ -371,17 +367,18 @@ public class DemandDepositFacade {
                     withdrawalAccount.getAccountNo(),
                     ""
             );
-            return apiClientUtil.callFinancialNetwork(
+            return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                     "/demandDeposit/updateDemandDepositAccountTransfer",
-                    financialRequestFactory.transferAccount(
+                    apiName -> financialRequestFactory.transferAccount(
                             EMAIL,
-                            "updateDemandDepositAccountTransfer",
+                            apiName,
                             transferRequest.depositAccountNo(),
                             transferRequest.depositTransactionSummary(),
                             transferRequest.transactionBalance(),
                             transferRequest.withdrawalAccountNo(),
                             transferRequest.withdrawalTransactionSummary()
                     ),
+                    "updateDemandDepositAccountTransfer",
                     UpdateDemandDepositAccountTransferResponse.class
             );
         }
@@ -394,11 +391,9 @@ public class DemandDepositFacade {
                 .map(savingsAccount -> {
                     Account depositAccount = inquireDemandDepositAccountService.findAccountById(
                             savingsAccount.getDepositAccountId());
-                    Bank bank = bankService.findBankById(depositAccount.getBankId());
                     Entertainer entertainer = entertainerService.findEntertainerById(savingsAccount.getEntertainerId());
                     Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
                             savingsAccount.getWithdrawalAccountId());
-                    Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
                     return HomeEntertainerAccountResponse.of(
                             depositAccount.getAccountId(),
                             entertainer.getEntertainerName(),
@@ -411,7 +406,7 @@ public class DemandDepositFacade {
     }
 
     public List<EntertainerResponse> getPossessionEntertainer() {
-        String userEmail = EMAIL; // 인증 사용자로 대체 필요
+        String userEmail = EMAIL;
         User user = userService.findUserByEmail(userEmail);
 
         List<EntertainerSavingsAccount> accounts =
@@ -449,7 +444,7 @@ public class DemandDepositFacade {
                         "deleteDemandDepositAccount",
                         withdrawalAccount.getAccountNo()
                 )
-        ).getBody().REC();
+        ).REC();
 
         Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(deleteResponse.accountNo());
         if (account.getAmount() != null && account.getAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -475,5 +470,28 @@ public class DemandDepositFacade {
             throw new BadRequestException(ResponseData.createResponse(ErrorCode.ENTERTAINER_SAVINGS));
         }
         deleteAccountService.deleteById(accountId);
+    }
+
+    private REC createEntertainerAccount(String email, String productUniqueNo) {
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
+                "/demandDeposit/createDemandDepositAccount",
+                apiName -> financialRequestFactory.UserKeyAccountTypeUniqueNoRequest(
+                        email,
+                        productUniqueNo,
+                        apiName
+                ),
+                "createDemandDepositAccount",
+                CreateAccountResponse.class
+        ).getBody().REC();
+    }
+
+    private String getEntertainerProductUniqueNo() {
+        return getProducts()
+                .REC()
+                .stream()
+                .filter(product -> product.getAccountName().equals("연예인 적금"))
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_DEMAND_DEPOSIT_PRODUCT)))
+                .getAccountTypeUniqueNo();
     }
 }

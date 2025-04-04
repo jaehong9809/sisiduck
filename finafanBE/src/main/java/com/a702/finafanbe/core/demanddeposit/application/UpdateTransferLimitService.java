@@ -13,7 +13,7 @@ public class UpdateTransferLimitService {
 
     private final ApiClientUtil apiClientUtil;
 
-    public ResponseEntity<UpdateDemandDepositAccountTransferLimitResponse> updateLimit(
+    public UpdateDemandDepositAccountTransferLimitResponse updateLimit(
         String path,
         UpdateAccountTransferLimitRequest updateDemandDepositAccountTransferLimitRequest
     ) {
@@ -21,6 +21,6 @@ public class UpdateTransferLimitService {
             path,
             updateDemandDepositAccountTransferLimitRequest,
             UpdateDemandDepositAccountTransferLimitResponse.class
-        );
+        ).getBody();
     }
 }

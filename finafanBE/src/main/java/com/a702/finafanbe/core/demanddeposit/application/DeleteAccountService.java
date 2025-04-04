@@ -15,13 +15,13 @@ public class DeleteAccountService {
     private final ApiClientUtil apiClientUtil;
     private final AccountRepository accountRepository;
 
-    public ResponseEntity<DeleteAccountResponse> deleteAccount(String path,
+    public DeleteAccountResponse deleteAccount(String path,
         DeleteAccountRequest deleteAccountRequest) {
         return apiClientUtil.callFinancialNetwork(
             path,
             deleteAccountRequest,
             DeleteAccountResponse.class
-        );
+        ).getBody();
     }
 
     public void deleteById(Long accountId) {

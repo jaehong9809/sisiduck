@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class KRW1certificationController {
     private final KRW1certificationService krw1certificationService;
 
+    //TODO
     @PostMapping("/certification")
     public ResponseEntity<KRW1CertificationResponse> registerKRW1Certification(@RequestBody KRW1CertificationRequest krw1Certification) {
         return krw1certificationService.registerKRW1Certification(

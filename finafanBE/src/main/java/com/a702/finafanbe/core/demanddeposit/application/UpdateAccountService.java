@@ -27,7 +27,7 @@ public class UpdateAccountService {
         );
     }
 
-    public ResponseEntity<UpdateDemandDepositAccountDepositResponse> deposit(
+    public UpdateDemandDepositAccountDepositResponse deposit(
             String path,
             UpdateAccountRequest updateDemandDepositAccountDepositRequest
     ) {
@@ -35,17 +35,7 @@ public class UpdateAccountService {
                 path,
                 updateDemandDepositAccountDepositRequest,
                 UpdateDemandDepositAccountDepositResponse.class
-        );
+        ).getBody();
     }
 
-    public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transfer(
-        String path,
-        UpdateAccountTransferRequest updateDemandDepositAccountTransferRequest
-    ) {
-        return apiClientUtil.callFinancialNetwork(
-            path,
-            updateDemandDepositAccountTransferRequest,
-            UpdateDemandDepositAccountTransferResponse.class
-        );
-    }
 }
