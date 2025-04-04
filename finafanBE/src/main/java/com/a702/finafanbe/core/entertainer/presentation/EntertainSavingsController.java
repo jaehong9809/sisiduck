@@ -6,6 +6,7 @@ import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.demanddeposit.facade.*;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
+import com.a702.finafanbe.core.entertainer.application.TopTransactionsService;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
@@ -20,6 +21,7 @@ import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/star")
 @RequiredArgsConstructor
+@Slf4j
 public class EntertainSavingsController {
 
     private static final String EMAIL = "lsc7134@naver.com";
@@ -40,6 +43,7 @@ public class EntertainSavingsController {
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
     private final RankingWebSocketService rankingWebSocketService;
     private final EntertainSavingsService entertainSavingsService;
+    private final TopTransactionsService topTransactionsService;
 
     @GetMapping("/account/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
@@ -107,7 +111,7 @@ public class EntertainSavingsController {
                 withdrawalAccount.getAccountId(),
                 depositAccount.addAmount(new BigDecimal(starTransferRequest.transactionBalance())),
                 new BigDecimal(starTransferRequest.transactionBalance()),
-                exchange.getBody().REC().get(0).transactionUniqueNo(),
+                exchange.getBody().REC().get(1).transactionUniqueNo(),
                 starTransferRequest.message(),
                 image
             );
@@ -194,5 +198,19 @@ public class EntertainSavingsController {
     public ResponseEntity<ResponseData<Void>> disconnectWithdrawalAccount(@PathVariable Long depositAccountId) {
         demandDepositFacade.deleteStarWithdrawalAccount(depositAccountId);
         return ResponseUtil.success();
+    }
+
+    @GetMapping("/{entertainerId}/top-transactions")
+    public ResponseEntity<ResponseData<TopTransactionsResponse>> getTopTransactions(
+        @PathVariable Long entertainerId,
+        @RequestParam(defaultValue = "daily") String period) {
+
+        log.info("Getting top transactions for entertainer: {}, period: {}",
+            entertainerId, period);
+
+        TopTransactionsResponse response =
+            topTransactionsService.getTopTransactions(entertainerId, period);
+
+        return ResponseUtil.success(response);
     }
 }
