@@ -12,7 +12,6 @@ import com.a702.finafanbe.core.savings.entity.QSavingsAccount;
 import com.a702.finafanbe.core.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
@@ -31,7 +30,7 @@ public class FundingQueryRepository {
     QFundingGroup fundingGroup = QFundingGroup.fundingGroup;
     QGroupUser groupUser = QGroupUser.groupUser;
     QEntertainer entertainer = QEntertainer.entertainer;
-    QFundingPendingTransaction fundingPendingTransaction = QFundingPendingTransaction.fundingPendingTransaction;
+    QFundingPendingTransaction transaction = QFundingPendingTransaction.fundingPendingTransaction;
     QUser user = QUser.user;
     QSavingsAccount savingsAccount = QSavingsAccount.savingsAccount;
 
@@ -71,9 +70,9 @@ public class FundingQueryRepository {
                         fundingGroup.name,
                         filter.equalsIgnoreCase("my") ? savingsAccount.accountNo : Expressions.constant(""),
                         fundingGroup.status,
-                        JPAExpressions.select(fundingPendingTransaction.balance.sum().coalesce(0L))
-                                .from(fundingPendingTransaction)
-                                .where(fundingPendingTransaction.fundingId.eq(fundingGroup.id), fundingPendingTransaction.deletedAt.isNull()),
+                        JPAExpressions.select(transaction.balance.sum().coalesce(0L))
+                                .from(transaction)
+                                .where(transaction.fundingId.eq(fundingGroup.id), transaction.deletedAt.isNull()),
                         fundingGroup.goalAmount,
                         fundingGroup.createdAt
                 ))
@@ -131,11 +130,11 @@ public class FundingQueryRepository {
                         entertainer.entertainerId,
                         entertainer.entertainerName,
                         entertainer.entertainerProfileUrl,
-                        fundingPendingTransaction.balance.sum().coalesce(0L)
+                        transaction.balance.sum().coalesce(0L)
                 )
                 .from(fundingGroup)
                 .join(entertainer).on(fundingGroup.entertainerId.eq(entertainer.entertainerId))
-                .leftJoin(fundingPendingTransaction).on(fundingPendingTransaction.fundingId.eq(fundingGroup.id))
+                .leftJoin(transaction).on(transaction.fundingId.eq(fundingGroup.id))
                 .where(fundingGroup.id.eq(fundingId))
                 .groupBy(fundingGroup.id, entertainer.entertainerId, entertainer.entertainerName, entertainer.entertainerProfileUrl)
                 .fetchOne();
@@ -159,37 +158,37 @@ public class FundingQueryRepository {
                 result.get(fundingGroup.description),
                 result.get(fundingGroup.status),
                 result.get(fundingGroup.goalAmount),
-                result.get(fundingPendingTransaction.balance.sum().coalesce(0L)),
+                result.get(transaction.balance.sum().coalesce(0L)),
                 result.get(fundingGroup.fundingExpiryDate)
         );
 
     }
 
-    public List<GetFundingPendingTransactionResponse> getFundingPendingTransaction(Long userId, Long fundingId, String filter) {
+    public List<GetFundingPendingTransactionResponse> getTransaction(Long userId, Long fundingId, String filter) {
         boolean participated = isUserParticipatedInFunding(userId, fundingId);
         if (!participated) {
             return List.of();
         }
         BooleanBuilder where = new BooleanBuilder()
-                .and(fundingPendingTransaction.fundingId.eq(fundingId))
-                .and(fundingPendingTransaction.deletedAt.isNull());
+                .and(transaction.fundingId.eq(fundingId))
+                .and(transaction.deletedAt.isNull());
 
         if ("my".equalsIgnoreCase(filter)) {
-            where.and(fundingPendingTransaction.userId.eq(userId));
+            where.and(transaction.userId.eq(userId));
         }
 
         return queryFactory
                 .select(new QGetFundingPendingTransactionResponse(
-                        fundingPendingTransaction.id,
+                        transaction.id,
                         user.name,
-                        fundingPendingTransaction.balance,
-                        fundingPendingTransaction.content,
-                        fundingPendingTransaction.createdAt
+                        transaction.balance,
+                        transaction.content,
+                        transaction.createdAt
                 ))
-                .from(fundingPendingTransaction)
-                .join(user).on(fundingPendingTransaction.userId.eq(user.userId))
+                .from(transaction)
+                .join(user).on(transaction.userId.eq(user.userId))
                 .where(where)
-                .orderBy(fundingPendingTransaction.createdAt.desc())
+                .orderBy(transaction.createdAt.desc())
                 .fetch();
     }
 
@@ -203,4 +202,32 @@ public class FundingQueryRepository {
                 )
                 .fetchFirst() != null;
     }
+
+//    public List<FundingGroup> selectExpiredFundingStatue() {
+//        return queryFactory
+//                .selectFrom(fundingGroup)
+//                .where(
+//                        fundingGroup.status.eq(FundingStatus.INPROGRESS),
+//                        fundingGroup.fundingExpiryDate.before(LocalDateTime.now()),
+//                        JPAExpressions
+//                                .select(transaction.balance.sum())
+//                                .where(transaction.id.eq(fundingGroup.id))
+//                                .goe(transaction.balance.sum())
+//                )
+//                .fetch();
+//    }
+//
+//    public void changeExpiredFundingState(List<FundingGroup> fundings, boolean isSuccess) {
+//        if (fundings == null || fundings.isEmpty()) return;
+//        FundingStatus status = isSuccess ? FundingStatus.SUCCESS : FundingStatus.FAILED;
+//        List<Long> ids = fundings.stream()
+//                .map(FundingGroup::getId)
+//                .toList();
+//
+//        queryFactory
+//                .update(fundingGroup)
+//                .set(fundingGroup.status, status)
+//                .where(fundingGroup.id.in(ids))
+//                .execute();
+//    }
 }

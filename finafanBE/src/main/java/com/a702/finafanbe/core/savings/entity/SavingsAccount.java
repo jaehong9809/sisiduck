@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.savings.entity;
 
+import com.a702.finafanbe.core.funding.funding.dto.CreateFundingRequest;
 import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -17,32 +18,53 @@ public class SavingsAccount extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    private Long id;
 
     @Column(name = "user_id", nullable = false)
-    protected Long userId;
+    private Long userId;
 
-    @Column(name = "savings_item_id", nullable = false)
-    protected Long savingsItemId;
+    @Column(name = "account_type_unique_no", nullable = false)
+    private String accountTypeUniqueNo;
 
     @Column(name = "account_no", nullable = false)
-    protected String accountNo;
+    private String accountNo;
 
     @Column(name = "account_nickname")
-    protected String accountNickname;
+    private String accountNickname;
 
-    protected Long balance;
+    @Column(name = "balance", nullable = false)
+    private Long balance;
 
     @Column(name = "account_expiry_date", nullable = false)
-    protected LocalDateTime accountExpiryDate;
+    private LocalDateTime accountExpiryDate;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @PrePersist
+    private void prePersist() {
+        deletedAt = null;
+        balance = 0L;
+    }
 
     @Builder
-    protected SavingsAccount(Long userId, Long savingsItemId, String accountNo, String accountNickname, Long balance, LocalDateTime accountExpiryDate) {
+    private SavingsAccount(Long userId, String accountTypeUniqueNo, String accountNo, String accountNickname, Long balance, LocalDateTime accountExpiryDate) {
         this.userId = userId;
-        this.savingsItemId = savingsItemId;
+        this.accountTypeUniqueNo = accountTypeUniqueNo;
         this.accountNo = accountNo;
         this.accountNickname = accountNickname;
         this.balance = balance;
         this.accountExpiryDate = accountExpiryDate;
+    }
+
+    public static SavingsAccount create(CreateFundingRequest request, Long userId, String accountTypeUniqueNo, String accountNo) {
+        return SavingsAccount.builder()
+                .userId(userId)
+                .accountTypeUniqueNo(accountTypeUniqueNo)
+                .accountNo(accountNo)
+                .accountNickname(request.accountNickname())
+                .balance(0L)
+                .accountExpiryDate(request.fundingExpiryDate())
+                .build();
     }
 }

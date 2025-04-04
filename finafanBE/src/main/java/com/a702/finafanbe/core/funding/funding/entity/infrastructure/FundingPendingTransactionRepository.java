@@ -13,5 +13,4 @@ public interface FundingPendingTransactionRepository extends JpaRepository<Fundi
 
     @Query("SELECT COALESCE(SUM(f.balance), 0) FROM FundingPendingTransaction f WHERE f.fundingId = :fundingId AND f.deletedAt IS NULL")
     Long sumByFundingId(@Param("fundingId") Long fundingId);
-
 }

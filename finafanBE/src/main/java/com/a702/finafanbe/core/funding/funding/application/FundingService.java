@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.funding.funding.application;
 
+import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
 import com.a702.finafanbe.core.funding.funding.dto.*;
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
@@ -42,12 +43,12 @@ public class FundingService {
     @Transactional
     public void createFunding(CreateFundingRequest request, Long userId) {
 
-        Random random = new Random();
-        int rand = 100 + random.nextInt(899);
+        ApiCreateAccountResponse response = apiSavingsAccountService.createFundingAccount(userId);
+        // System.out.println("API Answer : " + response.accountTypeUniqueNo() + " " + response.accountNo());
 
-        String account = "111111111"+ String.valueOf(rand);
-        //String account = apiSavingsAccountService.createAccount(request);
-        SavingsAccount fundingAccount = fundingAccountService.createFundingAccount(request, userId, account);
+        SavingsAccount fundingAccount = fundingAccountService.createFundingAccount(request, userId, response.accountNo(), response.accountTypeUniqueNo());
+        //System.out.println("fundingAccount Answer : " + fundingAccount.getAccountNickname());
+
         fundingGroupService.createFundingGroup(request, userId, fundingAccount.getId());
     }
 
@@ -65,7 +66,7 @@ public class FundingService {
 
     @Transactional(readOnly = true)
     public List<GetFundingPendingTransactionResponse> getFundingPendingTransaction (Long userId, Long fundingId, String filter) {
-        return fundingQueryRepository.getFundingPendingTransaction(userId, fundingId, filter);
+        return fundingQueryRepository.getTransaction(userId, fundingId, filter);
     }
 
     // 펀딩 가입
