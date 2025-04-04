@@ -84,54 +84,6 @@ public class EntertainSavingsService {
         );
     }
 
-    private EntertainerSavingsAccount saveEntertainerSavingsAccount(
-            Long userId,
-            Long entertainerId,
-            String productName,
-            Long depositAccountId,
-            Long withdrawalAccountId
-    ) {
-        return entertainerSavingsAccountRepository.save(
-                EntertainerSavingsAccount.of(
-                    userId,
-                    entertainerId,
-                    productName,
-                    depositAccountId,
-                    withdrawalAccountId,
-                    0.05,
-                    5L,
-                    "example.com"
-                )
-        );
-    }
-
-    private void validateNoExistingAccount(Long userId, Long entertainerId) {
-        if(existEntertainerSavings(userId, entertainerId)){
-            throw new BadRequestException(ResponseData.createResponse(EXIST_SAVINGS_PRODUCT));
-        }
-    }
-
-    private boolean existEntertainerSavings(
-            Long userId,
-            Long entertainerId
-    ) {
-        return entertainerSavingsAccountRepository.existsByUserIdAndEntertainerIdAndDeletedAtNull(
-                userId,
-                entertainerId
-        );
-    }
-
-    private Long findEntertainerId(Long entertainerId) {
-        return entertainRepository.findByEntertainerId(entertainerId)
-                .orElseThrow(()-> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)))
-                .getEntertainerId();
-    }
-
-    private User findUser(String userEmail) {
-        return userRepository.findBySocialEmail(userEmail)
-                .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
-    }
-
     @Transactional
     public EntertainerResponse choiceStar(
             SelectStarRequest selectStarRequest
@@ -147,11 +99,12 @@ public class EntertainSavingsService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<Entertainer> findStars() {
         return entertainRepository.findAll();
     }
 
-
+    @Transactional
     public EntertainerDepositResponse deposit(
             String userEmail,
             Long depositAccountId,
@@ -185,19 +138,23 @@ public class EntertainSavingsService {
         );
     }
 
+    @Transactional(readOnly = true)
     public EntertainerSavingsAccount findEntertainerAccountByDepositAccountId(Long savingAccountId) {
         return entertainerSavingsAccountRepository.findByDepositAccountId(savingAccountId).orElseThrow(
             () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
+    @Transactional(readOnly = true)
     public boolean existsEntertainerAccountByWithdrawalAccountId(Long savingAccountId) {
         return entertainerSavingsAccountRepository.existsByWithdrawalAccountId(savingAccountId);
     }
 
+    @Transactional(readOnly = true)
     public List<EntertainerSavingsAccount> findAccountByUserId(Long userId) {
         return entertainerSavingsAccountRepository.findByUserId(userId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundUser)));
     }
 
+    @Transactional(readOnly = true)
     public List<EntertainerSearchResponse> searchEntertainers(String keyword) {
         List<Entertainer> entertainers;
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -236,12 +193,60 @@ public class EntertainSavingsService {
         );
     }
 
-
+    @Transactional
     public void deleteByAccountId(Long accountId) {
         entertainerSavingsAccountRepository.deleteById(accountId);
     }
 
     public boolean existsEntertainerAccountByDepositAccountId(Long accountId) {
         return entertainerSavingsAccountRepository.existsByDepositAccountId(accountId);
+    }
+
+    private EntertainerSavingsAccount saveEntertainerSavingsAccount(
+            Long userId,
+            Long entertainerId,
+            String productName,
+            Long depositAccountId,
+            Long withdrawalAccountId
+    ) {
+        return entertainerSavingsAccountRepository.save(
+                EntertainerSavingsAccount.of(
+                        userId,
+                        entertainerId,
+                        productName,
+                        depositAccountId,
+                        withdrawalAccountId,
+                        0.05,
+                        5L,
+                        "example.com"
+                )
+        );
+    }
+
+    private void validateNoExistingAccount(Long userId, Long entertainerId) {
+        if(existEntertainerSavings(userId, entertainerId)){
+            throw new BadRequestException(ResponseData.createResponse(EXIST_SAVINGS_PRODUCT));
+        }
+    }
+
+    private boolean existEntertainerSavings(
+            Long userId,
+            Long entertainerId
+    ) {
+        return entertainerSavingsAccountRepository.existsByUserIdAndEntertainerIdAndDeletedAtNull(
+                userId,
+                entertainerId
+        );
+    }
+
+    private Long findEntertainerId(Long entertainerId) {
+        return entertainRepository.findByEntertainerId(entertainerId)
+                .orElseThrow(()-> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)))
+                .getEntertainerId();
+    }
+
+    private User findUser(String userEmail) {
+        return userRepository.findBySocialEmail(userEmail)
+                .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
     }
 }
