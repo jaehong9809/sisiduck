@@ -5,7 +5,6 @@ import com.a702.finafanbe.core.demanddeposit.dto.response.DeleteAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,13 +12,18 @@ import org.springframework.stereotype.Service;
 public class DeleteAccountService {
 
     private final ApiClientUtil apiClientUtil;
+    private final AccountRepository accountRepository;
 
-    public ResponseEntity<DeleteAccountResponse> deleteAccount(String path,
+    public DeleteAccountResponse deleteAccount(String path,
         DeleteAccountRequest deleteAccountRequest) {
         return apiClientUtil.callFinancialNetwork(
             path,
             deleteAccountRequest,
             DeleteAccountResponse.class
-        );
+        ).getBody();
+    }
+
+    public void deleteById(Long accountId) {
+        accountRepository.deleteById(accountId);
     }
 }

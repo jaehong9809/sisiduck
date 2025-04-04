@@ -20,11 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-//    @PostMapping("/sign-up")
-//    public ResponseEntity<User> signUp(UserRequest userRequest) {
-//        return ResponseEntity.ok(userService.signUp(userRequest));
-//    }
-
     @PostMapping
     public ResponseEntity<ResponseData<UserFinancialNetworkResponse>> signUpWithFinancialNetwork(
         @RequestBody String userEmail ) {

@@ -16,7 +16,7 @@ public class InquireDemandDepositAccountService {
     private final AccountRepository accountRepository;
 
     public Account findAccountById(Long accountId) {
-        return accountRepository.findById(accountId).orElseThrow(()->new BadRequestException(
+        return accountRepository.findByAccountId(accountId).orElseThrow(()->new BadRequestException(
             ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
