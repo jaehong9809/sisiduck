@@ -2,6 +2,7 @@ package com.a702.finafan.domain.savings.repository
 
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
+import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
@@ -38,4 +39,6 @@ interface SavingRepository {
     suspend fun weeklyStarRanking(): List<Ranking>
 
     suspend fun totalStarRanking(): List<Ranking>
+
+    suspend fun rankingDetail(starId: Long, type: RankingType): Ranking
 }

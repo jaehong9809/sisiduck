@@ -6,6 +6,7 @@ import com.a702.finafan.data.savings.api.SavingApi
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.data.savings.dto.response.toDomain
+import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
@@ -197,6 +198,16 @@ class SavingRepositoryImpl @Inject constructor(
 
         return if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }
+        } else {
+            throw Exception(response.message)
+        }
+    }
+
+    override suspend fun rankingDetail(starId: Long, type: RankingType): Ranking {
+        val response = api.starSavingHistory(starId, type.value)
+
+        return if (response.code == "S0000" && response.data != null) {
+            response.data.toDomain()
         } else {
             throw Exception(response.message)
         }

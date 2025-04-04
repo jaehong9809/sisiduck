@@ -37,7 +37,7 @@ sealed class NavRoutes(val route: String) {
 
     /* Ranking */
     object RankingMain : NavRoutes("ranking_main")
-    object RankingHistory : NavRoutes("ranking_history")
+    object RankingDetail : NavRoutes("ranking_detail")
 
     /* Funding */
     object Funding : NavRoutes("funding")

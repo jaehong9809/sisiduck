@@ -4,6 +4,7 @@ import com.a702.finafan.common.data.dto.ApiResponse
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.response.AccountResponse
 import com.a702.finafan.data.savings.dto.response.BankResponse
+import com.a702.finafan.data.savings.dto.response.RankingDetailResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountInfoResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountResponse
 import com.a702.finafan.data.savings.dto.response.SavingCreateResponse
@@ -92,5 +93,11 @@ interface SavingApi {
     // 적금 누적 랭킹 조회
     @GET("v1/ranking/total/entertainers")
     suspend fun totalStarRanking(): ApiResponse<List<SavingRankingResponse>>
+
+    @GET("v1/star/{entertainerId}/top-transactions")
+    suspend fun starSavingHistory(
+        @Path("entertainerId") starId: Long,
+        @Query("period") type: String
+    ): ApiResponse<RankingDetailResponse>
 
 }
