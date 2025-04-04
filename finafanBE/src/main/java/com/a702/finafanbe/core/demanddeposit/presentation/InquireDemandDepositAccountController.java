@@ -25,21 +25,20 @@ public class InquireDemandDepositAccountController {
            @RequestParam String userEmail,
            @RequestParam String accountNo
     ) {
-        InquireDemandDepositAccountResponse.REC rec = demandDepositFacade.getDemandDepositAccount(
+        return ResponseUtil.success(demandDepositFacade.getDemandDepositAccount(
                 userEmail,
                 accountNo
-        ).getBody().REC();
-        return ResponseUtil.success(rec);
+        ).REC());
     }
 
     @GetMapping("/accounts")
     public ResponseEntity<ResponseData<List<REC>>> getDemandDepositAccountList(
     ) {
-        List<REC> rec = demandDepositFacade.getDemandDepositListAccount(
-            "lsc7134@naver.com").getBody().REC();
 
-        return ResponseUtil.success(rec);
-
+        return ResponseUtil.success(demandDepositFacade
+                .getDemandDepositListAccount("lsc7134@naver.com")
+                .getBody()
+                .REC());
     }
 
     @GetMapping("/account-holder")

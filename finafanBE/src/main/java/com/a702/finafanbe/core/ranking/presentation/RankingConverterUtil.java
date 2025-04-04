@@ -33,7 +33,6 @@ public class RankingConverterUtil {
             List<RankingService.EntertainerRankingEntry> entries) {
         return entries.stream()
                 .map(entry -> {
-                    // 연예인 정보 조회
                     Entertainer entertainer = entertainerRepository.findById(entry.getEntertainerId())
                             .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NotFoundEntertainer)));
 
@@ -55,7 +54,6 @@ public class RankingConverterUtil {
             List<RankingService.UserRankingEntry> entries) {
         return entries.stream()
                 .map(entry -> {
-                    // 사용자 정보 조회
                     User user = userRepository.findById(entry.getUserId())
                             .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NotFoundUser)));
 
