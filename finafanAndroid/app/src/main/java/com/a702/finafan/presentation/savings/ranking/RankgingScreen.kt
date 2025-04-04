@@ -15,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +31,7 @@ import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -47,15 +47,25 @@ fun RankingScreen(
 
     val savingState by viewModel.savingState.collectAsState()
 
-    val tabTitle = remember {
-        mutableStateOf(
+    val selectedTab by remember {
+        derivedStateOf {
             when (selectedTabIndex.intValue) {
-                0 -> context.getString(R.string.ranking_daily_star)
-                1 -> context.getString(R.string.ranking_weekly_star)
-                2 -> context.getString(R.string.ranking_total_star)
-                else -> context.getString(R.string.ranking_daily_star)
+                0 -> RankingType.DAILY
+                1 -> RankingType.WEEKLY
+                2 -> RankingType.TOTAL
+                else -> RankingType.DAILY
             }
-        )
+        }
+    }
+
+    val tabTitle by remember {
+        derivedStateOf {
+            when (selectedTab) {
+                RankingType.DAILY -> context.getString(R.string.ranking_daily_star)
+                RankingType.WEEKLY -> context.getString(R.string.ranking_weekly_star)
+                RankingType.TOTAL -> context.getString(R.string.ranking_total_star)
+            }
+        }
     }
 
     val rankingList by remember {
@@ -63,7 +73,7 @@ fun RankingScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.fetchStarRanking(selectedTabIndex.intValue)
+        viewModel.fetchStarRanking(selectedTab)
     }
 
     Scaffold(
@@ -98,16 +108,13 @@ fun RankingScreen(
                         selectedIndex = selectedTabIndex,
                         onTabSelected = listOf(
                             {
-                                tabTitle.value = context.getString(R.string.ranking_daily_star)
-                                viewModel.fetchStarRanking(0)
+                                viewModel.fetchStarRanking(RankingType.DAILY)
                             },
                             {
-                                tabTitle.value = context.getString(R.string.ranking_weekly_star)
-                                viewModel.fetchStarRanking(1)
+                                viewModel.fetchStarRanking(RankingType.WEEKLY)
                             },
                             {
-                                tabTitle.value = context.getString(R.string.ranking_total_star)
-                                viewModel.fetchStarRanking(2)
+                                viewModel.fetchStarRanking(RankingType.TOTAL)
                             }
                         ),
                     )
@@ -130,7 +137,7 @@ fun RankingScreen(
 
                         Text(
                             modifier = Modifier.padding(top = 4.dp),
-                            text = tabTitle.value,
+                            text = tabTitle,
                             fontWeight = FontWeight.Bold,
                             fontSize = 30.sp,
                             lineHeight = 46.sp,
@@ -146,8 +153,7 @@ fun RankingScreen(
                     else -> {
                         items(rankingList) { ranking ->
                             RankingItem(ranking, onSelect = {
-                                viewModel.setRanking(ranking)
-                                navController.navigate(NavRoutes.RankingHistory.route)
+                                navController.navigate(NavRoutes.RankingDetail.route + "/${ranking.starId}/${selectedTab.value}")
                             })
                         }
                     }

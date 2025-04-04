@@ -31,7 +31,11 @@ object ExceptionHandler {
             val errorResponse =
                 Gson().fromJson(e.response()?.errorBody()?.string(), ErrorResponse::class.java)
 
-            errorResponse.message
+            if (errorResponse.code == "E8007") {
+                "스타 적금과 연결된 계좌입니다."
+            } else {
+                errorResponse.message
+            }
         } catch (ex: Exception) {
             null
         }
