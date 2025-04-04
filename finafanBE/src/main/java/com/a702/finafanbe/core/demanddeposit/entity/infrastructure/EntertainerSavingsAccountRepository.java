@@ -17,4 +17,6 @@ public interface EntertainerSavingsAccountRepository extends JpaRepository<Enter
     boolean existsByDepositAccountId(Long accountId);
 
     boolean existsByUserIdAndEntertainerIdAndDeletedAtNull(Long userId, Long entertainerId);
+
+    List<EntertainerSavingsAccount> findByEntertainerId(Long entertainerId);
 }

@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
+import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -113,18 +114,26 @@ fun ConnectBankScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                items(savingState.bankList.size) { index ->
-                    val bank = savingState.bankList[index]
-                    val isSelected = selectBank.value.bankCode == bank.bankCode
 
-                    BankItem(
-                        bank = bank,
-                        isSelected = isSelected,
-                        onSelect = {
-                            selectBank.value = it
-                        }
-                    )
+                if (savingState.isLoading) {
+                    item {
+                        CommonProgress()
+                    }
+                } else {
+                    items(savingState.bankList.size) { index ->
+                        val bank = savingState.bankList[index]
+                        val isSelected = selectBank.value.bankCode == bank.bankCode
+
+                        BankItem(
+                            bank = bank,
+                            isSelected = isSelected,
+                            onSelect = {
+                                selectBank.value = it
+                            }
+                        )
+                    }
                 }
+
             }
         }
     }

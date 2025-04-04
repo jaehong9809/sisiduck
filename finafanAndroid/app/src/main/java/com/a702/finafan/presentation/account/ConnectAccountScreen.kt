@@ -7,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -34,9 +34,9 @@ fun ConnectAccountScreen(
     val savingState by viewModel.savingState.collectAsState()
     val account = savingState.connectAccount
 
-    val showDeleteDialog = remember { mutableStateOf(false) }
-    val showDialog = remember { mutableStateOf(false) }
-    val dialogContent = remember { mutableStateOf("") }
+    val showDeleteDialog = rememberSaveable { mutableStateOf(false) }
+    val showDialog = rememberSaveable { mutableStateOf(false) }
+    val dialogContent = rememberSaveable { mutableStateOf("") }
 
     if (showDeleteDialog.value) {
         ConfirmDialog(
@@ -57,6 +57,7 @@ fun ConnectAccountScreen(
                 showDialog.value = false
 
                 if (savingState.isCancel) {
+                    viewModel.resetCancelState() // 상태 초기화
                     onComplete()
                 }
             }

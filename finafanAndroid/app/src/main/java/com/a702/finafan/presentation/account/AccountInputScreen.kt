@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
-import com.a702.finafan.common.ui.component.StringField
+import com.a702.finafan.common.ui.component.NumberField
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 계좌 번호 입력 화면
@@ -38,7 +38,7 @@ fun AccountInputScreen(
     ) {
 
         // 계좌번호 입력 필드
-        StringField(
+        NumberField(
             modifier = Modifier.padding(top = 34.dp),
             label = stringResource(R.string.account_label),
             hint = stringResource(R.string.account_hint),

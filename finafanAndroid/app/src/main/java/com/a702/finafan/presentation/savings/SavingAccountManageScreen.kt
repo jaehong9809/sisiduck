@@ -3,6 +3,7 @@ package com.a702.finafan.presentation.savings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -198,9 +199,11 @@ fun SavingAccountManageScreen(
                 Text(
                     modifier = Modifier
                         .padding(16.dp)
-                        .clickable {
-                            onCancelClick()
-                        },
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { onCancelClick() }
+                        ),
                     text = stringResource(R.string.btn_account_cancel),
                     color = MainTextGray,
                     fontSize = 20.sp,

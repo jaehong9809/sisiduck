@@ -112,7 +112,12 @@ fun TextItem(modifier: Modifier, onClick: (() -> Unit)? = null, text: String?) {
     text?.let {
         Text(
             modifier = if (onClick != null) {
-                modifier.clickable { onClick() }
+                modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = { onClick() }
+                    )
             } else {
                 modifier
             },

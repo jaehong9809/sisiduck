@@ -97,7 +97,10 @@ fun MainScreen(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp))
 
             MainWideButton(
-                modifier = Modifier.height(60.dp),
+                modifier = Modifier
+                    .height(60.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 onClick = {
                     navController.navigate(NavRoutes.AllAccount.route)
                 },
@@ -107,9 +110,13 @@ fun MainScreen(
             Spacer(modifier = Modifier.padding(8.dp))
 
             Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 MainSquareIconButton(
+                    modifier = Modifier.weight(1f),
                     onClick = {
                         blePermissionLauncher.launch(
                             arrayOf(
@@ -135,6 +142,7 @@ fun MainScreen(
                 )
 
                 MainSquareIconButton(
+                    modifier = Modifier.weight(1f),
                     onClick = {
                         navController.navigate(NavRoutes.FundingMain.route)
                     },
@@ -156,6 +164,9 @@ fun MainScreen(
             Spacer(modifier = Modifier.padding(8.dp))
 
             MainWideIconButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 onClick = {
                     navController.navigate(NavRoutes.Chat.route)
                 },

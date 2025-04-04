@@ -5,8 +5,7 @@ import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.SavingAccountInfo
 
 data class SavingAccountInfoResponse(
-    val total: Int = 0,
-    val accountAmount: Long = 0,
+    val total: Long = 0,
     val accounts: List<SavingAccountResponse> = emptyList()
 )
 
@@ -25,7 +24,6 @@ data class SavingAccountResponse(
 fun SavingAccountInfoResponse.toDomain(): SavingAccountInfo {
     return SavingAccountInfo(
         total = this.total,
-        accountAmount = this.accountAmount,
         accounts = this.accounts.map { it.toDomain() }
     )
 }
