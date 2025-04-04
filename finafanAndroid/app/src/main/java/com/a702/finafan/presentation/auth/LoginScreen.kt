@@ -66,7 +66,8 @@ fun LoginScreen(
 
     uiState.value.openOAuthUrl?.let { url ->
         LaunchedEffect(url) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            val noCacheUrl = "$url&t=${System.currentTimeMillis()}"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(noCacheUrl))
             context.startActivity(intent)
             Log.d("Try to Open URL: ", url)
         }
