@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 from app.schemas.question import QuestionRequest
 from app.service.v2.callback_handler import SSECallbackHandler
@@ -10,10 +10,10 @@ import re
 router = APIRouter()
 
 @router.post("")
-async def ask_question(request: QuestionRequest):
+async def ask_question(request: QuestionRequest, req: Request):
     question = request.question
     question = re.sub(r'\s*덕순[이가아]?\s*', ' ', question).strip()
-
+    user_id = req.headers.get("X-User-Id", "test")
     cache_key = make_cache_key(question)
 
     # ✅ 1. 캐시 확인
@@ -46,8 +46,11 @@ async def ask_question(request: QuestionRequest):
         try:
             is_agent = await asyncio.to_thread(needs_agent, {"input": question})
             chain = get_agent_chain(callback) if is_agent else get_chat_chain(callback)
-            result = await chain.ainvoke({"input": question})
+
+            result = await chain.ainvoke({"input": question, "user_id": user_id})
+
             final_output = result["output"]
+            
         except Exception as e:
             print("❌ 체인 실행 오류:", e)
             final_output = "죄송해요, 덕순이가 지금은 대답하기 어려워요 😢"

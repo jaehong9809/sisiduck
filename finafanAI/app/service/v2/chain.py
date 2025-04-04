@@ -9,7 +9,7 @@ from app.service.v2.llm import get_llm, get_hard_llm, get_soft_llm
 from langchain import hub
 
 # ✅ 메모리
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="output")
+# memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="output")
 
 # ✅ 도구 정의
 tools = [
@@ -29,6 +29,21 @@ async def to_friendly_tone(answer: str) -> str:
     ]
     result = await llm.ainvoke(prompt)
     return result.content.strip()
+
+def get_user_id(x: dict) -> str:
+    return x.get("user_id", "test")
+
+user_memory_store = {}
+
+def get_user_memory(user_id: str):
+    if user_id not in user_memory_store:
+        user_memory_store[user_id] = ConversationBufferMemory(
+            memory_key="chat_history",
+            return_messages=True,
+            output_key="output"
+        )
+    print("user : ", user_id)
+    return user_memory_store[user_id]
 
 # ✅ Final Answer 추출
 def extract_final_answer(text: str) -> str:
@@ -66,15 +81,21 @@ def needs_agent(input: dict) -> bool:
 # ✅ Chat 체인 생성 함수 (후처리 버전)
 def get_chat_chain(callback):
     async def _chat(x):
+        user_id = get_user_id(x)
+        memory = get_user_memory(user_id)
+
         llm = get_soft_llm(streaming=True, callback=callback)
         history = memory.load_memory_variables({})["chat_history"]
+
         result = await llm.ainvoke([
             SystemMessage(content=DUKSUNI_SYSTEM_PROMPT.strip()),
             *history,
             HumanMessage(content=x["input"])
         ])
+
         print("\n🧩 [Chat 원본 출력]")
         print(result.content)
+
         memory.save_context({"input": x["input"]}, {"output": result.content})
         return {"output": result.content}
 
@@ -83,6 +104,9 @@ def get_chat_chain(callback):
 # ✅ Agent 체인 생성 함수 (후처리 버전)
 def get_agent_chain(callback):
     async def _agent(x):
+        user_id = get_user_id(x)
+        memory = get_user_memory(user_id)
+
         llm = get_llm(streaming=True, callback=callback)
 
         # prompt = react_prompt_kr.partial(
@@ -105,13 +129,11 @@ def get_agent_chain(callback):
             return_intermediate_steps=True,
             output_key="output"
         )
-
+        del x['user_id']
         result = await executor.ainvoke(x)
-        
-        intermediate_steps = result.get("intermediate_steps", [])
-        seen = set()
-        unique_tool_outputs = []
-
+        # intermediate_steps = result.get("intermediate_steps", [])
+        # seen = set()
+        # unique_tool_outputs = []
         # for step in intermediate_steps:
         #     action = step[0]  # AgentAction
         #     output = step[1]  # Tool output (observation)
