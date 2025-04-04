@@ -14,4 +14,8 @@ public class SSAFYUserInfo {
 
     @JsonProperty("name")
     private String name;
+
+    public String toString(){
+        return "userId: " + userId + ",\n email: " + email + ",\n name: " + name;
+    }
 }
