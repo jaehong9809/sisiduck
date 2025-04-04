@@ -25,7 +25,8 @@ public class AuthService {
         log.info("✨ SSAFY access token: {}", ssafyAccessToken);
 
         SSAFYUserInfo userInfo = ssafyOAuthProvider.getUserInfo(ssafyAccessToken);
-        log.info("✨ User Email and Name: {}, {}", userInfo.getEmail(), userInfo.getName());
+        log.info("✨ User Email: {}", userInfo.getEmail());
+        log.info("✨ User Name: {}", userInfo.getName());
 
         User user = findOrCreateUser(
                 userInfo.getEmail(),
