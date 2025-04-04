@@ -1,16 +1,22 @@
 package com.a702.finafanbe.core.transaction.deposittransaction.entity;
 
+import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Table(name = "entertainer_savings_transaction_detail")
+@Table(name = "entertainer_savings_transaction_details")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class EntertainerSavingsTransactionDetail {
+@SQLDelete(sql = "UPDATE entertainer_savings_transaction_details SET deleted_at = CURRENT_TIMESTAMP WHERE user_id = ?")
+@SQLRestriction("deleted_at IS NULL")
+public class EntertainerSavingsTransactionDetail extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -39,6 +45,9 @@ public class EntertainerSavingsTransactionDetail {
 
     @Column(nullable = false, name = "image_url")
     private String imageUrl;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public void addAmount(BigDecimal amount) {
         this.amount = this.amount.add(amount);
