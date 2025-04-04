@@ -45,7 +45,6 @@ public class SsafyOAuthProvider {
         this.userInfoUri = userInfoUri;
     }
 
-
     public String fetchSSAFYAccessToken(String code) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -65,6 +64,15 @@ public class SsafyOAuthProvider {
 
         log.info("token uri: {}", tokenUri);
         log.info("redirect url : {} ", redirectUri);
+
+        // 에러 디버깅용
+        ResponseEntity<String> debugResponse = restTemplate.exchange(
+                tokenUri,
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+        );
+        log.info("Debug Response: {}", debugResponse.getBody());
 
         //TODO : httpClient[주호]
         ResponseEntity<TokenResponse> response = restTemplate.exchange(
