@@ -128,7 +128,6 @@ public class EntertainSavingsService {
     }
 
     private User findUser(String userEmail) {
-        log.info("Find user by email: " + userEmail);
         return userRepository.findBySocialEmail(userEmail)
                 .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
     }

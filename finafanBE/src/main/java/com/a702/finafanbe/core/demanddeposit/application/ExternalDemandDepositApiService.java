@@ -1,6 +1,5 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
-import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountResponse;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;

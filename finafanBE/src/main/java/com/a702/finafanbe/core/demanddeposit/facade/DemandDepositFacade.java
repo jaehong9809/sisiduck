@@ -2,8 +2,7 @@ package com.a702.finafanbe.core.demanddeposit.facade;
 
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.entity.Bank;
-import com.a702.finafanbe.core.demanddeposit.application.DeleteAccountService;
-import com.a702.finafanbe.core.demanddeposit.application.ExternalDemandDepositApiService;
+import com.a702.finafanbe.core.demanddeposit.application.*;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.request.*;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
@@ -22,10 +21,10 @@ import com.a702.finafanbe.core.user.application.UserService;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
+import com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
-import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +37,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants.INQUIRE_DEMAND_DEPOSIT_ACCOUNT_PATH;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -45,6 +46,7 @@ public class DemandDepositFacade {
 
     private static final String EMAIL = "lsc7134@naver.com";
 
+    private final ApiConstants apiConstants;
     private final ExternalDemandDepositApiService externalDemandDepositApiService;
     private final EntertainSavingsService entertainSavingsService;
     private final DepositTransactionService depositTransactionService;
@@ -61,11 +63,14 @@ public class DemandDepositFacade {
             String accountNo
     ) {
         return externalDemandDepositApiService.DemandDepositRequest(
-                "/demandDeposit/inquireDemandDepositAccount",
+                INQUIRE_DEMAND_DEPOSIT_ACCOUNT_PATH,
                 userEmail,
-                accountNo,"inquireDemandDepositAccount"
+                accountNo,
+                apiConstants.extractApiName(INQUIRE_DEMAND_DEPOSIT_ACCOUNT_PATH)
         );
     }
+
+
 
     public ResponseEntity<InquireDemandDepositAccountListResponse> getDemandDepositListAccount(String userEmail) {
         return externalDemandDepositApiService.DemandDepositRequestWithFactory(

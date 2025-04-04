@@ -1,9 +1,7 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
 import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountTransferRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountDepositResponse;
-import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountWithdrawalResponse;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;

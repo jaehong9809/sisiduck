@@ -12,17 +12,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants.CREATE_DEMAND_DEPOSIT_PATH;
+
 @RestController
 @RequestMapping("/api/v1/demand-deposit")
 @RequiredArgsConstructor
 public class RegisterAccountController {
+
 
     private final RegisterAccountService registerAccountService;
 
     @PostMapping("/product")
     public ResponseEntity<ResponseData<RegisterProductResponse>> registerDemandDeposit(@RequestBody RegisterProductRequest createProductRequest) {
         return ResponseUtil.success(registerAccountService.registerDemandDeposit(
-                "/demandDeposit/createDemandDeposit",
+                CREATE_DEMAND_DEPOSIT_PATH,
                 createProductRequest
         ));
     }

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants.UPDATE_TRANSFER_LIMIT_PATH;
+
 @RestController
 @RequestMapping("/api/v1/account")
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class UpdateTransferLimitController {
         @RequestBody UpdateAccountTransferLimitRequest updateDemandDepositAccountTransferLimitRequest
     ){
         return ResponseUtil.success(updateTransferLimitService.updateLimit(
-                "/demandDeposit/updateTransferLimit",
+                UPDATE_TRANSFER_LIMIT_PATH,
                 updateDemandDepositAccountTransferLimitRequest
         ));
     }
