@@ -7,6 +7,11 @@ from app.service.v2.search import fast_news_search, youtube_search, duckduckgo_s
 from app.service.v2.prompts import DUKSUNI_SYSTEM_PROMPT
 from app.service.v2.llm import get_llm, get_hard_llm, get_soft_llm
 from langchain import hub
+from app.core.conv_utils import (
+    get_user_memory
+)
+
+
 
 # ✅ 메모리
 # memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="output")
@@ -34,16 +39,6 @@ def get_user_id(x: dict) -> str:
     return x.get("user_id", "test")
 
 user_memory_store = {}
-
-def get_user_memory(user_id: str):
-    if user_id not in user_memory_store:
-        user_memory_store[user_id] = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True,
-            output_key="output"
-        )
-    print("user : ", user_id)
-    return user_memory_store[user_id]
 
 # ✅ Final Answer 추출
 def extract_final_answer(text: str) -> str:
@@ -83,10 +78,10 @@ def get_chat_chain(callback):
     async def _chat(x):
         user_id = get_user_id(x)
         memory = get_user_memory(user_id)
-
+        
         llm = get_soft_llm(streaming=True, callback=callback)
         history = memory.load_memory_variables({})["chat_history"]
-
+        
         result = await llm.ainvoke([
             SystemMessage(content=DUKSUNI_SYSTEM_PROMPT.strip()),
             *history,

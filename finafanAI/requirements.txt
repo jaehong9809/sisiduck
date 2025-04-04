@@ -194,3 +194,4 @@ zipp==3.21.0
 redis
 duckduckgo_search
 bs4
+apscheduler
