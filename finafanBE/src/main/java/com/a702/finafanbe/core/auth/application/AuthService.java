@@ -22,15 +22,16 @@ public class AuthService {
 
     public AuthTokens login(String code) {
         String ssafyAccessToken = ssafyOAuthProvider.fetchSSAFYAccessToken(code);
-        log.info("SSAFY access token: {}", ssafyAccessToken);
+        log.info("✨ SSAFY access token: {}", ssafyAccessToken);
 
         SSAFYUserInfo userInfo = ssafyOAuthProvider.getUserInfo(ssafyAccessToken);
+        log.info("✨ User Email and Name: {}, {}", userInfo.getEmail(), userInfo.getName());
 
         User user = findOrCreateUser(
-                userInfo.getSocialEmail(),
-                userInfo.getNickname()
+                userInfo.getEmail(),
+                userInfo.getName()
         );
-
+        
         AuthTokens authTokens = jwtUtil.createLoginToken(user.getUserId().toString());
         //TODO refreshToken
         return authTokens;

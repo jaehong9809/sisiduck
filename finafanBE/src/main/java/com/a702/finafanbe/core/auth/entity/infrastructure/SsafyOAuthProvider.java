@@ -76,7 +76,7 @@ public class SsafyOAuthProvider {
 
         log.info("✅ Status Code: {}", response.getStatusCode());
         log.info("✅ Response Headers: {}", response.getHeaders());
-        log.info("✅ Response Body: {}", response.getBody());
+        log.info("✅ Response Body: {}", response.getBody().toString());
 
         return Optional.ofNullable(response.getBody())
                 .orElseThrow(
@@ -126,5 +126,9 @@ public class SsafyOAuthProvider {
         private String refreshToken;
         @JsonProperty("refresh_token_expires_in")
         private Integer refreshTokenExpiresIn;
+
+        public String toString() {
+            return "token_type: " + tokenType + "\n access_token: " + accessToken + "\n scope: " + scope;
+        }
     }
 }
