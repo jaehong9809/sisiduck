@@ -46,7 +46,6 @@ public class DemandDepositFacade {
 
     private static final String EMAIL = "lsc7134@naver.com";
 
-    private final ApiConstants apiConstants;
     private final ExternalDemandDepositApiService externalDemandDepositApiService;
     private final EntertainSavingsService entertainSavingsService;
     private final DepositTransactionService depositTransactionService;
@@ -66,7 +65,7 @@ public class DemandDepositFacade {
                 INQUIRE_DEMAND_DEPOSIT_ACCOUNT_PATH,
                 userEmail,
                 accountNo,
-                apiConstants.extractApiName(INQUIRE_DEMAND_DEPOSIT_ACCOUNT_PATH)
+                ApiConstants.extractApiName(INQUIRE_DEMAND_DEPOSIT_ACCOUNT_PATH)
         );
     }
 
@@ -98,23 +97,24 @@ public class DemandDepositFacade {
         );
     }
 
-    public ResponseEntity<AccountTransactionHistoriesResponse> inquireHistories(
+    public AccountTransactionHistoriesResponse.REC inquireHistories(
             TransactionHistoriesRequest transactionHistoriesRequest
     ) {
+        Account depositAccount = inquireDemandDepositAccountService.findAccountById(transactionHistoriesRequest.accountId());
         return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/inquireTransactionHistoryList",
                 apiName -> financialRequestFactory.inquireHistories(
-                        transactionHistoriesRequest.email(),
+                        EMAIL,
                         apiName,
-                        transactionHistoriesRequest.accountNo(),
-                        transactionHistoriesRequest.startDate(),
-                        transactionHistoriesRequest.endDate(),
-                        transactionHistoriesRequest.transactionType(),
-                        transactionHistoriesRequest.orderByType()
+                        depositAccount.getAccountNo(),
+                        "00000101",
+                        DateUtil.getTransmissionDate(),
+                        "A",
+                        "DESC"
                 ),
                 "inquireTransactionHistoryList",
                 AccountTransactionHistoriesResponse.class
-        );
+        ).getBody().REC();
     }
 
     public ResponseEntity<InquireAccountHolderNameResponse> inquireAccountHolderName(
@@ -282,8 +282,11 @@ public class DemandDepositFacade {
     public InquireEntertainerHistoriesResponse inquireEntertainerHistories(
             Long savingAccountId
     ) {
+
         Account depositAccount = inquireDemandDepositAccountService.findAccountById(savingAccountId);
-        AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = EntertainerAccountHistories(depositAccount);
+
+        AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = entertainerAccountHistories(depositAccount);
+
         List<EntertainerSavingsTransactionDetail> transactionDetails = depositTransactionService.getEntertainerAccountTransactionsByAccountId(
             depositAccount.getAccountId());
         Map<Long, EntertainerSavingsTransactionDetail> transactionImageMap = transactionDetails.stream().collect(
@@ -320,22 +323,8 @@ public class DemandDepositFacade {
         );
     }
 
-    private AccountTransactionHistoriesResponse.REC EntertainerAccountHistories(Account depositAccount) {
-        AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = externalDemandDepositApiService.DemandDepositRequestWithFactory(
-                "/demandDeposit/inquireTransactionHistoryList",
-                apiName -> financialRequestFactory.inquireHistories(
-                        EMAIL,
-                        apiName,
-                        depositAccount.getAccountNo(),
-                        "00000101",
-                        DateUtil.getTransmissionDate(),
-                        "A",
-                        "DESC"
-                ),
-                "inquireTransactionHistoryList",
-                AccountTransactionHistoriesResponse.class
-        ).getBody().REC();
-        return inquireTransactionHistoryList;
+    private AccountTransactionHistoriesResponse.REC entertainerAccountHistories(Account depositAccount) {
+        return inquireHistories(TransactionHistoriesRequest.of(depositAccount.getAccountId()));
     }
 
     public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transferAccount(

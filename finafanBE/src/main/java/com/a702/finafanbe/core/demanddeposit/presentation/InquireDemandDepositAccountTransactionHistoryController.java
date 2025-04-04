@@ -22,8 +22,7 @@ public class InquireDemandDepositAccountTransactionHistoryController {
     public ResponseEntity<ResponseData<REC>> getDemandDepositTransactionHistories(
         @RequestBody TransactionHistoriesRequest transactionHistoryListRequest
     ){
-        return ResponseUtil.success(demandDepositFacade.inquireHistories(
-                transactionHistoryListRequest).getBody().REC());
+        return ResponseUtil.success(demandDepositFacade.inquireHistories(transactionHistoryListRequest));
     }
 
     @GetMapping("/transaction-history")
