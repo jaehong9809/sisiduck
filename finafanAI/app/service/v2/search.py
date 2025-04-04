@@ -5,20 +5,47 @@ import os
 from urllib.parse import quote
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.tools import DuckDuckGoSearchRun
 from duckduckgo_search import DDGS
 import warnings
 from langchain_core._api.deprecation import LangChainDeprecationWarning
 import requests
 import re
+from bs4 import BeautifulSoup
+import requests
+
 warnings.filterwarnings("ignore", category=LangChainDeprecationWarning)
+
 
 def extract_topic(text: str) -> str:
     # 가장 단순한 예: "XXX 최근 소식", "XXX 뉴스", "XXX 근황" 등의 패턴 제거
     return re.sub(r"(의\s*)?(최근\s*소식|뉴스|근황|활동)\s*(알려줘|전해줘|없어\?|좀 알려줄래)?", "", text).strip()
 
+def read_webpage(url: str) -> str:
+    try:
+        response = requests.get(url, timeout=5)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # 모든 <p> 태그 텍스트 추출, 공백 제거 및 한 줄로 정리
+        paragraphs = soup.find_all("p")
+        cleaned_paragraphs = []
+
+        for p in paragraphs:
+            text = p.get_text().strip()
+            if text:
+                # 줄바꿈/중복 공백 제거 → 한 문단 단위로
+                text = re.sub(r"\s+", " ", text)
+                cleaned_paragraphs.append(text)
+
+        # 문단 사이는 마침표 + 띄어쓰기 형태로 연결
+        content = " ".join(cleaned_paragraphs)
+
+        return content[:1000] if content else "본문 내용을 찾을 수 없어요."
+
+    except Exception as e:
+        return f"웹페이지 내용을 불러오지 못했어요: {str(e)}"
+
 # 웹 검색
-def duckduckgo_search(query: str, max_results: int = 3) -> str:
+def duckduckgo_search(query: str, max_results: int = 5) -> str:
     with DDGS() as ddgs:
         results = ddgs.text(query, max_results=max_results)
         return "\n".join([
@@ -26,18 +53,20 @@ def duckduckgo_search(query: str, max_results: int = 3) -> str:
         ])
 
 # 뉴스 검색
-def fast_news_search(query: str) -> str:
-    #query = extract_topic(query)
+def fast_news_search(query: str, max_results: int = 3) -> str:
     encoded_query = quote(query)  # 공백 및 한글 인코딩
-
     url = f"https://news.google.com/rss/search?q={encoded_query}&hl=ko&gl=KR&ceid=KR:ko"
 
     feed = feedparser.parse(url)
-    results = []
-    for entry in feed.entries[:3]:
-        title = entry.title
-        link = entry.link
-        results.append(f"{title} - {link}")
+    entries = feed.entries[:max_results]  # 👉 최대 결과 수 반영
+
+    if not entries:
+        return "관련된 뉴스 기사를 찾지 못했어ㅠㅠ"
+
+    results = [
+        f"{entry.title} - {entry.link}" for entry in entries
+    ]
+
     return "\n".join(results)
 
 # YouTube 검색
@@ -67,13 +96,13 @@ def youtube_search(query: str, max_results: int = 3) -> str:
 
 
 # 인물 정보 검색
-embeddings = OpenAIEmbeddings()
-person_db = Chroma(persist_directory="./person_db", embedding_function=embeddings)
-person_retriever = person_db.as_retriever(search_kwargs={"k": 1})
+# embeddings = OpenAIEmbeddings()
+# person_db = Chroma(persist_directory="./person_db", embedding_function=embeddings)
+# person_retriever = person_db.as_retriever(search_kwargs={"k": 1})
 
-def search_person_info(query: str) -> str:
-    docs = person_retriever.get_relevant_documents(query)
-    return "\n".join([doc.page_content for doc in docs])
+# def search_person_info(query: str) -> str:
+#     docs = person_retriever.get_relevant_documents(query)
+#     return "\n".join([doc.page_content for doc in docs])
 
 def get_weather(city="Seoul"):
     url = f"https://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=c03977953046419f6c73010097b1cbfa&units=metric&lang=kr"
