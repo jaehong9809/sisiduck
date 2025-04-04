@@ -67,14 +67,15 @@ def needs_agent(input: dict) -> bool:
 def get_chat_chain(callback):
     async def _chat(x):
         llm = get_soft_llm(streaming=True, callback=callback)
-
+        history = memory.load_memory_variables({})["chat_history"]
         result = await llm.ainvoke([
             SystemMessage(content=DUKSUNI_SYSTEM_PROMPT.strip()),
+            *history,
             HumanMessage(content=x["input"])
         ])
         print("\n🧩 [Chat 원본 출력]")
         print(result.content)
-
+        memory.save_context({"input": x["input"]}, {"output": result.content})
         return {"output": result.content}
 
     return RunnableLambda(_chat)
@@ -90,7 +91,7 @@ def get_agent_chain(callback):
         # )
         # prompt = ReActPrompt().get_prompt(tools)
 
-        prompt2 = hub.pull("hwchase17/react")
+        prompt2 = hub.pull("hwchase17/react-chat")
 
         agent = create_react_agent(llm=llm, tools=tools, prompt=prompt2)
 
