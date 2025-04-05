@@ -3,8 +3,8 @@ package com.a702.finafan.presentation.auth
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.data.user.local.UserPreferences
 import com.a702.finafan.domain.auth.repository.AuthRepository
-import com.a702.finafan.domain.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    private val userPreferences: UserPreferences,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -63,6 +64,7 @@ class LoginViewModel @Inject constructor(
                 authRepository.saveAccessToken(accessToken)
 
                 _uiState.update {
+                    userPreferences.setLoginState(true)
                     it.copy(
                         isLoading = false,
                         isLoggedIn = true,
