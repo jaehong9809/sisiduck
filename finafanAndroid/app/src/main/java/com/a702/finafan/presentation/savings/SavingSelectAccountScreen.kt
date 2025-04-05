@@ -56,7 +56,7 @@ fun SavingSelectAccountScreen(
             } else {
                 // 출금 계좌가 있으면 첫 번째 계좌를 연결
                 val firstAccount = savingState.withdrawalAccounts.first()
-                viewModel.updateSavingConnectAccount(firstAccount)
+                viewModel.updateConnectAccount(firstAccount)
             }
         }
     }
@@ -115,7 +115,7 @@ fun SavingSelectAccountScreen(
         onButtonClick = {
             // 적금 개설
             val savingCreate = SavingCreate(
-                savingState.selectStar.entertainerId,
+                savingState.selectStar.starId,
                 savingState.accountName,
                 savingState.connectAccount
             )

@@ -1,8 +1,12 @@
 package com.a702.finafan.presentation.navigation
 
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.a702.finafan.presentation.savings.SavingAccountManageScreen
 import com.a702.finafan.presentation.savings.SavingCancelScreen
@@ -14,7 +18,7 @@ import com.a702.finafan.presentation.savings.SavingSelectAccountScreen
 import com.a702.finafan.presentation.savings.StarSearchScreen
 import com.a702.finafan.presentation.savings.TermGuideScreen
 import com.a702.finafan.presentation.savings.TransactionDetailScreen
-import com.a702.finafan.presentation.savings.ranking.RankingHistoryScreen
+import com.a702.finafan.presentation.savings.ranking.RankingDetailScreen
 import com.a702.finafan.presentation.savings.ranking.RankingScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
@@ -101,13 +105,29 @@ fun NavGraphBuilder.savingGraph(
             )
         }
 
-        composable(NavRoutes.RankingMain.route) {
-            RankingScreen(savingViewModel)
+        composable(NavRoutes.RankingMain.route + "?selectedTabIndex={selectedTabIndex}",
+            arguments = listOf(navArgument("selectedTabIndex") {
+                type = NavType.IntType
+                defaultValue = 0
+            })
+        ) { backStackEntry ->
+            val selectedTabIndex = rememberSaveable  {
+                mutableIntStateOf(
+                    backStackEntry.arguments?.getInt("selectedTabIndex") ?: 0
+                )
+            }
+
+            RankingScreen(selectedTabIndex, savingViewModel)
         }
 
-        composable(NavRoutes.RankingHistory.route) { backStackEntry ->
-            RankingHistoryScreen(
-                viewModel = savingViewModel
+        composable(NavRoutes.RankingDetail.route + "/{starId}/{type}") { backStackEntry ->
+            val starId = backStackEntry.arguments?.getString("starId")?.toLongOrNull()
+            val type = backStackEntry.arguments?.getString("type")
+
+            RankingDetailScreen(
+                viewModel = savingViewModel,
+                starId = starId ?: 0,
+                type = type ?: ""
             )
         }
 

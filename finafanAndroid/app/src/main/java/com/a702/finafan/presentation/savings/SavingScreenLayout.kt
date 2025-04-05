@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,42 +34,59 @@ fun SavingScreenLayout(
     onButtonClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .imePadding()
-            .windowInsetsPadding(WindowInsets.ime)
-    ) {
-        // 공통 상단 바
-        CommonBackTopBar(modifier = Modifier, text = topBarTitle, isTextCentered = true)
 
+    Scaffold(
+        topBar = {
+            CommonBackTopBar(
+                modifier = Modifier,
+                text = topBarTitle,
+                isTextCentered = true
+            )
+        },
+        bottomBar = {
+            PrimaryGradBottomButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding(),
+                onClick = onButtonClick,
+                text = buttonText,
+                isEnabled = isButtonEnabled
+            )
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
+                .padding(innerPadding)
+                .fillMaxSize()
                 .background(MainWhite)
-                .fillMaxWidth()
-                .padding(horizontal = if (isFill) 0.dp else 16.dp)
+                .imePadding()
+                .windowInsetsPadding(WindowInsets.ime)
         ) {
-            Text(
-                modifier = Modifier.padding(top = 36.dp, start = if (isFill) 16.dp else 0.dp, end = if (isFill) 16.dp else 0.dp),
-                text = title,
-                color = MainBlack,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 36.sp,
-                textAlign = TextAlign.Start
-            )
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth()
+                    .padding(horizontal = if (isFill) 0.dp else 16.dp)
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            top = 36.dp,
+                            start = if (isFill) 16.dp else 0.dp,
+                            end = if (isFill) 16.dp else 0.dp
+                        ),
+                    text = title,
+                    color = MainBlack,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 36.sp,
+                    textAlign = TextAlign.Start
+                )
 
-            content()
+                content()
+            }
         }
 
-        // 공통 하단 버튼
-        PrimaryGradBottomButton(
-            modifier = Modifier.fillMaxWidth().imePadding(),
-            onClick = onButtonClick,
-            text = buttonText,
-            isEnabled = isButtonEnabled
-        )
     }
+
 }

@@ -105,4 +105,5 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
 
     implementation(libs.datastore.preferences)
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
 }

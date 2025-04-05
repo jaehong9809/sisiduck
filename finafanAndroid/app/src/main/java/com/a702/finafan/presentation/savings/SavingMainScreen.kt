@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +39,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
+import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.theme.MainBlackWithTransparency
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -55,59 +58,73 @@ fun SavingMainScreen(
 ) {
 
     val navController = LocalNavController.current
+    val savingState by viewModel.savingState.collectAsState()
 
     // 적금 계좌 정보, 입금 내역 목록
     LaunchedEffect(Unit) {
         viewModel.fetchSavingInfo(savingAccountId)
     }
 
-    val savingState by viewModel.savingState.collectAsState()
-
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        CommonBackTopBar(
-            modifier = Modifier,
-            text = stringResource(R.string.saving_account_manage_title),
-            textOnClick = {
-                navController.navigate(NavRoutes.SavingAccountManage.route)
-            }
-        )
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = CenterHorizontally
+    Scaffold(
+        topBar = {
+            CommonBackTopBar(
+                modifier = Modifier,
+                text = stringResource(R.string.saving_account_manage_title),
+                textOnClick = {
+                    navController.navigate(NavRoutes.SavingAccountManage.route)
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxWidth()
+                .background(MainWhite)
         ) {
-            item {
-                SavingHeader(savingState.savingInfo.savingAccount)
-            }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = CenterHorizontally
+            ) {
+                item {
+                    SavingHeader(savingState.savingInfo.savingAccount)
+                }
 
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
-            if (savingState.savingInfo.transactions.isEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
+                }
 
-                    Text(text = stringResource(R.string.saving_item_empty_transaction),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MainTextGray,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 24.sp
-                    )
+                when {
+                    savingState.isLoading -> {
+                        item { CommonProgress() }
+                    }
+                    savingState.savingInfo.transactions.isEmpty() -> {
+                        item {
+                            Spacer(modifier = Modifier.height(18.dp))
+
+                            Text(text = stringResource(R.string.saving_item_empty_transaction),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MainTextGray,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 30.sp
+                            )
+                        }
+                    }
+                    else -> {
+                        items(savingState.savingInfo.transactions) { transaction ->
+                            TransactionItem(transaction, onSelect = {
+                                viewModel.setTransaction(transaction)
+                                navController.navigate(NavRoutes.TransactionDetail.route)
+                            })
+                        }
+                    }
                 }
-            } else {
-                items(savingState.savingInfo.transactions) { transaction ->
-                    TransactionItem(transaction, onSelect = {
-                        viewModel.setTransaction(transaction)
-                        navController.navigate(NavRoutes.TransactionDetail.route)
-                    })
-                }
+
             }
         }
     }
+
 }
 
 @Composable
@@ -122,7 +139,7 @@ fun SavingHeader(account: SavingAccount) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(560.dp)
+            .height(530.dp)
             .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
     ) {
 
@@ -131,7 +148,7 @@ fun SavingHeader(account: SavingAccount) {
             contentDescription = "Star Image",
             modifier = Modifier
                 .fillMaxSize()
-                .height(560.dp)
+                .height(530.dp)
                 .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
                 .background(LightGray)
                 .align(Alignment.Center)
@@ -179,7 +196,8 @@ fun SavingHeader(account: SavingAccount) {
                 text = account.accountNo,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
-                color = MainWhite
+                color = MainWhite,
+                textDecoration = TextDecoration.Underline,
             )
         }
     }

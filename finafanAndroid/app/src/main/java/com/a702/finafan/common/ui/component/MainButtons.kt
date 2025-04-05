@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -32,14 +33,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.BtnBgGray
-import com.a702.finafan.common.ui.theme.MainBgGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
-import kotlin.collections.List
 
 /* 메인 메뉴용 IconButton */
 @Composable
@@ -52,6 +51,7 @@ fun MainSquareIconButton(
     Box(
         modifier = modifier
             .size(156.dp)
+            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(24.dp))
             .background(MainWhite, shape = RoundedCornerShape(24.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -85,9 +85,10 @@ fun MainWideIconButton(
 ) {
     Box(
         modifier = modifier
-            .width(312.dp)
-            .height(156.dp)
-            .background(MainWhite, shape = RoundedCornerShape(16.dp))
+            .width(332.dp)
+            .height(120.dp)
+            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp))
+            .background(MainWhite, shape = RoundedCornerShape(20.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -95,8 +96,9 @@ fun MainWideIconButton(
             ),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             icon?.invoke()
+            Spacer(modifier = Modifier.width(25.dp))
             text.let {
                 Text(
                     text = it,
@@ -104,6 +106,37 @@ fun MainWideIconButton(
                     fontWeight = FontWeight.Medium,
                     color = MainBlack,
                     modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MainWideButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String
+) {
+    Box(
+        modifier = modifier
+            .width(332.dp)
+            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp))
+            .background(MainWhite, shape = RoundedCornerShape(20.dp))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onClick() }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            text.let {
+                Text(
+                    text = it,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MainBlack
                 )
             }
         }
@@ -330,6 +363,36 @@ fun GradSelectBottomButton(
         ) {
             Text(
                 text = right,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MainWhite
+            )
+        }
+    }
+}
+
+@Composable
+fun BlackButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String? = null,
+) {
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onClick() }
+            )
+            .background(MainBlack, shape = RoundedCornerShape(20.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        text?.let {
+            Text(
+                text = it,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MainWhite

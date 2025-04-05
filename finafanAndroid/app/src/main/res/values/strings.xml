@@ -1,10 +1,25 @@
 <resources>
-    <string name="app_name">FinAFan</string>
+    <string name="app_name">시시덕</string>
 
     <!-- Login Screen -->
     <string name="ssafy_login">SSAFY 금융망 로그인</string>
     <string name="login">로그인</string>
 
+    <!-- Main Screen -->
+    <string name="card_login_button">로그인</string>
+    <string name="card_create_saving_info">아직 가입한 상품이 없어요!</string>
+    <string name="card_create_saving_button">스타적금 시작하기</string>
+    <string name="card_saving_info">\u0020스타적금</string>
+    <string name="card_saving_deposit_button">입금하기</string>
+    <string name="all_acount_button">전체 계좌 보기</string>
+    <string name="ranking_tabrow_daily_label">일간</string>
+    <string name="ranking_tabrow_weekly_label">주간</string>
+    <string name="ranking_tabrow_total_label">누적</string>
+    <string name="ranking_empty_message">랭킹 데이터 없음</string>
+    <string name="ranking_card_daily_label">오늘</string>
+    <string name="ranking_card_weekly_label">이번 주</string>
+    <string name="ranking_card_total_label">지금까지</string>
+    <string name="ranking_card_rank_text">위</string>
 
     <!-- Chat Screen -->
     <string name="chatbot_talk_button">덕순이와 대화하기</string>
@@ -125,9 +140,12 @@
     <string name="saving_item_star_not_exist">입력한 스타가\n존재하지 않습니다.</string>
     <string name="saving_item_exist">이미 가입한\n스타 적금입니다.</string>
     <string name="saving_item_change_name">적금 이름 변경</string>
-    <string name="saving_item_cancel_complete">적금 해지가 완료되었어요!</string>
+    <string name="saving_item_saving_cancel_complete">적금 해지가 완료되었어요!</string>
+    <string name="saving_item_connect_cancel_complete">연결 계좌 삭제가 완료되었어요!</string>
+    <string name="saving_item_connect_cancel_confirm">연결된 계좌를 삭제하시겠어요?</string>
     <string name="saving_item_deposit_complete">입금이 완료되었어요!</string>
     <string name="saving_item_withdrawal_empty">출금 가능 계좌가 없어요.\n계좌 연결을 해 볼까요?</string>
+    <string name="saving_item_limit">적금은 3개까지 가입이 가능해요!</string>
 
     <!-- Saving Ranking -->
     <string name="ranking_daily_title">일간</string>
@@ -135,6 +153,7 @@
     <string name="ranking_together">같이 덕질하기</string>
     <string name="ranking_daily_star">오늘의 1등 스타</string>
     <string name="ranking_weekly_star">이번 주 1등 스타</string>
+    <string name="ranking_total_star">지금까지 1등 스타</string>
     <string name="ranking_history_title">랭킹 보기</string>
     <string name="ranking_history">응원글 보기</string>
     <string name="ranking_my_history">나의 응원 내역</string>
@@ -144,5 +163,19 @@
     <!-- BLUETOOTH -->
     <string name="ble_find_user">주변 팬 찾기</string>
     <string name="ble_finding_user">주변 탐색 중...</string>
+
+    <!-- All Account -->
+    <string name="all_account_title">내 계좌</string>
+    <string name="all_account_saving_title">적금</string>
+    <string name="all_account_funding_title">모금</string>
+    <string name="all_account_other_title">다른 금융</string>
+    <string name="all_account_count_header">총</string>
+    <string name="all_account_count_content">개</string>
+    <string name="all_account_saving_account_no">스타적금 %s</string>
+    <string name="all_account_funding_account_no">모금통장 %s</string>
+    <string name="all_account_list_empty">계좌가 존재하지 않습니다.</string>
+    <string name="all_account_create_saving">적금 개설하기</string>
+    <string name="all_account_create_funding">모금통장 개설하기</string>
+    <string name="all_account_connect_bank">다른 계좌 연결하기</string>
 
 </resources>

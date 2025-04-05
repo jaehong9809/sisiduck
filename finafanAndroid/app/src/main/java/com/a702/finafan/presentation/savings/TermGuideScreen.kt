@@ -2,15 +2,13 @@ package com.a702.finafan.presentation.savings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,50 +26,55 @@ import com.a702.finafan.common.ui.theme.MainWhite
 
 // 상품 안내, 약관동의 안내 화면
 @Composable
-fun TermGuideScreen(title: String?, onConfirm: () -> Unit) {
+fun TermGuideScreen(
+    title: String?,
+    onConfirm: () -> Unit
+) {
 
-    Column(
-        modifier = Modifier
-            .background(MainWhite)
-            .fillMaxSize()
-            .imePadding()
-            .windowInsetsPadding(WindowInsets.ime)
-    ) {
-
-        CommonCloseTopBar(
-            modifier = Modifier,
-            text = title
-        )
-
+    Scaffold(
+        topBar = {
+            CommonCloseTopBar(
+                modifier = Modifier,
+                text = title
+            )
+        },
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
+                .padding(innerPadding)
                 .background(MainWhite)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .fillMaxSize()
         ) {
-            Text(
-                modifier = Modifier,
-                text = "설명입니다.",
-                color = MainBlack,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 36.sp,
-                textAlign = TextAlign.Start
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .background(MainWhite)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = "설명입니다.",
+                    color = MainBlack,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 36.sp,
+                    textAlign = TextAlign.Start
+                )
+            }
+
+            PrimaryGradButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                    .imePadding(),
+                onClick = {
+                    onConfirm()
+                },
+                text = stringResource(R.string.btn_confirm)
             )
         }
-
-        PrimaryGradButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
-                .imePadding(),
-            onClick = {
-                onConfirm()
-            },
-            text = stringResource(R.string.btn_confirm)
-        )
     }
 
 }

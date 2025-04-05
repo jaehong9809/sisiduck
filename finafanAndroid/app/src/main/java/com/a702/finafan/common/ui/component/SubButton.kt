@@ -45,7 +45,7 @@ fun SubButton(modifier: Modifier = Modifier,
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 14.dp),
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 14.dp),
             text = text,
             fontSize = fontSize,
             fontWeight = FontWeight.Medium,
@@ -78,7 +78,7 @@ fun GradSubButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 14.dp),
+            modifier = Modifier.padding(vertical = 10.dp, horizontal = 14.dp),
             text = text,
             fontSize = fontSize,
             fontWeight = FontWeight.Medium,
