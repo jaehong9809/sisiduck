@@ -69,7 +69,7 @@ public class TopTransactionsService {
             savingsAccountRepository.findByEntertainerId(entertainerId);
 
         List<Long> depositAccountIds = savingsAccounts.stream()
-            .map(EntertainerSavingsAccount::getDepositAccountId)
+            .map(EntertainerSavingsAccount::getId)
             .collect(Collectors.toList());
 
         if (depositAccountIds.isEmpty()) {
