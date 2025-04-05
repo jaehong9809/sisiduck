@@ -8,7 +8,7 @@ public record BankAccountConnectionResponse(
     String accountNo,
     Bank bank
 ) {
-    public static BankAccountConnectionResponse from(Account account, Bank bank) {
+    public static BankAccountConnectionResponse of(Account account, Bank bank) {
         return new BankAccountConnectionResponse(
             account.getAccountId(),
             account.getAccountNo(),

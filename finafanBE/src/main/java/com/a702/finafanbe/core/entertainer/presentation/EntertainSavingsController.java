@@ -170,10 +170,7 @@ public class EntertainSavingsController {
     public ResponseEntity<ResponseData<List<WithdrawalAccountResponse>>> getWithdrawalAccounts(
 //        @AuthMember User user;
     ) {
-        String email = EMAIL;
-
-        List<WithdrawalAccountResponse> accounts = savingsAccountService.getWithdrawalAccounts(email);
-        return ResponseUtil.success(accounts);
+        return ResponseUtil.success(savingsAccountService.getWithdrawalAccounts(EMAIL));
     }
 
     @PutMapping("/alias/{savingAccountId}")

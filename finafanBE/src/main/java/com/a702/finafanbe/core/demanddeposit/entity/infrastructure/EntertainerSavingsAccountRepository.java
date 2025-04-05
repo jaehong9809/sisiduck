@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import org.springframework.data.jpa.repository.Query;
 
 public interface EntertainerSavingsAccountRepository extends JpaRepository<EntertainerSavingsAccount, Long> {
 
@@ -17,4 +18,7 @@ public interface EntertainerSavingsAccountRepository extends JpaRepository<Enter
     boolean existsByUserIdAndEntertainerIdAndDeletedAtNull(Long userId, Long entertainerId);
 
     List<EntertainerSavingsAccount> findByEntertainerId(Long entertainerId);
+
+    @Query("SELECT e.accountNo FROM EntertainerSavingsAccount e")
+    List<String> findAllAccountNos();
 }

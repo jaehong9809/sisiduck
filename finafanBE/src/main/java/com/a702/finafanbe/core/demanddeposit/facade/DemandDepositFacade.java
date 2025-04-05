@@ -1,6 +1,8 @@
 package com.a702.finafanbe.core.demanddeposit.facade;
 
 import com.a702.finafanbe.core.bank.application.BankService;
+import com.a702.finafanbe.core.bank.dto.response.BankAccountConnectionResponse;
+import com.a702.finafanbe.core.bank.dto.response.BankAccountResponse;
 import com.a702.finafanbe.core.bank.entity.Bank;
 import com.a702.finafanbe.core.demanddeposit.application.*;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
@@ -25,6 +27,7 @@ import com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
+import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -488,5 +491,47 @@ public class DemandDepositFacade {
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_DEMAND_DEPOSIT_PRODUCT)))
                 .getAccountTypeUniqueNo();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BankAccountResponse> findUserAccountsByBanks(List<Long> bankIds) {
+
+        List<InquireDemandDepositAccountListResponse.REC> userAccounts = getDemandDepositListAccount("lsc7134@naver.com").getBody().REC();
+
+        if (userAccounts == null || userAccounts.isEmpty()) {
+            return List.of();
+        }
+
+        Set<String> existingAccountNos = inquireDemandDepositAccountService.findAccountByUserId(1L).stream()
+            .map(Account::getAccountNo)
+            .collect(Collectors.toSet());
+
+        List<String> entertainerAccountNos = entertainSavingsService.findAllAccountNos();
+        existingAccountNos.addAll(entertainerAccountNos);
+
+        List<Bank> banks = bankService.findAllBanks();
+
+        Map<Long, Bank> bankIdMap = banks.stream()
+            .collect(Collectors.toMap(Bank::getBankId, bank -> bank));
+
+        Map<String, Long> bankCodeToIdMap = banks.stream()
+            .collect(Collectors.toMap(Bank::getBankCode, Bank::getBankId));
+
+        return userAccounts.stream()
+            .filter(account -> {
+                if(existingAccountNos.contains(account.accountNo())){
+                    return false;
+                }
+                Long bankId = bankCodeToIdMap.get(account.bankCode());
+                return bankId != null && bankIds.contains(bankId);
+            })
+            .map(account -> {
+                Bank bank = bankIdMap.get(bankCodeToIdMap.get(account.bankCode()));
+                return BankAccountResponse.of(
+                    account.accountNo(),
+                    bank
+                );
+            })
+            .collect(Collectors.toList());
     }
 }

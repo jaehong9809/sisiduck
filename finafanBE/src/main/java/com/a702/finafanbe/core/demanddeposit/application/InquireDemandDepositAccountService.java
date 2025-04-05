@@ -5,6 +5,7 @@ import static com.a702.finafanbe.global.common.exception.ErrorCode.NOT_FOUND_ACC
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import java.util.List;
 import java.util.Optional;
@@ -30,8 +31,9 @@ public class InquireDemandDepositAccountService {
             ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
-    public Optional<List<Account>> findAccountByUserId(Long userId) {
-        return accountRepository.findByUserId(userId);
+    public List<Account> findAccountByUserId(Long userId) {
+        return accountRepository.findByUserId(userId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(
+            ErrorCode.NOT_FOUND_ACCOUNT)));
     }
 }
 

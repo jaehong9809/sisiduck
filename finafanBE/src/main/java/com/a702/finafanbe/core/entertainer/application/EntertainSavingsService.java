@@ -44,7 +44,6 @@ public class EntertainSavingsService {
     private final EntertainerRepository entertainRepository;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
     private final UserRepository userRepository;
-    private final AccountRepository accountRepository;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final BankService bankService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
@@ -223,5 +222,9 @@ public class EntertainSavingsService {
     private User findUser(String userEmail) {
         return userRepository.findBySocialEmail(userEmail)
                 .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
+    }
+
+    public List<String> findAllAccountNos() {
+        return entertainerSavingsAccountRepository.findAllAccountNos();
     }
 }

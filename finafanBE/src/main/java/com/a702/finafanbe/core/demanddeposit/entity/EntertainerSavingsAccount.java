@@ -35,7 +35,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(nullable = false, name="amount")
     private BigDecimal amount;
 
-    @Column(nullable = false, name ="account_id")
+    @Column(nullable = false, name ="account_no")
     private String accountNo;
 
     @Column(nullable = false, name = "withdrawal_account_id")
