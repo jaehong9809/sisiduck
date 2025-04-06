@@ -20,6 +20,7 @@ import com.a702.finafanbe.core.ranking.application.RankingService;
 import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.user.application.UserService;
+import com.a702.finafanbe.core.user.dto.response.UserFinancialNetworkResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
@@ -27,12 +28,12 @@ import com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -59,6 +60,7 @@ public class DemandDepositFacade {
     private final RankingService rankingService;
     private final DeleteAccountService deleteAccountService;
     private final FinancialRequestFactory financialRequestFactory;
+    private final CreateAccountService createAccountService;
 
     public InquireDemandDepositAccountResponse getDemandDepositAccount(
             String userEmail,
@@ -152,14 +154,31 @@ public class DemandDepositFacade {
         );
     }
 
-    public ApiCreateAccountResponse createEntertainerAccount(
+    public ApiCreateAccountResponse createAccount(
             String email
     ) {
         User user = userService.findUserByEmail(email);
         String productUniqueNo = getEntertainerProductUniqueNo();
-        REC createDemandDepositAccount = createEntertainerAccount(email, productUniqueNo);
+        REC createDemandDepositAccount = createAccount(email, productUniqueNo);
         return ApiCreateAccountResponse.of(
             user.getUserId(),
+            user.getSocialEmail(),
+            createDemandDepositAccount.getAccountNo(),
+            createDemandDepositAccount.getBankCode(),
+            createDemandDepositAccount.getCurrency().getCurrency(),
+            productUniqueNo
+        );
+    }
+
+    public ApiCreateAccountResponse createTestAccount(
+        String email
+    ) {
+        User user = userService.findUserByEmail(email);
+        String productUniqueNo = getDummyProductUniqueNo();
+        REC createDemandDepositAccount = createAccount(email, productUniqueNo);
+        return ApiCreateAccountResponse.of(
+            user.getUserId(),
+            user.getSocialEmail(),
             createDemandDepositAccount.getAccountNo(),
             createDemandDepositAccount.getBankCode(),
             createDemandDepositAccount.getCurrency().getCurrency(),
@@ -211,7 +230,7 @@ public class DemandDepositFacade {
     }
 
     public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
-        ApiCreateAccountResponse response = createEntertainerAccount(
+        ApiCreateAccountResponse response = createAccount(
             EMAIL
         );
         return entertainSavingsService.createEntertainerSavings(
@@ -427,7 +446,6 @@ public class DemandDepositFacade {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public void deleteStarAccount(Long savingAccountId) {
         Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
@@ -470,7 +488,7 @@ public class DemandDepositFacade {
         deleteAccountService.deleteById(accountId);
     }
 
-    private REC createEntertainerAccount(String email, String productUniqueNo) {
+    private REC createAccount(String email, String productUniqueNo) {
         return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/createDemandDepositAccount",
                 apiName -> financialRequestFactory.UserKeyAccountTypeUniqueNoRequest(
@@ -493,7 +511,16 @@ public class DemandDepositFacade {
                 .getAccountTypeUniqueNo();
     }
 
-    @Transactional(readOnly = true)
+    private String getDummyProductUniqueNo() {
+        return getProducts()
+            .REC()
+            .stream()
+            .filter(product -> product.getAccountName().equals("test"))
+            .findFirst()
+            .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_DEMAND_DEPOSIT_PRODUCT)))
+            .getAccountTypeUniqueNo();
+    }
+
     public List<BankAccountResponse> findUserAccountsByBanks(List<Long> bankIds) {
 
         List<InquireDemandDepositAccountListResponse.REC> userAccounts = getDemandDepositListAccount("lsc7134@naver.com").getBody().REC();
@@ -533,5 +560,84 @@ public class DemandDepositFacade {
                 );
             })
             .collect(Collectors.toList());
+    }
+
+    public List<BankAccountConnectionResponse> connectUserAccounts(List<String> accountNos) {
+
+        if (accountNos == null || accountNos.isEmpty()) {
+            return List.of();
+        }
+
+        ResponseEntity<InquireDemandDepositAccountListResponse> response =
+            getDemandDepositListAccount(EMAIL);
+
+        List<InquireDemandDepositAccountListResponse.REC> allAccounts = response.getBody().REC();
+
+        if (allAccounts == null || allAccounts.isEmpty()) {
+            throw new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_ACCOUNT));
+        }
+
+        List<Bank> banks = bankService.findAllBanks();
+        Map<String, Bank> bankCodeMap = banks.stream()
+            .collect(Collectors.toMap(Bank::getBankCode, bank -> bank));
+        Set<String> existingAccountNos = inquireDemandDepositAccountService.findAllAccountsNo();
+
+        List<Account> accountsToSave = new ArrayList<>();
+
+        for (String accountNo : accountNos) {
+            if(existingAccountNos.contains(accountNo)){
+                continue;
+            }
+            Optional<InquireDemandDepositAccountListResponse.REC> accountOpt = allAccounts.stream()
+                .filter(acc -> acc.accountNo().equals(accountNo))
+                .findFirst();
+            if (accountOpt.isPresent()) {
+                InquireDemandDepositAccountListResponse.REC acc = accountOpt.get();
+                Bank bank = bankCodeMap.get(acc.bankCode());
+
+                if (bank == null) {
+                    log.warn("Bank not found for code: {}", acc.bankCode());
+                    continue;
+                }
+
+                // 계좌 객체 생성
+                Account account = Account.of(
+//                    user.getUserId(),
+                    1L,
+                    acc.accountNo(),
+                    "KRW", // 기본 통화
+                    acc.accountName(),
+                    "GENERAL001", // 기본 계좌 유형
+                    bank.getBankId()
+                );
+                accountsToSave.add(account);
+            }
+        }
+
+        if(!accountsToSave.isEmpty()){
+            return createAccountService.connectAll(accountsToSave).stream()
+                .map(account -> {
+                    Bank bank = bankService.findBankById(account.getBankId());
+                    return BankAccountConnectionResponse.of(
+                        account,
+                        bank
+                    );
+                })
+                .collect(Collectors.toList());
+        }else{
+            throw new BadRequestException(ResponseData.createResponse(ErrorCode.DUPLICATE_ACCOUNT));
+        }
+    }
+
+    public ApiCreateAccountResponse signUpWithFinancialNetwork(
+        String userEmail
+    ) {
+        UserFinancialNetworkResponse financialNetwork = userService.requestFinancialNetwork(
+            "https://finopenapi.ssafy.io/ssafy/api/v1/member",
+            userEmail
+        );
+        userService.createUser(userEmail, financialNetwork.userKey());
+
+        return createTestAccount(userEmail);
     }
 }

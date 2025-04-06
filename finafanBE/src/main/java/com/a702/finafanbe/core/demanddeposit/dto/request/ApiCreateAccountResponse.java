@@ -2,6 +2,7 @@ package com.a702.finafanbe.core.demanddeposit.dto.request;
 
 public record ApiCreateAccountResponse(
         Long userId,
+        String userEmail,
         String accountNo,
         String bankCode,
         String currency,
@@ -10,12 +11,14 @@ public record ApiCreateAccountResponse(
     public static ApiCreateAccountResponse of(
             Long userId,
             String accountNo,
+            String userEmail,
             String bankCode,
             String currency,
             String accountTypeUniqueNo
     ){
         return new ApiCreateAccountResponse(
                 userId,
+                userEmail,
                 accountNo,
                 bankCode,
                 currency,

@@ -9,6 +9,8 @@ import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,12 @@ public class InquireDemandDepositAccountService {
     public List<Account> findAccountByUserId(Long userId) {
         return accountRepository.findByUserId(userId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(
             ErrorCode.NOT_FOUND_ACCOUNT)));
+    }
+
+    public Set<String> findAllAccountsNo() {
+        return accountRepository.findAll().stream()
+            .map(Account::getAccountNo)
+            .collect(Collectors.toSet());
     }
 }
 

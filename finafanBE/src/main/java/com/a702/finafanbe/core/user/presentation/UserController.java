@@ -1,9 +1,11 @@
 package com.a702.finafanbe.core.user.presentation;
 
 import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
+import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.user.application.UserService;
 import com.a702.finafanbe.core.user.dto.request.UpdateStarIdRequest;
+import com.a702.finafanbe.core.user.dto.request.UserEmailRequest;
 import com.a702.finafanbe.core.user.dto.request.UserFinancialNetworkRequest;
 import com.a702.finafanbe.core.user.dto.request.UserRequest;
 import com.a702.finafanbe.core.user.dto.response.InquireUserResponse;
@@ -24,18 +26,18 @@ public class UserController {
     private final DemandDepositFacade demandDepositFacade;
 
     @PostMapping
-    public ResponseEntity<ResponseData<UserResponse>> signUpWithFinancialNetwork(
-        @RequestBody String userEmail ) {
-        userService.signUpWithFinancialNetwork(userEmail);
-
-        return ResponseUtil.success();
+    public ResponseEntity<ResponseData<ApiCreateAccountResponse>> signUpWithFinancialNetwork(
+        @RequestBody UserEmailRequest userEmailRequest
+    ) {
+        return ResponseUtil.success(demandDepositFacade.signUpWithFinancialNetwork(userEmailRequest.userEmail()));
     }
 
     @GetMapping
     public ResponseEntity<ResponseData<UserResponse>> getUser(
-        String userEmail
+        @RequestBody UserEmailRequest userEmailRequest
     ) {
-        return ResponseUtil.success(userService.getUserWithFinancialNetwork(userEmail));
+        return ResponseUtil.success(userService.getUserWithFinancialNetwork(
+            userEmailRequest.userEmail()));
     }
 
     @GetMapping("/star")

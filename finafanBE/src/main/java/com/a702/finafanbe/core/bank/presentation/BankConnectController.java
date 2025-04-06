@@ -25,7 +25,6 @@ import java.util.List;
 public class BankConnectController {
 
     private final DemandDepositFacade demandDepositFacade;
-    private final BankAccountService bankAccountService;
 
     @GetMapping
     public ResponseEntity<ResponseData<List<BankAccountResponse>>> connectBankAccounts(
@@ -40,7 +39,7 @@ public class BankConnectController {
 //        @AuthMember User user,
         @RequestBody AccountConnectionRequest request
     ) {
-        return ResponseUtil.success(bankAccountService.connectUserAccounts(request.accountNos()));
+        return ResponseUtil.success(demandDepositFacade.connectUserAccounts(request.accountNos()));
     }
 
 }
