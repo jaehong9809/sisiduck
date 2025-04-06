@@ -104,11 +104,14 @@ public class FundingService {
 
     // 펀딩 입금 취소
     @Transactional
-    public void withdrawFunding(Long userId, Long fundingId, Long fundingSupportId) {
+    public void withdrawFunding(Long userId, Long fundingId, WithdrawTransactionRequest request) {
         if(!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
             throw new RuntimeException("펀딩이 진행 중일 때만 입금을 취소할 수 있습니다.");
         }
-        fundingPendingTransactionRepository.deleteById(fundingSupportId);
+        for (Long id : request.transactions()) {
+            fundingPendingTransactionRepository.deleteById(id);
+        }
+
     }
 
     // 펀딩 중도 해지
