@@ -23,14 +23,14 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<ResponseData<UserFinancialNetworkResponse>> signUpWithFinancialNetwork(
-        @RequestBody String userEmail ) {
+            @RequestBody String userEmail ) {
         userService.signUpWithFinancialNetwork(userEmail);
         return ResponseUtil.success();
     }
 
     @GetMapping
     public ResponseEntity<ResponseData<UserFinancialNetworkResponse>> getUser(
-        String userEmail
+            String userEmail
     ) {
         UserFinancialNetworkResponse response = userService.getUserWithFinancialNetwork(userEmail);
         return ResponseUtil.success(response);
@@ -58,6 +58,6 @@ public class UserController {
             @AuthMember User user
     ) {
         UserInfoResponse response = UserInfoResponse.from(user);
-        return ResponseUtil.sucuess(response);
+        return ResponseUtil.success(response);
     }
 }
