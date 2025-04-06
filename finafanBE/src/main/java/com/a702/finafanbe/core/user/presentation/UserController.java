@@ -7,6 +7,7 @@ import com.a702.finafanbe.core.user.dto.request.UserFinancialNetworkRequest;
 import com.a702.finafanbe.core.user.dto.request.UserRequest;
 import com.a702.finafanbe.core.user.dto.response.InquireUserResponse;
 import com.a702.finafanbe.core.user.dto.response.UserFinancialNetworkResponse;
+import com.a702.finafanbe.core.user.dto.response.UserInfoResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
@@ -50,5 +51,13 @@ public class UserController {
     ) {
         Long newStarId = userService.updateUserStarId(user.getUserId(), updateStarIdRequest.starId());
         return ResponseUtil.success(newStarId);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<ResponseData<UserInfoResponse>> getUserInfo(
+            @AuthMember User user
+    ) {
+        UserInfoResponse response = UserInfoResponse.from(user);
+        return ResponseUtil.sucuess(response);
     }
 }
