@@ -43,10 +43,12 @@ public class FundingService {
     @Transactional
     public void createFunding(CreateFundingRequest request, Long userId) {
 
-        ApiCreateAccountResponse response = apiSavingsAccountService.createFundingAccount(userId);
+        // ApiCreateAccountResponse response = apiSavingsAccountService.createFundingAccount(userId);
         // System.out.println("API Answer : " + response.accountTypeUniqueNo() + " " + response.accountNo());
 
-        SavingsAccount fundingAccount = fundingAccountService.createFundingAccount(request, userId, response.accountNo(), response.accountTypeUniqueNo());
+        String accountNo = "1111";
+        String accountTypeUniqueNo = "001-1-f5f1f9ee427d47";
+        SavingsAccount fundingAccount = fundingAccountService.createFundingAccount(request, userId, accountNo, accountTypeUniqueNo);
         //System.out.println("fundingAccount Answer : " + fundingAccount.getAccountNickname());
 
         fundingGroupService.createFundingGroup(request, userId, fundingAccount.getId());
@@ -111,7 +113,7 @@ public class FundingService {
 
     // 펀딩 중도 해지
     @Transactional
-    public void cancelFunding(Long userId, Long fundingId) {
+    public void cancelFunding(Long userId, Long fundingId, CancelFundingRequest request) {
         checkAdminUser(userId, fundingId);
         if (!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
             throw new RuntimeException("펀딩이 진행 중일 때만 중단할 수 있습니다.");

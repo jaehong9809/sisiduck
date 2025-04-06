@@ -74,7 +74,7 @@ public class FundingQueryRepository {
                                 .from(transaction)
                                 .where(transaction.fundingId.eq(fundingGroup.id), transaction.deletedAt.isNull()),
                         fundingGroup.goalAmount,
-                        fundingGroup.createdAt
+                        fundingGroup.fundingExpiryDate
                 ))
                 .from(fundingGroup)
                 .join(entertainer).on(fundingGroup.entertainerId.eq(entertainer.entertainerId))

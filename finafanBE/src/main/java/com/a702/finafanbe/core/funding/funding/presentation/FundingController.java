@@ -109,11 +109,12 @@ public class FundingController {
     // 펀딩 중도 해지
     @DeleteMapping("/{fundingId}/cancel")
     public ResponseEntity<?> cancelFunding(
-            @PathVariable Long fundingId
+            @PathVariable Long fundingId,
+            @RequestBody CancelFundingRequest request
             //@AuthMember Long userId
     ) {
         Long userId = 1L;
-        fundingService.cancelFunding(userId, fundingId);
+        fundingService.cancelFunding(userId, fundingId, request);
         return ResponseUtil.success();
     }
 

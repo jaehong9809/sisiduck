@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -48,7 +49,13 @@ public class SavingsAccount extends BaseEntity {
     }
 
     @Builder
-    private SavingsAccount(Long userId, String accountTypeUniqueNo, String accountNo, String accountNickname, Long balance, LocalDateTime accountExpiryDate) {
+    private SavingsAccount(
+            Long userId,
+            String accountTypeUniqueNo,
+            String accountNo,
+            String accountNickname,
+            Long balance,
+            LocalDateTime accountExpiryDate) {
         this.userId = userId;
         this.accountTypeUniqueNo = accountTypeUniqueNo;
         this.accountNo = accountNo;
@@ -57,14 +64,19 @@ public class SavingsAccount extends BaseEntity {
         this.accountExpiryDate = accountExpiryDate;
     }
 
-    public static SavingsAccount create(CreateFundingRequest request, Long userId, String accountTypeUniqueNo, String accountNo) {
+    public static SavingsAccount create(
+            CreateFundingRequest request,
+            Long userId,
+            String accountTypeUniqueNo,
+            String accountNo
+    ) {
         return SavingsAccount.builder()
                 .userId(userId)
                 .accountTypeUniqueNo(accountTypeUniqueNo)
                 .accountNo(accountNo)
                 .accountNickname(request.accountNickname())
                 .balance(0L)
-                .accountExpiryDate(request.fundingExpiryDate())
+                .accountExpiryDate(LocalDate.now().plusMonths(6).atStartOfDay())
                 .build();
     }
 }
