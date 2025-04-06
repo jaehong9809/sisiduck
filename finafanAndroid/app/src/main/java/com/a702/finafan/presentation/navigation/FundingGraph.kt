@@ -9,7 +9,6 @@ import com.a702.finafan.presentation.funding.screen.FundingCreateScreen
 import com.a702.finafan.presentation.funding.screen.FundingDetailScreen
 import com.a702.finafan.presentation.funding.screen.FundingScreen
 import com.a702.finafan.presentation.funding.screen.FundingTermScreen
-import com.a702.finafan.presentation.funding.screen.getMyStars
 import com.a702.finafan.presentation.funding.viewmodel.FundingCreateViewModel
 import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 
@@ -26,9 +25,7 @@ fun NavGraphBuilder.fundingGraph(
 
         composable(NavRoutes.FundingDetail.route + "/{fundingId}") { backStackEntry ->
             val fundingId = backStackEntry.arguments?.getString("fundingId")?.toLongOrNull() ?: 0L
-            val myStars = getMyStars()
-            val star = myStars.find { it.id == fundingId } ?: myStars.firstOrNull()
-            FundingDetailScreen(star, fundingId)
+            FundingDetailScreen(fundingId)
         }
 
         composable(NavRoutes.FundingJoin.route + "/{fundingId}") { backStackEntry ->

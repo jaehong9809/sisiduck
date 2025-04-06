@@ -18,7 +18,8 @@ object StringUtil {
     }
 
     fun formatNumber(amount: String): Long {
-        return amount.replace(Regex("[^0-9]"), "").toLong()
+        val digitsOnly = amount.replace(Regex("[^0-9]"), "")
+        return if (digitsOnly.isBlank()) 0L else digitsOnly.toLong()
     }
 
     fun formatEditMoney(amount: String): String {

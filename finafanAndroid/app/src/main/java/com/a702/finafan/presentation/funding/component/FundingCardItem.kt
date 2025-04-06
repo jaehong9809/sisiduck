@@ -58,7 +58,7 @@ fun FundingCardItem(
     Column(
         modifier = Modifier
             .height(260.dp)
-            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp)) // 외부 그림자 추가
+            .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp))
             .background(MainWhite)
             .padding(20.dp)
             .clickable {
@@ -73,7 +73,7 @@ fun FundingCardItem(
                             .clip(CircleShape)
                             .background(
                                 brush = Brush.linearGradient(
-                                    colors = listOf(starThemes[star.index].start, starThemes[star.index].end) // 원하는 그라데이션 색상 설정
+                                    colors = listOf(starThemes[star.index].start, starThemes[star.index].end)
                                 )
                             )
                     ) {

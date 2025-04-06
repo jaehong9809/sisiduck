@@ -54,6 +54,34 @@ class FundingRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun leaveFunding(fundingId: Long): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createDeposit(deposit: Deposit): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun withDrawDeposit(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createPost(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getPost() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updatePost() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deletePost(): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getDepositHistory(
         fundingId: Long,
         filter: DepositFilter
@@ -75,6 +103,18 @@ class FundingRepositoryImpl @Inject constructor(
         } else {
             throw Exception(response.message)
         }
+    }
+
+    override suspend fun cancelFunding(cancelDescription: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun terminateFunding(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateFundingDesc(fundingDescription: String): Boolean {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getMyStars(): List<MyStar> {

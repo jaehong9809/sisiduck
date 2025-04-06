@@ -20,7 +20,6 @@ import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.funding.model.FundingFilter
-import com.a702.finafan.domain.funding.model.Star
 import com.a702.finafan.presentation.funding.component.FundingCreateButton
 import com.a702.finafan.presentation.funding.component.FundingList
 import com.a702.finafan.presentation.funding.component.MenuTitle
@@ -34,7 +33,6 @@ fun FundingScreen(
     fundingViewModel: FundingViewModel
 ) {
     val uiState by fundingViewModel.uiState.collectAsState()
-    val myStars: List<Star> = getMyStars()
 
     LaunchedEffect(Unit) {
         fundingViewModel.fetchFundings(FundingFilter.ALL)
@@ -45,7 +43,6 @@ fun FundingScreen(
             .fillMaxSize()
             .background(MainBgLightGray)
             .padding(14.dp)
-//            .verticalScroll(rememberScrollState())
     ) {
         ScreenTitle("모금", modifier = Modifier.padding(start = 6.dp, top = 20.dp, bottom = 10.dp))
         FundingCreateButton(
@@ -78,18 +75,4 @@ fun FundingScreen(
             FundingList(uiState.fundings, navController)
         }
     }
-}
-
-fun getMyStars(): List<Star> {
-    return listOf(
-        Star(id = 101,
-            name = "임영웅",
-            index = 0,
-            thumbnail = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/limyeongwoong.png"),
-        Star(id = 102,
-            name = "이찬원",
-            index = 1,
-            thumbnail = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/leechanwon.png",
-            image = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/image12.png"),
-    )
 }

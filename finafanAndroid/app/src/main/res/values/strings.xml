@@ -90,6 +90,8 @@
     <string name="funding_create_content_description">모금액 사용 계획을 상세하게 적어주세요.</string>
     <string name="funding_create_content_placeholder">내용 (최소 100자 이상)</string>
 
+    <string name="funding_deposit_title">모금 통장 입금하기</string>
+
     <!-- TextField Label -->
     <string name="saving_item_name_label">적금 이름</string>
     <string name="saving_item_name_label_default">적금</string>

@@ -31,6 +31,7 @@ import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.funding.model.Funding
+import com.a702.finafan.domain.funding.model.FundingStatus
 import com.a702.finafan.domain.funding.model.Star
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -56,6 +57,7 @@ fun FundingDetailHeader(
             .padding(top = 10.dp, start = 25.dp, end = 25.dp)
 
     ) {
+        Text(text = FundingStatus.valueOf(funding.status).toString())
         ScreenTitle(funding.title, modifier = Modifier.padding(vertical = 8.dp))
         Text(funding.star.name, modifier = Modifier.padding(bottom = 10.dp),
             fontSize = 16.sp,

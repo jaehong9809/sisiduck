@@ -17,15 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.BottomSheetLayout
 import com.a702.finafan.common.ui.component.Card
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.CustomGradBottomButton
@@ -40,7 +42,7 @@ import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.ui.theme.starThemes
 import com.a702.finafan.domain.funding.model.DepositFilter
-import com.a702.finafan.domain.funding.model.Star
+import com.a702.finafan.domain.funding.model.FundingStatus
 import com.a702.finafan.presentation.funding.component.DepositHistoryList
 import com.a702.finafan.presentation.funding.component.FundingDetailHeader
 import com.a702.finafan.presentation.funding.component.MenuTitle
@@ -50,18 +52,27 @@ import com.a702.finafan.presentation.navigation.NavRoutes
 
 @Composable
 fun FundingDetailScreen(
-    star: Star?,
     fundingId: Long
 ) {
     val viewModel: FundingDetailViewModel = hiltViewModel()
     val navController = LocalNavController.current
 
-    val star: Star = star ?: throw IllegalArgumentException("star가 null임!!")
-
     val uiState by viewModel.uiState.collectAsState()
+
+    val showBottomSheet = remember { mutableStateOf(false) }
+
+    val bottomSheetMessage = when (uiState.funding?.let { FundingStatus.valueOf(it.status) }) {
+        FundingStatus.CANCELED -> "주최자에 의해 중단된 펀딩입니다."
+        FundingStatus.FAILED -> "목표 금액을 달성하지 못해 종료된 펀딩입니다."
+        else -> ""
+    }
 
     LaunchedEffect(Unit) {
         viewModel.fetchFundingDetail(fundingId)
+        val status = uiState.funding?.let { FundingStatus.valueOf(it.status) }
+        if (status == FundingStatus.CANCELED || status == FundingStatus.FAILED) {
+            showBottomSheet.value = true
+        }
     }
 
     val colorSet: List<Color> = listOf(
@@ -84,7 +95,7 @@ fun FundingDetailScreen(
         ) {
             CommonBackTopBar(modifier = Modifier.background(Color.Transparent), text = "모금 보기")
 
-            uiState.funding?.let { FundingDetailHeader(it, star, colorSet) }
+            uiState.funding?.let { FundingDetailHeader(it, uiState.funding!!.star, colorSet) }
 
             if(uiState.isParticipant) {
                 Column(
@@ -176,10 +187,13 @@ fun FundingDetailScreen(
                 )
             )
         }
-    }
-}
 
-@Preview
-@Composable
-fun FundingDetailScreenPreview() {
+        BottomSheetLayout(
+            showBottomSheet = showBottomSheet,
+            confirmBtnText = "확인",
+            onClickConfirm = { showBottomSheet.value = false }
+        ) {
+            Text(text = bottomSheetMessage)
+        }
+    }
 }

@@ -4,93 +4,104 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
-import com.a702.finafan.common.ui.component.CommonTextArea
-import com.a702.finafan.common.ui.component.CommonTextField
 import com.a702.finafan.common.ui.component.DatePicker
+import com.a702.finafan.common.ui.component.LiveTextArea
+import com.a702.finafan.common.ui.component.LiveTextField
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.TermBoxGray
-import com.a702.finafan.domain.funding.model.MyStar
 import com.a702.finafan.presentation.funding.component.MenuDescription
 import com.a702.finafan.presentation.funding.component.MenuTitle
+import com.a702.finafan.presentation.funding.component.MyStarRow
 import com.a702.finafan.presentation.funding.viewmodel.FundingCreateViewModel
+import java.time.LocalDate
 
 @Composable
 fun FundingCreateScreen(
     navController: NavHostController,
     fundingCreateViewModel: FundingCreateViewModel
 ) {
-
     val uiState by fundingCreateViewModel.uiState.collectAsState()
 
-    val myStars = listOf(
-        MyStar(
-            id = 1,
-            name = "앙앙",
-            imageUrl = "https://cdn.eroun.net/news/photo/202305/32650_59862_4410.jpg"
-        )
-    )
+    LaunchedEffect(Unit) {
+        fundingCreateViewModel.fetchMyStars()
+    }
 
-    Column() {
+    val myStars = uiState.myStars
+    val title = remember { mutableStateOf("") }
+    val goalAmount = remember { mutableStateOf("") }
+    val description = remember { mutableStateOf("") }
+    val expiryDate = remember { mutableStateOf<LocalDate?>(null) }
+
+    Column {
         CommonBackTopBar(text = stringResource(R.string.funding_create_title))
         Column(
-            modifier = Modifier.background(color = MainWhite)
+            modifier = Modifier
+                .background(color = MainWhite)
                 .padding(20.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-
             MenuTitle(stringResource(R.string.funding_create_star_label))
-//            MyStarRow(
-//                myStars = myStars,
-//                selectedStar = uiState.selectedStar,
-//                onStarSelected = { uiState.selectedStar = it }
-//            )
-
-
+            MyStarRow(
+                myStars = myStars,
+                selectedStar = uiState.selectedStar,
+                onStarSelected = { fundingCreateViewModel.updateSelectedStar(it) }
+            )
 
             MenuTitle(stringResource(R.string.funding_create_title_label))
             MenuDescription(stringResource(R.string.funding_create_title_description))
-            val fundingTitle = rememberSaveable { mutableStateOf("") }
-            CommonTextField(
-                text = fundingTitle,
+            LiveTextField(
+                value = title.value,
                 hint = stringResource(R.string.funding_create_title_placeholder),
-                isSaving = false
+                onValueChange = {
+                    title.value = it
+                    fundingCreateViewModel.updateFundingTitle(it)
+                }
             )
+
 
             MenuTitle(stringResource(R.string.funding_create_goal_amount_label))
             MenuDescription(stringResource(R.string.funding_create_goal_amount_description))
-            val fundingGoal = rememberSaveable { mutableStateOf("") }
-            CommonTextField(
-                text = fundingGoal,
+            LiveTextField(
+                value = goalAmount.value,
                 hint = "",
-                isMoney = true
+                isMoney = true,
+                onValueChange = {
+                    goalAmount.value = it
+                    fundingCreateViewModel.updateFundingGoal(it)
+                }
             )
 
             MenuTitle(stringResource(R.string.funding_create_goal_date_label))
-            DatePicker { }
+            DatePicker { selectedDate ->
+                expiryDate.value = selectedDate
+                fundingCreateViewModel.updateFundingExpiryDate(selectedDate)
+            }
 
-            Box(
-                modifier = Modifier.background(color = TermBoxGray)
-            ) {
-                Column(
-                    modifier = Modifier.padding(5.dp)
-                ) {
+            Box(modifier = Modifier.background(color = TermBoxGray)) {
+                Column(modifier = Modifier.padding(5.dp)) {
                     MenuTitle(stringResource(R.string.funding_create_caution_title))
                     MenuDescription(stringResource(R.string.funding_create_caution_description))
                 }
@@ -98,19 +109,50 @@ fun FundingCreateScreen(
 
             MenuTitle(stringResource(R.string.funding_create_content_label))
             MenuDescription(stringResource(R.string.funding_create_content_description))
-            val fundingDescription = rememberSaveable { mutableStateOf("") }
-            CommonTextArea(
-                description = fundingDescription,
+            LiveTextArea(
+                description = description,
                 placeholder = stringResource(R.string.funding_create_content_placeholder),
                 charLimit = 1000,
-                modifier = Modifier
+                onValueChange = {
+                    description.value = it
+                    fundingCreateViewModel.updateFundingDescription(it)
+                }
             )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MainWhite)
+            ) {
+                MenuTitle("상품 이용 약관")
+                Box(modifier = Modifier.padding(25.dp)) {
+                    Text("이용 약관 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관" +
+                            " 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관" +
+                            " 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관")
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Checkbox(
+                        checked = uiState.isTermAgreed,
+                        onCheckedChange = {
+                            fundingCreateViewModel.updateTermAgreed(it)
+                        }
+                    )
+                    Text("이용 약관에 동의합니다.")
+                }
+            }
+
             PrimaryGradBottomButton(
-                modifier = Modifier,
-                onClick = { /* createFunding() */ },
-                text = "다음",
-                isEnabled = true
+                text = "개설",
+                isEnabled = uiState.isFormValid,
+                onClick = {
+                    fundingCreateViewModel.createFunding()
+                }
             )
         }
     }
 }
+
+
