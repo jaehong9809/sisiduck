@@ -27,34 +27,24 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.domain.main.model.MainSaving
+import com.a702.finafan.domain.user.model.User
 
-// TODO: 로그인 구현하면서 dataStore 내에서 유저 상태 구현
-sealed class UserState {
-    object LoggedOut : UserState()
-    object LoggedIn : UserState()
-}
 
 @Composable
 fun CardCarousel(
+    isLoggedIn: Boolean,
     savings: List<MainSaving>,
     modifier: Modifier = Modifier
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val cardWidth = screenWidth * 0.8f
     val peekWidth = (screenWidth - cardWidth) / 2
-
     val listState = rememberLazyListState()
 
-    // TODO: 로그인 구현 후 상태 값 받아 오도록 수정
-    val userState: UserState = UserState.LoggedIn
-
-    val cards: List<@Composable () -> Unit> = when (userState) {
-        is UserState.LoggedOut -> listOf({ LoginContent() })
-        is UserState.LoggedIn -> if (savings.isEmpty()) {
-            listOf({ CreateSavingContent() })
-        } else {
-            savings.map { saving -> { SavingContent(saving) } }
-        }
+    val cards: List<@Composable () -> Unit> = when {
+        !isLoggedIn -> listOf({ LoginContent() })
+        savings.isEmpty() -> listOf({ CreateSavingContent() })
+        else -> savings.map { saving -> { SavingContent(saving) } }
     }
 
     LaunchedEffect(listState) {

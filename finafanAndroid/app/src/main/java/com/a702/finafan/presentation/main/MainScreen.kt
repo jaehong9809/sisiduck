@@ -52,19 +52,15 @@ import com.a702.finafan.presentation.navigation.NavRoutes
 fun MainScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    viewModel: MainViewModel = hiltViewModel()
 ) {
-    val viewModel: MainViewModel = hiltViewModel()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchMainSavings()
-        // TODO: 랭킹 UI 구현 후 연결
-        // viewModel.fetchMainRanking(RankingType.DAILY)
-    }
+    val context = LocalContext.current
 
     val mainSavingState by viewModel.mainSavingState.collectAsState()
     val mainRankingState by viewModel.mainRankingState.collectAsState()
-
-    val context = LocalContext.current
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+    val userInfo by viewModel.userInfo.collectAsState()
 
     val blePermissionLauncher = rememberBlePermissionLauncher(
         onGranted = {
@@ -77,6 +73,21 @@ fun MainScreen(
         }
     )
 
+    LaunchedEffect(isLoggedIn) {
+        viewModel.fetchMainSavings()
+        if (isLoggedIn) {
+            viewModel.fetchUserInfo()
+        }
+        // TODO: 랭킹 UI 구현 후 연결
+        // viewModel.fetchMainRanking(RankingType.DAILY)
+    }
+
+    val nameText = when {
+        !isLoggedIn -> "로그인 후 이용해 주세요"
+        userInfo?.userName != null -> "${userInfo!!.userName}님"
+        else -> ""
+    }
+
     Column(modifier = modifier
         .fillMaxSize()
         .background(color = MainBgLightGray)
@@ -86,15 +97,21 @@ fun MainScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // TODO: 로그인 구현 후 상태에서 유저 이름 가져오기
-            Text(text = "....님",
+            Text(text = nameText,
                 modifier = Modifier.fillMaxWidth()
                     .padding(start = 40.dp, top = 30.dp),
                 textAlign = TextAlign.Left,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
             )
-            CardCarousel(mainSavingState.savings,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp))
+
+            CardCarousel(
+                isLoggedIn = isLoggedIn,
+                savings = mainSavingState.savings,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 14.dp)
+            )
 
             MainWideButton(
                 modifier = Modifier

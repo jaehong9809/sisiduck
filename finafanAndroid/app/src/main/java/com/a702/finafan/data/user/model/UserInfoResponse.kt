@@ -18,3 +18,5 @@ data class UserInfoResponse(
         )
     }
 }
+
+// TO DO: 나중에 field name 맞추기 or @SerializedName 사용
