@@ -2,7 +2,7 @@ package com.a702.finafanbe.core.funding.funding.dto;
 
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record GetFundingDetailResponse(
         boolean participated,
@@ -13,7 +13,7 @@ public record GetFundingDetailResponse(
         FundingStatus status,
         Long goalAmount,
         Long currentAmount,
-        LocalDateTime fundingExpiryDate
+        LocalDate fundingExpiryDate
 ) {
     public static GetFundingDetailResponse of(
             boolean participated,
@@ -24,7 +24,7 @@ public record GetFundingDetailResponse(
             FundingStatus status,
             Long goalAmount,
             Long currentAmount,
-            LocalDateTime fundingExpiryDate
+            LocalDate fundingExpiryDate
     ) {
         return new GetFundingDetailResponse(
                 participated,

@@ -7,16 +7,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "funding_groups")
-@SQLDelete(sql = "UPDATE funding_groups SET deleted_at = NOW() WHERE id = ?")
 public class FundingGroup extends BaseEntity {
 
     @Id
@@ -39,7 +36,7 @@ public class FundingGroup extends BaseEntity {
     private Long goalAmount;
 
     @Column(name = "funding_expiry_date", nullable = false)
-    private LocalDateTime fundingExpiryDate;
+    private LocalDate fundingExpiryDate;
 
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
@@ -58,7 +55,15 @@ public class FundingGroup extends BaseEntity {
     }
 
     @Builder
-    private FundingGroup(Long accountId, Long entertainerId, String name, String description, Long goalAmount, LocalDateTime fundingExpiryDate, FundingStatus status) {
+    private FundingGroup(
+            Long accountId,
+            Long entertainerId,
+            String name,
+            String description,
+            Long goalAmount,
+            LocalDate fundingExpiryDate,
+            FundingStatus status
+    ) {
         this.accountId = accountId;
         this.entertainerId = entertainerId;
         this.name = name;

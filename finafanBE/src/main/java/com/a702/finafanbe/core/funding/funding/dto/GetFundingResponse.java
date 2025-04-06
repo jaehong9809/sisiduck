@@ -1,8 +1,9 @@
 package com.a702.finafanbe.core.funding.funding.dto;
 
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
+import com.querydsl.core.annotations.QueryProjection;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record GetFundingResponse (
         EntertainerResponse entertainer,
@@ -12,7 +13,7 @@ public record GetFundingResponse (
         FundingStatus status,
         Long currentAmount,
         Long goalAmount,
-        LocalDateTime fundingExpiryDate
+        LocalDate fundingExpiryDate
 ) {
     public static GetFundingResponse of (
             EntertainerResponse entertainer,
@@ -22,7 +23,7 @@ public record GetFundingResponse (
             FundingStatus status,
             Long currentAmount,
             Long goalAmount,
-            LocalDateTime fundingExpiryDate
+            LocalDate fundingExpiryDate
     ) {
         return new GetFundingResponse(
                 entertainer,
@@ -35,4 +36,7 @@ public record GetFundingResponse (
                 fundingExpiryDate
         );
     }
+
+    @QueryProjection
+    public GetFundingResponse {}
 }
