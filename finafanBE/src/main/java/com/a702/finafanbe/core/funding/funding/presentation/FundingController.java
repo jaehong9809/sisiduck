@@ -95,14 +95,14 @@ public class FundingController {
     }
 
     // 펀딩 입금 취소
-    @DeleteMapping("/{fundingId}/withdraw/{fundingSupportId}")
+    @DeleteMapping("/{fundingId}/withdraw")
     public ResponseEntity<?> withdrawFunding(
             @PathVariable Long fundingId,
-            @PathVariable Long fundingSupportId
+            @RequestBody WithdrawTransactionRequest request
             //@AuthMember Long userId
     ) {
-        Long userId = 3L;
-        fundingService.withdrawFunding(userId, fundingId, fundingSupportId);
+        Long userId = 1L;
+        fundingService.withdrawFunding(userId, fundingId, request);
         return ResponseUtil.success();
     }
 
