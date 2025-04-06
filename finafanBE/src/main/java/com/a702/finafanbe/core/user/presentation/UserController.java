@@ -57,7 +57,6 @@ public class UserController {
     public ResponseEntity<ResponseData<UserInfoResponse>> getUserInfo(
             @AuthMember User user
     ) {
-        UserInfoResponse response = UserInfoResponse.from(user);
-        return ResponseUtil.success(response);
+        return ResponseUtil.success(UserInfoResponse.from(user));
     }
 }
