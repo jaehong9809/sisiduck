@@ -1,6 +1,12 @@
 package com.a702.finafanbe.core.bank.presentation;
 
+import static com.a702.finafanbe.core.user.entity.QUser.user;
+
+import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
+import com.a702.finafanbe.core.bank.application.BankAccountService;
+import com.a702.finafanbe.core.bank.dto.request.AccountConnectionRequest;
 import com.a702.finafanbe.core.bank.dto.request.BankAccountsRequest;
+import com.a702.finafanbe.core.bank.dto.response.BankAccountConnectionResponse;
 import com.a702.finafanbe.core.bank.dto.response.BankAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.global.common.response.ResponseData;
@@ -19,16 +25,22 @@ import java.util.List;
 public class BankConnectController {
 
     private final DemandDepositFacade demandDepositFacade;
+    private final BankAccountService bankAccountService;
 
     @GetMapping
     public ResponseEntity<ResponseData<List<BankAccountResponse>>> connectBankAccounts(
 //        @AuthMember User user,
         @RequestBody BankAccountsRequest request
     ) {
-        List<BankAccountResponse> accounts = demandDepositFacade.findUserAccountsByBanks(request.bankIds());
-        return ResponseUtil.success(accounts);
+        return ResponseUtil.success(demandDepositFacade.findUserAccountsByBanks(request.bankIds()));
     }
 
-
+    @PostMapping("/connect")
+    public ResponseEntity<ResponseData<List<BankAccountConnectionResponse>>> connectUserAccounts(
+//        @AuthMember User user,
+        @RequestBody AccountConnectionRequest request
+    ) {
+        return ResponseUtil.success(bankAccountService.connectUserAccounts(request.accountNos()));
+    }
 
 }

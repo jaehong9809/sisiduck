@@ -1,12 +1,14 @@
 package com.a702.finafanbe.core.user.presentation;
 
 import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
+import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.user.application.UserService;
 import com.a702.finafanbe.core.user.dto.request.UpdateStarIdRequest;
 import com.a702.finafanbe.core.user.dto.request.UserFinancialNetworkRequest;
 import com.a702.finafanbe.core.user.dto.request.UserRequest;
 import com.a702.finafanbe.core.user.dto.response.InquireUserResponse;
 import com.a702.finafanbe.core.user.dto.response.UserFinancialNetworkResponse;
+import com.a702.finafanbe.core.user.dto.response.UserResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
@@ -19,28 +21,28 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final DemandDepositFacade demandDepositFacade;
 
     @PostMapping
-    public ResponseEntity<ResponseData<UserFinancialNetworkResponse>> signUpWithFinancialNetwork(
+    public ResponseEntity<ResponseData<UserResponse>> signUpWithFinancialNetwork(
         @RequestBody String userEmail ) {
         userService.signUpWithFinancialNetwork(userEmail);
+
         return ResponseUtil.success();
     }
 
     @GetMapping
-    public ResponseEntity<ResponseData<UserFinancialNetworkResponse>> getUser(
+    public ResponseEntity<ResponseData<UserResponse>> getUser(
         String userEmail
     ) {
-        UserFinancialNetworkResponse response = userService.getUserWithFinancialNetwork(userEmail);
-        return ResponseUtil.success(response);
+        return ResponseUtil.success(userService.getUserWithFinancialNetwork(userEmail));
     }
 
     @GetMapping("/star")
     public ResponseEntity<ResponseData<Long>> getUserStarId(
             @AuthMember User user
     ) {
-        Long starId = userService.getUserStarId(user.getUserId());
-        return ResponseUtil.success(starId);
+        return ResponseUtil.success(userService.getUserStarId(user.getUserId()));
     }
 
     @PostMapping("/star")
@@ -48,7 +50,7 @@ public class UserController {
             @AuthMember User user,
             @RequestBody UpdateStarIdRequest updateStarIdRequest
     ) {
-        Long newStarId = userService.updateUserStarId(user.getUserId(), updateStarIdRequest.starId());
-        return ResponseUtil.success(newStarId);
+        return ResponseUtil.success(
+            userService.updateUserStarId(user.getUserId(), updateStarIdRequest.starId()));
     }
 }

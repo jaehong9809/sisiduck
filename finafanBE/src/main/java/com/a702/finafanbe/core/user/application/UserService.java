@@ -2,6 +2,7 @@ package com.a702.finafanbe.core.user.application;
 
 import com.a702.finafanbe.core.user.dto.request.UserFinancialNetworkRequest;
 import com.a702.finafanbe.core.user.dto.response.UserFinancialNetworkResponse;
+import com.a702.finafanbe.core.user.dto.response.UserResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
@@ -33,28 +34,38 @@ public class UserService {
         return findUserOrThrow(userId);
     }
 
-    public void signUpWithFinancialNetwork(
+    public UserResponse signUpWithFinancialNetwork(
         String userEmail
     ) {
 
-        User user = findUserByEmail(userEmail);
-        userRepository.save(
-                User.of(
-                        userEmail,
-                        requestFinancialNetwork(
-                                "https://finopenapi.ssafy.io/ssafy/api/v1/member",
-                                user.getSocialEmail()
-                        ).userKey(),
-                        "SSAFY"
-                )
+        if(userRepository.existsBySocialEmail(userEmail)){
+            throw new BadRequestException(ResponseData.createResponse(ErrorCode.DUPLICATE_EMAIL));
+        }
+        User ssafy = userRepository.save(
+            User.of(
+                userEmail,
+                requestFinancialNetwork(
+                    "https://finopenapi.ssafy.io/ssafy/api/v1/member",
+                    userEmail
+                ).userKey(),
+                "SSAFY"
+            )
+        );
+        return new UserResponse(
+            ssafy.getSocialEmail(),
+            ssafy.getName()
         );
     }
 
-    public UserFinancialNetworkResponse getUserWithFinancialNetwork(String userEmail) {
+    public UserResponse getUserWithFinancialNetwork(String userEmail) {
         User user = findUserByEmail(userEmail);
-        return requestFinancialNetwork(
-                "https://finopenapi.ssafy.io/ssafy/api/v1/member/search",
-                user.getSocialEmail()
+        UserFinancialNetworkResponse userFinancialNetworkResponse = requestFinancialNetwork(
+            "https://finopenapi.ssafy.io/ssafy/api/v1/member/search",
+            user.getSocialEmail()
+        );
+        return new UserResponse(
+            userFinancialNetworkResponse.userId(),
+            userFinancialNetworkResponse.userName()
         );
     }
 
