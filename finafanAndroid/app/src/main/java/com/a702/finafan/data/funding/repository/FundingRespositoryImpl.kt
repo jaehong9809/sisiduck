@@ -17,7 +17,6 @@ import javax.inject.Inject
 class FundingRepositoryImpl @Inject constructor(
     private val api: FundingApi
 ): FundingRepository {
-
     override suspend fun getFunding(fundingId: Long): FundingDetail {
         val response = api.getFundingDetail(fundingId)
         
@@ -31,14 +30,31 @@ class FundingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFundingList(filter: FundingFilter): List<Funding> {
-        val response = api.getFundingList(filter.toString())
+        Log.d("FundingRepositoryImpl", ">>> getFundingList() 호출됨")
+        return try {
+            val response = api.getFundingList(filter.toString())
+            Log.d("FundingRepositoryImpl", ">>> API 응답 성공: ${response.data}")
 
-        Log.d("getFundingList: ", "${response.data}")
+            if (response.code == "S0000" && response.data != null) {
+                response.data.map { it.toDomain() }
+            } else {
+                throw Exception(response.message)
+            }
+        } catch (e: Exception) {
+            Log.e("FundingRepositoryImpl", "❌ 예외 발생: ${e.message}", e)
 
-        return if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
+            // Retrofit이 뱉는 HTTP 에러 확인
+            if (e is retrofit2.HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("FundingRepositoryImpl", "❌ HTTP 상태코드: ${e.code()}, 에러 바디: $errorBody")
+            }
+
+            // Gson 등 JSON 파싱 예외 확인
+            if (e is com.google.gson.JsonParseException) {
+                Log.e("FundingRepositoryImpl", "❌ JSON 파싱 에러: ${e.message}")
+            }
+
+            throw e
         }
     }
 

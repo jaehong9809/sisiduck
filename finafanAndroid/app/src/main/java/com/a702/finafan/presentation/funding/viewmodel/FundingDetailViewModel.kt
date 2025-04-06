@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.funding.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.domain.funding.model.DepositFilter
@@ -30,6 +31,7 @@ class FundingDetailViewModel @Inject constructor(
             isParticipant = fundingDetail.participated,
             deposits = fundingDetail.depositHistory ?: emptyList()
         )
+        Log.d("isParticipated: ", "${uiState.value.isParticipant}")
     }
 
     fun fetchFundingDetail(fundingId: Long) {

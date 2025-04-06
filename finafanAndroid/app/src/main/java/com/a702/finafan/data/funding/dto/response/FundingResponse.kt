@@ -13,7 +13,7 @@ data class FundingResponse(
     val status: String,
     val currentAmount: Long,
     val goalAmount: Long,
-    val fundingExpiryDate: LocalDate
+    val fundingExpiryDate: String
 )
 
 fun FundingResponse.toDomain(): Funding {
@@ -25,7 +25,7 @@ fun FundingResponse.toDomain(): Funding {
         status = this.status,
         currentAmount = this.currentAmount,
         goalAmount = this.goalAmount,
-        fundingExpiryDate = this.fundingExpiryDate
+        fundingExpiryDate = LocalDate.parse(this.fundingExpiryDate)
     )
 
 }

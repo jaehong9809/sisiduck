@@ -14,7 +14,7 @@ data class FundingDetailResponse(
     val status: String,
     val goalAmount: Long,
     val currentAmount: Long,
-    val fundingExpiryDate: LocalDate,
+    val fundingExpiryDate: String,
 )
 
 data class Entertainer(
@@ -45,7 +45,7 @@ fun FundingDetailResponse.toDomain(id: Long): FundingDetail {
             status = status,
             currentAmount = currentAmount,
             goalAmount = goalAmount,
-            fundingExpiryDate = fundingExpiryDate
+            fundingExpiryDate = LocalDate.parse(fundingExpiryDate)
         ),
         description = description,
         host = adminUser.adminName,

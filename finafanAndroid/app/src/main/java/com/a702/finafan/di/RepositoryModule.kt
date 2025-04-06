@@ -2,10 +2,10 @@ package com.a702.finafan.di
 
 import com.a702.finafan.data.ble.repository.BleScanRepositoryImpl
 import com.a702.finafan.data.chatbot.repository.ChatRepositoryImpl
-import com.a702.finafan.domain.ble.repository.BleScanRepository
 import com.a702.finafan.data.funding.repository.FundingRepositoryImpl
 import com.a702.finafan.data.main.repository.MainRepositoryImpl
 import com.a702.finafan.data.savings.repository.SavingRepositoryImpl
+import com.a702.finafan.domain.ble.repository.BleScanRepository
 import com.a702.finafan.domain.chatbot.repository.ChatRepository
 import com.a702.finafan.domain.funding.repository.FundingRepository
 import com.a702.finafan.domain.main.repository.MainRepository
@@ -49,5 +49,4 @@ internal abstract class RepositoryModule {
     abstract fun bindFundingRepository(
         fundingRepositoryImpl: FundingRepositoryImpl
     ): FundingRepository
-
 }

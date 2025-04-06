@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.funding.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ fun FundingScreen(
 
     LaunchedEffect(Unit) {
         fundingViewModel.fetchFundings(FundingFilter.ALL)
+        uiState.fundings
     }
 
     Column (
@@ -72,6 +74,7 @@ fun FundingScreen(
                 CircularProgressIndicator()
             }
         } else {
+            Log.d("uiState.fundings: ", uiState.fundings.toString())
             FundingList(uiState.fundings, navController)
         }
     }
