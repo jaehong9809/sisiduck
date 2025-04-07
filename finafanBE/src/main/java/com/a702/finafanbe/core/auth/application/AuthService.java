@@ -1,6 +1,5 @@
 package com.a702.finafanbe.core.auth.application;
 
-import com.a702.finafanbe.core.auth.dto.request.TokenRequest;
 import com.a702.finafanbe.core.auth.entity.infrastructure.SSAFYUserInfo;
 import com.a702.finafanbe.core.auth.entity.infrastructure.SsafyOAuthProvider;
 import com.a702.finafanbe.core.auth.entity.AuthTokens;
@@ -8,9 +7,11 @@ import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.core.auth.presentation.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -19,15 +20,19 @@ public class AuthService {
     private final SsafyOAuthProvider ssafyOAuthProvider;
     private final UserRepository userRepository;
 
-    public AuthTokens login(TokenRequest tokenRequest) {
-        String ssafyAccessToken = ssafyOAuthProvider.fetchSSAFyAccessToken(tokenRequest.code());
+    public AuthTokens login(String code) {
+        String ssafyAccessToken = ssafyOAuthProvider.fetchSSAFYAccessToken(code);
+        log.info("✨ SSAFY access token: {}", ssafyAccessToken);
+
         SSAFYUserInfo userInfo = ssafyOAuthProvider.getUserInfo(ssafyAccessToken);
+        log.info("✨ User Email: {}", userInfo.getEmail());
+        log.info("✨ User Name: {}", userInfo.getName());
 
         User user = findOrCreateUser(
-                userInfo.getSocialEmail(),
-                userInfo.getNickname()
+                userInfo.getEmail(),
+                userInfo.getName()
         );
-
+        
         AuthTokens authTokens = jwtUtil.createLoginToken(user.getUserId().toString());
         //TODO refreshToken
         return authTokens;

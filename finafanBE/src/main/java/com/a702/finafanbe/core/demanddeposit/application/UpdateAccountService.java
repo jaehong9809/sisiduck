@@ -1,9 +1,7 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
 import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.UpdateAccountTransferRequest;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountDepositResponse;
-import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferResponse;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountWithdrawalResponse;
 import com.a702.finafanbe.global.common.util.ApiClientUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,7 @@ public class UpdateAccountService {
         );
     }
 
-    public ResponseEntity<UpdateDemandDepositAccountDepositResponse> deposit(
+    public UpdateDemandDepositAccountDepositResponse deposit(
             String path,
             UpdateAccountRequest updateDemandDepositAccountDepositRequest
     ) {
@@ -35,17 +33,7 @@ public class UpdateAccountService {
                 path,
                 updateDemandDepositAccountDepositRequest,
                 UpdateDemandDepositAccountDepositResponse.class
-        );
+        ).getBody();
     }
 
-    public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transfer(
-        String path,
-        UpdateAccountTransferRequest updateDemandDepositAccountTransferRequest
-    ) {
-        return apiClientUtil.callFinancialNetwork(
-            path,
-            updateDemandDepositAccountTransferRequest,
-            UpdateDemandDepositAccountTransferResponse.class
-        );
-    }
 }

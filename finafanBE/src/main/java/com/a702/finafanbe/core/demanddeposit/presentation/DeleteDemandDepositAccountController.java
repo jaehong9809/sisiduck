@@ -13,16 +13,13 @@ import org.springframework.web.bind.annotation.*;
 public class DeleteDemandDepositAccountController {
 
     private final DemandDepositFacade demandDepositFacade;
-    private final DeleteAccountService deleteAccountService;
 
     @DeleteMapping("/account")
     public ResponseEntity<DeleteAccountResponse> deleteAccount(
-            @RequestParam String userEmail,
             @RequestParam String accountNo,
             @RequestParam String refundAccountNo
     ){
         return demandDepositFacade.deleteAccount(
-                userEmail,
                 accountNo,
                 refundAccountNo
         );

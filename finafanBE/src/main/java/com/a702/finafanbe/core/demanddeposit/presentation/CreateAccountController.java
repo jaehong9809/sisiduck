@@ -19,10 +19,9 @@ public class CreateAccountController {
 
     @PostMapping("/account")
     public ResponseEntity<ResponseData<ApiCreateAccountResponse>> createAccount(
-            String email,
-            String productName
+            String email
     ){
-        return ResponseUtil.success(demandDepositFacade.createEntertainerAccount(
+        return ResponseUtil.success(demandDepositFacade.createAccount(
                 email
         ));
     }
