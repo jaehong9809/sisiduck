@@ -1,9 +1,5 @@
 package com.a702.finafanbe.core.bank.presentation;
 
-import static com.a702.finafanbe.core.user.entity.QUser.user;
-
-import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
-import com.a702.finafanbe.core.bank.application.BankAccountService;
 import com.a702.finafanbe.core.bank.dto.request.AccountConnectionRequest;
 import com.a702.finafanbe.core.bank.dto.request.BankAccountsRequest;
 import com.a702.finafanbe.core.bank.dto.response.BankAccountConnectionResponse;

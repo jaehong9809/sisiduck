@@ -1,17 +1,13 @@
 package com.a702.finafanbe.global.config;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
@@ -21,6 +17,7 @@ import org.springframework.util.StringUtils;
 @Configuration
 @EnableRedisRepositories
 @Profile("redis-sentinel")
+@ConditionalOnProperty(name = "spring.data.redis.sentinel.nodes")
 public class RedisConfig {
 
     @Value("${spring.data.redis.sentinel.nodes}")
@@ -33,7 +30,6 @@ public class RedisConfig {
     private String password;
 
     @Bean
-    @Profile("redis-sentinel")
     public RedisConnectionFactory sentinelRedisConnectionFactory() {
         RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration()
             .master(master);
