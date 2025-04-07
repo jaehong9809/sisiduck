@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "group_users")
 @SQLDelete(sql = "UPDATE group_users SET deleted_at = NOW()  WHERE id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction("deleted_at is NULL")
 public class GroupUser extends BaseEntity {
 
     @Id
@@ -32,6 +34,11 @@ public class GroupUser extends BaseEntity {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.deletedAt = null;
+    }
 
     @Builder
     private GroupUser(Long userId, Long fundingGroupId, Role role) {

@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.funding.funding.application;
 
+import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
 import com.a702.finafanbe.core.funding.funding.dto.*;
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
@@ -42,12 +43,14 @@ public class FundingService {
     @Transactional
     public void createFunding(CreateFundingRequest request, Long userId) {
 
-        Random random = new Random();
-        int rand = 100 + random.nextInt(899);
+        // ApiCreateAccountResponse response = apiSavingsAccountService.createFundingAccount(userId);
+        // System.out.println("API Answer : " + response.accountTypeUniqueNo() + " " + response.accountNo());
 
-        String account = "111111111"+ String.valueOf(rand);
-        //String account = apiSavingsAccountService.createAccount(request);
-        SavingsAccount fundingAccount = fundingAccountService.createFundingAccount(request, userId, account);
+        String accountNo = "1111";
+        String accountTypeUniqueNo = "001-1-f5f1f9ee427d47";
+        SavingsAccount fundingAccount = fundingAccountService.createFundingAccount(request, userId, accountNo, accountTypeUniqueNo);
+        //System.out.println("fundingAccount Answer : " + fundingAccount.getAccountNickname());
+
         fundingGroupService.createFundingGroup(request, userId, fundingAccount.getId());
     }
 
@@ -65,7 +68,7 @@ public class FundingService {
 
     @Transactional(readOnly = true)
     public List<GetFundingPendingTransactionResponse> getFundingPendingTransaction (Long userId, Long fundingId, String filter) {
-        return fundingQueryRepository.getFundingPendingTransaction(userId, fundingId, filter);
+        return fundingQueryRepository.getTransaction(userId, fundingId, filter);
     }
 
     // 펀딩 가입
@@ -101,16 +104,19 @@ public class FundingService {
 
     // 펀딩 입금 취소
     @Transactional
-    public void withdrawFunding(Long userId, Long fundingId, Long fundingSupportId) {
+    public void withdrawFunding(Long userId, Long fundingId, WithdrawTransactionRequest request) {
         if(!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
             throw new RuntimeException("펀딩이 진행 중일 때만 입금을 취소할 수 있습니다.");
         }
-        fundingPendingTransactionRepository.deleteById(fundingSupportId);
+        for (Long id : request.transactions()) {
+            fundingPendingTransactionRepository.deleteById(id);
+        }
+
     }
 
     // 펀딩 중도 해지
     @Transactional
-    public void cancelFunding(Long userId, Long fundingId) {
+    public void cancelFunding(Long userId, Long fundingId, CancelFundingRequest request) {
         checkAdminUser(userId, fundingId);
         if (!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
             throw new RuntimeException("펀딩이 진행 중일 때만 중단할 수 있습니다.");

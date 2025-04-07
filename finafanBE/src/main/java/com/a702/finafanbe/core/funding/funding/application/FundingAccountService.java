@@ -18,20 +18,15 @@ public class FundingAccountService {
 
     private final SavingsAccountRepository savingsAccountRepository;
 
-    public SavingsAccount createFundingAccount(CreateFundingRequest request, Long userId, String accountNo) {
+    private final String UNIQUE_NO = "001-1-f5f1f9ee427d47";
 
-        SavingsItem item = savingsItemRepository.findByAccountTypeUniqueNo("2222").orElseThrow(() -> new RuntimeException("존재하지 않는 상품입니다."));
+    public SavingsAccount createFundingAccount(CreateFundingRequest request, Long userId, String accountNo, String uniqueNo) {
+
+        if (!UNIQUE_NO.equals(uniqueNo)) {
+            throw new IllegalArgumentException("Unique No");
+        }
         // 생성한 적금 계좌 저장
-        SavingsAccount account = SavingsAccount.builder()
-                .userId(userId)
-                .savingsItemId(item.getSavingsItemId())
-                .accountNo(accountNo)
-                .accountNickname(request.accountNickname())
-                .balance(0L)
-                .accountExpiryDate(LocalDateTime.now().plusMonths(6))
-                .build();
-
+        SavingsAccount account = SavingsAccount.create(request, userId, uniqueNo, accountNo);
         return savingsAccountRepository.save(account);
     }
-
 }

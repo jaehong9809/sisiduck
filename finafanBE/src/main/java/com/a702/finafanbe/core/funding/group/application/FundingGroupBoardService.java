@@ -53,6 +53,7 @@ public class FundingGroupBoardService {
         board.updateBoard(request);
     }
 
+    @Transactional
     public void deleteGroupBoard(Long userId, Long fundingId, Long groupBoardId) {
         GroupBoard groupBoard = groupBoardRepository.findById(groupBoardId).orElseThrow();
         groupBoardRepository.delete(groupBoard);
@@ -70,6 +71,5 @@ public class FundingGroupBoardService {
         if (!funding.getStatus().equals(FundingStatus.SUCCESS)) {
             throw new RuntimeException("성공하지 않은 펀딩의 게시판은 접근할 수 없습니다.");
         }
-
     }
 }
