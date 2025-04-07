@@ -68,7 +68,7 @@ services:
       - "26379:26379"
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-    command: >
+    command: |
       bash -c "mkdir -p /etc/redis &&
       echo 'port 26379
       sentinel monitor mymaster redis-server 6379 2
@@ -88,7 +88,7 @@ services:
       - "26380:26379"
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-    command: >
+    command: |
       bash -c "mkdir -p /etc/redis &&
       echo 'port 26379
       sentinel monitor mymaster redis-server 6379 2
@@ -108,7 +108,7 @@ services:
       - "26381:26379"
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-    command: >
+    command: |
       bash -c "mkdir -p /etc/redis &&
       echo 'port 26379
       sentinel monitor mymaster redis-server 6379 2
