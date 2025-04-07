@@ -22,7 +22,7 @@ public class BankConnectController {
 
     private final DemandDepositFacade demandDepositFacade;
 
-    @GetMapping
+    @PostMapping
     public ResponseEntity<ResponseData<List<BankAccountResponse>>> connectBankAccounts(
 //        @AuthMember User user,
         @RequestBody BankAccountsRequest request
