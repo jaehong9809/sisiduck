@@ -57,6 +57,7 @@ public class ApiSavingsAccountService {
         return ApiCreateAccountResponse.of(
                 user.getUserId(),
                 createDemandDepositAccount.getAccountNo(),
+                user.getSocialEmail(),
                 createDemandDepositAccount.getBankCode(),
                 createDemandDepositAccount.getCurrency().getCurrency(),
                 UNIQUE_NO
