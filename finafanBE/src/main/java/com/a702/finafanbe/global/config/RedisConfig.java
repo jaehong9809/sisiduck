@@ -18,6 +18,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableRedisRepositories
+@Profile("redis-sentinel")
 public class RedisConfig {
 
     @Value("${spring.data.redis.host:localhost}")
