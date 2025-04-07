@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">시시덕</string>
 
+    <!-- Login Screen -->
+    <string name="ssafy_login">SSAFY 금융망 로그인</string>
+    <string name="login">로그인</string>
+
     <!-- Main Screen -->
     <string name="card_login_button">로그인</string>
     <string name="card_create_saving_info">아직 가입한 상품이 없어요!</string>

@@ -9,4 +9,6 @@ interface AuthRepository {
     fun logout() : Flow<DataResource<Unit>>
 
     fun getLoginState(): Flow<DataResource<Boolean>>
+    suspend fun saveAccessToken(accessToken: String)
+    fun observeAccessToken(): Flow<String?>
 }
