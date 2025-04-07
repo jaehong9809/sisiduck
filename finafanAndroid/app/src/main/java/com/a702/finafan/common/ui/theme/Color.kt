@@ -36,6 +36,8 @@ val MainBtnLightBlue = Color(0xFFEDEEFF)
 val MainBtnLightOrange = Color(0xFFFFEDDC)
 val MainBtnLightYellow = Color(0xFFFFF9C4)
 
+val BackWhite = Color(0xFFF0F0F0)
+
 /* ------------ Star Color ------------ */
 val starGradGreen = Color(0xFF49DD81)
 val starGradTurquoise = Color(0xFF22B4C6)

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.AccountTextGary
@@ -44,7 +45,7 @@ import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 
 @Composable
-fun LoginContent() {
+fun LoginContent(navController: NavController) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxHeight()
@@ -61,7 +62,10 @@ fun LoginContent() {
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(horizontal = 20.dp)
-                .background(MainBgLightGray, shape = RoundedCornerShape(15.dp)),
+                .background(MainBgLightGray, shape = RoundedCornerShape(15.dp))
+                .clickable {
+                    navController.navigate("login")
+                },
             contentAlignment = Alignment.Center
         ){
             Text(text = stringResource(R.string.card_login_button),

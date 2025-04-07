@@ -61,11 +61,12 @@ public class EntertainSavingsService {
         EntertainerSavingsAccount createdAccount = entertainerSavingsAccountRepository.save(EntertainerSavingsAccount.of(
             user.getUserId(),
             entertainerId,
+            bank.getBankId(),
             createStartAccountRequest.productName(),
             accountResponse.accountNo(),
             createStartAccountRequest.withdrawalAccountId(),
             0.05,
-            5L,
+            60L,
             "example.com"
 
         ));

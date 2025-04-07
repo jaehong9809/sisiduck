@@ -554,6 +554,7 @@ public class DemandDepositFacade {
             })
             .map(account -> {
                 Bank bank = bankIdMap.get(bankCodeToIdMap.get(account.bankCode()));
+                log.info(bank.toString());
                 return BankAccountResponse.of(
                     account.accountNo(),
                     bank
