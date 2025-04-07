@@ -1,22 +1,24 @@
 package com.a702.finafan.presentation.chatbot
 
-import android.Manifest
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,8 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
-import com.a702.finafan.common.ui.theme.MainGradBlue
-import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.chatbot.model.ChatMessage
 import com.dotlottie.dlplayer.Mode
@@ -51,7 +51,9 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
 
     val showScrollToBottomButton by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex < uiState.messages.lastIndex
+            val isNotAtBottom = listState.firstVisibleItemIndex < uiState.messages.lastIndex
+            val isScrollable = listState.layoutInfo.totalItemsCount > 5
+            isNotAtBottom && isScrollable
         }
     }
 
@@ -88,7 +90,7 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(bottom = 84.dp), // 버튼 높이 고려
+                    .padding(bottom = 84.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(uiState.messages) { ChatBubble(it) }
@@ -128,77 +130,36 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
             }
         }
 
-        GradientButton(
-            onClick = {
-                when {
-                    context.checkSelfPermission(Manifest.permission.RECORD_AUDIO)
-                            == android.content.pm.PackageManager.PERMISSION_GRANTED -> {
-                        viewModel.startListening()
-                    }
-                    else -> {
-                        permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-                    }
-                }
-            },
-            buttonText = stringResource(R.string.chatbot_talk_button),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
+        ChatInputBar(
+            viewModel = viewModel,
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
 
-        if (showScrollToBottomButton) {
+        AnimatedVisibility(
+            visible = showScrollToBottomButton,
+            enter = fadeIn() + slideInVertically { it },
+            exit = fadeOut() + slideOutVertically { it },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 96.dp)
+        ) {
             FloatingActionButton(
                 onClick = {
                     coroutineScope.launch {
                         listState.animateScrollToItem(uiState.messages.size)
                     }
                 },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 96.dp, end = 16.dp),
+                modifier = Modifier.size(48.dp),
                 containerColor = MainWhite,
                 shape = CircleShape,
                 elevation = FloatingActionButtonDefaults.elevation(8.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.down_scroll),
-                    color = MainBlack,
-                    fontSize = 20.sp,
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = stringResource(R.string.down_scroll),
+                    tint = MainBlack
                 )
             }
         }
     }
 }
-
-
-// 추후 재사용 가능한 Button Component로 교체
-@Composable
-fun GradientButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    buttonText: String
-) {
-
-    val gradient = Brush.horizontalGradient(
-        colors = listOf(MainGradBlue, MainGradViolet)
-    )
-
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(84.dp)
-            .padding(horizontal = 12.dp, vertical = 12.dp)
-            .background(gradient, shape = RoundedCornerShape(12.dp))
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = buttonText,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-    }
-}
-
-
-
