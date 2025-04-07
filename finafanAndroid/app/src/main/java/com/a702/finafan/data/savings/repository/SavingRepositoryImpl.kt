@@ -1,7 +1,6 @@
 package com.a702.finafan.data.savings.repository
 
 import com.a702.finafan.common.domain.DataResource
-import com.a702.finafan.common.domain.ExceptionHandler
 import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.savings.api.SavingApi
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
@@ -25,221 +24,164 @@ class SavingRepositoryImpl @Inject constructor(
     private val api: SavingApi
 ): SavingRepository {
 
-    override suspend fun getStars(keyword: String?): List<Star> {
+    override suspend fun getStars(keyword: String?): DataResource<List<Star>> = safeApiCall {
         val response = keyword?.run { api.starSearch(this) } ?: api.getStars()
-
-        return if (response.code == "S0000" && response.data != null) {
+        if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }
         } else {
             throw Exception(response.message)
         }
     }
 
-    override suspend fun deposit(request: SavingDepositRequest): Long {
-        return try {
-            val map = mutableMapOf<String, RequestBody>().apply {
-                put("depositAccountId",
-                    request.depositAccountId.toString()
-                        .toRequestBody("text/plain".toMediaTypeOrNull())
-                )
-                put("transactionBalance",
-                    request.transactionBalance.toString()
-                        .toRequestBody("text/plain".toMediaTypeOrNull())
-                )
-                put("message", request.message.toRequestBody("text/plain".toMediaTypeOrNull()))
-            }
-
-            val response = api.deposit(map, request.imageFile)
-
-            if (response.code == "S0000" && response.data != null) {
-                response.data.depositAccountId
-            } else {
-                throw Exception(response.message)
-            }
-        } catch (e: Exception) {
-            throw ExceptionHandler.handle(e)
+    override suspend fun deposit(request: SavingDepositRequest): DataResource<Long> = safeApiCall {
+        val map = mutableMapOf<String, RequestBody>().apply {
+            put("depositAccountId", request.depositAccountId.toString().toRequestBody("text/plain".toMediaTypeOrNull()))
+            put("transactionBalance", request.transactionBalance.toString().toRequestBody("text/plain".toMediaTypeOrNull()))
+            put("message", request.message.toRequestBody("text/plain".toMediaTypeOrNull()))
+        }
+        val response = api.deposit(map, request.imageFile)
+        if (response.code == "S0000" && response.data != null) {
+            response.data.depositAccountId
+        } else {
+            throw Exception(response.message)
         }
     }
 
-    override suspend fun createSaving(request: SavingCreateRequest): Long {
-        return try {
-            val response = api.createSaving(request)
-
-            if (response.code == "S0000" && response.data != null) {
-                response.data.depositAccountId
-            } else {
-                throw Exception(response.message)
-            }
-        } catch (e: Exception) {
-            throw ExceptionHandler.handle(e)
+    override suspend fun createSaving(request: SavingCreateRequest): DataResource<Long> = safeApiCall {
+        val response = api.createSaving(request)
+        if (response.code == "S0000" && response.data != null) {
+            response.data.depositAccountId
+        } else {
+            throw Exception(response.message)
         }
     }
 
-    override suspend fun history(savingAccountId: Long): List<Transaction> {
+    override suspend fun history(savingAccountId: Long): DataResource<List<Transaction>> = safeApiCall {
         val response = api.history(savingAccountId)
-
-        return if (response.code == "S0000" && response.data != null) {
+        if (response.code == "S0000" && response.data != null) {
             response.data.transactions.map { it.toDomain() }
         } else {
             throw Exception(response.message)
         }
     }
 
-    override suspend fun accountInfo(savingAccountId: Long): SavingAccount {
+    override suspend fun accountInfo(savingAccountId: Long): DataResource<SavingAccount> = safeApiCall {
         val response = api.accountInfo(savingAccountId)
-
-        return if (response.code == "S0000" && response.data != null) {
+        if (response.code == "S0000" && response.data != null) {
             response.data.toDomain()
         } else {
             throw Exception(response.message)
         }
     }
 
-    override suspend fun savingAccounts(): SavingAccountInfo {
+    override suspend fun savingAccounts(): DataResource<SavingAccountInfo> = safeApiCall {
         val response = api.savingAccounts()
-
-        return if (response.code == "S0000" && response.data != null) {
+        if (response.code == "S0000" && response.data != null) {
             response.data.toDomain()
         } else {
             throw Exception(response.message)
         }
     }
 
-    override suspend fun withdrawAccount(): List<Account> {
+    override suspend fun withdrawAccount(): DataResource<List<Account>> = safeApiCall {
         val response = api.withdrawAccount()
-
-        return if (response.code == "S0000" && response.data != null) {
+        if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }
         } else {
             throw Exception(response.message)
         }
     }
 
-    override suspend fun bankList(): DataResource<List<Bank>> {
-        return safeApiCall {
-            val response = api.bankList()
-
-            if (response.code == "S0000" && response.data != null) {
-                response.data.map { it.toDomain() }
-            } else {
-                throw Exception(response.message)
-            }
-
+    override suspend fun bankList(): DataResource<List<Bank>> = safeApiCall {
+        val response = api.bankList()
+        if (response.code == "S0000" && response.data != null) {
+            response.data.map { it.toDomain() }
+        } else {
+            throw Exception(response.message)
         }
     }
 
-    override suspend fun changeSavingName(savingAccountId: Long, name: String): String {
-        return try {
-            val request = mapOf("newName" to name)
-
-            val response = api.updateSavingName(savingAccountId, request)
-
-            if (response.code == "S0000" && response.data != null) {
-                return response.data.accountName
-            } else {
-                throw Exception(response.message)
-            }
-        } catch (e: Exception) {
-            throw ExceptionHandler.handle(e)
+    override suspend fun changeSavingName(savingAccountId: Long, name: String): DataResource<String> = safeApiCall {
+        val request = mapOf("newName" to name)
+        val response = api.updateSavingName(savingAccountId, request)
+        if (response.code == "S0000" && response.data != null) {
+            response.data.accountName
+        } else {
+            throw Exception(response.message)
         }
     }
 
-    override suspend fun deleteSavingAccount(savingAccountId: Long): Boolean {
-        return try {
-            val response = api.deleteSavingAccount(savingAccountId)
-
-            if (response.code == "S0000") {
-                return true
-            } else {
-                throw Exception(response.message)
-            }
-        } catch (e: Exception) {
-            throw ExceptionHandler.handle(e)
+    override suspend fun deleteSavingAccount(savingAccountId: Long): DataResource<Boolean> = safeApiCall {
+        val response = api.deleteSavingAccount(savingAccountId)
+        if (response.code == "S0000") {
+            true
+        } else {
+            throw Exception(response.message)
         }
     }
 
-    override suspend fun deleteConnectAccount(accountId: Long): Boolean {
-        return try {
-            val response = api.deleteConnectAccount(accountId)
-
-            if (response.code == "S0000") {
-                return true
-            } else {
-                throw Exception(response.message)
-            }
-        } catch (e: Exception) {
-            throw ExceptionHandler.handle(e)
+    override suspend fun deleteConnectAccount(accountId: Long): DataResource<Boolean> = safeApiCall {
+        val response = api.deleteConnectAccount(accountId)
+        if (response.code == "S0000") {
+            true
+        } else {
+            throw Exception(response.message)
         }
     }
 
-    override suspend fun dailyStarRanking(): List<Ranking> {
+    override suspend fun dailyStarRanking(): DataResource<List<Ranking>> = safeApiCall {
         val response = api.dailyStarRanking()
-
-        return if (response.code == "S0000" && response.data != null) {
+        if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }
         } else {
             throw Exception(response.message)
         }
     }
 
-    override suspend fun weeklyStarRanking(): List<Ranking> {
+    override suspend fun weeklyStarRanking(): DataResource<List<Ranking>> = safeApiCall {
         val response = api.weeklyStarRanking()
-
-        return if (response.code == "S0000" && response.data != null) {
+        if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }
         } else {
             throw Exception(response.message)
         }
     }
 
-    override suspend fun totalStarRanking(): List<Ranking> {
+    override suspend fun totalStarRanking(): DataResource<List<Ranking>> = safeApiCall {
         val response = api.totalStarRanking()
-
-        return if (response.code == "S0000" && response.data != null) {
+        if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }
         } else {
             throw Exception(response.message)
         }
     }
 
-    override suspend fun rankingDetail(starId: Long, type: RankingType): Ranking {
+    override suspend fun rankingDetail(starId: Long, type: RankingType): DataResource<Ranking> = safeApiCall {
         val response = api.starSavingHistory(starId, type.value)
-
-        return if (response.code == "S0000" && response.data != null) {
+        if (response.code == "S0000" && response.data != null) {
             response.data.toDomain()
         } else {
             throw Exception(response.message)
         }
     }
 
-    override suspend fun selectBanks(bankIds: List<Long>): List<Account> {
-        return try {
-            val map = mapOf("bankIds" to bankIds)
-            val response = api.selectBanks(map)
-
-            if (response.code == "S0000" && response.data != null) {
-                return response.data.map { it.toDomain() }
-            } else {
-                throw Exception(response.message)
-            }
-        } catch (e: Exception) {
-            throw ExceptionHandler.handle(e)
+    override suspend fun selectBanks(bankIds: List<Long>): DataResource<List<Account>> = safeApiCall {
+        val map = mapOf("bankIds" to bankIds)
+        val response = api.selectBanks(map)
+        if (response.code == "S0000" && response.data != null) {
+            response.data.map { it.toDomain() }
+        } else {
+            throw Exception(response.message)
         }
     }
 
-    override suspend fun selectAccounts(accountNos: List<String>): List<Account> {
-        return try {
-            val map = mapOf("accountNos" to accountNos)
-            val response = api.selectAccounts(map)
-
-            if (response.code == "S0000" && response.data != null) {
-                return response.data.map { it.toDomain() }
-            } else {
-                throw Exception(response.message)
-            }
-        } catch (e: Exception) {
-            throw ExceptionHandler.handle(e)
+    override suspend fun selectAccounts(accountNos: List<String>): DataResource<List<Account>> = safeApiCall {
+        val map = mapOf("accountNos" to accountNos)
+        val response = api.selectAccounts(map)
+        if (response.code == "S0000" && response.data != null) {
+            response.data.map { it.toDomain() }
+        } else {
+            throw Exception(response.message)
         }
     }
-
 }

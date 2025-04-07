@@ -198,29 +198,6 @@ class SavingViewModel @Inject constructor(
         }
     }
 
-//    fun fetchBankList() {
-//        viewModelScope.launch {
-//            _savingState.update { it.copy(isLoading = true) }
-//
-//            try {
-//                val bankList = getBankUseCase()
-//
-//                _savingState.update {
-//                    it.copy(
-//                        isLoading = false,
-//                        bankList = bankList
-//                    )
-//                }
-//            } catch (e: Exception) {
-//                _savingState.update {
-//                    it.copy(
-//                        error = e
-//                    )
-//                }
-//            }
-//        }
-//    }
-
     fun fetchBankList() {
         viewModelScope.launch {
             _savingState.update { it.copy(isLoading = true, error = null) }
