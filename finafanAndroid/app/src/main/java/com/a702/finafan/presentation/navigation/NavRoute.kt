@@ -40,11 +40,15 @@ sealed class NavRoutes(val route: String) {
 
     /* Ranking */
     object RankingMain : NavRoutes("ranking_main")
-    object RankingHistory : NavRoutes("ranking_history")
+    object RankingDetail : NavRoutes("ranking_detail")
 
     /* Funding */
     object Funding : NavRoutes("funding")
     object FundingMain : NavRoutes("funding_main")
     object FundingDetail : NavRoutes("funding_detail")
     object FundingJoin : NavRoutes("funding_join")
+
+    /* AllAccount */
+    object AllAccount : NavRoutes("all_account")
+    object AllAccountParam : NavRoutes("all_account?selectedTabIndex={selectedTabIndex}")
 }

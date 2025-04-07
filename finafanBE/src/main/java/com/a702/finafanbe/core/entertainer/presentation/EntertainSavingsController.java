@@ -1,11 +1,14 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
+import com.a702.finafanbe.core.bank.application.BankService;
+import com.a702.finafanbe.core.bank.entity.Bank;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.demanddeposit.facade.*;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
+import com.a702.finafanbe.core.entertainer.application.TopTransactionsService;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
@@ -20,6 +23,7 @@ import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +33,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/star")
 @RequiredArgsConstructor
+@Slf4j
 public class EntertainSavingsController {
 
     private static final String EMAIL = "lsc7134@naver.com";
@@ -40,13 +45,13 @@ public class EntertainSavingsController {
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
     private final RankingWebSocketService rankingWebSocketService;
     private final EntertainSavingsService entertainSavingsService;
+    private final TopTransactionsService topTransactionsService;
 
     @GetMapping("/account/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
         @PathVariable Long savingAccountId
     ) {
         return ResponseUtil.success(demandDepositFacade.getEntertainerAccount(
-            EMAIL,
             savingAccountId
         ));
     }
@@ -107,7 +112,7 @@ public class EntertainSavingsController {
                 withdrawalAccount.getAccountId(),
                 depositAccount.addAmount(new BigDecimal(starTransferRequest.transactionBalance())),
                 new BigDecimal(starTransferRequest.transactionBalance()),
-                exchange.getBody().REC().get(0).transactionUniqueNo(),
+                exchange.getBody().REC().get(1).transactionUniqueNo(),
                 starTransferRequest.message(),
                 image
             );
@@ -151,6 +156,11 @@ public class EntertainSavingsController {
         return ResponseUtil.success(entertainService.findStars());
     }
 
+    @GetMapping("/favorite")
+    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers() {
+        return ResponseUtil.success(demandDepositFacade.getPossessionEntertainer());
+    }
+
     @GetMapping("/search")
     public ResponseEntity<ResponseData<List<EntertainerSearchResponse>>> searchEntertainers(
         @RequestParam(required = false) String keyword
@@ -171,16 +181,37 @@ public class EntertainSavingsController {
     @PutMapping("/alias/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> updateAccountAlias(
             @PathVariable Long savingAccountId,
-            String newName
+            @RequestBody  UpdateSavingsRequest updateSavingsRequest
     ){
         return ResponseUtil.success(entertainSavingsService.putAccountAlias(
                 savingAccountId,
-                newName
+                updateSavingsRequest.newName()
         ));
     }
 
-//    @DeleteMapping("/{savingAccountId}")
-//    public ResponseEntity<ResponseData<Void>> deleteAccountAlias(@PathVariable Long savingAccountId){
-//        return ResponseUtil.success(entertainSavingsService.del)
-//    }
+    @DeleteMapping("/{savingAccountId}")
+    public ResponseEntity<ResponseData<Void>> deleteAccount(@PathVariable Long savingAccountId){
+        demandDepositFacade.deleteStarAccount(savingAccountId);
+        return ResponseUtil.success();
+    }
+
+    @DeleteMapping("/{depositAccountId}/withdrawal-connection")
+    public ResponseEntity<ResponseData<Void>> disconnectWithdrawalAccount(@PathVariable Long depositAccountId) {
+        demandDepositFacade.deleteStarWithdrawalAccount(depositAccountId);
+        return ResponseUtil.success();
+    }
+
+    @GetMapping("/{entertainerId}/top-transactions")
+    public ResponseEntity<ResponseData<TopTransactionsResponse>> getTopTransactions(
+        @PathVariable Long entertainerId,
+        @RequestParam(defaultValue = "daily") String period) {
+
+        log.info("Getting top transactions for entertainer: {}, period: {}",
+            entertainerId, period);
+
+        TopTransactionsResponse response =
+            topTransactionsService.getTopTransactions(entertainerId, period);
+
+        return ResponseUtil.success(response);
+    }
 }

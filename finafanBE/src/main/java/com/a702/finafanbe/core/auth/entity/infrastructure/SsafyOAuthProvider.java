@@ -13,6 +13,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -44,10 +46,10 @@ public class SsafyOAuthProvider {
         this.userInfoUri = userInfoUri;
     }
 
-
-    public String fetchSSAFyAccessToken(String code) {
+    public String fetchSSAFYAccessToken(String code) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setContentType(new MediaType("application", "x-www-form-urlencoded", StandardCharsets.UTF_8));
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type","authorization_code");
@@ -71,6 +73,10 @@ public class SsafyOAuthProvider {
                 requestEntity,
                 TokenResponse.class
         );
+
+        log.info("✅ Status Code: {}", response.getStatusCode());
+        log.info("✅ Response Headers: {}", response.getHeaders());
+        log.info("✅ Response Body: {}", response.getBody().toString());
 
         return Optional.ofNullable(response.getBody())
                 .orElseThrow(
@@ -98,6 +104,7 @@ public class SsafyOAuthProvider {
                 params
         );
         if(response.getStatusCode().is2xxSuccessful()) {
+            log.info("Response Body Check: {}", response.getBody().toString());
             return response.getBody();
         }
         throw new BadRequestException(ResponseData.<Void>builder()
@@ -120,5 +127,9 @@ public class SsafyOAuthProvider {
         private String refreshToken;
         @JsonProperty("refresh_token_expires_in")
         private Integer refreshTokenExpiresIn;
+
+        public String toString() {
+            return "token_type: " + tokenType + "\n access_token: " + accessToken + "\n scope: " + scope;
+        }
     }
 }

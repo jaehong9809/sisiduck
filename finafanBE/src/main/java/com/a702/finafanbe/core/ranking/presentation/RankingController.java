@@ -33,9 +33,64 @@ public class RankingController {
      */
     @GetMapping("/daily/entertainers")
     public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getDailyEntertainerRanking() {
-        log.info("Getting daily entertainer ranking");
 
         List<RankingService.EntertainerRankingEntry> entries = rankingService.getDailyEntertainerRanking();
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    /**
+     * 모든 연예인 랭킹 조회 (일간)
+     */
+    @GetMapping("/daily/all-entertainers")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getAllEntertainerDailyRanking() {
+
+        List<Entertainer> allEntertainers = entertainerRepository.findAll();
+
+        List<RankingService.EntertainerRankingEntry> entries =
+                rankingService.getAllEntertainerDailyRanking(allEntertainers);
+
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    /**
+     * 모든 연예인 랭킹 조회 (주간)
+     */
+    @GetMapping("/weekly/all-entertainers")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getAllEntertainerWeeklyRanking() {
+
+        List<Entertainer> allEntertainers = entertainerRepository.findAll();
+
+        List<RankingService.EntertainerRankingEntry> entries =
+                rankingService.getAllEntertainerWeeklyRanking(allEntertainers);
+
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    @GetMapping("/total/top3")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getTopThreeTotalRanking() {
+        log.info("Getting top 3 total entertainer ranking");
+
+        List<RankingService.EntertainerRankingEntry> entries = rankingService.getTopNTotalEntertainerRanking(3);
+        List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
+
+        return ResponseUtil.success(responses);
+    }
+
+    /**
+     * 연예인 누적 랭킹 조회 API (전체 기간 전체 랭킹)
+     * 전체 기간 동안의 누적 금액 기준 모든 연예인 랭킹 조회
+     */
+    @GetMapping("/total/entertainers")
+    public ResponseEntity<ResponseData<List<EntertainerRankingResponse>>> getTotalRanking() {
+        log.info("Getting total entertainer ranking");
+
+        List<RankingService.EntertainerRankingEntry> entries = rankingService.getTotalEntertainerRanking();
         List<EntertainerRankingResponse> responses = convertToEntertainerRankingResponses(entries);
 
         return ResponseUtil.success(responses);
@@ -62,29 +117,23 @@ public class RankingController {
             @PathVariable Long entertainerId) {
         log.info("Getting daily ranking detail for entertainer: {}", entertainerId);
 
-        // 연예인 기본 정보 조회
         Entertainer entertainer = entertainerRepository.findById(entertainerId)
                 .orElseThrow(() -> new IllegalArgumentException("Entertainer not found: " + entertainerId));
 
-        // 연예인 적금 총액 조회 (일간)
         Double totalAmount = getTotalAmountFromRanking(
                 rankingService.getDailyEntertainerRanking(),
                 entertainerId);
 
-        // 연예인 적금 내 사용자 랭킹 조회 (일간)
         List<RankingService.UserRankingEntry> userEntries = rankingService.getDailyUserRanking(entertainerId);
         List<UserRankingResponse> userResponses = convertToUserRankingResponses(userEntries);
 
-        // 랭킹 상세 정보 응답 생성
-        RankingDetailResponse response = new RankingDetailResponse(
+        return ResponseUtil.success(new RankingDetailResponse(
                 entertainerId,
                 entertainer.getEntertainerName(),
                 entertainer.getEntertainerProfileUrl(),
                 totalAmount,
                 userResponses
-        );
-
-        return ResponseUtil.success(response);
+        ));
     }
 
     /**
@@ -95,20 +144,16 @@ public class RankingController {
             @PathVariable Long entertainerId) {
         log.info("Getting weekly ranking detail for entertainer: {}", entertainerId);
 
-        // 연예인 기본 정보 조회
         Entertainer entertainer = entertainerRepository.findById(entertainerId)
                 .orElseThrow(() -> new IllegalArgumentException("Entertainer not found: " + entertainerId));
 
-        // 연예인 적금 총액 조회 (주간)
         Double totalAmount = getTotalAmountFromRanking(
                 rankingService.getWeeklyEntertainerRanking(),
                 entertainerId);
 
-        // 연예인 적금 내 사용자 랭킹 조회 (주간)
         List<RankingService.UserRankingEntry> userEntries = rankingService.getWeeklyUserRanking(entertainerId);
         List<UserRankingResponse> userResponses = convertToUserRankingResponses(userEntries);
 
-        // 랭킹 상세 정보 응답 생성
         RankingDetailResponse response = new RankingDetailResponse(
                 entertainerId,
                 entertainer.getEntertainerName(),
@@ -127,7 +172,6 @@ public class RankingController {
             List<RankingService.EntertainerRankingEntry> entries) {
         return entries.stream()
                 .map(entry -> {
-                    // 연예인 정보 조회
                     Entertainer entertainer = entertainerRepository.findById(entry.getEntertainerId())
                             .orElse(null);
 
@@ -152,7 +196,6 @@ public class RankingController {
             List<RankingService.UserRankingEntry> entries) {
         return entries.stream()
                 .map(entry -> {
-                    // 사용자 정보 조회
                     User user = userRepository.findById(entry.getUserId()).orElse(null);
                     String userName = user != null ? user.getName() : "Unknown";
 

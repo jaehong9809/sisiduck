@@ -29,42 +29,33 @@ public class UserService {
     private final UserRepository userRepository;
     private final FinancialNetworkUtil financialNetworkUtil;
 
-//    public User signUp(UserRequest userRequest) {
-//        getUser(userRequest);
-//        return userRepository.save(User.of(userRequest));
-//    }
-//
-//    private void getUser(UserRequest userRequest) {
-//        userRepository.findByPhoneNumber(userRequest.phoneNumber()).orElseThrow(
-//                ParameterException::new);
-//    }
+    public User getUser(Long userId) {
+        return findUserOrThrow(userId);
+    }
 
     public void signUpWithFinancialNetwork(
         String userEmail
     ) {
 
         User user = findUserByEmail(userEmail);
-        ResponseEntity<UserFinancialNetworkResponse> exchange = requestFinancialNetwork(
-                "https://finopenapi.ssafy.io/ssafy/api/v1/member",
-                user.getSocialEmail()
-        );
         userRepository.save(
                 User.of(
                         userEmail,
-                        exchange.getBody().userKey(),
+                        requestFinancialNetwork(
+                                "https://finopenapi.ssafy.io/ssafy/api/v1/member",
+                                user.getSocialEmail()
+                        ).userKey(),
                         "SSAFY"
                 )
         );
     }
 
-
     public UserFinancialNetworkResponse getUserWithFinancialNetwork(String userEmail) {
         User user = findUserByEmail(userEmail);
-        ResponseEntity<UserFinancialNetworkResponse> exchange = requestFinancialNetwork(
+        return requestFinancialNetwork(
                 "https://finopenapi.ssafy.io/ssafy/api/v1/member/search",
                 user.getSocialEmail()
         );
-        return exchange.getBody();
     }
 
     public User findUserByEmail(String userEmail) {
@@ -74,7 +65,7 @@ public class UserService {
                 .build()));
     }
 
-    private ResponseEntity<UserFinancialNetworkResponse> requestFinancialNetwork(
+    private UserFinancialNetworkResponse requestFinancialNetwork(
             String url,
             String userEmail
     ) {
@@ -94,7 +85,7 @@ public class UserService {
                 HttpMethod.POST,
                 httpEntity,
                 UserFinancialNetworkResponse.class
-        );
+        ).getBody();
     }
 
     @Cacheable(value = "starId", key = "'user:' + #userId + ':starId'")
@@ -120,5 +111,4 @@ public class UserService {
                                 .message(ErrorCode.NotFoundUser.getMessage())
                                 .build()));
     }
-
 }

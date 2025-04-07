@@ -37,6 +37,10 @@ object StringUtil {
     }
 
     fun formatDate(dateString: String): String {
+        if (dateString.isEmpty()) {
+            return ""
+        }
+
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
         val dateTime = LocalDateTime.parse(dateString, formatter)
 

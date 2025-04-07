@@ -5,11 +5,13 @@ import com.a702.finafan.data.ble.repository.BleScanRepositoryImpl
 import com.a702.finafan.data.chatbot.repository.ChatRepositoryImpl
 import com.a702.finafan.domain.ble.repository.BleScanRepository
 import com.a702.finafan.data.funding.repository.FundingRepositoryImpl
+import com.a702.finafan.data.main.repository.MainRepositoryImpl
 import com.a702.finafan.data.savings.repository.SavingRepositoryImpl
 import com.a702.finafan.data.user.repository.UserRepositoryImpl
 import com.a702.finafan.domain.auth.repository.AuthRepository
 import com.a702.finafan.domain.chatbot.repository.ChatRepository
 import com.a702.finafan.domain.funding.repository.FundingRepository
+import com.a702.finafan.domain.main.repository.MainRepository
 import com.a702.finafan.domain.savings.repository.SavingRepository
 import com.a702.finafan.domain.user.repository.UserRepository
 import dagger.Binds
@@ -21,6 +23,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindMainRepository(
+        mainRepositoryImpl: MainRepositoryImpl
+    ): MainRepository
 
     @Binds
     @Singleton
@@ -51,4 +59,10 @@ internal abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ) : AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        userRepositoryImpl: UserRepositoryImpl
+    ) : UserRepository
 }

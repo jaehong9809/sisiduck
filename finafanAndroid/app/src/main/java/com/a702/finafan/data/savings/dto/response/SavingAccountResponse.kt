@@ -2,6 +2,12 @@ package com.a702.finafan.data.savings.dto.response
 
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.domain.savings.model.SavingAccountInfo
+
+data class SavingAccountInfoResponse(
+    val total: Long = 0,
+    val accounts: List<SavingAccountResponse> = emptyList()
+)
 
 data class SavingAccountResponse(
     val accountId: Long,
@@ -14,6 +20,13 @@ data class SavingAccountResponse(
     val imageUrl: String,
     val withdrawalAccount: Account
 )
+
+fun SavingAccountInfoResponse.toDomain(): SavingAccountInfo {
+    return SavingAccountInfo(
+        total = this.total,
+        accounts = this.accounts.map { it.toDomain() }
+    )
+}
 
 fun SavingAccountResponse.toDomain(): SavingAccount {
     return SavingAccount(

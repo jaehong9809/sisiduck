@@ -25,7 +25,6 @@ class MainActivity : ComponentActivity() {
 
     private val loginViewModel: LoginViewModel by viewModels()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,11 +49,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        Log.d("DeepLink", "onNewIntent called with intent: $intent")
         handleDeepLink(intent)
     }
 
     private fun handleDeepLink(intent: Intent?) {
         intent?.data?.let { uri ->
+            Log.d("DeepLink", "Received URI: $uri")
             val token = uri.getQueryParameter("token")
             Log.d("✅ DeepLinkToken", "Received token: $token")
             token?.let {

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SavingTransactionService {
 
-
     public SavingTransactionResponse getSavingAccounts() {
         return new SavingTransactionResponse();
     }

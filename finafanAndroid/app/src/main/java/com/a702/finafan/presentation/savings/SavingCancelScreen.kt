@@ -9,9 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
@@ -35,10 +40,46 @@ fun SavingCancelScreen(
     onComplete: () -> Unit
 ) {
 
+    val context = LocalContext.current
+
     val savingState by viewModel.savingState.collectAsState()
     val accountInfo = savingState.savingInfo.savingAccount
     val withdrawalAccount = accountInfo.withdrawalAccount
-    val bank = accountInfo.withdrawalAccount.bank
+    val bank = withdrawalAccount.bank
+
+    val showDialog = remember { mutableStateOf(false) }
+    val dialogContent = remember { mutableStateOf("") }
+
+    if (showDialog.value) {
+        ConfirmDialog(
+            showDialog,
+            content = dialogContent.value,
+            onClickConfirm = {
+                showDialog.value = false
+
+                if (savingState.isCancel) {
+                    viewModel.resetCancelState() // 상태 초기화
+                    onComplete()
+                }
+            }
+        )
+    }
+
+    LaunchedEffect(savingState.isCancel) {
+        if (savingState.isCancel) {
+            showDialog.value = true
+            dialogContent.value = context.getString(R.string.saving_item_saving_cancel_complete)
+        }
+    }
+
+    LaunchedEffect(savingState.error) {
+        savingState.error?.let {
+            showDialog.value = true
+            dialogContent.value = savingState.error?.message.toString()
+
+            viewModel.clearError()
+        }
+    }
 
     SavingScreenLayout(
         isFill = true,
@@ -46,8 +87,8 @@ fun SavingCancelScreen(
         buttonText = stringResource(R.string.btn_account_cancel),
         isButtonEnabled = true,
         onButtonClick = {
-            /* TODO: 적금 해지 절차 */
-            onComplete()
+            // 적금 해지
+            viewModel.deleteSavingAccount(accountInfo.accountId)
         }
     ) {
 

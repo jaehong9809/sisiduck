@@ -8,5 +8,17 @@ public record KRW1CertificationValidateRequest(
     String authText,
     String authCode
 ) {
-
+    public static KRW1CertificationValidateRequest of(
+            BaseRequestHeaderIncludeUserKey Header,
+            String accountNo,
+            String authText,
+            String authCode
+    ) {
+        return new KRW1CertificationValidateRequest(
+                Header,
+                accountNo,
+                authText,
+                authCode
+        );
+    }
 }
