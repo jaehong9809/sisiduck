@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,15 +45,18 @@ fun SelectBankAccountScreen(
     onComplete: () -> Unit
 ) {
 
+    val context = LocalContext.current
+
     val selectedAccountNos = remember { mutableStateListOf<String>() }
     val savingState by viewModel.savingState.collectAsState()
 
     val showDialog = rememberSaveable { mutableStateOf(false) }
     val dialogContent = rememberSaveable { mutableStateOf("") }
 
-    LaunchedEffect(savingState.isLoading) {
-        if (!savingState.isLoading) {
-            onComplete()
+    LaunchedEffect(savingState.isCancel) {
+        if (savingState.isCancel) {
+            showDialog.value = true
+            dialogContent.value = context.getString(R.string.saving_item_connect_account_complete)
         }
     }
 
@@ -71,6 +75,11 @@ fun SelectBankAccountScreen(
             content = dialogContent.value,
             onClickConfirm = {
                 showDialog.value = false
+
+                if (savingState.isCancel) {
+                    viewModel.resetConnectState()
+                    onComplete()
+                }
             }
         )
     }

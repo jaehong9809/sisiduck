@@ -2,6 +2,7 @@ package com.a702.finafan.presentation.savings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.main.model.RankingType
@@ -197,28 +198,59 @@ class SavingViewModel @Inject constructor(
         }
     }
 
+//    fun fetchBankList() {
+//        viewModelScope.launch {
+//            _savingState.update { it.copy(isLoading = true) }
+//
+//            try {
+//                val bankList = getBankUseCase()
+//
+//                _savingState.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        bankList = bankList
+//                    )
+//                }
+//            } catch (e: Exception) {
+//                _savingState.update {
+//                    it.copy(
+//                        error = e
+//                    )
+//                }
+//            }
+//        }
+//    }
+
     fun fetchBankList() {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
+            getBankUseCase().collect { result ->
+                when (result) {
+                    is DataResource.Loading -> {
+                        _savingState.update { it.copy(isLoading = true) }
+                    }
 
-            try {
-                val bankList = getBankUseCase()
+                    is DataResource.Success -> {
+                        _savingState.update {
+                            it.copy(
+                                isLoading = false,
+                                bankList = result.data
+                            )
+                        }
+                    }
 
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        bankList = bankList
-                    )
-                }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        error = e
-                    )
+                    is DataResource.Error -> {
+                        _savingState.update {
+                            it.copy(
+                                isLoading = false,
+                                error = result.throwable
+                            )
+                        }
+                    }
                 }
             }
         }
     }
+
 
     fun changeSavingName(savingAccountId: Long, name: String) {
         viewModelScope.launch {
@@ -371,7 +403,8 @@ class SavingViewModel @Inject constructor(
                 _savingState.update {
                     it.copy(
                         isLoading = false,
-                        accounts = accounts
+                        accounts = accounts,
+                        isConnect = true
                     )
                 }
             } catch (e: Exception) {
@@ -418,6 +451,10 @@ class SavingViewModel @Inject constructor(
 
     fun resetCancelState() {
         _savingState.update { it.copy(isCancel = false) }
+    }
+
+    fun resetConnectState() {
+        _savingState.update { it.copy(isConnect = false) }
     }
 
 }
