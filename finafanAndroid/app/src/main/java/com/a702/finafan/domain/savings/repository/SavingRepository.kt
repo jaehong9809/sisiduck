@@ -1,5 +1,6 @@
 package com.a702.finafan.domain.savings.repository
 
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.main.model.RankingType
@@ -26,7 +27,7 @@ interface SavingRepository {
 
     suspend fun withdrawAccount(): List<Account>
 
-    suspend fun bankList(): List<Bank>
+    suspend fun bankList(): DataResource<List<Bank>>
 
     suspend fun changeSavingName(savingAccountId: Long, name: String): String
 

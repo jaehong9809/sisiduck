@@ -1,7 +1,8 @@
 package com.a702.finafan.data.savings.repository
 
-import android.util.Log
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.domain.ExceptionHandler
+import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.savings.api.SavingApi
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
@@ -56,8 +57,7 @@ class SavingRepositoryImpl @Inject constructor(
                 throw Exception(response.message)
             }
         } catch (e: Exception) {
-            Log.d("saving repository", e.toString())
-            throw Exception(ExceptionHandler.handle(e))
+            throw ExceptionHandler.handle(e)
         }
     }
 
@@ -71,7 +71,7 @@ class SavingRepositoryImpl @Inject constructor(
                 throw Exception(response.message)
             }
         } catch (e: Exception) {
-            throw Exception(ExceptionHandler.handle(e))
+            throw ExceptionHandler.handle(e)
         }
     }
 
@@ -115,13 +115,16 @@ class SavingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun bankList(): List<Bank> {
-        val response = api.bankList()
+    override suspend fun bankList(): DataResource<List<Bank>> {
+        return safeApiCall {
+            val response = api.bankList()
 
-        return if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
+            if (response.code == "S0000" && response.data != null) {
+                response.data.map { it.toDomain() }
+            } else {
+                throw Exception(response.message)
+            }
+
         }
     }
 
@@ -137,7 +140,7 @@ class SavingRepositoryImpl @Inject constructor(
                 throw Exception(response.message)
             }
         } catch (e: Exception) {
-            throw Exception(ExceptionHandler.handle(e))
+            throw ExceptionHandler.handle(e)
         }
     }
 
@@ -151,7 +154,7 @@ class SavingRepositoryImpl @Inject constructor(
                 throw Exception(response.message)
             }
         } catch (e: Exception) {
-            throw Exception(ExceptionHandler.handle(e))
+            throw ExceptionHandler.handle(e)
         }
     }
 
@@ -165,7 +168,7 @@ class SavingRepositoryImpl @Inject constructor(
                 throw Exception(response.message)
             }
         } catch (e: Exception) {
-            throw Exception(ExceptionHandler.handle(e))
+            throw ExceptionHandler.handle(e)
         }
     }
 
@@ -220,7 +223,7 @@ class SavingRepositoryImpl @Inject constructor(
                 throw Exception(response.message)
             }
         } catch (e: Exception) {
-            throw Exception(ExceptionHandler.handle(e))
+            throw ExceptionHandler.handle(e)
         }
     }
 
@@ -235,7 +238,7 @@ class SavingRepositoryImpl @Inject constructor(
                 throw Exception(response.message)
             }
         } catch (e: Exception) {
-            throw Exception(ExceptionHandler.handle(e))
+            throw ExceptionHandler.handle(e)
         }
     }
 

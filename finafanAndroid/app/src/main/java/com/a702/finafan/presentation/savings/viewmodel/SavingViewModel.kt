@@ -223,34 +223,31 @@ class SavingViewModel @Inject constructor(
 
     fun fetchBankList() {
         viewModelScope.launch {
-            getBankUseCase().collect { result ->
-                when (result) {
-                    is DataResource.Loading -> {
-                        _savingState.update { it.copy(isLoading = true) }
-                    }
+            _savingState.update { it.copy(isLoading = true, error = null) }
 
-                    is DataResource.Success -> {
-                        _savingState.update {
-                            it.copy(
-                                isLoading = false,
-                                bankList = result.data
-                            )
-                        }
+            when (val result = getBankUseCase()) {
+                is DataResource.Success -> {
+                    _savingState.update {
+                        it.copy(
+                            bankList = result.data,
+                            isLoading = false
+                        )
                     }
-
-                    is DataResource.Error -> {
-                        _savingState.update {
-                            it.copy(
-                                isLoading = false,
-                                error = result.throwable
-                            )
-                        }
+                }
+                is DataResource.Error -> {
+                    _savingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
                     }
+                }
+                is DataResource.Loading -> {
+                    _savingState.update { it.copy(isLoading = true) }
                 }
             }
         }
     }
-
 
     fun changeSavingName(savingAccountId: Long, name: String) {
         viewModelScope.launch {
