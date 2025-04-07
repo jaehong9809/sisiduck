@@ -1,7 +1,5 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
-import com.a702.finafanbe.core.bank.application.BankService;
-import com.a702.finafanbe.core.bank.entity.Bank;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
@@ -117,7 +115,7 @@ public class EntertainSavingsController {
                 image
             );
 
-            EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(
+            EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(
                     starTransferRequest.depositAccountId()
             );
 
@@ -172,10 +170,7 @@ public class EntertainSavingsController {
     public ResponseEntity<ResponseData<List<WithdrawalAccountResponse>>> getWithdrawalAccounts(
 //        @AuthMember User user;
     ) {
-        String email = EMAIL;
-
-        List<WithdrawalAccountResponse> accounts = savingsAccountService.getWithdrawalAccounts(email);
-        return ResponseUtil.success(accounts);
+        return ResponseUtil.success(savingsAccountService.getWithdrawalAccounts(EMAIL));
     }
 
     @PutMapping("/alias/{savingAccountId}")

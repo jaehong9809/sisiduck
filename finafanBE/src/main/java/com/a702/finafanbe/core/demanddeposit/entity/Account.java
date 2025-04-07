@@ -32,9 +32,6 @@ public class Account extends BaseEntity {
     @Column(name = "amount", nullable = false, precision = 50)
     private BigDecimal amount;
 
-    @Column(name = "interest_rate", nullable = false)
-    private Double interestRate;
-
     @Column(name = "status", nullable = false, length = 20)
     private String status;
 
@@ -71,18 +68,6 @@ public class Account extends BaseEntity {
     @Column(name = "account_expiry_date", nullable = false, length = 8)
     private LocalDateTime accountExpiryDate;
 
-    @Column(name = "rate_description")
-    private String rateDescription;
-
-    @Column(name = "min_subscription_balance", nullable = false)
-    private BigDecimal minSubscriptionBalance;
-
-    @Column(name = "max_subscription_balance", nullable = false)
-    private BigDecimal maxSubscriptionBalance;
-
-    @Column(name = "subscription_period")
-    private LocalDateTime subscriptionPeriod;
-
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
@@ -104,13 +89,10 @@ public class Account extends BaseEntity {
         account.accountPw = 1234;
         account.accountTypeCode = "1";
         account.amount = BigDecimal.ZERO;
-        account.interestRate = 0.01;
         account.status = "ACTIVE";
         account.dailyTransferLimit = new BigDecimal("5000000");
         account.oneTimeTransferLimit = new BigDecimal("1000000");
         account.lastTransactionDate = LocalDateTime.now();
-        account.minSubscriptionBalance = new BigDecimal("1000");
-        account.maxSubscriptionBalance = new BigDecimal("10000000");
 
         return account;
     }
