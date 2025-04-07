@@ -74,5 +74,6 @@ Question: {input}
 """
 )
 
+
 def get_react_prompt():
     return PromptTemplate.from_template(react_prompt_kr)

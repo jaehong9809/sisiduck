@@ -8,6 +8,7 @@ import os
 
 load_dotenv()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("✅ FastAPI 앱 시작됨 (lifespan)")
@@ -15,11 +16,13 @@ async def lifespan(app: FastAPI):
     yield
     print("🛑 FastAPI 앱 종료됨 (lifespan)")
 
+
 app = FastAPI(root_path="/ai", lifespan=lifespan)
 
 # ✅ 라우터 등록
 app.include_router(v1_chatbot_router.router, prefix="/chatbot", tags=["ChainRouter"])
 app.include_router(v2_chatbot_router.router, prefix="/chatbot2", tags=["Agent"])
+
 
 @app.get("/")
 def read_root():

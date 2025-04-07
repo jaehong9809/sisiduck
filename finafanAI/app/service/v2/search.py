@@ -18,7 +18,12 @@ warnings.filterwarnings("ignore", category=LangChainDeprecationWarning)
 
 def extract_topic(text: str) -> str:
     # 가장 단순한 예: "XXX 최근 소식", "XXX 뉴스", "XXX 근황" 등의 패턴 제거
-    return re.sub(r"(의\s*)?(최근\s*소식|뉴스|근황|활동)\s*(알려줘|전해줘|없어\?|좀 알려줄래)?", "", text).strip()
+    return re.sub(
+        r"(의\s*)?(최근\s*소식|뉴스|근황|활동)\s*(알려줘|전해줘|없어\?|좀 알려줄래)?",
+        "",
+        text,
+    ).strip()
+
 
 def read_webpage(url: str) -> str:
     try:
@@ -44,13 +49,15 @@ def read_webpage(url: str) -> str:
     except Exception as e:
         return f"웹페이지 내용을 불러오지 못했어요: {str(e)}"
 
+
 # 웹 검색
 def duckduckgo_search(query: str, max_results: int = 5) -> str:
     with DDGS() as ddgs:
         results = ddgs.text(query, max_results=max_results)
-        return "\n".join([
-            f"{r['title']} - {r['href']}" for r in results if 'href' in r
-        ])
+        return "\n".join(
+            [f"{r['title']} - {r['href']}" for r in results if "href" in r]
+        )
+
 
 # 뉴스 검색
 def fast_news_search(query: str, max_results: int = 3) -> str:
@@ -63,11 +70,10 @@ def fast_news_search(query: str, max_results: int = 3) -> str:
     if not entries:
         return "관련된 뉴스 기사를 찾지 못했어ㅠㅠ"
 
-    results = [
-        f"{entry.title} - {entry.link}" for entry in entries
-    ]
+    results = [f"{entry.title} - {entry.link}" for entry in entries]
 
     return "\n".join(results)
+
 
 # YouTube 검색
 def youtube_search(query: str, max_results: int = 3) -> str:
@@ -76,10 +82,7 @@ def youtube_search(query: str, max_results: int = 3) -> str:
     youtube = build("youtube", "v3", developerKey=api_key)
 
     request = youtube.search().list(
-        q=query,
-        part="snippet",
-        type="video",
-        maxResults=max_results
+        q=query, part="snippet", type="video", maxResults=max_results
     )
 
     response = request.execute()
@@ -104,6 +107,7 @@ def youtube_search(query: str, max_results: int = 3) -> str:
 #     docs = person_retriever.get_relevant_documents(query)
 #     return "\n".join([doc.page_content for doc in docs])
 
+
 def get_weather(city="Seoul"):
     url = f"https://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=c03977953046419f6c73010097b1cbfa&units=metric&lang=kr"
     response = requests.get(url)
@@ -112,11 +116,11 @@ def get_weather(city="Seoul"):
     if response.status_code != 200:
         return "날씨 정보를 가져오지 못했습니다."
 
-    weather = data['weather'][0]['description']                # 날씨 설명
-    temp = data['main']['temp']                                # 온도
-    humidity = data['main']['humidity']                        # 습도
-    wind_speed = data['wind']['speed']                         # 풍속 (m/s)
-    cloud_percent = data['clouds']['all']                      # 구름량 (%)
+    weather = data["weather"][0]["description"]  # 날씨 설명
+    temp = data["main"]["temp"]  # 온도
+    humidity = data["main"]["humidity"]  # 습도
+    wind_speed = data["wind"]["speed"]  # 풍속 (m/s)
+    cloud_percent = data["clouds"]["all"]  # 구름량 (%)
 
     return (
         f"대한민국 서울 현재 날씨는 '{weather}'이고, "

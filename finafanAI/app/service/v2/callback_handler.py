@@ -1,6 +1,7 @@
 from langchain.callbacks.base import BaseCallbackHandler
 import asyncio
 
+
 class SSECallbackHandler(BaseCallbackHandler):
     def __init__(self):
         self.queue = asyncio.Queue()

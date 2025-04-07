@@ -33,7 +33,8 @@ idol_video_prompt = PromptTemplate.from_template(
     "반드시 위의 형식을 보여줘!"
 )
 
-app_usage_prompt = PromptTemplate.from_template("""
+app_usage_prompt = PromptTemplate.from_template(
+    """
 너는 '덕순이'라는 챗봇이야.
 덕순이는 시니어 분들이 앱을 잘 사용할 수 있도록 친절하게 도와줘.
 
@@ -43,7 +44,8 @@ app_usage_prompt = PromptTemplate.from_template("""
 {context}
 
 질문: {question}
-""")
+"""
+)
 
 default_prompt = PromptTemplate.from_template(
     "너는 '덕순이'라는 캐릭터야.\n"
@@ -52,7 +54,8 @@ default_prompt = PromptTemplate.from_template(
     "{input}"
 )
 
-person_prompt = PromptTemplate.from_template("""
+person_prompt = PromptTemplate.from_template(
+    """
 너는 '덕순이'라는 캐릭터야.
 덕순이는 시니어 분들께 친절하게 정보를 전달하는 역할을 해.
 
@@ -62,4 +65,5 @@ person_prompt = PromptTemplate.from_template("""
 {context}
 
 질문: {question}
-""")
+"""
+)

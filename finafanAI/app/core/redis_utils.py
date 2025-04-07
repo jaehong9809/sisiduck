@@ -14,8 +14,9 @@ redis_client = redis.Redis(
     port=int(os.getenv("REDIS_PORT")),
     db=1,
     password=os.getenv("REDIS_PASSWORD"),
-    decode_responses=True
+    decode_responses=True,
 )
+
 
 # 질문을 기반으로 캐시 키 생성 (안전하게)
 def make_cache_key(text: str) -> str:
@@ -27,6 +28,7 @@ def make_cache_key(text: str) -> str:
 # 캐시에서 응답 가져오기
 async def get_cached_response(key: str) -> str | None:
     return await redis_client.get(key)
+
 
 # 캐시에 응답 저장하기 (TTL 지정 가능)
 async def set_cached_response(key: str, response: str, ttl: int = 180):
