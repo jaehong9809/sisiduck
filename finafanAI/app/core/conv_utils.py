@@ -25,7 +25,7 @@ def get_user_memory(user_id: str) -> ConversationBufferMemory:
     """
     특정 사용자에 대한 LangChain Memory 생성 (Redis 기반)
     """
-    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/1")
+    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/2")
 
     history = RedisChatMessageHistory(session_id=user_id, url=redis_url)
 
