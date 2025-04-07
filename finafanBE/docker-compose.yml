@@ -42,88 +42,69 @@ services:
       mysql:
         condition: service_healthy
 
-  redis-master:
+  redis-slave-1:
     image: redis:6.2
-    container_name: redis-master
+    container_name: redis-slave-1
     ports:
-      - "6379:6379"
-    volumes:
-      - redis-master-data:/data
-    command: redis-server --requirepass ${REDIS_PASSWORD}
+      - "6380:6379"
+    command: redis-server --slaveof redis-server 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
     networks:
       - app-network
 
-    redis-slave-1:
-      image: redis:6.2
-      container_name: redis-slave-1
-      ports:
-        - "6380:6379"
-      command: redis-server --slaveof redis-master 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
-      depends_on:
-        - redis-master
-      networks:
-        - app-network
+  redis-slave-2:
+    image: redis:6.2
+    container_name: redis-slave-2
+    ports:
+      - "6381:6379"
+    command: redis-server --slaveof redis-server 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
+    networks:
+      - app-network
 
-    redis-slave-2:
-      image: redis:6.2
-      container_name: redis-slave-2
-      ports:
-        - "6381:6379"
-      command: redis-server --slaveof redis-master 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
-      depends_on:
-        - redis-master
-      networks:
-        - app-network
+  redis-sentinel-1:
+    image: redis:6.2
+    container_name: redis-sentinel-1
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./redis/sentinel1.conf:/sentinel.conf
+    command: redis-sentinel /sentinel.conf
+    depends_on:
+      - redis-slave-1
+      - redis-slave-2
+    networks:
+      - app-network
 
-    redis-sentinel-1:
-      image: redis:6.2
-      container_name: redis-sentinel-1
-      ports:
-        - "26379:26379"
-      volumes:
-        - ./redis/sentinel1.conf:/sentinel.conf
-      command: redis-sentinel /sentinel.conf
-      depends_on:
-        - redis-master
-        - redis-slave-1
-        - redis-slave-2
-      networks:
-        - app-network
+  redis-sentinel-2:
+    image: redis:6.2
+    container_name: redis-sentinel-2
+    ports:
+      - "26380:26379"
+    volumes:
+      - ./redis/sentinel2.conf:/sentinel.conf
+    command: redis-sentinel /sentinel.conf
+    depends_on:
+      - redis-slave-1
+      - redis-slave-2
+    networks:
+      - app-network
 
-    redis-sentinel-2:
-      image: redis:6.2
-      container_name: redis-sentinel-2
-      ports:
-        - "26380:26379"
-      volumes:
-        - ./redis/sentinel2.conf:/sentinel.conf
-      command: redis-sentinel /sentinel.conf
-      depends_on:
-        - redis-master
-        - redis-slave-1
-        - redis-slave-2
-      networks:
-        - app-network
-
-    redis-sentinel-3:
-      image: redis:6.2
-      container_name: redis-sentinel-3
-      ports:
-        - "26381:26379"
-      volumes:
-        - ./redis/sentinel3.conf:/sentinel.conf
-      command: redis-sentinel /sentinel.conf
-      depends_on:
-        - redis-master
-        - redis-slave-1
-        - redis-slave-2
-      networks:
-        - app-network
+  redis-sentinel-3:
+    image: redis:6.2
+    container_name: redis-sentinel-3
+    ports:
+      - "26381:26379"
+    volumes:
+      - ./redis/sentinel3.conf:/sentinel.conf
+    command: redis-sentinel /sentinel.conf
+    depends_on:
+      - redis-slave-1
+      - redis-slave-2
+    networks:
+      - app-network
 
 networks:
   app-network:
-    driver: bridge
+    external: true  # 기존에 생성된 네트워크 사용
 
 volumes:
   mysql-data:
-  redis-master-data:
