@@ -62,9 +62,11 @@ fun SelectBankAccountScreen(
         }
     }
 
-    if (savingState.isConnect) {
-        showDialog.value = true
-        dialogContent.value = context.getString(R.string.saving_item_connect_account_complete)
+    LaunchedEffect(savingState.isConnect) {
+        if (savingState.isConnect) {
+            showDialog.value = true
+            dialogContent.value = context.getString(R.string.saving_item_connect_account_complete)
+        }
     }
 
     if (showDialog.value) {
