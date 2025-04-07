@@ -66,9 +66,6 @@ def get_user_id(x: dict) -> str:
     return x.get("user_id", "test")
 
 
-user_memory_store = {}
-
-
 # ✅ Final Answer 추출
 def extract_final_answer(text: str) -> str:
     if "Final Answer:" in text:
@@ -135,6 +132,16 @@ def get_agent_chain(callback):
     async def _agent(x):
         user_id = get_user_id(x)
         memory = get_user_memory(user_id)
+
+        if "소속사" in x["input"]:
+            answer = ""
+            if "영웅" in x["input"]:
+                answer = "임영웅의 소속사는 물고기뮤직이야!"
+            elif "찬원" in x["input"]:
+                answer = "이찬원의 소속사는 티엔엔터테인먼트야!"
+            friendly = await to_friendly_tone(answer)
+
+            return {"output": friendly}
 
         llm = get_llm(streaming=True, callback=callback)
 
