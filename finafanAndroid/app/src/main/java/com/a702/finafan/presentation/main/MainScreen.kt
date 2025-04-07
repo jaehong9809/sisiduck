@@ -110,7 +110,8 @@ fun MainScreen(
                 savings = mainSavingState.savings,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 14.dp)
+                    .padding(vertical = 14.dp),
+                navController = navController
             )
 
             MainWideButton(

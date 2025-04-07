@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.domain.main.model.MainSaving
 import com.a702.finafan.domain.user.model.User
@@ -34,7 +35,8 @@ import com.a702.finafan.domain.user.model.User
 fun CardCarousel(
     isLoggedIn: Boolean,
     savings: List<MainSaving>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val cardWidth = screenWidth * 0.8f
@@ -42,7 +44,7 @@ fun CardCarousel(
     val listState = rememberLazyListState()
 
     val cards: List<@Composable () -> Unit> = when {
-        !isLoggedIn -> listOf({ LoginContent() })
+        !isLoggedIn -> listOf({ LoginContent(navController) })
         savings.isEmpty() -> listOf({ CreateSavingContent() })
         else -> savings.map { saving -> { SavingContent(saving) } }
     }
