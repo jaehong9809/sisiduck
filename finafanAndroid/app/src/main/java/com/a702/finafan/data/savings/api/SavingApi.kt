@@ -40,7 +40,7 @@ interface SavingApi {
     @Multipart
     @PUT("v1/star/deposit")
     suspend fun deposit(
-        @PartMap map: HashMap<String, RequestBody>,
+        @PartMap map: Map<String, RequestBody>,
         @Part imageFile: MultipartBody.Part?
     ): ApiResponse<SavingDepositResponse>
 
@@ -72,7 +72,7 @@ interface SavingApi {
     @PUT("v1/star/alias/{savingAccountId}")
     suspend fun updateSavingName(
         @Path("savingAccountId") savingAccountId: Long,
-        @Body request: HashMap<String, String>
+        @Body request: Map<String, String>
     ): ApiResponse<SavingAccount>
 
     // 적금 계좌 해지하기
@@ -116,10 +116,10 @@ interface SavingApi {
 
     // 은행 선택 -> 연결 가능 계좌 목록 조회
     @GET("v1/bank/accounts")
-    suspend fun selectBanks(@Body request: HashMap<String, List<Long>>): ApiResponse<List<AccountResponse>>
+    suspend fun selectBanks(@Body request: Map<String, List<Long>>): ApiResponse<List<AccountResponse>>
 
     // 연결 계좌 선택
     @POST("v1/bank/accounts/connect")
-    suspend fun selectAccounts(@Body request: HashMap<String, List<String>>): ApiResponse<List<AccountResponse>>
+    suspend fun selectAccounts(@Body request: Map<String, List<String>>): ApiResponse<List<AccountResponse>>
 
 }

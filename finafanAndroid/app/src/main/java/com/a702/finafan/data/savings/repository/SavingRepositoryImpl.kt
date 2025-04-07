@@ -36,20 +36,17 @@ class SavingRepositoryImpl @Inject constructor(
 
     override suspend fun deposit(request: SavingDepositRequest): Long {
         return try {
-            val map = HashMap<String, RequestBody>()
-
-            map.put(
-                "depositAccountId",
-                request.depositAccountId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-            )
-
-            map.put(
-                "transactionBalance",
-                request.transactionBalance.toString()
-                    .toRequestBody("text/plain".toMediaTypeOrNull())
-            )
-
-            map.put("message", request.message.toRequestBody("text/plain".toMediaTypeOrNull()))
+            val map = mutableMapOf<String, RequestBody>().apply {
+                put("depositAccountId",
+                    request.depositAccountId.toString()
+                        .toRequestBody("text/plain".toMediaTypeOrNull())
+                )
+                put("transactionBalance",
+                    request.transactionBalance.toString()
+                        .toRequestBody("text/plain".toMediaTypeOrNull())
+                )
+                put("message", request.message.toRequestBody("text/plain".toMediaTypeOrNull()))
+            }
 
             val response = api.deposit(map, request.imageFile)
 
@@ -130,8 +127,7 @@ class SavingRepositoryImpl @Inject constructor(
 
     override suspend fun changeSavingName(savingAccountId: Long, name: String): String {
         return try {
-            val request = HashMap<String, String>()
-            request.put("newName", name)
+            val request = mapOf("newName" to name)
 
             val response = api.updateSavingName(savingAccountId, request)
 
@@ -215,9 +211,7 @@ class SavingRepositoryImpl @Inject constructor(
 
     override suspend fun selectBanks(bankIds: List<Long>): List<Account> {
         return try {
-            val map = HashMap<String, List<Long>>()
-            map.put("bankIds", bankIds)
-
+            val map = mapOf("bankIds" to bankIds)
             val response = api.selectBanks(map)
 
             if (response.code == "S0000" && response.data != null) {
@@ -232,9 +226,7 @@ class SavingRepositoryImpl @Inject constructor(
 
     override suspend fun selectAccounts(accountNos: List<String>): List<Account> {
         return try {
-            val map = HashMap<String, List<String>>()
-            map.put("accountNos", accountNos)
-
+            val map = mapOf("accountNos" to accountNos)
             val response = api.selectAccounts(map)
 
             if (response.code == "S0000" && response.data != null) {
