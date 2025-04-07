@@ -41,6 +41,11 @@ class ChatViewModel @Inject constructor(
         speechRecognizerHelper.startListening()
     }
 
+    fun cancelListening() {
+        _uiState.update { it.copy(isListening = false) }
+        speechRecognizerHelper.stopListening()
+    }
+
     fun streamUserMessage(message: String) {
         _uiState.update {
             it.copy(
@@ -98,9 +103,13 @@ class ChatViewModel @Inject constructor(
                     inputText = ""
                 )
             }
-            // TO DO: 서버로 전송 로직 호출
+            // TODO: 서버로 전송 로직 호출
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        speechRecognizerHelper.destroy()
+    }
 }
 

@@ -8,11 +8,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
@@ -21,13 +24,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.theme.BackWhite
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.chatbot.model.ChatMessage
 import com.dotlottie.dlplayer.Mode
@@ -104,30 +111,9 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
         }
 
         if (uiState.isListening) {
-            Column(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                DotLottieAnimation(
-                    source = DotLottieSource.Url("https://lottie.host/cbdfd462-2890-4e31-89a5-cc1ff1d2d688/MzEAG2h9z8.lottie"),
-                    autoplay = true,
-                    loop = true,
-                    speed = 3f,
-                    useFrameInterpolation = false,
-                    playMode = Mode.FORWARD,
-                    modifier = Modifier.size(80.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.ducksoon_is_listening),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF37474F)
-                )
-            }
+            ListeningDialog(
+                onStopListening = { viewModel.cancelListening() }
+            )
         }
 
         ChatInputBar(
@@ -159,6 +145,65 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                     contentDescription = stringResource(R.string.down_scroll),
                     tint = MainBlack
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun ListeningDialog(
+    onStopListening: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Dialog(onDismissRequest = { /* 뒤로가기 방지 */ }) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(BackWhite, shape = RoundedCornerShape(20.dp))
+                .padding(24.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // 🐥 덕순이
+                Image(
+                    painter = painterResource(id = R.drawable.duck),
+                    contentDescription = null,
+                    modifier = Modifier.size(100.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                DotLottieAnimation(
+                    source = DotLottieSource.Url("https://lottie.host/cbdfd462-2890-4e31-89a5-cc1ff1d2d688/MzEAG2h9z8.lottie"),
+                    autoplay = true,
+                    loop = true,
+                    speed = 3f,
+                    useFrameInterpolation = false,
+                    playMode = Mode.FORWARD,
+                    modifier = Modifier.size(80.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(R.string.ducksoon_is_listening),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF37474F)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 🛑 Stop Button
+                Button(
+                    onClick = onStopListening,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MainGradViolet)
+                ) {
+                    Text("말하기 종료", color = MainWhite, fontWeight = FontWeight.Bold)
+                }
             }
         }
     }
