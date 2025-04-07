@@ -42,25 +42,25 @@ services:
       mysql:
         condition: service_healthy
 
-  redis-master:
-    image: redis:6.2
-    container_name: redis-master
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-master-data:/data
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    networks:
-      - app-network
+#  redis-master:
+#    image: redis:6.2
+#    container_name: redis-master
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - redis-master-data:/data
+#    command: redis-server --requirepass ${REDIS_PASSWORD}
+#    networks:
+#      - app-network
 
   redis-slave-1:
     image: redis:6.2
     container_name: redis-slave-1
     ports:
       - "6380:6379"
-    command: redis-server --slaveof redis-master 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
+    command: redis-server --slaveof redis-server 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
     depends_on:
-      - redis-master
+      - redis-server
     networks:
       - app-network
 
@@ -69,9 +69,9 @@ services:
     container_name: redis-slave-2
     ports:
       - "6381:6379"
-    command: redis-server --slaveof redis-master 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
+    command: redis-server --slaveof redis-server 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
     depends_on:
-      - redis-master
+      - redis-server
     networks:
       - app-network
 
@@ -84,7 +84,7 @@ services:
       - ./redis/sentinel1.conf:/sentinel.conf
     command: redis-sentinel /sentinel.conf
     depends_on:
-      - redis-master
+      - redis-server
       - redis-slave-1
       - redis-slave-2
     networks:
@@ -99,7 +99,7 @@ services:
       - ./redis/sentinel2.conf:/sentinel.conf
     command: redis-sentinel /sentinel.conf
     depends_on:
-      - redis-master
+      - redis-server
       - redis-slave-1
       - redis-slave-2
     networks:
@@ -114,7 +114,7 @@ services:
       - ./redis/sentinel3.conf:/sentinel.conf
     command: redis-sentinel /sentinel.conf
     depends_on:
-      - redis-master
+      - redis-server
       - redis-slave-1
       - redis-slave-2
     networks:
@@ -126,4 +126,4 @@ networks:
 
 volumes:
   mysql-data:
-  redis-master-data:
+#  redis-master-data:
