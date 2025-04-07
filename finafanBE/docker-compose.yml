@@ -69,7 +69,8 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     command: >
-      bash -c "echo 'port 26379
+      bash -c "mkdir -p /etc/redis &&
+      echo 'port 26379
       sentinel monitor mymaster redis-server 6379 2
       sentinel down-after-milliseconds mymaster 5000
       sentinel failover-timeout mymaster 60000
@@ -88,7 +89,8 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     command: >
-      bash -c "echo 'port 26379
+      bash -c "mkdir -p /etc/redis &&
+      echo 'port 26379
       sentinel monitor mymaster redis-server 6379 2
       sentinel down-after-milliseconds mymaster 5000
       sentinel failover-timeout mymaster 60000
@@ -107,7 +109,8 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     command: >
-      bash -c "echo 'port 26379
+      bash -c "mkdir -p /etc/redis &&
+      echo 'port 26379
       sentinel monitor mymaster redis-server 6379 2
       sentinel down-after-milliseconds mymaster 5000
       sentinel failover-timeout mymaster 60000
