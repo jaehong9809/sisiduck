@@ -138,9 +138,7 @@ public class SavingsAccountService {
     public List<WithdrawalAccountResponse> getWithdrawalAccounts(String email) {
         User user = userService.findUserByEmail(email);
 
-        List<Account> accounts = findUser(user);
-
-        return accounts.stream()
+        return findUser(user).stream()
             .map(account -> {
                 Bank bank = bankService.findBankById(account.getBankId());
                 return WithdrawalAccountResponse.of(account, bank);
@@ -149,17 +147,8 @@ public class SavingsAccountService {
     }
 
     private List<Account> findUser(User user) {
-        List<Account> accounts = accountRepository.findByUserId(
+        return accountRepository.findByUserId(
                 user.getUserId())
             .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NOT_FOUND_ACCOUNT)));
-
-        List<EntertainerSavingsAccount> entertainerSavingsAccounts = entertainSavingsService.findAccountByUserId(user.getUserId());
-        Set<Long> entertainerSavingAccountIds = entertainerSavingsAccounts.stream()
-                        .map(EntertainerSavingsAccount::getEntertainerId)
-                                .collect(Collectors.toSet());
-
-        return accounts.stream()
-                .filter(account -> !entertainerSavingAccountIds.contains(account.getAccountId()))
-                .collect(Collectors.toList());
     }
 }
