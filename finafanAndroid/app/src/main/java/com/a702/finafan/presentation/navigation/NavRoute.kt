@@ -3,6 +3,9 @@ package com.a702.finafan.presentation.navigation
 sealed class NavRoutes(val route: String) {
     object Main : NavRoutes("main")
 
+    /* Login */
+    object Login : NavRoutes("login")
+
     /* Chat */
     object Chat : NavRoutes("chat")
 
