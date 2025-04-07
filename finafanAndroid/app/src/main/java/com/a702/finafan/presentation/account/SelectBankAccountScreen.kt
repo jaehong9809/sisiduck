@@ -3,8 +3,10 @@ package com.a702.finafan.presentation.account
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,8 +31,6 @@ import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 계좌 선택 화면
@@ -92,7 +92,7 @@ fun SelectBankAccountScreen(
                 )
             }
 
-            LazyColumn (
+            LazyColumn(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
@@ -104,25 +104,29 @@ fun SelectBankAccountScreen(
                         CommonProgress()
                     }
                 } else {
-                    items(savingState.withdrawalAccounts) { index ->
-                        val account = savingState.withdrawalAccounts[index]
+                    items(savingState.withdrawalAccounts) { item ->
+                        val account = item
                         val isSelected = selectedAccountIds.any { it == account.accountId }
 
-//                        AccountInfoItem(
-//                            account = account,
-//                            isSelect = true,
-//                            selectedAccounts = selectedAccountIds,
-//                            onToggleSelect = { clickedAccountId ->
-//                                if (isSelected) {
-//                                    selectedAccountIds.removeAll { it == clickedAccountId }
-//                                } else {
-//                                    selectedAccountIds.add(clickedAccountId)
-//                                }
-//                            }
-//                        )
+                        AccountInfoItem(
+                            account = account,
+                            isConnect = true,
+                            selectedAccounts = selectedAccountIds,
+                            onSelect = { clickedAccountId ->
+                                if (isSelected) {
+                                    selectedAccountIds.removeAll { it == clickedAccountId }
+                                } else {
+                                    selectedAccountIds.add(clickedAccountId)
+                                }
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
-        }
-    }
 
+            }
+        }
+
+    }
 }
