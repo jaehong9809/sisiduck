@@ -9,7 +9,7 @@ spring:
 spring:
   profiles:
     group:
-      local: oauth
+      local: oauth, redis-sentinel
 
 cloud:
   aws:

@@ -8,6 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.a702.finafan.presentation.auth.LoginScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -49,6 +50,10 @@ fun NavGraph(
 
             composable(NavRoutes.Main.route) {
                 MainScreen(navController, modifier)
+            }
+
+            composable(NavRoutes.Login.route) {
+                LoginScreen()
             }
 
             composable(NavRoutes.Chat.route) {

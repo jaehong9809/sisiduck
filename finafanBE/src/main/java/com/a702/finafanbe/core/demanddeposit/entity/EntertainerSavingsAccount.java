@@ -2,6 +2,7 @@ package com.a702.finafanbe.core.demanddeposit.entity;
 
 import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +29,14 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(nullable = false, name="user_id")
     private Long userId;
 
-    @Column(nullable = false, name ="deposit_account_id")
-    private Long depositAccountId;
+    @Column(nullable = false, name="bank_id")
+    private Long bankId;
+
+    @Column(nullable = false, name="amount")
+    private BigDecimal amount;
+
+    @Column(nullable = false, name ="account_no")
+    private String accountNo;
 
     @Column(nullable = false, name = "withdrawal_account_id")
     private Long withdrawalAccountId;
@@ -49,33 +56,46 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "min_subscription_balance", nullable = false)
+    private BigDecimal minSubscriptionBalance;
+
+    @Column(name = "max_subscription_balance", nullable = false)
+    private BigDecimal maxSubscriptionBalance;
+
     public static EntertainerSavingsAccount of(
         Long userId,
         Long entertainerId,
+        Long bankId,
         String productName,
-        Long depositAccountId,
+        String depositAccountNo,
         Long withdrawalAccountId,
         Double interestRate,
         Long duration,
         String imageUrl
     ) {
-        return new EntertainerSavingsAccount(
+        EntertainerSavingsAccount entertainerSavingsAccount =  new EntertainerSavingsAccount(
             userId,
             entertainerId,
+            bankId,
             productName,
-            depositAccountId,
+            depositAccountNo,
             withdrawalAccountId,
             interestRate,
             duration,
             imageUrl
         );
+        entertainerSavingsAccount.amount = BigDecimal.ZERO;
+        entertainerSavingsAccount.minSubscriptionBalance = new BigDecimal("1000");
+        entertainerSavingsAccount.maxSubscriptionBalance = new BigDecimal("10000000");
+        return entertainerSavingsAccount;
     }
 
     private EntertainerSavingsAccount(
         Long userId,
         Long entertainerId,
+        Long bankId,
         String productName,
-        Long depositAccountId,
+        String depositAccountNo,
         Long withdrawalAccountId,
         Double interestRate,
         Long duration,
@@ -83,8 +103,9 @@ public class EntertainerSavingsAccount extends BaseEntity {
     ){
         this.userId = userId;
         this.entertainerId = entertainerId;
+        this.bankId = bankId;
         this.productName = productName;
-        this.depositAccountId = depositAccountId;
+        this.accountNo = depositAccountNo;
         this.withdrawalAccountId = withdrawalAccountId;
         this.interestRate = interestRate;
         this.duration = duration;

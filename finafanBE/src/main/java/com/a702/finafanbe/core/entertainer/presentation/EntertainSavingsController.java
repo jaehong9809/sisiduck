@@ -1,22 +1,24 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
-import com.a702.finafanbe.core.bank.application.BankService;
-import com.a702.finafanbe.core.bank.entity.Bank;
+import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.demanddeposit.facade.*;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
+import com.a702.finafanbe.core.entertainer.application.EntertainerSavingsSchedulerService;
 import com.a702.finafanbe.core.entertainer.application.TopTransactionsService;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
+import com.a702.finafanbe.core.entertainer.dto.request.TerminateSavingsRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.*;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.ranking.application.RankingWebSocketService;
 import com.a702.finafanbe.core.s3.service.S3Service;
 import com.a702.finafanbe.core.savings.application.SavingsAccountService;
+import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
@@ -46,6 +48,7 @@ public class EntertainSavingsController {
     private final RankingWebSocketService rankingWebSocketService;
     private final EntertainSavingsService entertainSavingsService;
     private final TopTransactionsService topTransactionsService;
+    private final EntertainerSavingsSchedulerService schedulerService;
 
     @GetMapping("/account/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
@@ -117,7 +120,7 @@ public class EntertainSavingsController {
                 image
             );
 
-            EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(
+            EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(
                     starTransferRequest.depositAccountId()
             );
 
@@ -172,10 +175,7 @@ public class EntertainSavingsController {
     public ResponseEntity<ResponseData<List<WithdrawalAccountResponse>>> getWithdrawalAccounts(
 //        @AuthMember User user;
     ) {
-        String email = EMAIL;
-
-        List<WithdrawalAccountResponse> accounts = savingsAccountService.getWithdrawalAccounts(email);
-        return ResponseUtil.success(accounts);
+        return ResponseUtil.success(savingsAccountService.getWithdrawalAccounts(EMAIL));
     }
 
     @PutMapping("/alias/{savingAccountId}")
@@ -213,5 +213,29 @@ public class EntertainSavingsController {
             topTransactionsService.getTopTransactions(entertainerId, period);
 
         return ResponseUtil.success(response);
+    }
+
+    @PostMapping("/terminate/{savingsAccountId}")
+    public ResponseEntity<ResponseData<Void>> terminateSavingsAccount(
+            @AuthMember User user,
+            @PathVariable Long savingsAccountId,
+            @RequestBody(required = false) TerminateSavingsRequest request) {
+
+        EntertainerSavingsAccount account = entertainSavingsService.findEntertainerAccountById(savingsAccountId);
+
+        if (!account.getUserId().equals(user.getUserId())) {
+            throw new BadRequestException(ResponseData.createResponse(ErrorCode.DATA_FORBIDDEN_ACCESS));
+        }
+
+        String reason = (request != null && request.terminationReason() != null)
+                ? request.terminationReason()
+                : "사용자 요청에 의한 중도해지";
+
+        log.info("연예인 적금 중도해지 요청: 계좌ID={}, 사용자ID={}, 사유={}",
+                savingsAccountId, user.getUserId(), reason);
+
+        schedulerService.processEarlyTermination(savingsAccountId, reason);
+
+        return ResponseUtil.success();
     }
 }

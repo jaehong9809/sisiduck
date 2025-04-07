@@ -1,4 +1,8 @@
 package com.a702.finafanbe.core.user.dto.response;
 
-public class UserResponse {
+public record UserResponse (
+    String userId,
+    String userName
+){
+
 }
