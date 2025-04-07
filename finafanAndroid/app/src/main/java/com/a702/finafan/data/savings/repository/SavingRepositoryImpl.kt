@@ -5,6 +5,8 @@ import com.a702.finafan.common.data.dto.getOrThrowNull
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.savings.api.SavingApi
+import com.a702.finafan.data.savings.dto.request.AccountNosRequest
+import com.a702.finafan.data.savings.dto.request.BankIdsRequest
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.data.savings.dto.response.toDomain
@@ -102,12 +104,12 @@ class SavingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun selectBanks(bankIds: List<Long>): DataResource<List<Account>> = safeApiCall {
-        val map = mapOf("bankIds" to bankIds)
-        api.selectBanks(map).getOrThrow { it.map { dto -> dto.toDomain() } }
+        val request = BankIdsRequest(bankIds)
+        api.selectBanks(request).getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
     override suspend fun selectAccounts(accountNos: List<String>): DataResource<List<Account>> = safeApiCall {
-        val map = mapOf("accountNos" to accountNos)
-        api.selectAccounts(map).getOrThrow { it.map { dto -> dto.toDomain() } }
+        val request = AccountNosRequest(accountNos)
+        api.selectAccounts(request).getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 }

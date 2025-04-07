@@ -53,13 +53,6 @@ fun SelectBankAccountScreen(
     val showDialog = rememberSaveable { mutableStateOf(false) }
     val dialogContent = rememberSaveable { mutableStateOf("") }
 
-    LaunchedEffect(savingState.isCancel) {
-        if (savingState.isCancel) {
-            showDialog.value = true
-            dialogContent.value = context.getString(R.string.saving_item_connect_account_complete)
-        }
-    }
-
     LaunchedEffect(savingState.error) {
         savingState.error?.let {
             showDialog.value = true
@@ -69,6 +62,11 @@ fun SelectBankAccountScreen(
         }
     }
 
+    if (savingState.isConnect) {
+        showDialog.value = true
+        dialogContent.value = context.getString(R.string.saving_item_connect_account_complete)
+    }
+
     if (showDialog.value) {
         ConfirmDialog(
             showDialog,
@@ -76,7 +74,7 @@ fun SelectBankAccountScreen(
             onClickConfirm = {
                 showDialog.value = false
 
-                if (savingState.isCancel) {
+                if (savingState.isConnect) {
                     viewModel.resetConnectState()
                     onComplete()
                 }
@@ -139,10 +137,6 @@ fun SelectBankAccountScreen(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
 
                 if (savingState.isLoading) {
                     item {

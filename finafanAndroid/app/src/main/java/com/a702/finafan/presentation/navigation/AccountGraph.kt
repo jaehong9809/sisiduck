@@ -33,7 +33,9 @@ fun NavGraphBuilder.accountGraph(
 
         composable(NavRoutes.SelectAccount.route) {
             SelectBankAccountScreen(savingViewModel, onComplete = {
-                navController.navigate(NavRoutes.AllAccount.route + "?selectedTabIndex=2")
+                navController.navigate(NavRoutes.AllAccount.route + "?selectedTabIndex=2") {
+                    popUpTo(NavRoutes.AllAccount.route)
+                }
             })
         }
 

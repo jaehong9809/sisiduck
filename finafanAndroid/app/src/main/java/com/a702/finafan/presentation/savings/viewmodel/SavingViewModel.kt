@@ -290,7 +290,7 @@ class SavingViewModel @Inject constructor(
                 is DataResource.Success -> {
                     _savingState.update {
                         it.copy(
-                            isConnect = result.data,
+                            isCancel = result.data,
                             isLoading = false
                         )
                     }
@@ -430,8 +430,9 @@ class SavingViewModel @Inject constructor(
                 is DataResource.Success -> {
                     _savingState.update {
                         it.copy(
-                            accounts = result.data,
-                            isLoading = false
+//                            accounts = result.data,
+                            isLoading = false,
+                            isConnect = true
                         )
                     }
                 }

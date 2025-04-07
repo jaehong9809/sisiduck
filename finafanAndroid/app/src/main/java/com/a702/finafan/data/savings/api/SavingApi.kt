@@ -1,6 +1,8 @@
 package com.a702.finafan.data.savings.api
 
 import com.a702.finafan.common.data.dto.ApiResponse
+import com.a702.finafan.data.savings.dto.request.AccountNosRequest
+import com.a702.finafan.data.savings.dto.request.BankIdsRequest
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.response.AccountResponse
 import com.a702.finafan.data.savings.dto.response.BankResponse
@@ -116,10 +118,10 @@ interface SavingApi {
 
     // 은행 선택 -> 연결 가능 계좌 목록 조회
     @POST("v1/bank/accounts")
-    suspend fun selectBanks(@Body request: Map<String, List<Long>>): ApiResponse<List<AccountResponse>>
+    suspend fun selectBanks(@Body request: BankIdsRequest): ApiResponse<List<AccountResponse>>
 
     // 연결 계좌 선택
     @POST("v1/bank/accounts/connect")
-    suspend fun selectAccounts(@Body request: Map<String, List<String>>): ApiResponse<List<AccountResponse>>
+    suspend fun selectAccounts(@Body request: AccountNosRequest): ApiResponse<List<AccountResponse>>
 
 }
