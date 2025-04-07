@@ -31,6 +31,7 @@ public class FundingGroupService {
         GroupUser groupUser = GroupUser.create(userId, newFunding.getId(), Role.ADMIN);
         fundingGroupRepository.save(funding);
         groupUserRepository.save(groupUser);
+        System.out.println(groupUser.getUserId());
     }
 
     // 그룹 가입

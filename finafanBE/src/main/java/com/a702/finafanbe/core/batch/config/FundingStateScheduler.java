@@ -22,7 +22,6 @@ public class FundingStateScheduler {
     private final FundingPendingTransactionRepository fundingPendingTransactionRepository;
     private final FundingGroupRepository fundingGroupRepository;
 
-
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void fundingStateScheduler() {
@@ -32,7 +31,7 @@ public class FundingStateScheduler {
         //      if : transaction (deletedAt is not null) 의 총합과 비교해서 그거보다 같거나 크면
         //          펀딩 state Success 로 변환
         //      else : false로 변환
-        log.info("*** Scheduling funding state : {} ***" + LocalDateTime.now());
+        log.info("*** Scheduling funding state : {} ***", LocalDateTime.now());
         List<FundingGroup> finishefundings = fundingGroupRepository.findExpiredFunding(LocalDateTime.now(), FundingStatus.INPROGRESS);
         for (FundingGroup funding : finishefundings) {
             Long sumAmount = fundingPendingTransactionRepository.sumByFundingId(funding.getId());

@@ -46,6 +46,10 @@ public class FundingPendingTransaction extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FundingTransactionStatus status;
 
+    public void updateStatus(FundingTransactionStatus status) {
+        this.status = status;
+    }
+
     @Builder
     private FundingPendingTransaction(Long userId, Long fundingId, Long accountId, Long balance, String content, String depositUserName) {
         this.userId = userId;
