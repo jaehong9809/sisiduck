@@ -19,7 +19,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +48,9 @@ fun ConnectBankScreen(
     val selectedBankIds = remember { mutableStateListOf<Long>() }
     val savingState by viewModel.savingState.collectAsState()
 
+    val showDialog = rememberSaveable { mutableStateOf(false) }
+    val dialogContent = rememberSaveable { mutableStateOf("") }
+
     // 은행 목록
     LaunchedEffect(Unit) {
         viewModel.fetchBankList()
@@ -61,7 +66,8 @@ fun ConnectBankScreen(
                     .fillMaxWidth()
                     .imePadding(),
                 onClick = {
-                    // TODO: 다음 누르면 은행 선택 API 호출 -> 계좌 목록 화면으로 이동
+                    // 은행 선택
+                    viewModel.selectBank(selectedBankIds)
                     onComplete()
                 },
                 text = stringResource(R.string.btn_next),
@@ -115,6 +121,7 @@ fun ConnectBankScreen(
                         CommonProgress()
                     }
                 } else {
+
                     items(savingState.bankList.size) { index ->
                         val bank = savingState.bankList[index]
                         val isSelected = selectedBankIds.any { it == bank.bankId }
@@ -131,11 +138,12 @@ fun ConnectBankScreen(
                             }
                         )
                     }
+
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
             }
         }
     }

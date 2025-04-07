@@ -37,11 +37,11 @@ fun AccountInfoItem(
     isCancel: Boolean = false,
     fontColor: Color = MainBlack,
     isConnect: Boolean = false,
-    selectedAccounts: List<Long> = emptyList(),
-    onSelect: (Long) -> Unit = {}
+    selectedAccounts: List<String> = emptyList(),
+    onSelect: (String) -> Unit = {}
 ) {
 
-    val isSelected = selectedAccounts.any { it == account.accountId }
+    val isSelected = selectedAccounts.any { it == account.accountNo }
 
     Row(
         modifier = modifier
@@ -66,7 +66,7 @@ fun AccountInfoItem(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = {
-                    onSelect(account.accountId)
+                    onSelect(account.accountNo)
                 }
             ),
         verticalAlignment = Alignment.CenterVertically,

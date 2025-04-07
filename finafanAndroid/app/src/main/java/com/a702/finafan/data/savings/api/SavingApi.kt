@@ -114,4 +114,12 @@ interface SavingApi {
     @GET("v1/demand-deposit/transaction-histories")
     suspend fun connectTransactionHistory(): ApiResponse<List<Transaction>>
 
+    // 은행 선택 -> 연결 가능 계좌 목록 조회
+    @GET("v1/bank/accounts")
+    suspend fun selectBanks(@Body request: HashMap<String, List<Long>>): ApiResponse<List<AccountResponse>>
+
+    // 연결 계좌 선택
+    @POST("v1/bank/accounts/connect")
+    suspend fun selectAccounts(@Body request: HashMap<String, List<String>>): ApiResponse<List<AccountResponse>>
+
 }

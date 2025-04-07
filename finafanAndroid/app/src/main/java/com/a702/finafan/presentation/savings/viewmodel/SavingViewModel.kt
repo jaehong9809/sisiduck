@@ -20,6 +20,8 @@ import com.a702.finafan.domain.savings.usecase.GetSavingUseCase
 import com.a702.finafan.domain.savings.usecase.GetStarRankingUseCase
 import com.a702.finafan.domain.savings.usecase.GetStarUseCase
 import com.a702.finafan.domain.savings.usecase.GetWithdrawalAccountUseCase
+import com.a702.finafan.domain.savings.usecase.UpdateConnectAccountUseCase
+import com.a702.finafan.domain.savings.usecase.UpdateConnectBankUseCase
 import com.a702.finafan.domain.savings.usecase.UpdateSavingNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +45,8 @@ class SavingViewModel @Inject constructor(
     private val deleteConnectAccountUseCase: DeleteConnectAccountUseCase,
     private val getStarRankingUseCase: GetStarRankingUseCase,
     private val getRankingDetailUseCase: GetRankingDetailUseCase,
+    private val updateConnectAccountUseCase: UpdateConnectAccountUseCase,
+    private val updateConnectBankUseCase: UpdateConnectBankUseCase,
 ): ViewModel() {
 
     private val _savingState = MutableStateFlow(SavingState())
@@ -322,6 +326,52 @@ class SavingViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         ranking = ranking
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
+    fun selectBank(bankIds: List<Long>) {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val accounts = updateConnectBankUseCase(bankIds)
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        accounts = accounts
+                    )
+                }
+            } catch (e: Exception) {
+                _savingState.update {
+                    it.copy(
+                        error = e
+                    )
+                }
+            }
+        }
+    }
+
+    fun selectAccount(accountNos: List<String>) {
+        viewModelScope.launch {
+            _savingState.update { it.copy(isLoading = true) }
+
+            try {
+                val accounts = updateConnectAccountUseCase(accountNos)
+
+                _savingState.update {
+                    it.copy(
+                        isLoading = false,
+                        accounts = accounts
                     )
                 }
             } catch (e: Exception) {

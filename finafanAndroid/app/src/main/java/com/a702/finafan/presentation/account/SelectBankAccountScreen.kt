@@ -14,10 +14,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.CommonProgress
+import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -40,8 +44,36 @@ fun SelectBankAccountScreen(
     onComplete: () -> Unit
 ) {
 
-    val selectedAccountIds = remember { mutableStateListOf<Long>() }
+    val selectedAccountNos = remember { mutableStateListOf<String>() }
     val savingState by viewModel.savingState.collectAsState()
+
+    val showDialog = rememberSaveable { mutableStateOf(false) }
+    val dialogContent = rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(savingState.isLoading) {
+        if (!savingState.isLoading) {
+            onComplete()
+        }
+    }
+
+    LaunchedEffect(savingState.error) {
+        savingState.error?.let {
+            showDialog.value = true
+            dialogContent.value = savingState.error?.message.toString()
+
+            viewModel.clearError()
+        }
+    }
+
+    if (showDialog.value) {
+        ConfirmDialog(
+            showDialog,
+            content = dialogContent.value,
+            onClickConfirm = {
+                showDialog.value = false
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -53,11 +85,11 @@ fun SelectBankAccountScreen(
                     .fillMaxWidth()
                     .imePadding(),
                 onClick = {
-                    // TODO: 다음 누르면 계좌 선택 API 호출 -> 다이얼로그 띄우고 연결 계좌 목록 화면으로 이동하기
-                    onComplete()
+                    // 계좌 선택
+                    viewModel.selectAccount(selectedAccountNos)
                 },
                 text = stringResource(R.string.btn_next),
-                isEnabled = selectedAccountIds.isNotEmpty()
+                isEnabled = selectedAccountNos.isNotEmpty()
             )
         }
     ) { innerPadding ->
@@ -99,30 +131,36 @@ fun SelectBankAccountScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
 
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
                 if (savingState.isLoading) {
                     item {
                         CommonProgress()
                     }
                 } else {
-                    items(savingState.withdrawalAccounts) { item ->
+                    items(savingState.accounts) { item ->
                         val account = item
-                        val isSelected = selectedAccountIds.any { it == account.accountId }
+                        val isSelected = selectedAccountNos.any { it == account.accountNo }
 
                         AccountInfoItem(
                             account = account,
                             isConnect = true,
-                            selectedAccounts = selectedAccountIds,
-                            onSelect = { clickedAccountId ->
+                            selectedAccounts = selectedAccountNos,
+                            onSelect = { clickedAccountNo ->
                                 if (isSelected) {
-                                    selectedAccountIds.removeAll { it == clickedAccountId }
+                                    selectedAccountNos.removeAll { it == clickedAccountNo }
                                 } else {
-                                    selectedAccountIds.add(clickedAccountId)
+                                    selectedAccountNos.add(clickedAccountNo)
                                 }
                             }
                         )
-
-                        Spacer(modifier = Modifier.height(16.dp))
                     }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
 
             }

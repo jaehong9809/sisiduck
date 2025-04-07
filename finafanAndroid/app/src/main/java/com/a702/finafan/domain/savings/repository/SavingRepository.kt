@@ -41,4 +41,8 @@ interface SavingRepository {
     suspend fun totalStarRanking(): List<Ranking>
 
     suspend fun rankingDetail(starId: Long, type: RankingType): Ranking
+
+    suspend fun selectBanks(bankIds: List<Long>): List<Account>
+
+    suspend fun selectAccounts(accountNos: List<String>): List<Account>
 }

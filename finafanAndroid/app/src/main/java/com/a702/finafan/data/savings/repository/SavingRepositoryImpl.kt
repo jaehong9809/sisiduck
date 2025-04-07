@@ -213,4 +213,38 @@ class SavingRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun selectBanks(bankIds: List<Long>): List<Account> {
+        return try {
+            val map = HashMap<String, List<Long>>()
+            map.put("bankIds", bankIds)
+
+            val response = api.selectBanks(map)
+
+            if (response.code == "S0000" && response.data != null) {
+                return response.data.map { it.toDomain() }
+            } else {
+                throw Exception(response.message)
+            }
+        } catch (e: Exception) {
+            throw Exception(ExceptionHandler.handle(e))
+        }
+    }
+
+    override suspend fun selectAccounts(accountNos: List<String>): List<Account> {
+        return try {
+            val map = HashMap<String, List<String>>()
+            map.put("accountNos", accountNos)
+
+            val response = api.selectAccounts(map)
+
+            if (response.code == "S0000" && response.data != null) {
+                return response.data.map { it.toDomain() }
+            } else {
+                throw Exception(response.message)
+            }
+        } catch (e: Exception) {
+            throw Exception(ExceptionHandler.handle(e))
+        }
+    }
+
 }
