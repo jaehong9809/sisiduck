@@ -10,8 +10,8 @@ public record ApiCreateAccountResponse(
 ) {
     public static ApiCreateAccountResponse of(
             Long userId,
-            String accountNo,
             String userEmail,
+            String accountNo,
             String bankCode,
             String currency,
             String accountTypeUniqueNo
