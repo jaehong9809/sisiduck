@@ -63,42 +63,60 @@ services:
   redis-sentinel-1:
     image: redis:6.2
     container_name: redis-sentinel-1
+    restart: always
     ports:
       - "26379:26379"
-    volumes:
-      - ./redis/sentinel1.conf:/sentinel.conf
-    command: redis-sentinel /sentinel.conf
-    depends_on:
-      - redis-slave-1
-      - redis-slave-2
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: |
+      bash -c "mkdir -p /etc/redis &&
+      echo 'port 26379
+      sentinel monitor mymaster 172.21.0.2 6379 2
+      sentinel down-after-milliseconds mymaster 5000
+      sentinel failover-timeout mymaster 60000
+      sentinel parallel-syncs mymaster 1
+      sentinel auth-pass mymaster '${REDIS_PASSWORD} > /etc/redis/sentinel.conf &&
+      redis-sentinel /etc/redis/sentinel.conf"
     networks:
       - app-network
 
   redis-sentinel-2:
     image: redis:6.2
     container_name: redis-sentinel-2
+    restart: always
     ports:
       - "26380:26379"
-    volumes:
-      - ./redis/sentinel2.conf:/sentinel.conf
-    command: redis-sentinel /sentinel.conf
-    depends_on:
-      - redis-slave-1
-      - redis-slave-2
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: |
+      bash -c "mkdir -p /etc/redis &&
+      echo 'port 26379
+      sentinel monitor mymaster 172.21.0.2 6379 2
+      sentinel down-after-milliseconds mymaster 5000
+      sentinel failover-timeout mymaster 60000
+      sentinel parallel-syncs mymaster 1
+      sentinel auth-pass mymaster '${REDIS_PASSWORD} > /etc/redis/sentinel.conf &&
+      redis-sentinel /etc/redis/sentinel.conf"
     networks:
       - app-network
 
   redis-sentinel-3:
     image: redis:6.2
     container_name: redis-sentinel-3
+    restart: always
     ports:
       - "26381:26379"
-    volumes:
-      - ./redis/sentinel3.conf:/sentinel.conf
-    command: redis-sentinel /sentinel.conf
-    depends_on:
-      - redis-slave-1
-      - redis-slave-2
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: |
+      bash -c "mkdir -p /etc/redis &&
+      echo 'port 26379
+      sentinel monitor mymaster 172.21.0.2 6379 2
+      sentinel down-after-milliseconds mymaster 5000
+      sentinel failover-timeout mymaster 60000
+      sentinel parallel-syncs mymaster 1
+      sentinel auth-pass mymaster '${REDIS_PASSWORD} > /etc/redis/sentinel.conf &&
+      redis-sentinel /etc/redis/sentinel.conf"
     networks:
       - app-network
 
