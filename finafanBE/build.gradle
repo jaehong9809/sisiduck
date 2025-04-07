@@ -55,6 +55,8 @@ dependencies {
     implementation 'org.apache.commons:commons-pool2:2.11.1'
 
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
 }
 
 tasks.named('test') {

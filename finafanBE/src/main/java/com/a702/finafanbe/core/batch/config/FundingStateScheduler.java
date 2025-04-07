@@ -1,4 +1,4 @@
-package com.a702.finafanbe.core.funding.config;
+package com.a702.finafanbe.core.batch.config;
 
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
 import com.a702.finafanbe.core.funding.funding.entity.FundingPendingTransaction;
