@@ -1,5 +1,7 @@
 package com.a702.finafan.data.savings.repository
 
+import com.a702.finafan.common.data.dto.getOrThrow
+import com.a702.finafan.common.data.dto.getOrThrowNull
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.savings.api.SavingApi
@@ -26,162 +28,86 @@ class SavingRepositoryImpl @Inject constructor(
 
     override suspend fun getStars(keyword: String?): DataResource<List<Star>> = safeApiCall {
         val response = keyword?.run { api.starSearch(this) } ?: api.getStars()
-        if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+        response.getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
     override suspend fun deposit(request: SavingDepositRequest): DataResource<Long> = safeApiCall {
         val map = mutableMapOf<String, RequestBody>().apply {
-            put("depositAccountId", request.depositAccountId.toString().toRequestBody("text/plain".toMediaTypeOrNull()))
-            put("transactionBalance", request.transactionBalance.toString().toRequestBody("text/plain".toMediaTypeOrNull()))
+            put(
+                "depositAccountId",
+                request.depositAccountId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+            )
+            put(
+                "transactionBalance",
+                request.transactionBalance.toString()
+                    .toRequestBody("text/plain".toMediaTypeOrNull())
+            )
             put("message", request.message.toRequestBody("text/plain".toMediaTypeOrNull()))
         }
-        val response = api.deposit(map, request.imageFile)
-        if (response.code == "S0000" && response.data != null) {
-            response.data.depositAccountId
-        } else {
-            throw Exception(response.message)
-        }
+
+        api.deposit(map, request.imageFile).getOrThrow { it.depositAccountId }
     }
 
     override suspend fun createSaving(request: SavingCreateRequest): DataResource<Long> = safeApiCall {
-        val response = api.createSaving(request)
-        if (response.code == "S0000" && response.data != null) {
-            response.data.depositAccountId
-        } else {
-            throw Exception(response.message)
-        }
+        api.createSaving(request).getOrThrow { it.depositAccountId }
     }
 
     override suspend fun history(savingAccountId: Long): DataResource<List<Transaction>> = safeApiCall {
-        val response = api.history(savingAccountId)
-        if (response.code == "S0000" && response.data != null) {
-            response.data.transactions.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+        api.history(savingAccountId).getOrThrow { it.transactions.map { dto -> dto.toDomain() } }
     }
 
     override suspend fun accountInfo(savingAccountId: Long): DataResource<SavingAccount> = safeApiCall {
-        val response = api.accountInfo(savingAccountId)
-        if (response.code == "S0000" && response.data != null) {
-            response.data.toDomain()
-        } else {
-            throw Exception(response.message)
-        }
+        api.accountInfo(savingAccountId).getOrThrow { it.toDomain() }
     }
 
     override suspend fun savingAccounts(): DataResource<SavingAccountInfo> = safeApiCall {
-        val response = api.savingAccounts()
-        if (response.code == "S0000" && response.data != null) {
-            response.data.toDomain()
-        } else {
-            throw Exception(response.message)
-        }
+        api.savingAccounts().getOrThrow { it.toDomain() }
     }
 
     override suspend fun withdrawAccount(): DataResource<List<Account>> = safeApiCall {
-        val response = api.withdrawAccount()
-        if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+        api.withdrawAccount().getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
     override suspend fun bankList(): DataResource<List<Bank>> = safeApiCall {
-        val response = api.bankList()
-        if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+        api.bankList().getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
     override suspend fun changeSavingName(savingAccountId: Long, name: String): DataResource<String> = safeApiCall {
         val request = mapOf("newName" to name)
-        val response = api.updateSavingName(savingAccountId, request)
-        if (response.code == "S0000" && response.data != null) {
-            response.data.accountName
-        } else {
-            throw Exception(response.message)
-        }
+        api.updateSavingName(savingAccountId, request).getOrThrow { it.accountName }
     }
 
     override suspend fun deleteSavingAccount(savingAccountId: Long): DataResource<Boolean> = safeApiCall {
-        val response = api.deleteSavingAccount(savingAccountId)
-        if (response.code == "S0000") {
-            true
-        } else {
-            throw Exception(response.message)
-        }
+        api.deleteSavingAccount(savingAccountId).getOrThrowNull { true }
     }
 
     override suspend fun deleteConnectAccount(accountId: Long): DataResource<Boolean> = safeApiCall {
-        val response = api.deleteConnectAccount(accountId)
-        if (response.code == "S0000") {
-            true
-        } else {
-            throw Exception(response.message)
-        }
+        api.deleteConnectAccount(accountId).getOrThrowNull { true }
     }
 
     override suspend fun dailyStarRanking(): DataResource<List<Ranking>> = safeApiCall {
-        val response = api.dailyStarRanking()
-        if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+        api.dailyStarRanking().getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
     override suspend fun weeklyStarRanking(): DataResource<List<Ranking>> = safeApiCall {
-        val response = api.weeklyStarRanking()
-        if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+        api.weeklyStarRanking().getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
     override suspend fun totalStarRanking(): DataResource<List<Ranking>> = safeApiCall {
-        val response = api.totalStarRanking()
-        if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+        api.totalStarRanking().getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
     override suspend fun rankingDetail(starId: Long, type: RankingType): DataResource<Ranking> = safeApiCall {
-        val response = api.starSavingHistory(starId, type.value)
-        if (response.code == "S0000" && response.data != null) {
-            response.data.toDomain()
-        } else {
-            throw Exception(response.message)
-        }
+        api.starSavingHistory(starId, type.value).getOrThrow { it.toDomain() }
     }
 
     override suspend fun selectBanks(bankIds: List<Long>): DataResource<List<Account>> = safeApiCall {
         val map = mapOf("bankIds" to bankIds)
-        val response = api.selectBanks(map)
-        if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+        api.selectBanks(map).getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
     override suspend fun selectAccounts(accountNos: List<String>): DataResource<List<Account>> = safeApiCall {
         val map = mapOf("accountNos" to accountNos)
-        val response = api.selectAccounts(map)
-        if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+        api.selectAccounts(map).getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 }
