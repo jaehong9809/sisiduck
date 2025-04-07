@@ -8,6 +8,7 @@ data class ChatState(
     val isListening: Boolean = false,
     val isStreaming: Boolean = false,
     val streamingText: String = "",
+    val inputText: String = "",
     override val isLoading: Boolean = false,
     override val error: Throwable? = null,
     override val toastMessage: String? = null
