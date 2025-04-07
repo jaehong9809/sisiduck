@@ -30,6 +30,7 @@
     <string name="error_recongnizer">음성 인식 중 오류가 발생했어요.</string>
     <string name="not_found_audio">말씀을 잘 못 알아들었어요.</string>
     <string name="down_scroll">⬇</string>
+    <string name="chatbot_input_hint">덕순이에게 말을 걸어보세요!</string>
 
     <!-- TopBar Title -->
     <string name="saving_item_star_list_title">스타 목록</string>
