@@ -1,10 +1,14 @@
 package com.a702.finafan.di
 
+import android.content.Context
 import com.a702.finafan.BuildConfig
+import com.a702.finafan.infrastructure.util.UserIdManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -67,15 +71,28 @@ object NetworkModule {
             .build()
     }
 
+
     @AiOkHttpClient
     @Provides
     @Singleton
-    fun provideAiOkHttpClient(): OkHttpClient {
+    fun provideAiOkHttpClient(
+        @ApplicationContext context: Context
+    ): OkHttpClient {
+        val userId = UserIdManager.getOrCreateUserId(context)
+
+        val userIdInterceptor = Interceptor { chain ->
+            val original = chain.request()
+            val requestWithUserId = original.newBuilder()
+                .addHeader("X-User-Id", userId)
+                .build()
+            chain.proceed(requestWithUserId)
+        }
+
         return OkHttpClient.Builder()
+            .addInterceptor(userIdInterceptor)
             .readTimeout(0, TimeUnit.MILLISECONDS)
             .build()
     }
-
 
     @AiChatRetrofit
     @Provides
