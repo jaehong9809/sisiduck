@@ -24,6 +24,8 @@ import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -169,6 +171,7 @@ public class EntertainSavingsService {
             String newName
     ) {
         EntertainerSavingsAccount savingsAccount = findEntertainerAccountById(savingAccountId);
+        long maintenanceDays = ChronoUnit.DAYS.between(savingsAccount.getCreatedAt(), LocalDateTime.now());
         Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
         Bank bank = bankService.findBankById(account.getBankId());
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
@@ -182,6 +185,7 @@ public class EntertainSavingsService {
                 account.getCreatedAt(),
                 savingsAccount.getInterestRate(),
                 savingsAccount.getDuration(),
+                maintenanceDays,
                 savingsAccount.getImageUrl(),
                 withdrawalAccount,
                 bank,
