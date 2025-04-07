@@ -245,7 +245,7 @@ public class DemandDepositFacade {
             Long savingAccountId
     ) {
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
-        long maintenanceDays = getMaintenanceDays(savingsAccount);
+        long maintenanceDays = savingsAccount.getMaintenanceDays(savingsAccount);
         Bank bank = bankService.findBankById(savingsAccount.getBankId());
         Account withDrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withDrawalAccount.getBankId());
@@ -278,7 +278,7 @@ public class DemandDepositFacade {
                         .map(savingsAccount -> {
                             EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(
                                     savingsAccount.getId());
-                            long maintenanceDays = getMaintenanceDays(depositAccount);
+                            long maintenanceDays = savingsAccount.getMaintenanceDays(depositAccount);
                             Bank bank = bankService.findBankById(depositAccount.getBankId());
                             Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
                                     savingsAccount.getWithdrawalAccountId());
@@ -302,9 +302,7 @@ public class DemandDepositFacade {
         );
     }
 
-    private static long getMaintenanceDays(EntertainerSavingsAccount depositAccount) {
-        return ChronoUnit.DAYS.between(depositAccount.getCreatedAt(), LocalDateTime.now());
-    }
+
 
     public InquireEntertainerHistoriesResponse inquireEntertainerHistories(
             Long savingAccountId

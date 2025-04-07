@@ -171,7 +171,7 @@ public class EntertainSavingsService {
             String newName
     ) {
         EntertainerSavingsAccount savingsAccount = findEntertainerAccountById(savingAccountId);
-        long maintenanceDays = ChronoUnit.DAYS.between(savingsAccount.getCreatedAt(), LocalDateTime.now());
+        long maintenanceDays = savingsAccount.getMaintenanceDays(savingsAccount);
         Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
         Bank bank = bankService.findBankById(account.getBankId());
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
