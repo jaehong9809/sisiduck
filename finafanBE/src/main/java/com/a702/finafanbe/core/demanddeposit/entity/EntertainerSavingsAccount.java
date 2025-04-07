@@ -65,9 +65,9 @@ public class EntertainerSavingsAccount extends BaseEntity {
     public static EntertainerSavingsAccount of(
         Long userId,
         Long entertainerId,
+        Long bankId,
         String productName,
         String depositAccountNo,
-
         Long withdrawalAccountId,
         Double interestRate,
         Long duration,
@@ -76,6 +76,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
         EntertainerSavingsAccount entertainerSavingsAccount =  new EntertainerSavingsAccount(
             userId,
             entertainerId,
+            bankId,
             productName,
             depositAccountNo,
             withdrawalAccountId,
@@ -83,6 +84,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
             duration,
             imageUrl
         );
+        entertainerSavingsAccount.amount = BigDecimal.ZERO;
         entertainerSavingsAccount.minSubscriptionBalance = new BigDecimal("1000");
         entertainerSavingsAccount.maxSubscriptionBalance = new BigDecimal("10000000");
         return entertainerSavingsAccount;
@@ -91,6 +93,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
     private EntertainerSavingsAccount(
         Long userId,
         Long entertainerId,
+        Long bankId,
         String productName,
         String depositAccountNo,
         Long withdrawalAccountId,
@@ -100,6 +103,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
     ){
         this.userId = userId;
         this.entertainerId = entertainerId;
+        this.bankId = bankId;
         this.productName = productName;
         this.accountNo = depositAccountNo;
         this.withdrawalAccountId = withdrawalAccountId;
