@@ -21,7 +21,7 @@ public class CreateAccountController {
     public ResponseEntity<ResponseData<ApiCreateAccountResponse>> createAccount(
             String email
     ){
-        return ResponseUtil.success(demandDepositFacade.createEntertainerAccount(
+        return ResponseUtil.success(demandDepositFacade.createAccount(
                 email
         ));
     }

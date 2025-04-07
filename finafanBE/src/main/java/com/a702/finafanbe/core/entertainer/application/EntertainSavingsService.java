@@ -44,7 +44,6 @@ public class EntertainSavingsService {
     private final EntertainerRepository entertainRepository;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
     private final UserRepository userRepository;
-    private final AccountRepository accountRepository;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final BankService bankService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
@@ -59,28 +58,24 @@ public class EntertainSavingsService {
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
         Bank bank = bankService.findBankByCode(accountResponse.bankCode());
-        Account createdAccount = accountRepository.save(Account.of(
+        EntertainerSavingsAccount createdAccount = entertainerSavingsAccountRepository.save(EntertainerSavingsAccount.of(
             user.getUserId(),
-            accountResponse.accountNo(),
-            accountResponse.currency(),
+            entertainerId,
             createStartAccountRequest.productName(),
-            accountResponse.accountTypeUniqueNo(),
-            bank.getBankId()
+            accountResponse.accountNo(),
+            createStartAccountRequest.withdrawalAccountId(),
+            0.05,
+            5L,
+            "example.com"
+
         ));
 
-        EntertainerSavingsAccount entertainerSavingsAccount = saveEntertainerSavingsAccount(
-                user.getUserId(),
-                entertainerId,
-                createStartAccountRequest.productName(),
-                createdAccount.getAccountId(),
-                createStartAccountRequest.withdrawalAccountId()
-        );
         return StarAccountResponse.of(
-                entertainerSavingsAccount.getUserId(),
-                entertainerSavingsAccount.getEntertainerId(),
-                entertainerSavingsAccount.getDepositAccountId(),
-                entertainerSavingsAccount.getWithdrawalAccountId(),
-                bank
+            createdAccount.getUserId(),
+            createdAccount.getEntertainerId(),
+            createdAccount.getId(),
+            createdAccount.getWithdrawalAccountId(),
+            bank
         );
     }
 
@@ -139,8 +134,8 @@ public class EntertainSavingsService {
     }
 
     @Transactional(readOnly = true)
-    public EntertainerSavingsAccount findEntertainerAccountByDepositAccountId(Long savingAccountId) {
-        return entertainerSavingsAccountRepository.findByDepositAccountId(savingAccountId).orElseThrow(
+    public EntertainerSavingsAccount findEntertainerAccountById(Long savingAccountId) {
+        return entertainerSavingsAccountRepository.findById(savingAccountId).orElseThrow(
             () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
@@ -172,14 +167,14 @@ public class EntertainSavingsService {
             Long savingAccountId,
             String newName
     ) {
-        EntertainerSavingsAccount savingsAccount = findEntertainerAccountByDepositAccountId(savingAccountId);
+        EntertainerSavingsAccount savingsAccount = findEntertainerAccountById(savingAccountId);
         Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
         Bank bank = bankService.findBankById(account.getBankId());
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
         account.updateName(newName);
         return InquireEntertainerAccountResponse.of(
-                savingsAccount.getDepositAccountId(),
+                savingsAccount.getId(),
                 account.getAccountNo(),
                 account.getAccountName(),
                 account.getAmount(),
@@ -198,29 +193,8 @@ public class EntertainSavingsService {
         entertainerSavingsAccountRepository.deleteById(accountId);
     }
 
-    public boolean existsEntertainerAccountByDepositAccountId(Long accountId) {
-        return entertainerSavingsAccountRepository.existsByDepositAccountId(accountId);
-    }
-
-    private EntertainerSavingsAccount saveEntertainerSavingsAccount(
-            Long userId,
-            Long entertainerId,
-            String productName,
-            Long depositAccountId,
-            Long withdrawalAccountId
-    ) {
-        return entertainerSavingsAccountRepository.save(
-                EntertainerSavingsAccount.of(
-                        userId,
-                        entertainerId,
-                        productName,
-                        depositAccountId,
-                        withdrawalAccountId,
-                        0.05,
-                        5L,
-                        "example.com"
-                )
-        );
+    public boolean existsEntertainerAccountById(Long accountId) {
+        return entertainerSavingsAccountRepository.existsById(accountId);
     }
 
     private void validateNoExistingAccount(Long userId, Long entertainerId) {
@@ -248,5 +222,9 @@ public class EntertainSavingsService {
     private User findUser(String userEmail) {
         return userRepository.findBySocialEmail(userEmail)
                 .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
+    }
+
+    public List<String> findAllAccountNos() {
+        return entertainerSavingsAccountRepository.findAllAccountNos();
     }
 }
