@@ -3,47 +3,70 @@
 # 프로젝트명 : 시시덕
 
 ## 팀명 : [A702]
-|[강진주]|[권민채]|[김예진]|[김진영]|[이재홍]|[이주호]|
-|-------|-------|-------|-------|-------|-------|
-|- 팀장<br>- 프론트엔드<br>- 기획|- 백엔드<br>- 서버 아키텍처<br>- DevOps|- 백엔드<br>- DB 설계<br>- API 개발|- 백엔드<br>- AI 모델 연동<br>- Redis 캐싱|- 프론트엔드<br>- UX/UI 디자인<br>- BLE 구현|- 백엔드<br>- 결제 시스템<br>- 모임 통장 로직|
+| [강진주]                           | [권민채]                                  | [김예진]                                                 | [김진영]                                                                | [이재홍]                                          | [이주호]                                        |
+|---------------------------------|----------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------|----------------------------------------------|
+| - 팀장<br>- 프론트엔드<br>- 캐싱<br>- BLE 구현 | - 프론트엔드<br>- UX/UI 디자인<br>- UX/UI Lead | - 프론트엔드<br>- 기획<br>- UX/UI 디자인<br>- DB 설계<br>- API 개발 | - 백엔드<br>- DB 설계<br>- API 개발<br>- Batch처리| - 백엔드<br>- AI 모델 연동<br>- 서버 아키텍처<br>- DevOps| - 백엔드<br>- 금융망 연동<br>- 연예인 적금 랭킹<br>- DevOps |
 
 ## 💁‍♂️ Detail Role
-### [강진주]
-- 팀 일정 및 기획 총괄
-- 메인 화면 및 사용자 인터페이스 개발
-- 시니어 UX 디자인 최적화
+[강진주]
 
-### [권민채]
-- AWS 인프라 구축 및 관리
-- CI/CD 파이프라인 구축 (Jenkins, Docker)
-- Redis Sentinel 구성 및 모니터링
+팀 일정 관리 및 프로젝트 전체 기획 총괄
+메인 화면 UI/UX 개발 및 시니어 사용자 접근성 최적화
+BLE 기술을 활용한 주변 팬 탐색 기능 구현
+Redis 기반 캐싱 시스템 적용 및 성능 최적화
 
-### [김예진]
-- 데이터베이스 모델링 및 ERD 설계
-- 연예인 적금 관련 API 개발
-- JPA 및 QueryDSL을 활용한 데이터 접근 계층 구현
+[권민채]
 
-### [김진영]
-- LangChain 기반 AI 챗봇(덕순이) 개발
-- Redis 기반 실시간 랭킹 시스템 구현
-- 웹소켓을 활용한 실시간 업데이트 기능 개발
+전체 애플리케이션 UX/UI 디자인 리드
+사용자 경험 중심의 인터페이스 설계 및 구현
+반응형 웹 컴포넌트 개발 및 스타일 가이드 작성
+시니어 사용자를 위한 접근성 향상 기능 적용
 
-### [이재홍]
-- 모바일 앱 UI/UX 디자인
-- 주변 동료 탐색 BLE 기능 구현
-- 반응형 웹 디자인 및 접근성 향상
+[김예진]
 
-### [이주호]
-- 결제 시스템 연동 및 보안 강화
-- 모임 통장 및 모금 기능 개발
-- Spring Batch를 활용한 일괄 처리 로직 구현
+프로젝트 초기 기획 및 요구사항 정의
+애플리케이션 UI 컴포넌트 설계 및 구현
+프론트엔드 API 통신 로직 개발
+클라이언트 데이터 모델링 및 상태 관리 최적화
+사용자 테스트 및 피드백 반영 주도
+
+[김진영]
+
+백엔드 API 설계 및 구현
+데이터베이스 스키마 설계 및 쿼리 최적화
+결제 및 거래 처리 시스템 개발
+Spring Batch를 활용한 정산 및 배치 작업 구현
+
+[이재홍]
+
+LangChain 기반 AI 챗봇(덕순이) 개발
+백엔드 서버 아키텍처 설계 및 구현
+클라우드 인프라 관리 및 최적화
+
+[이주호]
+
+금융망 연동 및 통합 
+연예인 적금 랭킹 시스템 설계 및 구현
+CI/CD 파이프라인 구축 및 배포 자동화
 
 ## Languages
-Kotlin Java TypeScript
+Kotlin Java Python
 
 ## Technologies
-Spring Boot MySQL Redis Spring Batch
-Git GitLab Jira AWS Jenkins Docker JPA QueryDSL WebSocket LangChain
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
+![Spring Batch](https://img.shields.io/badge/Spring%20Batch-6DB33F?style=flat-square&logo=spring&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
+![GitLab](https://img.shields.io/badge/GitLab-FCA121?style=flat-square&logo=gitlab&logoColor=white)
+![Jira](https://img.shields.io/badge/Jira-0052CC?style=flat-square&logo=jira&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazonaws&logoColor=white)
+![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=flat-square&logo=jenkins&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+![JPA](https://img.shields.io/badge/JPA-59666C?style=flat-square&logo=hibernate&logoColor=white)
+![QueryDSL](https://img.shields.io/badge/QueryDSL-007ACC?style=flat-square&logo=java&logoColor=white)
+![WebSocket](https://img.shields.io/badge/WebSocket-010101?style=flat-square&logo=socketdotio&logoColor=white)
+![LangChain](https://img.shields.io/badge/LangChain-3178C6?style=flat-square&logo=chainlink&logoColor=white)
 
 ## 📝 목차
 - [개요](#개요)
