@@ -26,8 +26,6 @@ import java.util.List;
 @Slf4j
 public class EntertainerSavingsSchedulerService {
 
-    private static final String EMAIL = "lsc7134@naver.com";
-
     private final EntertainerSavingsAccountRepository savingsAccountRepository;
     private final InquireDemandDepositAccountService accountService;
     private final DemandDepositFacade demandDepositFacade;
