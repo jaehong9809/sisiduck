@@ -24,7 +24,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -215,9 +214,9 @@ fun ListeningDialog(
 
                 Text(
                     text = stringResource(R.string.ducksoon_is_listening),
-                    fontSize = 20.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF37474F)
+                    color = MainBlack
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -228,7 +227,12 @@ fun ListeningDialog(
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MainGradViolet)
                 ) {
-                    Text("말하기 종료", color = MainWhite, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = stringResource(R.string.voice_cancel),
+                        color = MainWhite,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                 }
             }
         }
