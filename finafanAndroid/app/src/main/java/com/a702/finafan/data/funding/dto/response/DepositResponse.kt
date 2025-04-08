@@ -8,7 +8,7 @@ data class DepositResponse(
     val name: String,
     val balance: Long,
     val content: String,
-    val createdAt: LocalDateTime
+    val createdAt: String
 )
 
 fun DepositResponse.toDomain(): Deposit {
@@ -17,6 +17,6 @@ fun DepositResponse.toDomain(): Deposit {
         name = this.name,
         balance = this.balance,
         message = this.content,
-        createdAt = this.createdAt
+        createdAt = LocalDateTime.parse(this.createdAt)
     )
 }

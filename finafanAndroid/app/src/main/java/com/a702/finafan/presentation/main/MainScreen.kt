@@ -73,10 +73,9 @@ fun MainScreen(
     )
 
     LaunchedEffect(isLoggedIn) {
-        viewModel.fetchMainSavings()
-
         if (isLoggedIn) {
             viewModel.fetchUserInfo()
+            viewModel.fetchMainSavings()
         }
     }
 

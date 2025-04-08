@@ -21,7 +21,7 @@ interface FundingRepository {
 
     suspend fun joinFunding(fundingId: Long): DataResource<Boolean>
     suspend fun leaveFunding(fundingId: Long): DataResource<Boolean>
-    suspend fun createDeposit(deposit: Deposit): DataResource<Boolean>
+    suspend fun createDeposit(fundingId: Long, deposit: Deposit): DataResource<Boolean>
     suspend fun withDrawDeposit(): DataResource<Boolean> // TODO: WithdrawDeposits 모델 파라미터로 추가
 
     // TODO: 아래 메서드들 모델, Request, Response DTO 설계 필요

@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.common.ui.theme.MainBlack
@@ -55,15 +54,4 @@ fun DepositHistoryList(deposits: List<Deposit>) {
             DepositHistoryItem(deposit.message, deposit.createdAt, deposit.balance)
         }
     }
-}
-
-@Preview
-@Composable
-fun DepositHistoryPreview() {
-    val deposits = listOf(
-        Deposit(1, "사람1", 20000, "aaa", LocalDateTime.of(2025, 3, 17, 0, 1)),
-        Deposit(2, "사람2", 10000, "bbb",  LocalDateTime.of(2025, 3, 16, 15, 1)),
-        Deposit(3, "사람3", 15000, "ccc",  LocalDateTime.of(2025, 3, 16, 3, 1)
-    ))
-    DepositHistoryList(deposits)
 }

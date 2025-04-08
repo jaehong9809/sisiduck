@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.funding.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.BottomSheetLayout
 import com.a702.finafan.common.ui.component.Card
@@ -52,9 +52,9 @@ import com.a702.finafan.presentation.navigation.NavRoutes
 
 @Composable
 fun FundingDetailScreen(
-    fundingId: Long
+    fundingId: Long,
+    viewModel: FundingDetailViewModel
 ) {
-    val viewModel: FundingDetailViewModel = hiltViewModel()
     val navController = LocalNavController.current
 
     val uiState by viewModel.uiState.collectAsState()
@@ -95,7 +95,7 @@ fun FundingDetailScreen(
         ) {
             CommonBackTopBar(modifier = Modifier.background(Color.Transparent), text = "모금 보기")
 
-            uiState.funding?.let { FundingDetailHeader(it, uiState.funding!!.star, colorSet) }
+            uiState.funding?.let { FundingDetailHeader(it, it.star, colorSet) }
 
             if(uiState.isParticipant) {
                 Column(
@@ -129,6 +129,7 @@ fun FundingDetailScreen(
                         .fillMaxWidth()
                         .padding(vertical = 22.dp)
                     )
+                    Log.d("uiState.deposits: ", "${uiState.deposits}")
                     DepositHistoryList(uiState.deposits)
 
                 }
@@ -166,7 +167,9 @@ fun FundingDetailScreen(
             GradSelectBottomButton(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
-                onLeftClick = {},
+                onLeftClick = {
+                    navController.navigate(NavRoutes.FundingDeposit.route)
+                },
                 onRightClick = {},
                 left = "입금하기",
                 right = "참여 취소하기",

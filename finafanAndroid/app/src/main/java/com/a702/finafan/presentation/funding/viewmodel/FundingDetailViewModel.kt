@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
+import com.a702.finafan.domain.funding.model.Deposit
 import com.a702.finafan.domain.funding.model.DepositFilter
+import com.a702.finafan.domain.funding.usecase.CreateDepositUseCase
 import com.a702.finafan.domain.funding.usecase.GetFundingDepositHistoryUseCase
 import com.a702.finafan.domain.funding.usecase.GetFundingDetailUseCase
 import com.a702.finafan.domain.funding.usecase.JoinFundingUseCase
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class FundingDetailViewModel @Inject constructor(
     private val getFundingDetailUseCase: GetFundingDetailUseCase,
     private val getFundingDepositHistoryUseCase: GetFundingDepositHistoryUseCase,
-    private val joinFundingUseCase: JoinFundingUseCase
+    private val joinFundingUseCase: JoinFundingUseCase,
+    private val createDepositUseCase: CreateDepositUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FundingDetailState())
@@ -41,7 +44,6 @@ class FundingDetailViewModel @Inject constructor(
                             isLoading = false
                         )
                     }
-                    Log.d("isParticipated", "${fundingDetail.participated}")
                 }
                 is DataResource.Error -> {
                     _uiState.update {
@@ -61,8 +63,33 @@ class FundingDetailViewModel @Inject constructor(
 
             when (val result = getFundingDepositHistoryUseCase(fundingId, filter)) {
                 is DataResource.Success -> {
+                    Log.d("뷰모델에서 deposit 목록 Success: ", "${result.data}")
                     _uiState.update {
                         it.copy(deposits = result.data, isLoading = false)
+                    }
+                }
+                is DataResource.Error -> {
+                    Log.d("뷰모델에서 deposit 목록 Error: ", "$result")
+                    _uiState.update {
+                        it.copy(isLoading = false, error = result.throwable)
+                    }
+                }
+                is DataResource.Loading -> {
+                    Log.d("뷰모델에서 deposit 목록 Loading: ", "$result")
+                    _uiState.update { it.copy(isLoading = true) }
+                }
+            }
+        }
+    }
+
+    fun joinFunding(fundingId: Long) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            when (val result = joinFundingUseCase(fundingId)) {
+                is DataResource.Success -> {
+                    _uiState.update {
+                        it.copy(isParticipant = true, isLoading = false)
                     }
                 }
                 is DataResource.Error -> {
@@ -77,11 +104,11 @@ class FundingDetailViewModel @Inject constructor(
         }
     }
 
-    fun joinFunding(fundingId: Long) {
+    fun createDeposit(fundingId: Long, deposit: Deposit) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            when (val result = joinFundingUseCase(fundingId)) {
+            when (val result = createDepositUseCase(fundingId, deposit)) {
                 is DataResource.Success -> {
                     _uiState.update {
                         it.copy(isParticipant = true, isLoading = false)
