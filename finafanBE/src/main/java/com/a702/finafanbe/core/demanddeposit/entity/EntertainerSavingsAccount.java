@@ -3,6 +3,7 @@ package com.a702.finafanbe.core.demanddeposit.entity;
 import com.a702.finafanbe.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -114,5 +115,8 @@ public class EntertainerSavingsAccount extends BaseEntity {
 
     public boolean isPresent() {
         return id != null;
+    }
+    public long getMaintenanceDays(EntertainerSavingsAccount depositAccount) {
+        return ChronoUnit.DAYS.between(depositAccount.getCreatedAt(), LocalDateTime.now());
     }
 }
