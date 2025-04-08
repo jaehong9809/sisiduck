@@ -57,7 +57,7 @@ fun ThreeTabRow(
                         ).then(
                             if (index == selectedIndex.intValue) Modifier.innerShadow(
                                 shape = RoundedCornerShape(15.dp),
-                                color = Color.Black.copy(alpha = 0.25f),
+                                color = Color.Black.copy(alpha = 0.4f),
                                 blur = 5.dp,
                                 offsetX = 2.dp,
                                 offsetY = 2.dp,
@@ -68,7 +68,7 @@ fun ThreeTabRow(
                     text = {
                         Text(
                             text = label,
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             fontFamily = Pretendard,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
