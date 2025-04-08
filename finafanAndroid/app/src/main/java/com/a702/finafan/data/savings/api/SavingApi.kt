@@ -10,7 +10,6 @@ import com.a702.finafan.data.savings.dto.response.SavingDepositResponse
 import com.a702.finafan.data.savings.dto.response.SavingRankingResponse
 import com.a702.finafan.data.savings.dto.response.StarResponse
 import com.a702.finafan.data.savings.dto.response.TransactionInfo
-import com.a702.finafan.domain.savings.model.SavingAccount
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -62,7 +61,7 @@ interface SavingApi {
     suspend fun updateSavingName(
         @Path("savingAccountId") savingAccountId: Long,
         @Body request: Map<String, String>
-    ): ApiResponse<SavingAccount>
+    ): ApiResponse<SavingAccountResponse>
 
     // 적금 계좌 해지하기
     @DELETE("v1/star/{savingAccountId}")

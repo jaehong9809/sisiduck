@@ -97,7 +97,7 @@ fun SavingMainScreen(
                 horizontalAlignment = CenterHorizontally
             ) {
                 item {
-                    SavingHeader(savingState.savingInfo.savingAccount)
+                    SavingHeader(savingState.savingAccount)
                 }
 
                 item {
@@ -108,7 +108,7 @@ fun SavingMainScreen(
                     savingState.isLoading -> {
                         item { CommonProgress() }
                     }
-                    savingState.savingInfo.transactions.isEmpty() -> {
+                    savingState.transactions.isEmpty() -> {
                         item {
                             Spacer(modifier = Modifier.height(18.dp))
 
@@ -122,7 +122,7 @@ fun SavingMainScreen(
                         }
                     }
                     else -> {
-                        items(savingState.savingInfo.transactions) { transaction ->
+                        items(savingState.transactions) { transaction ->
                             TransactionItem(transaction, onSelect = {
                                 viewModel.setTransaction(transaction)
                                 navController.navigate(NavRoutes.TransactionDetail.route)
