@@ -19,7 +19,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,7 +36,6 @@ import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 계좌 선택 화면
 @Composable
@@ -48,7 +46,7 @@ fun SelectBankAccountScreen(
 
     val context = LocalContext.current
 
-    val selectedAccountNos = remember { mutableStateListOf<String>() }
+    val selectedAccountNos = rememberSaveable { mutableStateListOf<String>() }
     val accountState by viewModel.accountState.collectAsState()
 
     val showDialog = rememberSaveable { mutableStateOf(false) }

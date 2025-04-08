@@ -7,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -42,10 +42,10 @@ fun SavingSelectAccountScreen(
     val accountState by accountViewModel.accountState.collectAsState()
     val savingState by savingViewModel.savingState.collectAsState()
 
-    val showDialog = remember { mutableStateOf(false) }
-    val dialogContent = remember { mutableStateOf("") }
+    val showDialog = rememberSaveable { mutableStateOf(false) }
+    val dialogContent = rememberSaveable { mutableStateOf("") }
 
-    val showAccountDialog = remember { mutableStateOf(false) }
+    val showAccountDialog = rememberSaveable { mutableStateOf(false) }
 
     // 출금계좌 목록 조회
     LaunchedEffect(Unit) {
