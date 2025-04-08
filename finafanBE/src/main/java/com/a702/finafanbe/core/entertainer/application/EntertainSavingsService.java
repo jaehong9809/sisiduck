@@ -24,6 +24,8 @@ import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -169,19 +171,20 @@ public class EntertainSavingsService {
             String newName
     ) {
         EntertainerSavingsAccount savingsAccount = findEntertainerAccountById(savingAccountId);
-        Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
-        Bank bank = bankService.findBankById(account.getBankId());
+        long maintenanceDays = savingsAccount.getMaintenanceDays(savingsAccount);
+        Bank bank = bankService.findBankById(savingsAccount.getBankId());
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
-        account.updateName(newName);
+        savingsAccount.updateAccountName(newName);
         return InquireEntertainerAccountResponse.of(
                 savingsAccount.getId(),
-                account.getAccountNo(),
-                account.getAccountName(),
-                account.getAmount(),
-                account.getCreatedAt(),
+                savingsAccount.getAccountNo(),
+                savingsAccount.getProductName(),
+                savingsAccount.getAmount(),
+                savingsAccount.getCreatedAt(),
                 savingsAccount.getInterestRate(),
                 savingsAccount.getDuration(),
+                maintenanceDays,
                 savingsAccount.getImageUrl(),
                 withdrawalAccount,
                 bank,
@@ -227,5 +230,14 @@ public class EntertainSavingsService {
 
     public List<String> findAllAccountNos() {
         return entertainerSavingsAccountRepository.findAllAccountNos();
+    }
+
+    public EntertainerSavingsAccount findEntertainerAccountByAccountNo(String depositAccountNo) {
+        return entertainerSavingsAccountRepository.findByAccountNo(depositAccountNo).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
+    }
+
+    @Transactional
+    public void updateAccount(EntertainerSavingsAccount savingsAccount, Long amount) {
+        savingsAccount.addAmount(amount);
     }
 }

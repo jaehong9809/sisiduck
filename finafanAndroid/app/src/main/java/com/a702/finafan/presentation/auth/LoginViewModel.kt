@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.data.user.local.UserPreferences
 import com.a702.finafan.domain.auth.repository.AuthRepository
+import com.a702.finafan.presentation.navigation.NavRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,7 +57,9 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onOAuthCallbackReceived(accessToken: String) {
+    fun onOAuthCallbackReceived(
+        accessToken: String
+    ) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 

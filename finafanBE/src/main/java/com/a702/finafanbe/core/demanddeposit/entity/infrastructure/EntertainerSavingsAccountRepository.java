@@ -21,4 +21,6 @@ public interface EntertainerSavingsAccountRepository extends JpaRepository<Enter
 
     @Query("SELECT e.accountNo FROM EntertainerSavingsAccount e")
     List<String> findAllAccountNos();
+
+    Optional<EntertainerSavingsAccount> findByAccountNo(String depositAccountNo);
 }

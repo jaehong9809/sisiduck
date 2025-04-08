@@ -17,6 +17,7 @@ public record InquireEntertainerAccountResponse(
         LocalDateTime createdDate,
         Double interestRate,
         Long duration,
+        Long maintenanceDays,
         String imageUrl,
         AccountInfo withdrawalAccount,
         Bank bank
@@ -29,6 +30,7 @@ public record InquireEntertainerAccountResponse(
         LocalDateTime createdDate,
         Double interestRate,
         Long duration,
+        Long maintenanceDays,
         String imageUrl,
         Account withdrawalAccount,
         Bank bank,
@@ -50,6 +52,7 @@ public record InquireEntertainerAccountResponse(
             createdDate,
             interestRate,
             duration,
+            maintenanceDays,
             imageUrl,
             withdrawalAccountInfo,
             bank
