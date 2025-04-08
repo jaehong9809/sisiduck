@@ -18,7 +18,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,16 +37,16 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.account.model.Account
 import com.a702.finafan.domain.account.model.Bank
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 
 // 출금 계좌 선택 박스
 @Composable
 fun SelectAccountField(
-    viewModel: SavingViewModel,
+    viewModel: AccountViewModel,
     accounts: List<Account>
 ) {
 
-    val savingState by viewModel.savingState.collectAsState()
+    val accountState by viewModel.accountState.collectAsState()
     var expandStatus by remember { mutableStateOf(false) }
 
     Box(
@@ -65,10 +64,7 @@ fun SelectAccountField(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            LaunchedEffect(savingState) {
-
-            }
-            TextItem(savingState.selectAccount.bank.bankName + " " + savingState.selectAccount.accountNo,
+            TextItem(accountState.selectAccount.bank.bankName + " " + accountState.selectAccount.accountNo,
                 MainBlack, 20.sp)
 
             Spacer(modifier = Modifier.width(width = 8.dp))

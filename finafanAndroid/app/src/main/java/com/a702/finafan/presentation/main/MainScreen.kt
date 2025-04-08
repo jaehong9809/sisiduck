@@ -54,12 +54,12 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    val mainSavingState by viewModel.mainSavingState.collectAsState()
-    val mainRankingState by viewModel.mainRankingState.collectAsState()
-    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
-    val userInfo by viewModel.userInfo.collectAsState()
 
     val context = LocalContext.current
+
+    val mainSavingState by viewModel.mainSavingState.collectAsState()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+    val userInfo by viewModel.userInfo.collectAsState()
 
     val blePermissionLauncher = rememberBlePermissionLauncher(
         onGranted = {
@@ -74,11 +74,10 @@ fun MainScreen(
 
     LaunchedEffect(isLoggedIn) {
         viewModel.fetchMainSavings()
+
         if (isLoggedIn) {
             viewModel.fetchUserInfo()
         }
-        // TODO: 랭킹 UI 구현 후 연결
-        // viewModel.fetchMainRanking(RankingType.DAILY)
     }
 
     val nameText = when {
@@ -98,7 +97,7 @@ fun MainScreen(
             // TODO: 로그인 구현 후 상태에서 유저 이름 가져오기
             Text(text = nameText,
                 modifier = Modifier.fillMaxWidth()
-                    .padding(start = 40.dp, top = 30.dp),
+                    .padding(start = 20.dp, top = 30.dp, bottom = 6.dp),
                 textAlign = TextAlign.Left,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
@@ -211,7 +210,6 @@ fun MainScreen(
                 fontWeight = FontWeight.SemiBold
             )
 
-            MainRanking(viewModel, modifier = Modifier.padding(horizontal = 40.dp))
-        }
+        MainRanking(viewModel, modifier = Modifier.padding(horizontal = 16.dp))
     }
 }

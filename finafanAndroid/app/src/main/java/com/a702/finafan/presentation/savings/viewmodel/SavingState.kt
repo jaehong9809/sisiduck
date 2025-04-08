@@ -1,7 +1,6 @@
 package com.a702.finafan.presentation.savings.viewmodel
 
 import com.a702.finafan.common.presentation.BaseState
-import com.a702.finafan.domain.account.model.Account
 import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.SavingAccountInfo
 import com.a702.finafan.domain.savings.model.SavingInfo
@@ -11,7 +10,6 @@ import com.a702.finafan.domain.savings.model.Transaction
 data class SavingState(
     val selectStar: Star = Star(),
     val accountName: String = "",
-    val selectAccount: Account = Account(),
     val transaction: Transaction = Transaction(),
     val savingInfo: SavingInfo = SavingInfo(),
     val createAccountId: Long = 0,

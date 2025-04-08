@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,7 +51,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MainRanking(
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier
 ) {
     var selectedTab by remember { mutableStateOf(RankingType.DAILY) }
 
@@ -77,7 +77,7 @@ fun MainRanking(
                 { selectedTab = RankingType.WEEKLY },
                 { selectedTab = RankingType.TOTAL }
             ),
-            modifier = Modifier.padding(horizontal = 14.dp)
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         AutoScrollingRankList(rankings = rankingState.rankings, rankingType = selectedTab)
@@ -88,18 +88,14 @@ fun MainRanking(
 fun AutoScrollingRankList(
     rankings: List<MainRanking>,
     rankingType: RankingType,
-    intervalMillis: Long = 3000 // 3초마다 변경
+    intervalMillis: Long = 2000 // 2초마다 변경
 ) {
-    var currentIndex by remember { mutableIntStateOf(0) }
+    var currentIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(rankings) {
-        if (rankings.isNotEmpty() && rankings.size > 1) {
-            while (true) {
-                delay(intervalMillis)
-                currentIndex = (currentIndex + 1) % rankings.size
-            }
-        } else {
-            currentIndex = 0
+        while (rankings.isNotEmpty()) {
+            delay(intervalMillis)
+            currentIndex = (currentIndex + 1) % rankings.size
         }
     }
 
@@ -152,7 +148,7 @@ fun RankingCard(ranking: MainRanking, rankingType: RankingType) {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(vertical = 20.dp, horizontal = 14.dp)
+            .padding(vertical = 20.dp, horizontal = 30.dp)
             .dropShadow(
                 shape = RoundedCornerShape(25.dp),
                 offsetX = 2.dp

@@ -330,10 +330,6 @@ class SavingViewModel @Inject constructor(
         _savingState.update { it.copy(accountName = accountName) }
     }
 
-    fun updateSelectAccount(account: Account) {
-        _savingState.update { it.copy(selectAccount = account) }
-    }
-
     fun setTransaction(transaction: Transaction) {
         _savingState.update { it.copy(transaction = transaction) }
     }
