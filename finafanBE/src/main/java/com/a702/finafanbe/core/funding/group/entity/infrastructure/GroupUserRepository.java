@@ -14,7 +14,7 @@ public interface GroupUserRepository extends JpaRepository<GroupUser, Long> {
 
     Optional<GroupUser> findByFundingGroupIdAndUserId(Long fundingGroupId, Long userId);
 
-    Optional<GroupUser> findByFundingGroupIdAndRole(Long fundingId, Role role)
+    Optional<GroupUser> findByFundingGroupIdAndRole(Long fundingId, Role role);
 
     void deleteAllByFundingGroupId(Long fundingId);
 }

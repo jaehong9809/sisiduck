@@ -1,10 +1,9 @@
 package com.a702.finafanbe.core.batch.writer;
 
 import com.a702.finafanbe.core.batch.dto.TransactionRequest;
+import com.a702.finafanbe.core.batch.exception.RetryableTransactionException;
 import com.a702.finafanbe.core.demanddeposit.application.ExternalDemandDepositApiService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferResponse;
-import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
-import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.funding.funding.entity.FundingTransactionStatus;
 import com.a702.finafanbe.core.funding.funding.entity.infrastructure.FundingPendingTransactionRepository;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
@@ -27,7 +26,6 @@ public class FundingTransactionWriter implements ItemWriter<List<TransactionRequ
     private final String SUCCESS_CODE = "H0000";
     private final String NO_MONEY = "A1014";
     private final String CANT_SEND_MONEY = "A1017";
-    private final FundingPendingTransactionRepository fundingPendingTransactionRepository;
 
     @Override
     public void write(Chunk<? extends List<TransactionRequest>> chunk) throws Exception {
@@ -56,7 +54,7 @@ public class FundingTransactionWriter implements ItemWriter<List<TransactionRequ
                     } else if (responseCode.equals(SUCCESS_CODE)) {
                         updateTransactionStatus(request.id(), FundingTransactionStatus.SUCCESS);
                     } else {
-                        // retry 대상
+                        throw new RetryableTransactionException("API 통신 문제 : " + responseCode);
                     }
                 } catch (Exception e) {
                     log.error("이체 실패 : {}", request, e);
@@ -68,6 +66,6 @@ public class FundingTransactionWriter implements ItemWriter<List<TransactionRequ
 
     private void updateTransactionStatus(Long id, FundingTransactionStatus status) {
         repository.findById(id)
-                .ifPresent(tx -> {tx.updateStatus(status);})
+                .ifPresent(tx -> tx.updateStatus(status));
     }
 }

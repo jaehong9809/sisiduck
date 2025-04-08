@@ -1,7 +1,6 @@
 package com.a702.finafanbe.core.batch.listener;
 
-import com.a702.finafanbe.core.batch.dto.TransactionRequest;
-import com.a702.finafanbe.core.batch.entity.SkippedTransactionRepository;
+import com.a702.finafanbe.core.batch.entity.Infrastructure.SkippedTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ChunkListener;

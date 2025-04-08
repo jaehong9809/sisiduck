@@ -1,6 +1,7 @@
 package com.a702.finafanbe.core.batch.config;
 
 import com.a702.finafanbe.core.batch.dto.TransactionRequest;
+import com.a702.finafanbe.core.batch.exception.RetryableTransactionException;
 import com.a702.finafanbe.core.batch.listener.SkippedTransactionListener;
 import com.a702.finafanbe.core.batch.processor.FundingTransactionProcessor;
 import com.a702.finafanbe.core.batch.reader.FundingTransactionReader;
@@ -54,6 +55,8 @@ public class FundingBatchConfig {
                 .processor(transactionProcessor)
                 .writer(transactionWriter)
                 .faultTolerant()
+                .retry(RetryableTransactionException.class)
+                .skip()
                 .listener(new SkippedTransactionListener())
                 .build();
     }

@@ -1,7 +1,6 @@
-package com.a702.finafanbe.core.batch.config;
+package com.a702.finafanbe.core.batch.Scheduler;
 
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
-import com.a702.finafanbe.core.funding.funding.entity.FundingPendingTransaction;
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
 import com.a702.finafanbe.core.funding.funding.entity.infrastructure.FundingPendingTransactionRepository;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingGroupRepository;
