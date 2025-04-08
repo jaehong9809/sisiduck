@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -42,8 +43,8 @@ fun SavingSelectAccountScreen(
     val accountState by accountViewModel.accountState.collectAsState()
     val savingState by savingViewModel.savingState.collectAsState()
 
-    val showDialog = rememberSaveable { mutableStateOf(false) }
-    val dialogContent = rememberSaveable { mutableStateOf("") }
+    val showDialog = remember { mutableStateOf(false) }
+    val dialogContent = remember { mutableStateOf("") }
 
     val showAccountDialog = rememberSaveable { mutableStateOf(false) }
 
@@ -52,26 +53,14 @@ fun SavingSelectAccountScreen(
         accountViewModel.fetchWithdrawalAccount()
     }
 
-    LaunchedEffect(accountState.isLoading) {
-        if (!accountState.isLoading) {
-            if (accountState.withdrawalAccounts.isEmpty()) {
-                // 출금 계좌가 없으면 계좌 연결 페이지로 이동
-                showAccountDialog.value = true
-            } else {
-                // 출금 계좌가 있으면 첫 번째 계좌를 연결
-                val firstAccount = accountState.withdrawalAccounts.first()
-                accountViewModel.updateSelectAccount(firstAccount)
-            }
-        }
-    }
-
-    if (showAccountDialog.value) {
+    // 출금 계좌가 없으면 계좌 연결 페이지로 이동
+    if (accountState.dialogShow) {
         ConfirmDialog(
-            showAccountDialog,
+            showDialog = remember { mutableStateOf(true) },
             content = context.getString(R.string.saving_item_withdrawal_empty),
             isConfirm = false,
             onClickConfirm = {
-                showAccountDialog.value = false
+                accountViewModel.setDialogShow(false) // 다이얼로그 닫기
                 navController.navigate(NavRoutes.Account.route)
             }
         )

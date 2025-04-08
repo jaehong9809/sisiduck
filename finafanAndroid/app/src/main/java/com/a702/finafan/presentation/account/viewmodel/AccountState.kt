@@ -14,6 +14,7 @@ data class AccountState(
     val accounts: List<Account> = emptyList(),
     val isCancel: Boolean = false,
     val isConnect: Boolean = false,
+    val dialogShow: Boolean = false,
     override val isLoading: Boolean = true,
     override val error: Throwable? = null,
     override val toastMessage: String? = null
