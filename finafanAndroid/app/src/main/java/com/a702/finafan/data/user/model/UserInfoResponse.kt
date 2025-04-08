@@ -6,15 +6,14 @@ import com.a702.finafan.domain.user.model.User
 data class UserInfoResponse(
     val userId: Int,
     val userName: String,
-    val userEmail: String,
-    val profileUrl: String?
+    val userEmail: String
 ) : DataMapper<User> {
     override fun toDomain() : User {
         return User(
             userId = userId,
             userName = userName,
             userEmail = userEmail,
-            profileUrl = profileUrl
+            profileUrl = ""
         )
     }
 }
