@@ -172,17 +172,16 @@ public class EntertainSavingsService {
     ) {
         EntertainerSavingsAccount savingsAccount = findEntertainerAccountById(savingAccountId);
         long maintenanceDays = savingsAccount.getMaintenanceDays(savingsAccount);
-        Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
-        Bank bank = bankService.findBankById(account.getBankId());
+        Bank bank = bankService.findBankById(savingsAccount.getBankId());
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
-        account.updateName(newName);
+        savingsAccount.updateAccountName(newName);
         return InquireEntertainerAccountResponse.of(
                 savingsAccount.getId(),
-                account.getAccountNo(),
-                account.getAccountName(),
-                account.getAmount(),
-                account.getCreatedAt(),
+                savingsAccount.getAccountNo(),
+                savingsAccount.getProductName(),
+                savingsAccount.getAmount(),
+                savingsAccount.getCreatedAt(),
                 savingsAccount.getInterestRate(),
                 savingsAccount.getDuration(),
                 maintenanceDays,
