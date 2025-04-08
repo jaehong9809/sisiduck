@@ -50,7 +50,7 @@ fun StarSearchScreen(
 
     val starState by viewModel.starState.collectAsState()
 
-    val selectStar = rememberSaveable { mutableStateOf(Star()) }
+    val selectStar = remember { mutableStateOf(Star()) }
     val showDialog = rememberSaveable { mutableStateOf(false) }
 
     if (showDialog.value) {
