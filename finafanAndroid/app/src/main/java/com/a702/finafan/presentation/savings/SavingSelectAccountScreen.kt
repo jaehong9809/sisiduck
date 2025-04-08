@@ -1,5 +1,7 @@
 package com.a702.finafan.presentation.savings
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -8,7 +10,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -21,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.SelectAccountField
+import com.a702.finafan.common.ui.component.SubButton
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.data.savings.dto.request.toData
 import com.a702.finafan.domain.savings.model.SavingCreate
@@ -45,8 +47,6 @@ fun SavingSelectAccountScreen(
 
     val showDialog = remember { mutableStateOf(false) }
     val dialogContent = remember { mutableStateOf("") }
-
-    val showAccountDialog = rememberSaveable { mutableStateOf(false) }
 
     // 출금계좌 목록 조회
     LaunchedEffect(Unit) {
@@ -129,6 +129,16 @@ fun SavingSelectAccountScreen(
         )
 
         SelectAccountField(accountViewModel, accountState.withdrawalAccounts)
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        SubButton(
+            modifier = Modifier.padding(start = 4.dp),
+            text = stringResource(R.string.saving_item_connect_account_title),
+            fontSize = 16.sp
+        ) {
+            navController.navigate(NavRoutes.Account.route)
+        }
 
     }
 }
