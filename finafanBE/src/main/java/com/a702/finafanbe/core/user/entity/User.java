@@ -77,22 +77,37 @@ public class User extends BaseEntity {
         );
     }
 
-    public static User of(String socialEmail, String nickname) {
+    public static User of(String socialEmail, String name) {
         return new User(
                 socialEmail,
-                nickname
+                name
         );
     }
 
     public static User of(
             String socialEmail,
             String userKey,
-            String socialType) {
+            String socialType,
+            String name
+    ) {
         return new User(
                 socialEmail,
                 userKey,
-                socialType
+                socialType,
+                name
         );
+    }
+
+    private User(
+        String socialEmail,
+        String userKey,
+        String socialType,
+        String name
+    ){
+        this.socialEmail = socialEmail;
+        this.userKey = userKey;
+        this.socialType = SocialType.valueOf(socialType);
+        this.name = name;
     }
 
     private User(

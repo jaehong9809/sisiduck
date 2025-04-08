@@ -3,12 +3,26 @@ package com.a702.finafanbe.core.auth.application;
 import com.a702.finafanbe.core.auth.entity.infrastructure.SSAFYUserInfo;
 import com.a702.finafanbe.core.auth.entity.infrastructure.SsafyOAuthProvider;
 import com.a702.finafanbe.core.auth.entity.AuthTokens;
+import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
+import com.a702.finafanbe.core.user.dto.request.UserFinancialNetworkRequest;
+import com.a702.finafanbe.core.user.dto.response.UserFinancialNetworkResponse;
+import com.a702.finafanbe.core.user.dto.response.UserResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.core.auth.presentation.util.JwtUtil;
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
+import com.a702.finafanbe.global.common.financialnetwork.util.FinancialNetworkUtil;
+import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 
 @Slf4j
@@ -19,6 +33,8 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final SsafyOAuthProvider ssafyOAuthProvider;
     private final UserRepository userRepository;
+    private final FinancialNetworkUtil financialNetworkUtil;
+    private final RestTemplate restTemplate;
 
     public AuthTokens login(String code) {
         String ssafyAccessToken = ssafyOAuthProvider.fetchSSAFYAccessToken(code);
@@ -51,11 +67,70 @@ public class AuthService {
         ));
     }
 
-    private User createUser(String socialEmail, String name) {
-        String generatedNickName = name + "#" + socialEmail;
-        return userRepository.save(User.of(
-                socialEmail,
+    private User createUser(String userEmail, String name) {
+        String generatedNickName = name + "#" + userEmail;
+        UserFinancialNetworkResponse financialNetwork = requestFinancialNetwork(
+            "https://finopenapi.ssafy.io/ssafy/api/v1/member",
+            userEmail
+        );
+        return saveUser(userEmail, financialNetwork.userKey(), name);
+    }
+
+    @Transactional
+    public User saveUser(String userEmail, String userKey, String name) {
+        if(userRepository.existsBySocialEmail(userEmail)){
+            throw new BadRequestException(ResponseData.createResponse(ErrorCode.DUPLICATE_EMAIL));
+        }
+        return userRepository.save(
+            User.of(
+                userEmail,
+                userKey,
+                "SSAFY",
                 name
-        ));
+            )
+        );
+    }
+
+    public UserFinancialNetworkResponse requestFinancialNetwork(
+        String url,
+        String userEmail
+    ) {
+        UserFinancialNetworkRequest userFinancialNetworkRequest = new UserFinancialNetworkRequest(
+            financialNetworkUtil.getApiKey(),
+            userEmail
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<UserFinancialNetworkRequest> httpEntity = new HttpEntity<>(
+            userFinancialNetworkRequest,
+            headers
+        );
+        log.info(url + " " + userEmail);
+        return restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            httpEntity,
+            UserFinancialNetworkResponse.class
+        ).getBody();
+    }
+
+    public UserResponse getUserWithFinancialNetwork(String userEmail) {
+        User user = findUserByEmail(userEmail);
+        UserFinancialNetworkResponse userFinancialNetworkResponse = requestFinancialNetwork(
+            "https://finopenapi.ssafy.io/ssafy/api/v1/member/search",
+            user.getSocialEmail()
+        );
+        return new UserResponse(
+            userFinancialNetworkResponse.userId(),
+            userFinancialNetworkResponse.userName()
+        );
+    }
+
+    public User findUserByEmail(String userEmail) {
+        return userRepository.findBySocialEmail(userEmail).orElseThrow(() -> new BadRequestException(ResponseData.builder()
+            .code(ErrorCode.NotFoundUser.getCode())
+            .message(ErrorCode.NotFoundUser.getMessage())
+            .build()));
     }
 }

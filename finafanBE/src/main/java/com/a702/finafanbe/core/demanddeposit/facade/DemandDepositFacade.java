@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.demanddeposit.facade;
 
+import com.a702.finafanbe.core.auth.application.AuthService;
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.dto.response.BankAccountConnectionResponse;
 import com.a702.finafanbe.core.bank.dto.response.BankAccountResponse;
@@ -61,6 +62,7 @@ public class DemandDepositFacade {
     private final DeleteAccountService deleteAccountService;
     private final FinancialRequestFactory financialRequestFactory;
     private final CreateAccountService createAccountService;
+    private final AuthService authService;
 
     public InquireDemandDepositAccountResponse getDemandDepositAccount(
             String userEmail,
@@ -616,9 +618,9 @@ public class DemandDepositFacade {
 //                    user.getUserId(),
                     1L,
                     acc.accountNo(),
-                    "KRW", // 기본 통화
+                    "KRW",
                     acc.accountName(),
-                    "GENERAL001", // 기본 계좌 유형
+                    "GENERAL001",
                     bank.getBankId()
                 );
                 accountsToSave.add(account);
@@ -638,17 +640,5 @@ public class DemandDepositFacade {
         }else{
             throw new BadRequestException(ResponseData.createResponse(ErrorCode.DUPLICATE_ACCOUNT));
         }
-    }
-
-    public ApiCreateAccountResponse signUpWithFinancialNetwork(
-        String userEmail
-    ) {
-        UserFinancialNetworkResponse financialNetwork = userService.requestFinancialNetwork(
-            "https://finopenapi.ssafy.io/ssafy/api/v1/member",
-            userEmail
-        );
-        userService.createUser(userEmail, financialNetwork.userKey());
-
-        return createTestAccount(userEmail);
     }
 }
