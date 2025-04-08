@@ -82,6 +82,7 @@ pipeline {
                             docker-compose -f docker-compose.yml down
 
                             # DOCKER_USER 변수를 설정
+                            DOCKER_USER=${DOCKER_USER} BUILD_NUMBER=${BUILD_NUMBER} docker-compose -f docker-compose.yml build --no-cache
                             DOCKER_USER=${DOCKER_USER} BUILD_NUMBER=${BUILD_NUMBER} docker-compose -f docker-compose.yml up -d
                             """
                     }
