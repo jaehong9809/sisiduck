@@ -1,7 +1,6 @@
-package com.a702.finafan.presentation.funding
+package com.a702.finafan.presentation.funding.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,11 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.a702.finafan.R
+import com.a702.finafan.common.ui.component.BottomSheetLayout
 import com.a702.finafan.common.ui.component.Card
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.CustomGradBottomButton
@@ -42,26 +41,38 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.ui.theme.starThemes
-import com.a702.finafan.domain.funding.model.Star
+import com.a702.finafan.domain.funding.model.DepositFilter
+import com.a702.finafan.domain.funding.model.FundingStatus
+import com.a702.finafan.presentation.funding.component.DepositHistoryList
+import com.a702.finafan.presentation.funding.component.FundingDetailHeader
+import com.a702.finafan.presentation.funding.component.MenuTitle
 import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
-import java.time.LocalDate
 
 @Composable
 fun FundingDetailScreen(
-    star: Star?,
     fundingId: Long
 ) {
     val viewModel: FundingDetailViewModel = hiltViewModel()
     val navController = LocalNavController.current
 
-    val star: Star = star ?: throw IllegalArgumentException("star가 null임!!")
-
     val uiState by viewModel.uiState.collectAsState()
+
+    val showBottomSheet = remember { mutableStateOf(false) }
+
+    val bottomSheetMessage = when (uiState.funding?.let { FundingStatus.valueOf(it.status) }) {
+        FundingStatus.CANCELED -> "주최자에 의해 중단된 펀딩입니다."
+        FundingStatus.FAILED -> "목표 금액을 달성하지 못해 종료된 펀딩입니다."
+        else -> ""
+    }
 
     LaunchedEffect(Unit) {
         viewModel.fetchFundingDetail(fundingId)
+        val status = uiState.funding?.let { FundingStatus.valueOf(it.status) }
+        if (status == FundingStatus.CANCELED || status == FundingStatus.FAILED) {
+            showBottomSheet.value = true
+        }
     }
 
     val colorSet: List<Color> = listOf(
@@ -84,7 +95,7 @@ fun FundingDetailScreen(
         ) {
             CommonBackTopBar(modifier = Modifier.background(Color.Transparent), text = "모금 보기")
 
-            uiState.funding?.let { FundingDetailHeader(it, star, colorSet) }
+            uiState.funding?.let { FundingDetailHeader(it, uiState.funding!!.star, colorSet) }
 
             if(uiState.isParticipant) {
                 Column(
@@ -101,16 +112,18 @@ fun FundingDetailScreen(
                         text = "모금 상세",
                         gradientColor = listOf(colorSet[0], colorSet[2])
                     )
-                    MenuTitle(content = "모금 내역", modifier = Modifier.padding(
-                        horizontal = 6.dp
-                    ))
+                    MenuTitle(
+                        content = "모금 내역", modifier = Modifier.padding(
+                            horizontal = 6.dp
+                        )
+                    )
                     ThreeTabRow(
                         labels = listOf("전체", "나의 내역"),
                         containerColor = MainWhite,
                         selectedTabColor = MainBlack,
                         onTabSelected = listOf(
-                        { viewModel.fetchAllDeposits(fundingId) },
-                        { viewModel.fetchMyDeposits(fundingId) }
+                        { viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL) },
+                        { viewModel.fetchDepositHistory(fundingId, DepositFilter.MY) }
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -174,10 +187,13 @@ fun FundingDetailScreen(
                 )
             )
         }
-    }
-}
 
-@Preview
-@Composable
-fun FundingDetailScreenPreview() {
+        BottomSheetLayout(
+            showBottomSheet = showBottomSheet,
+            confirmBtnText = "확인",
+            onClickConfirm = { showBottomSheet.value = false }
+        ) {
+            Text(text = bottomSheetMessage)
+        }
+    }
 }

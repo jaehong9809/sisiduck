@@ -1,4 +1,4 @@
-package com.a702.finafan.presentation.funding
+package com.a702.finafan.presentation.funding.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,13 +57,13 @@ fun DepositHistoryList(deposits: List<Deposit>) {
     }
 }
 
-//@Preview
-//@Composable
-//fun DepositHistoryPreview() {
-//    val deposits = listOf(
-//        Deposit("2025", "3월 17일", "입금자명", "09:48", 44444),
-//        Deposit("2025", "3월 16일", "입금자명", "15:34", 44444),
-//        Deposit("2025", "3월 16일", "입금자명", "15:28", 44444)
-//    )
-//    DepositHistoryList(deposits)
-//}
+@Preview
+@Composable
+fun DepositHistoryPreview() {
+    val deposits = listOf(
+        Deposit(1, "사람1", 20000, "aaa", LocalDateTime.of(2025, 3, 17, 0, 1)),
+        Deposit(2, "사람2", 10000, "bbb",  LocalDateTime.of(2025, 3, 16, 15, 1)),
+        Deposit(3, "사람3", 15000, "ccc",  LocalDateTime.of(2025, 3, 16, 3, 1)
+    ))
+    DepositHistoryList(deposits)
+}
