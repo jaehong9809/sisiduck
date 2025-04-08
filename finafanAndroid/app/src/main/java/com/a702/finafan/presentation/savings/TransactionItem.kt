@@ -76,7 +76,7 @@ fun TransactionItem(
                     )
 
                 Text(
-                    text = StringUtil.formatDate(transaction.date),
+                    text = StringUtil.formatDetailDate(transaction.date),
                     fontSize = 16.sp,
                     color = MainTextGray,
                     fontWeight = FontWeight.Normal,

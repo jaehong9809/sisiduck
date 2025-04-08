@@ -78,7 +78,7 @@ public class EntertainSavingsController {
 //            @AuthMember User user,
             @RequestBody CreateStarAccountRequest createStarAccountRequest
     ){
-        return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(createStarAccountRequest));
+            return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(createStarAccountRequest));
     }
 
     /*
@@ -100,7 +100,7 @@ public class EntertainSavingsController {
         String transactionAccountNo = exchange.getBody().REC().stream()
             .map(transaction -> transaction.accountNo())
             .findFirst().get();
-        Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(depositAccountNo);
+        EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountByAccountNo(depositAccountNo);
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountByAccountNo(
             transactionAccountNo);
 
@@ -111,9 +111,9 @@ public class EntertainSavingsController {
             }
             EntertainerDepositResponse response = entertainService.deposit(
                 EMAIL,
-                depositAccount.getAccountId(),
+                depositAccount.getId(),
                 withdrawalAccount.getAccountId(),
-                depositAccount.addAmount(new BigDecimal(starTransferRequest.transactionBalance())),
+                depositAccount.getAmount().add(new BigDecimal(starTransferRequest.transactionBalance())),
                 new BigDecimal(starTransferRequest.transactionBalance()),
                 exchange.getBody().REC().get(1).transactionUniqueNo(),
                 starTransferRequest.message(),
@@ -123,6 +123,8 @@ public class EntertainSavingsController {
             EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(
                     starTransferRequest.depositAccountId()
             );
+
+            entertainSavingsService.updateAccount(savingsAccount, starTransferRequest.transactionBalance());
 
             rankingWebSocketService.updateAndBroadcastRanking(
                     savingsAccount.getUserId(),

@@ -2,8 +2,6 @@ package com.a702.finafan.data.savings.api
 
 import com.a702.finafan.common.data.dto.ApiResponse
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
-import com.a702.finafan.data.savings.dto.response.AccountResponse
-import com.a702.finafan.data.savings.dto.response.BankResponse
 import com.a702.finafan.data.savings.dto.response.RankingDetailResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountInfoResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountResponse
@@ -39,7 +37,7 @@ interface SavingApi {
     @Multipart
     @PUT("v1/star/deposit")
     suspend fun deposit(
-        @PartMap map: HashMap<String, RequestBody>,
+        @PartMap map: Map<String, RequestBody>,
         @Part imageFile: MultipartBody.Part?
     ): ApiResponse<SavingDepositResponse>
 
@@ -59,28 +57,16 @@ interface SavingApi {
     @GET("v1/star/accounts")
     suspend fun savingAccounts(): ApiResponse<SavingAccountInfoResponse>
 
-    // 출금 계좌 목록 조회
-    @GET("v1/star/withdrawal-accounts")
-    suspend fun withdrawAccount(): ApiResponse<List<AccountResponse>>
-
-    // 은행 목록 조회
-    @GET("v1/code/bank")
-    suspend fun bankList(): ApiResponse<List<BankResponse>>
-
     // 적금 계좌 이름 변경
     @PUT("v1/star/alias/{savingAccountId}")
     suspend fun updateSavingName(
         @Path("savingAccountId") savingAccountId: Long,
-        @Body request: HashMap<String, String>
+        @Body request: Map<String, String>
     ): ApiResponse<SavingAccount>
 
     // 적금 계좌 해지하기
     @DELETE("v1/star/account/{savingAccountId}")
     suspend fun deleteSavingAccount(@Path("savingAccountId") savingAccountId: Long): ApiResponse<Unit>
-
-    // 연결 계좌 삭제
-    @DELETE("v1/star/{depositAccountId}/withdrawal-connection")
-    suspend fun deleteConnectAccount(@Path("depositAccountId") depositAccountId: Long): ApiResponse<Unit>
 
     // 적금 일간 랭킹 조회
     @GET("v1/ranking/daily/all-entertainers")
@@ -94,6 +80,7 @@ interface SavingApi {
     @GET("v1/ranking/total/entertainers")
     suspend fun totalStarRanking(): ApiResponse<List<SavingRankingResponse>>
 
+    // 스타별 적금 내역 조회
     @GET("v1/star/{entertainerId}/top-transactions")
     suspend fun starSavingHistory(
         @Path("entertainerId") starId: Long,

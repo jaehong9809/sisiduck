@@ -3,13 +3,12 @@ package com.a702.finafan.presentation.account
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -19,7 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,18 +34,16 @@ import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
-import com.a702.finafan.domain.savings.model.Bank
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 
 // 은행 선택 화면
 @Composable
 fun ConnectBankScreen(
-    viewModel: SavingViewModel = viewModel(),
+    viewModel: AccountViewModel = viewModel(),
     onComplete: () -> Unit
 ) {
-
-    val selectBank = remember { mutableStateOf(Bank()) }
-    val savingState by viewModel.savingState.collectAsState()
+    val selectedBankIds = remember { mutableStateListOf<Long>() }
+    val accountState by viewModel.accountState.collectAsState()
 
     // 은행 목록
     LaunchedEffect(Unit) {
@@ -56,7 +53,6 @@ fun ConnectBankScreen(
     Scaffold(
         topBar = {
             CommonBackTopBar(modifier = Modifier)
-
         },
         bottomBar = {
             PrimaryGradBottomButton(
@@ -64,11 +60,12 @@ fun ConnectBankScreen(
                     .fillMaxWidth()
                     .imePadding(),
                 onClick = {
-                    viewModel.updateBank(selectBank.value)
+                    // 은행 선택
+                    viewModel.selectBank(selectedBankIds)
                     onComplete()
                 },
                 text = stringResource(R.string.btn_next),
-                isEnabled = selectBank.value.bankCode.isNotEmpty()
+                isEnabled = selectedBankIds.isNotEmpty()
             )
         }
     ) { innerPadding ->
@@ -77,8 +74,6 @@ fun ConnectBankScreen(
                 .padding(innerPadding)
                 .background(MainWhite)
                 .fillMaxSize()
-                .imePadding()
-                .windowInsetsPadding(WindowInsets.ime)
         ) {
             Column(
                 modifier = Modifier
@@ -105,6 +100,10 @@ fun ConnectBankScreen(
                 )
             }
 
+            if (accountState.isLoading) {
+                CommonProgress()
+            }
+
             LazyVerticalGrid (
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
@@ -115,22 +114,26 @@ fun ConnectBankScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
 
-                if (savingState.isLoading) {
-                    item {
-                        CommonProgress()
-                    }
-                } else {
-                    items(savingState.bankList.size) { index ->
-                        val bank = savingState.bankList[index]
-                        val isSelected = selectBank.value.bankCode == bank.bankCode
+                if (!accountState.isLoading) {
+                    items(accountState.bankList.size) { index ->
+                        val bank = accountState.bankList[index]
+                        val isSelected = selectedBankIds.any { it == bank.bankId }
 
                         BankItem(
                             bank = bank,
-                            isSelected = isSelected,
-                            onSelect = {
-                                selectBank.value = it
+                            selectedBanks = selectedBankIds,
+                            onToggleSelect = { clickedBankId ->
+                                if (isSelected) {
+                                    selectedBankIds.removeAll { it == clickedBankId }
+                                } else {
+                                    selectedBankIds.add(clickedBankId)
+                                }
                             }
                         )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
 

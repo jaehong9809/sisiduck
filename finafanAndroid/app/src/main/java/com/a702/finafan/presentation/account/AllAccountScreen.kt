@@ -51,8 +51,9 @@ import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
-import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.account.model.Account
 import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -61,33 +62,36 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 @Composable
 fun AllAccountScreen(
     selectedTabIndex: MutableIntState,
-    savingViewModel: SavingViewModel = viewModel()
+    savingViewModel: SavingViewModel = viewModel(),
+    accountViewModel: AccountViewModel = viewModel()
 ) {
 
     val navController = LocalNavController.current
     val context = LocalContext.current
+
     val savingState by savingViewModel.savingState.collectAsState()
+    val accountState by accountViewModel.accountState.collectAsState()
 
     LaunchedEffect(Unit) {
         when (selectedTabIndex.intValue) {
             0 -> savingViewModel.fetchSavingAccount()
             1 -> 0 // TODO: 모금 통장 API
-            2 -> savingViewModel.fetchWithdrawalAccount()
+            2 -> accountViewModel.fetchWithdrawalAccount()
         }
     }
 
-    val count by remember(selectedTabIndex, savingState) {
+    val count by remember(selectedTabIndex, savingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accounts.size
                 1 -> 0 // TODO: 모금 통장 개수
-                2 -> savingState.withdrawalAccounts.size
+                2 -> accountState.withdrawalAccounts.size
                 else -> 0
             }
         }
     }
 
-    val accountAmount by remember(selectedTabIndex, savingState) {
+    val accountAmount by remember(selectedTabIndex, savingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.total
@@ -97,13 +101,24 @@ fun AllAccountScreen(
         }
     }
 
-    val accountList by remember(selectedTabIndex, savingState) {
+    val accountList by remember(selectedTabIndex, savingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accounts
                 1 -> emptyList() // TODO: 모금 통장 리스트
-                2 -> savingState.withdrawalAccounts
+                2 -> accountState.withdrawalAccounts
                 else -> emptyList()
+            }
+        }
+    }
+
+    val isLoading by remember(selectedTabIndex, savingState, accountState) {
+        derivedStateOf {
+            when (selectedTabIndex.intValue) {
+                0 -> savingState.isLoading
+                1 -> true // TODO: 모금 통장 로딩
+                2 -> accountState.isLoading
+                else -> true
             }
         }
     }
@@ -160,7 +175,6 @@ fun AllAccountScreen(
                     onTabSelected = listOf(
                         {
                             selectedTabIndex.intValue = 0
-                            // 적금 계좌 목록
                             savingViewModel.fetchSavingAccount()
                         },
                         {
@@ -169,8 +183,7 @@ fun AllAccountScreen(
                         },
                         {
                             selectedTabIndex.intValue = 2
-                            // 출금 계좌 목록
-                            savingViewModel.fetchWithdrawalAccount()
+                            accountViewModel.fetchWithdrawalAccount()
                         }
                     ),
                 )
@@ -220,7 +233,7 @@ fun AllAccountScreen(
             ) {
 
                 when {
-                    savingState.isLoading -> {
+                    isLoading -> {
                         item { CommonProgress() }
                     }
                     accountList.isEmpty() -> {
@@ -256,7 +269,7 @@ fun AllAccountScreen(
                                 2 -> WithdrawalAccountItem(
                                     account as Account,
                                     onSelect = {
-                                        savingViewModel.updateConnectAccount(account)
+                                        accountViewModel.updateConnectAccount(account)
                                         navController.navigate(NavRoutes.ConnectAccount.route)
                                     }
                                 )

@@ -13,18 +13,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.NumberField
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 
 // 계좌 번호 입력 화면
 @Composable
 fun AccountInputScreen(
-    viewModel: SavingViewModel = viewModel(),
+    viewModel: AccountViewModel = viewModel(),
     onComplete: () -> Unit
 ) {
 
-    val savingState by viewModel.savingState.collectAsState()
+    val accountState by viewModel.accountState.collectAsState()
 
-    val selectBank = savingState.selectBank
+    val selectBank = accountState.selectBank
     val accountNo = remember { mutableStateOf("") }
 
     ConnectAccountLayout (

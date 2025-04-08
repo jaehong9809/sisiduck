@@ -62,8 +62,8 @@ fun SavingAccountManageScreen(
     val accountInfo = savingState.savingInfo.savingAccount
 
     val showBottomSheet = rememberSaveable { mutableStateOf(false) }
-    val showDialog = remember { mutableStateOf(false) }
-    val dialogContent = remember { mutableStateOf("") }
+    val showDialog = rememberSaveable { mutableStateOf(false) }
+    val dialogContent = rememberSaveable { mutableStateOf("") }
 
     val changeName = rememberSaveable { mutableStateOf(accountInfo.accountName) }
     val originName = rememberSaveable { mutableStateOf(accountInfo.accountName) }
