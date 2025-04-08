@@ -1,7 +1,9 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
+import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.demanddeposit.dto.response.RetrieveProductsResponse;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
+import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
