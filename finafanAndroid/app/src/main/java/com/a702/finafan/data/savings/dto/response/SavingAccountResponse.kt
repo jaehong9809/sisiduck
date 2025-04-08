@@ -1,6 +1,6 @@
 package com.a702.finafan.data.savings.dto.response
 
-import com.a702.finafan.domain.savings.model.Account
+import com.a702.finafan.domain.account.model.Account
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.SavingAccountInfo
 

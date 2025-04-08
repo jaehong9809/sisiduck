@@ -8,10 +8,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.a702.finafan.presentation.auth.LoginScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
+import com.a702.finafan.presentation.auth.LoginScreen
 import com.a702.finafan.presentation.ble.UuidListScreen
 import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.chatbot.ChatViewModel
@@ -26,6 +27,7 @@ fun NavGraph(
 ) {
     NavControllerProvider(navController = navController) {
         val savingViewModel: SavingViewModel = hiltViewModel()
+        val accountViewModel: AccountViewModel = hiltViewModel()
 
         val systemUiController = rememberSystemUiController()
         val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -65,9 +67,17 @@ fun NavGraph(
                 UuidListScreen()
             }
 
-            savingGraph(navController = navController, savingViewModel = savingViewModel)
+            savingGraph(
+                navController = navController,
+                savingViewModel = savingViewModel,
+                accountViewModel = accountViewModel
+            )
 
-            accountGraph(navController = navController, savingViewModel = savingViewModel)
+            accountGraph(
+                navController = navController,
+                savingViewModel = savingViewModel,
+                accountViewModel = accountViewModel
+            )
 
             fundingGraph(navController)
 

@@ -5,14 +5,10 @@ import com.a702.finafan.common.data.dto.getOrThrowNull
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.savings.api.SavingApi
-import com.a702.finafan.data.savings.dto.request.AccountNosRequest
-import com.a702.finafan.data.savings.dto.request.BankIdsRequest
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.data.savings.dto.response.toDomain
 import com.a702.finafan.domain.main.model.RankingType
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.SavingAccountInfo
@@ -66,14 +62,6 @@ class SavingRepositoryImpl @Inject constructor(
         api.savingAccounts().getOrThrow { it.toDomain() }
     }
 
-    override suspend fun withdrawAccount(): DataResource<List<Account>> = safeApiCall {
-        api.withdrawAccount().getOrThrow { it.map { dto -> dto.toDomain() } }
-    }
-
-    override suspend fun bankList(): DataResource<List<Bank>> = safeApiCall {
-        api.bankList().getOrThrow { it.map { dto -> dto.toDomain() } }
-    }
-
     override suspend fun changeSavingName(savingAccountId: Long, name: String): DataResource<String> = safeApiCall {
         val request = mapOf("newName" to name)
         api.updateSavingName(savingAccountId, request).getOrThrow { it.accountName }
@@ -81,10 +69,6 @@ class SavingRepositoryImpl @Inject constructor(
 
     override suspend fun deleteSavingAccount(savingAccountId: Long): DataResource<Boolean> = safeApiCall {
         api.deleteSavingAccount(savingAccountId).getOrThrowNull { true }
-    }
-
-    override suspend fun deleteConnectAccount(accountId: Long): DataResource<Boolean> = safeApiCall {
-        api.deleteConnectAccount(accountId).getOrThrowNull { true }
     }
 
     override suspend fun dailyStarRanking(): DataResource<List<Ranking>> = safeApiCall {
@@ -103,13 +87,4 @@ class SavingRepositoryImpl @Inject constructor(
         api.starSavingHistory(starId, type.value).getOrThrow { it.toDomain() }
     }
 
-    override suspend fun selectBanks(bankIds: List<Long>): DataResource<List<Account>> = safeApiCall {
-        val request = BankIdsRequest(bankIds)
-        api.selectBanks(request).getOrThrow { it.map { dto -> dto.toDomain() } }
-    }
-
-    override suspend fun selectAccounts(accountNos: List<String>): DataResource<List<Account>> = safeApiCall {
-        val request = AccountNosRequest(accountNos)
-        api.selectAccounts(request).getOrThrow { it.map { dto -> dto.toDomain() } }
-    }
 }

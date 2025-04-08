@@ -26,8 +26,8 @@ import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.gradientBlue
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.account.model.Account
+import com.a702.finafan.domain.account.model.Bank
 
 // 계좌번호 정보 아이템 (은행 사진 + 은행명 + 계좌번호)
 @Composable
