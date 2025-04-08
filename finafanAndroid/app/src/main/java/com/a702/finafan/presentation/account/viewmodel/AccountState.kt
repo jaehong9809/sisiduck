@@ -6,6 +6,7 @@ import com.a702.finafan.domain.account.model.Bank
 
 data class AccountState(
     val connectAccount: Account = Account(),
+    val selectAccount: Account = Account(),
     val selectBank: Bank = Bank(),
     val inputAccountNo: String = "",
     val withdrawalAccounts: List<Account> = emptyList(),
