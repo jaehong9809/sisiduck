@@ -68,7 +68,7 @@ fun SelectAccountField(
             LaunchedEffect(savingState) {
 
             }
-            TextItem(savingState.connectAccount.bank.bankName + " " + savingState.connectAccount.accountNo,
+            TextItem(savingState.selectAccount.bank.bankName + " " + savingState.selectAccount.accountNo,
                 MainBlack, 20.sp)
 
             Spacer(modifier = Modifier.width(width = 8.dp))
@@ -106,7 +106,7 @@ fun SelectAccountField(
                         )
                     },
                     onClick = {
-                        viewModel.updateConnectAccount(item)
+                        viewModel.updateSelectAccount(item)
                         expandStatus = false
                     }
                 )

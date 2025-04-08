@@ -11,7 +11,7 @@ import com.a702.finafan.domain.savings.model.Transaction
 data class SavingState(
     val selectStar: Star = Star(),
     val accountName: String = "",
-    val connectAccount: Account = Account(),
+    val selectAccount: Account = Account(),
     val transaction: Transaction = Transaction(),
     val savingInfo: SavingInfo = SavingInfo(),
     val createAccountId: Long = 0,

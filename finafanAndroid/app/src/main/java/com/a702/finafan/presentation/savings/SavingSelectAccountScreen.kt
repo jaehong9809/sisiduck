@@ -60,7 +60,7 @@ fun SavingSelectAccountScreen(
             } else {
                 // 출금 계좌가 있으면 첫 번째 계좌를 연결
                 val firstAccount = accountState.withdrawalAccounts.first()
-                savingViewModel.updateConnectAccount(firstAccount)
+                savingViewModel.updateSelectAccount(firstAccount)
             }
         }
     }
@@ -115,13 +115,13 @@ fun SavingSelectAccountScreen(
         topBarTitle = stringResource(R.string.saving_item_create_top_bar),
         title = stringResource(R.string.saving_item_select_account_title),
         buttonText = stringResource(R.string.btn_create),
-        isButtonEnabled = savingState.connectAccount.accountNo.isNotEmpty(),
+        isButtonEnabled = savingState.selectAccount.accountNo.isNotEmpty(),
         onButtonClick = {
             // 적금 개설
             val savingCreate = SavingCreate(
                 savingState.selectStar.starId,
                 savingState.accountName,
-                savingState.connectAccount
+                savingState.selectAccount
             )
 
             val request = savingCreate.toData()
