@@ -41,21 +41,21 @@ public class AuthService {
 
     private User findOrCreateUser(
             String socialEmail,
-            String nickname
+            String name
     ) {
         return userRepository.findBySocialEmail(
                 socialEmail
         ).orElseGet(() -> createUser(
                 socialEmail,
-                nickname
+                name
         ));
     }
 
-    private User createUser(String socialEmail, String nickname) {
-        String generatedNickName = nickname + "#" + socialEmail;
+    private User createUser(String socialEmail, String name) {
+        String generatedNickName = name + "#" + socialEmail;
         return userRepository.save(User.of(
                 socialEmail,
-                generatedNickName
+                name
         ));
     }
 }
