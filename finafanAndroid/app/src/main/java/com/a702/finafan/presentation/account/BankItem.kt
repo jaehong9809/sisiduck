@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,9 +31,12 @@ import com.a702.finafan.domain.savings.model.Bank
 @Composable
 fun BankItem(
     bank: Bank,
-    isSelected: Boolean,
-    onSelect: (Bank) -> Unit
+    selectedBanks: List<Long>,
+    onToggleSelect: (Long) -> Unit
 ) {
+
+    val isSelected = selectedBanks.any { it == bank.bankId }
+
     Column(
         modifier = Modifier
             .wrapContentHeight()
@@ -52,7 +56,7 @@ fun BankItem(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = {
-                    onSelect(bank)
+                    onToggleSelect(bank.bankId)
                 }
             ),
     ) {
@@ -85,7 +89,22 @@ fun BankItem(
 @Preview(showBackground = true)
 @Composable
 fun BankItemPreview() {
-    var selectedBank = "NH농협"
+    val banks = listOf(1, 2, 3)
 
-    BankItem(Bank(bankId = 12, bankCode = "011", bankName = "NH농협"), false, onSelect = {})
+    val selectedBanks = remember { mutableStateListOf<Long>() }
+    val bank = Bank()
+
+    Column {
+        BankItem(
+            bank = bank,
+            selectedBanks = selectedBanks,
+            onToggleSelect = { clickedBank ->
+                if (selectedBanks.any { it == clickedBank }) {
+                    selectedBanks.removeAll { it == clickedBank }
+                } else {
+                    selectedBanks.add(clickedBank)
+                }
+            }
+        )
+    }
 }

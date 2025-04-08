@@ -25,6 +25,8 @@ data class SavingState(
     val isCancel: Boolean = false,
     val rankingList: List<Ranking> = emptyList(),
     val ranking: Ranking = Ranking(),
+    val accounts: List<Account> = emptyList(),
+    val isConnect: Boolean = false,
     override val isLoading: Boolean = true,
     override val error: Throwable? = null,
     override val toastMessage: String? = null

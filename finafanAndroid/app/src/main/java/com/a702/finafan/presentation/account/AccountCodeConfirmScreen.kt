@@ -16,7 +16,6 @@ import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
-import com.a702.finafan.presentation.savings.AccountInfoItem
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 인증 코드 확인 완료 화면
