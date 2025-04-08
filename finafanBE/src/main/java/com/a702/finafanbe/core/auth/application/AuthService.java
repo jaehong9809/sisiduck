@@ -3,7 +3,11 @@ package com.a702.finafanbe.core.auth.application;
 import com.a702.finafanbe.core.auth.entity.infrastructure.SSAFYUserInfo;
 import com.a702.finafanbe.core.auth.entity.infrastructure.SsafyOAuthProvider;
 import com.a702.finafanbe.core.auth.entity.AuthTokens;
-import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
+import com.a702.finafanbe.core.demanddeposit.application.ExternalDemandDepositApiService;
+import com.a702.finafanbe.core.demanddeposit.dto.request.DepositRequest;
+import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
+import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse.REC;
+import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountDepositResponse;
 import com.a702.finafanbe.core.user.dto.request.UserFinancialNetworkRequest;
 import com.a702.finafanbe.core.user.dto.response.UserFinancialNetworkResponse;
 import com.a702.finafanbe.core.user.dto.response.UserResponse;
@@ -13,6 +17,7 @@ import com.a702.finafanbe.core.auth.presentation.util.JwtUtil;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialNetworkUtil;
+import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +25,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -35,6 +41,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final FinancialNetworkUtil financialNetworkUtil;
     private final RestTemplate restTemplate;
+    private final FinancialRequestFactory financialRequestFactory;
+    private final ExternalDemandDepositApiService externalDemandDepositApiService;
 
     public AuthTokens login(String code) {
         String ssafyAccessToken = ssafyOAuthProvider.fetchSSAFYAccessToken(code);
@@ -73,11 +81,46 @@ public class AuthService {
             "https://finopenapi.ssafy.io/ssafy/api/v1/member",
             userEmail
         );
+        REC dummyAccount = createDummyAccount(userEmail, "001-1-56b59a5f38c04f");
+        depositToDummyAccount(userEmail,
+            new DepositRequest(dummyAccount.getAccountNo(), 100000L, ""));
+
         return saveUser(userEmail, financialNetwork.userKey(), name);
     }
 
+    private ResponseEntity<UpdateDemandDepositAccountDepositResponse> depositToDummyAccount(
+        String userEmail,
+        DepositRequest depositRequest
+    ) {
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
+            "/demandDeposit/updateDemandDepositAccountDeposit",
+            apiName -> financialRequestFactory.depositAccount(
+                userEmail,
+                apiName,
+                depositRequest.accountNo(),
+                depositRequest.transactionBalance(),
+                depositRequest.transactionSummary()
+            ),
+            "updateDemandDepositAccountDeposit",
+            UpdateDemandDepositAccountDepositResponse.class
+        );
+    }
+
+    private REC createDummyAccount(String email, String productUniqueNo) {
+        return externalDemandDepositApiService.DemandDepositRequestWithFactory(
+            "/demandDeposit/createDemandDepositAccount",
+            apiName -> financialRequestFactory.UserKeyAccountTypeUniqueNoRequest(
+                email,
+                productUniqueNo,
+                apiName
+            ),
+            "createDemandDepositAccount",
+            CreateAccountResponse.class
+        ).getBody().REC();
+    }
+
     @Transactional
-    public User saveUser(String userEmail, String userKey, String name) {
+    protected User saveUser(String userEmail, String userKey, String name) {
         if(userRepository.existsBySocialEmail(userEmail)){
             throw new BadRequestException(ResponseData.createResponse(ErrorCode.DUPLICATE_EMAIL));
         }
