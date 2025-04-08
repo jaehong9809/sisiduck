@@ -19,7 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,8 +42,7 @@ fun ConnectBankScreen(
     viewModel: AccountViewModel = viewModel(),
     onComplete: () -> Unit
 ) {
-
-    val selectedBankIds = rememberSaveable { mutableStateListOf<Long>() }
+    val selectedBankIds = remember { mutableStateListOf<Long>() }
     val accountState by viewModel.accountState.collectAsState()
 
     // 은행 목록
@@ -101,6 +100,10 @@ fun ConnectBankScreen(
                 )
             }
 
+            if (accountState.isLoading) {
+                CommonProgress()
+            }
+
             LazyVerticalGrid (
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
@@ -111,12 +114,7 @@ fun ConnectBankScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
 
-                if (accountState.isLoading) {
-                    item {
-                        CommonProgress()
-                    }
-                } else {
-
+                if (!accountState.isLoading) {
                     items(accountState.bankList.size) { index ->
                         val bank = accountState.bankList[index]
                         val isSelected = selectedBankIds.any { it == bank.bankId }

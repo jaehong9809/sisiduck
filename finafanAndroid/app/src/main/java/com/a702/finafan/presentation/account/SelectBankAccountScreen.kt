@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -46,7 +47,7 @@ fun SelectBankAccountScreen(
 
     val context = LocalContext.current
 
-    val selectedAccountNos = rememberSaveable { mutableStateListOf<String>() }
+    val selectedAccountNos = remember { mutableStateListOf<String>() }
     val accountState by viewModel.accountState.collectAsState()
 
     val showDialog = rememberSaveable { mutableStateOf(false) }
