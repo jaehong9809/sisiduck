@@ -2,6 +2,7 @@ package com.a702.finafan.presentation.main
 
 import android.Manifest
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -75,10 +76,17 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         viewModel.fetchMainSavings()
+    }
 
+    LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
             viewModel.fetchUserInfo()
         }
+    }
+
+    // Logging userState
+    LaunchedEffect(userState) {
+        Log.d("Compose", "userState changed: $userState")
     }
 
     Column(modifier = modifier
