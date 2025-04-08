@@ -21,7 +21,6 @@ import com.a702.finafanbe.core.ranking.application.RankingService;
 import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.user.application.UserService;
-import com.a702.finafanbe.core.user.dto.response.UserFinancialNetworkResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
@@ -29,8 +28,6 @@ import com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +59,6 @@ public class DemandDepositFacade {
     private final DeleteAccountService deleteAccountService;
     private final FinancialRequestFactory financialRequestFactory;
     private final CreateAccountService createAccountService;
-    private final AuthService authService;
 
     public InquireDemandDepositAccountResponse getDemandDepositAccount(
             String userEmail,
