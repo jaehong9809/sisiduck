@@ -52,7 +52,7 @@ fun SavingSelectAccountScreen(
         accountViewModel.fetchWithdrawalAccount()
     }
 
-    LaunchedEffect(accountState.withdrawalAccounts) {
+    LaunchedEffect(accountState.isLoading) {
         if (!accountState.isLoading) {
             if (accountState.withdrawalAccounts.isEmpty()) {
                 // 출금 계좌가 없으면 계좌 연결 페이지로 이동

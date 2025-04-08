@@ -53,7 +53,12 @@ class AccountViewModel @Inject constructor(
                     }
                 }
                 is DataResource.Loading -> {
-                    _accountState.update { it.copy(isLoading = true) }
+                    _accountState.update {
+                        it.copy(
+                            isLoading = true,
+                            withdrawalAccounts = emptyList()
+                        )
+                    }
                 }
             }
         }
