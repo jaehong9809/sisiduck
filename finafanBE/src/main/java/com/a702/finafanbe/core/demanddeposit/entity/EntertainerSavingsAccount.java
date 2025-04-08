@@ -42,7 +42,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(nullable = false, name = "withdrawal_account_id")
     private Long withdrawalAccountId;
 
-    @Column(nullable = false, name = "product_name")
+    @Column(nullable = false, name = "]t_name")
     private String productName;
 
     @Column(nullable = false, name = "interest_rate")
@@ -118,5 +118,8 @@ public class EntertainerSavingsAccount extends BaseEntity {
     }
     public long getMaintenanceDays(EntertainerSavingsAccount depositAccount) {
         return ChronoUnit.DAYS.between(depositAccount.getCreatedAt(), LocalDateTime.now());
+    }
+    public void updateAccountName(String newName){
+        this.productName = newName;
     }
 }
