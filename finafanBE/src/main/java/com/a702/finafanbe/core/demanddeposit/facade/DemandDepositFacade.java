@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.demanddeposit.facade;
 
+import com.a702.finafanbe.core.auth.application.AuthService;
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.dto.response.BankAccountConnectionResponse;
 import com.a702.finafanbe.core.bank.dto.response.BankAccountResponse;
@@ -20,7 +21,6 @@ import com.a702.finafanbe.core.ranking.application.RankingService;
 import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.user.application.UserService;
-import com.a702.finafanbe.core.user.dto.response.UserFinancialNetworkResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
@@ -28,8 +28,6 @@ import com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -616,9 +614,9 @@ public class DemandDepositFacade {
 //                    user.getUserId(),
                     1L,
                     acc.accountNo(),
-                    "KRW", // 기본 통화
+                    "KRW",
                     acc.accountName(),
-                    "GENERAL001", // 기본 계좌 유형
+                    "GENERAL001",
                     bank.getBankId()
                 );
                 accountsToSave.add(account);
@@ -638,17 +636,5 @@ public class DemandDepositFacade {
         }else{
             throw new BadRequestException(ResponseData.createResponse(ErrorCode.DUPLICATE_ACCOUNT));
         }
-    }
-
-    public ApiCreateAccountResponse signUpWithFinancialNetwork(
-        String userEmail
-    ) {
-        UserFinancialNetworkResponse financialNetwork = userService.requestFinancialNetwork(
-            "https://finopenapi.ssafy.io/ssafy/api/v1/member",
-            userEmail
-        );
-        userService.createUser(userEmail, financialNetwork.userKey());
-
-        return createTestAccount(userEmail);
     }
 }

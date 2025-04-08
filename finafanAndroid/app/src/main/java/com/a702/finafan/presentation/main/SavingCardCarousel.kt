@@ -1,6 +1,6 @@
 package com.a702.finafan.presentation.main
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,14 +9,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,7 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.domain.main.model.MainSaving
-
+import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 @Composable
 fun CardCarousel(
@@ -50,39 +53,69 @@ fun CardCarousel(
 
     val listState = rememberLazyListState()
 
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.isScrollInProgress }
-            .collect { isScrolling ->
-                if (!isScrolling) {
-                    val index = listState.firstVisibleItemIndex
-                    val offset = listState.firstVisibleItemScrollOffset
-                    val targetIndex = if (offset > cardWidth.value / 2) index + 1 else index
+    LaunchedEffect(Unit) {
+        val interactionSource = listState.interactionSource
 
-                    listState.animateScrollToItem(targetIndex, scrollOffset = 0)
+        interactionSource.interactions.collect { interaction ->
+            if (interaction is DragInteraction.Stop || interaction is DragInteraction.Cancel) {
+                delay(100)
+
+                val layoutInfo = listState.layoutInfo
+                val visibleItems = layoutInfo.visibleItemsInfo
+
+                if (visibleItems.isNotEmpty()) {
+                    val center = layoutInfo.viewportStartOffset +
+                            (layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset) / 2
+
+                    val closestItem = visibleItems.minByOrNull { item ->
+                        val itemCenter = item.offset + item.size / 2
+                        abs(itemCenter - center)
+                    }
+
+                    closestItem?.let { item ->
+                        listState.animateScrollToItem(item.index)
+                    }
                 }
             }
+        }
     }
 
-    val contentPadding = if (cards.size == 1) {
-        PaddingValues(horizontal = 16.dp)
-    } else {
-        PaddingValues(start = peekWidth, end = peekWidth)
+    val isAtStart by remember {
+        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+    }
+
+    val isAtEnd by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex == cards.lastIndex ||
+                    (listState.firstVisibleItemIndex == cards.lastIndex - 1 &&
+                            listState.layoutInfo.visibleItemsInfo.size < cards.size)
+        }
+    }
+
+    val contentPadding = when {
+        cards.size == 1 -> PaddingValues(horizontal = 16.dp)
+        isAtStart -> PaddingValues(start = 16.dp, end = 0.dp)
+        isAtEnd -> PaddingValues(start = peekWidth, end = 0.dp)
+        else -> PaddingValues(start = peekWidth, end = 0.dp)
     }
 
     LazyRow(
         state = listState,
         contentPadding = contentPadding,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.fillMaxWidth()
-            .padding(vertical = 8.dp)
-
     ) {
-        items(cards) { card ->
-            Box(modifier = Modifier.fillParentMaxWidth(), contentAlignment = Alignment.Center) {
+        itemsIndexed(cards) { index, card ->
+            Box(
+                modifier = Modifier
+                    .width(cardWidth)
+                    .padding(end = if (cards.size == 1) 0.dp else 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
                 CardItem(card, cardWidth)
             }
         }
     }
+
 }
 
 @Composable
