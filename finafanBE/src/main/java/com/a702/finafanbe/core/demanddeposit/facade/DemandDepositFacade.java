@@ -349,7 +349,8 @@ public class DemandDepositFacade {
                     transaction.transactionAfterBalance(),
                     transaction.transactionBalance(),
                     transaction.transactionMemo(),
-                    imageUrl
+                    imageUrl,
+                    detail.getCreatedAt()
                 );
             })
             .collect(Collectors.toList());
@@ -458,19 +459,18 @@ public class DemandDepositFacade {
 
     public void deleteStarAccount(Long savingAccountId) {
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
-        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
-        log.info("Waccount {}" , withdrawalAccount.getAccountNo());
+        log.info("Waccount {}" , savingsAccount.getAccountNo());
         DeleteAccountResponse.REC deleteResponse = deleteAccountService.deleteAccount(
                 "/demandDeposit/deleteDemandDepositAccount",
                 financialRequestFactory.deleteAccountRequest(
                         EMAIL,
                         savingsAccount.getAccountNo(),
                         "deleteDemandDepositAccount",
-                        withdrawalAccount.getAccountNo()
+                        savingsAccount.getAccountNo()
                 )
         ).REC();
 
-        Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(deleteResponse.accountNo());
+        EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountByAccountNo(deleteResponse.accountNo());
         if (savingsAccount.getAmount() != null && savingsAccount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
             if (savingsAccount.isPresent()) {
                 double amountToDeduct = savingsAccount.getAmount().negate().doubleValue();
@@ -482,7 +482,7 @@ public class DemandDepositFacade {
             }
         }
 
-        entertainSavingsService.deleteByAccountId(depositAccount.getAccountId());
+        entertainSavingsService.deleteByAccountId(depositAccount.getId());
         deleteAccountService.deleteById(savingsAccount.getId());
     }
 
