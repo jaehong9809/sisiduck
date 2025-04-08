@@ -77,7 +77,7 @@ fun MainRanking(
                 { selectedTab = RankingType.WEEKLY },
                 { selectedTab = RankingType.TOTAL }
             ),
-            modifier = Modifier.padding(horizontal = 30.dp)
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         AutoScrollingRankList(rankings = rankingState.rankings, rankingType = selectedTab)
