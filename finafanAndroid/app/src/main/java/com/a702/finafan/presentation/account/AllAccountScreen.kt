@@ -76,7 +76,7 @@ fun AllAccountScreen(
         when (selectedTabIndex.intValue) {
             0 -> savingViewModel.fetchSavingAccount()
             1 -> 0 // TODO: 모금 통장 API
-            2 -> savingViewModel.fetchWithdrawalAccount()
+            2 -> accountViewModel.fetchWithdrawalAccount()
         }
     }
 
@@ -85,7 +85,7 @@ fun AllAccountScreen(
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accounts.size
                 1 -> 0 // TODO: 모금 통장 개수
-                2 -> savingState.withdrawalAccounts.size
+                2 -> accountState.withdrawalAccounts.size
                 else -> 0
             }
         }
@@ -106,7 +106,7 @@ fun AllAccountScreen(
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accounts
                 1 -> emptyList() // TODO: 모금 통장 리스트
-                2 -> savingState.withdrawalAccounts
+                2 -> accountState.withdrawalAccounts
                 else -> emptyList()
             }
         }

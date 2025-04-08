@@ -86,16 +86,19 @@ fun MainScreen(
         else -> ""
     }
 
-    Column(modifier = modifier
-        .fillMaxSize()
-        .background(color = MainBgLightGray)
-        .verticalScroll(rememberScrollState())
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = MainBgLightGray)
+            .verticalScroll(rememberScrollState())
     ) {
-        Column(modifier = Modifier.fillMaxWidth(),
+        Column(
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // TODO: 로그인 구현 후 상태에서 유저 이름 가져오기
-            Text(text = nameText,
+            Text(
+                text = nameText,
                 modifier = Modifier.fillMaxWidth()
                     .padding(start = 20.dp, top = 30.dp, bottom = 6.dp),
                 textAlign = TextAlign.Left,
@@ -124,91 +127,91 @@ fun MainScreen(
             )
         }
 
-            Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.padding(8.dp))
 
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                MainSquareIconButton(
-                    modifier = Modifier.weight(1f),
-                    onClick = {
-                        blePermissionLauncher.launch(
-                            arrayOf(
-                                Manifest.permission.BLUETOOTH_ADVERTISE,
-                                Manifest.permission.BLUETOOTH_SCAN,
-                                Manifest.permission.BLUETOOTH_CONNECT,
-                                Manifest.permission.ACCESS_FINE_LOCATION
-                            )
-                        )
-                    },
-                    icon = {
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(CircleShape)
-                                .background(MainBtnLightBlue)
-                                .padding(5.dp)
-                        ) {
-                            ImageItem(Modifier.fillMaxSize(), { }, R.drawable.ble)
-                        }
-                    },
-                    text = "주변 팬 찾기"
-                )
-
-                MainSquareIconButton(
-                    modifier = Modifier.weight(1f),
-                    onClick = {
-                        navController.navigate(NavRoutes.FundingMain.route)
-                    },
-                    icon = {
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(CircleShape)
-                                .background(MainBtnLightOrange)
-                                .padding(10.dp)
-                        ) {
-                            ImageItem(Modifier.fillMaxSize(), { }, R.drawable.funding_box)
-                        }
-                    },
-                    text = "모금"
-                )
-            }
-
-            Spacer(modifier = Modifier.padding(8.dp))
-
-            MainWideIconButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            MainSquareIconButton(
+                modifier = Modifier.weight(1f),
                 onClick = {
-                    navController.navigate(NavRoutes.Chat.route)
+                    blePermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.BLUETOOTH_ADVERTISE,
+                            Manifest.permission.BLUETOOTH_SCAN,
+                            Manifest.permission.BLUETOOTH_CONNECT,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        )
+                    )
                 },
                 icon = {
                     Box(
                         modifier = Modifier
                             .size(80.dp)
                             .clip(CircleShape)
-                            .background(MainBtnLightYellow)
-                            .padding(8.dp)
+                            .background(MainBtnLightBlue)
+                            .padding(5.dp)
                     ) {
-                        ImageItem(Modifier.fillMaxSize(), { }, R.drawable.duck)
+                        ImageItem(Modifier.fillMaxSize(), { }, R.drawable.ble)
                     }
                 },
-                text = "덕순이랑 놀기"
+                text = "주변 팬 찾기"
             )
 
-            Text(
-                text = "스타별 적금 랭킹",
-                modifier = Modifier.fillMaxWidth()
-                    .padding(start = 20.dp, top = 40.dp, bottom = 20.dp),
-                textAlign = TextAlign.Left,
-                fontSize = 26.sp,
-                fontWeight = FontWeight.SemiBold
+            MainSquareIconButton(
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    navController.navigate(NavRoutes.FundingMain.route)
+                },
+                icon = {
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .background(MainBtnLightOrange)
+                            .padding(10.dp)
+                    ) {
+                        ImageItem(Modifier.fillMaxSize(), { }, R.drawable.funding_box)
+                    }
+                },
+                text = "모금"
             )
+        }
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        MainWideIconButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            onClick = {
+                navController.navigate(NavRoutes.Chat.route)
+            },
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(MainBtnLightYellow)
+                        .padding(8.dp)
+                ) {
+                    ImageItem(Modifier.fillMaxSize(), { }, R.drawable.duck)
+                }
+            },
+            text = "덕순이랑 놀기"
+        )
+
+        Text(
+            text = "스타별 적금 랭킹",
+            modifier = Modifier.fillMaxWidth()
+                .padding(start = 20.dp, top = 40.dp, bottom = 20.dp),
+            textAlign = TextAlign.Left,
+            fontSize = 26.sp,
+            fontWeight = FontWeight.SemiBold
+        )
 
         MainRanking(viewModel, modifier = Modifier.padding(horizontal = 16.dp))
     }

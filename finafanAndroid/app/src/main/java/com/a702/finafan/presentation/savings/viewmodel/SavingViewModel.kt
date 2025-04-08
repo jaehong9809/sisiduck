@@ -2,12 +2,11 @@ package com.a702.finafan.presentation.savings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
+import com.a702.finafan.domain.account.model.Account
 import com.a702.finafan.domain.main.model.RankingType
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
-import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
@@ -163,37 +162,22 @@ class SavingViewModel @Inject constructor(
         viewModelScope.launch {
             _savingState.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                val savingAccountInfo = getSavingAccountUseCase()
-
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        savingAccountInfo = savingAccountInfo
-                    )
+            when (val result = getSavingAccountUseCase()) {
+                is DataResource.Success -> {
+                    _savingState.update {
+                        it.copy(
+                            savingAccountInfo = result.data,
+                            isLoading = false
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        error = e
-                    )
-                }
-            }
-        }
-    }
-
-    fun fetchBankList() {
-        viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
-
-            try {
-                val bankList = getBankUseCase()
-
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        bankList = bankList
-                    )
+                is DataResource.Error -> {
+                    _savingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
                 }
                 is DataResource.Loading -> {
                     _savingState.update { it.copy(isLoading = true) }

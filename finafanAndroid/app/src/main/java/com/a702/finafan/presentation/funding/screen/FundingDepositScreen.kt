@@ -33,18 +33,18 @@ import com.a702.finafan.common.ui.component.SelectAccountField
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.funding.model.Funding
 import com.a702.finafan.domain.funding.model.Star
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 import com.a702.finafan.presentation.funding.component.FundingInfoHeader
 import com.a702.finafan.presentation.navigation.LocalNavController
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 import java.time.LocalDate
 
 @Composable
 fun FundingDepositScreen(
     funding: Funding
 ) {
-    val savingViewModel: SavingViewModel = hiltViewModel()
+    val accountViewModel: AccountViewModel = hiltViewModel()
 
-    val savingState by savingViewModel.savingState.collectAsState()
+    val accountState by accountViewModel.accountState.collectAsState()
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
@@ -74,7 +74,7 @@ fun FundingDepositScreen(
 
         Text("출금 계좌 선택", fontWeight = FontWeight.Medium, fontSize = 14.sp)
         Spacer(modifier = Modifier.height(8.dp))
-        SelectAccountField(savingViewModel, savingState.withdrawalAccounts)
+        SelectAccountField(accountViewModel, accountState.withdrawalAccounts)
 
         Spacer(modifier = Modifier.height(24.dp))
 

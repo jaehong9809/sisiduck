@@ -1,8 +1,6 @@
 package com.a702.finafan.data.funding.dto.response
 
 import com.a702.finafan.domain.funding.model.Funding
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.SavingAccount
 import java.time.LocalDate
 
 data class FundingResponse(
@@ -30,16 +28,16 @@ fun FundingResponse.toDomain(): Funding {
 
 }
 
-fun Funding.toSavingAccount(): SavingAccount {
-    return SavingAccount(
-        accountId = this.id,
-        accountNo = this.accountNo,
-        accountName = this.title,
-        amount = this.currentAmount,
-        createdDate = "",
-        interestRate = "",
-        duration = 0,
-        imageUrl = "",
-        withdrawalAccount = Account()
-    )
-}
+//fun Funding.toSavingAccount(): SavingAccount {
+//    return SavingAccount(
+//        accountId = this.id,
+//        accountNo = this.accountNo,
+//        accountName = this.title,
+//        amount = this.currentAmount,
+//        createdDate = "",
+//        interestRate = "",
+//        duration = 0,
+//        imageUrl = "",
+//        withdrawalAccount = Account()
+//    )
+//}
