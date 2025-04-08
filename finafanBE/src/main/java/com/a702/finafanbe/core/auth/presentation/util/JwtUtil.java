@@ -37,7 +37,7 @@ public class JwtUtil {
         log.info("✅ [JwtUtil] subject value check: '{}'", subject);
         String refreshToken = createToken("", refreshTokenExpiry);
         String accessToken = createToken(subject, accessTokenExpiry);
-        return new AuthTokens(refreshToken, accessToken);
+        return new AuthTokens(accessToken, refreshToken);
     }
 
     private String createToken(String subject, Long expiredMs) {

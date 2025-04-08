@@ -38,8 +38,6 @@ import java.util.List;
 @Slf4j
 public class EntertainSavingsController {
 
-    private static final String EMAIL = "lsc7134@naver.com";
-
     private final DemandDepositFacade demandDepositFacade;
     private final EntertainSavingsService entertainService;
     private final S3Service s3Service;
@@ -61,33 +59,29 @@ public class EntertainSavingsController {
 
     @GetMapping("/home")
     public ResponseEntity<ResponseData<List<HomeEntertainerAccountResponse>>> getStarAccountsForHome(
-//            @AuthMember User user
+            @AuthMember User user
     ){
-        return ResponseUtil.success(demandDepositFacade.findStarAccountsForHome(EMAIL));
+        return ResponseUtil.success(demandDepositFacade.findStarAccountsForHome(user.getSocialEmail()));
     }
 
     @GetMapping("/accounts")
     public ResponseEntity<ResponseData<EntertainerAccountsResponse>> getStarAccounts(
-//            @AuthMember User user
+            @AuthMember User user
     ){
-        return ResponseUtil.success(demandDepositFacade.findStarAccounts(EMAIL));
+        return ResponseUtil.success(demandDepositFacade.findStarAccounts(user.getSocialEmail()));
     }
 
     @PostMapping("/savings")
     public ResponseEntity<ResponseData<StarAccountResponse>> createSavings(
-//            @AuthMember User user,
+            @AuthMember User user,
             @RequestBody CreateStarAccountRequest createStarAccountRequest
     ){
-        return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(createStarAccountRequest));
+            return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(user, createStarAccountRequest));
     }
 
-    /*
-    * TODO scheduler로 한 달 마다 이체가 되도록하면됨.
-    *
-    * */
     @PutMapping("/deposit")
     public ResponseEntity<ResponseData<EntertainerDepositResponse>> deposit(
-            //@AuthMember User user,
+            @AuthMember User user,
             @ModelAttribute StarTransferRequest starTransferRequest
             ){
         ResponseEntity<UpdateDemandDepositAccountTransferResponse> exchange = demandDepositFacade.transferEntertainerAccount(
@@ -110,7 +104,7 @@ public class EntertainSavingsController {
                 image = s3Service.uploadImage(starTransferRequest.imageFile());
             }
             EntertainerDepositResponse response = entertainService.deposit(
-                EMAIL,
+                user.getSocialEmail(),
                 depositAccount.getId(),
                 withdrawalAccount.getAccountId(),
                 depositAccount.getAmount().add(new BigDecimal(starTransferRequest.transactionBalance())),
@@ -123,6 +117,8 @@ public class EntertainSavingsController {
             EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(
                     starTransferRequest.depositAccountId()
             );
+
+            entertainSavingsService.updateAccount(savingsAccount, starTransferRequest.transactionBalance());
 
             rankingWebSocketService.updateAndBroadcastRanking(
                     savingsAccount.getUserId(),
@@ -138,18 +134,21 @@ public class EntertainSavingsController {
 
     @GetMapping("/transaction-histories/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerHistoriesResponse>> getDemandDepositTransactionHistories(
+            @AuthMember User user,
             @PathVariable Long savingAccountId
     ){
         return ResponseUtil.success(demandDepositFacade.inquireEntertainerHistories(
+                user,
                 savingAccountId));
     }
 
     @PostMapping("/select")
     public ResponseEntity<ResponseData<EntertainerResponse>> selectStar(
-//            @AuthMember User user,
+        @AuthMember User user,
         @RequestBody SelectStarRequest selectStarRequest
     ){
         return ResponseUtil.success(entertainService.choiceStar(
+            user.getSocialEmail(),
             selectStarRequest
         ));
     }
@@ -160,8 +159,8 @@ public class EntertainSavingsController {
     }
 
     @GetMapping("/favorite")
-    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers() {
-        return ResponseUtil.success(demandDepositFacade.getPossessionEntertainer());
+    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers(User user) {
+        return ResponseUtil.success(demandDepositFacade.getPossessionEntertainer(user.getSocialEmail()));
     }
 
     @GetMapping("/search")
@@ -173,9 +172,9 @@ public class EntertainSavingsController {
 
     @GetMapping("/withdrawal-accounts")
     public ResponseEntity<ResponseData<List<WithdrawalAccountResponse>>> getWithdrawalAccounts(
-//        @AuthMember User user;
+        @AuthMember User user
     ) {
-        return ResponseUtil.success(savingsAccountService.getWithdrawalAccounts(EMAIL));
+        return ResponseUtil.success(savingsAccountService.getWithdrawalAccounts(user.getSocialEmail()));
     }
 
     @PutMapping("/alias/{savingAccountId}")
@@ -190,8 +189,8 @@ public class EntertainSavingsController {
     }
 
     @DeleteMapping("/{savingAccountId}")
-    public ResponseEntity<ResponseData<Void>> deleteAccount(@PathVariable Long savingAccountId){
-        demandDepositFacade.deleteStarAccount(savingAccountId);
+    public ResponseEntity<ResponseData<Void>> deleteAccount(@PathVariable Long savingAccountId, @AuthMember User user){
+        demandDepositFacade.deleteStarAccount(user, savingAccountId);
         return ResponseUtil.success();
     }
 
