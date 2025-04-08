@@ -78,6 +78,8 @@
     <string name="saving_item_media_permission">미디어 권한에 동의하지 않았습니다.</string>
 
     <!-- Funding Screen -->
+    <string name="funding_join_btn">참여하기</string>
+    <string name="funding_join_alert">모금 참여를 시작합니다!</string>
     <string name="funding_create_star_label">스타 선택</string>
     <string name="funding_create_title_label">모금 제목</string>
     <string name="funding_create_title_description">커피차, 생일 서포트 등 진행하고 싶은 모금의 목적을 입력해주세요.</string>

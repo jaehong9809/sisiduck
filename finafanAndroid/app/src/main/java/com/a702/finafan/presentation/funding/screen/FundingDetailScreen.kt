@@ -1,6 +1,5 @@
 package com.a702.finafan.presentation.funding.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +68,7 @@ fun FundingDetailScreen(
 
     LaunchedEffect(Unit) {
         viewModel.fetchFundingDetail(fundingId)
+        viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL)
         val status = uiState.funding?.let { FundingStatus.valueOf(it.status) }
         if (status == FundingStatus.CANCELED || status == FundingStatus.FAILED) {
             showBottomSheet.value = true
@@ -93,9 +93,17 @@ fun FundingDetailScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 60.dp)
         ) {
-            CommonBackTopBar(modifier = Modifier.background(Color.Transparent), text = "모금 보기")
+            Box {
+                uiState.funding?.let {
+                    FundingDetailHeader(it, it.star, colorSet)
+                }
 
-            uiState.funding?.let { FundingDetailHeader(it, it.star, colorSet) }
+                CommonBackTopBar(
+                    text = "모금 보기",
+                    backgroundColor = Color.Transparent,
+                    modifier = Modifier.align(Alignment.TopStart)
+                )
+            }
 
             if(uiState.isParticipant) {
                 Column(
@@ -129,7 +137,6 @@ fun FundingDetailScreen(
                         .fillMaxWidth()
                         .padding(vertical = 22.dp)
                     )
-                    Log.d("uiState.deposits: ", "${uiState.deposits}")
                     DepositHistoryList(uiState.deposits)
 
                 }

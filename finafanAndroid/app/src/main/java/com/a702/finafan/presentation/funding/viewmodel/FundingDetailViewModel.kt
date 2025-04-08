@@ -1,6 +1,5 @@
 package com.a702.finafan.presentation.funding.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
@@ -63,19 +62,16 @@ class FundingDetailViewModel @Inject constructor(
 
             when (val result = getFundingDepositHistoryUseCase(fundingId, filter)) {
                 is DataResource.Success -> {
-                    Log.d("뷰모델에서 deposit 목록 Success: ", "${result.data}")
                     _uiState.update {
                         it.copy(deposits = result.data, isLoading = false)
                     }
                 }
                 is DataResource.Error -> {
-                    Log.d("뷰모델에서 deposit 목록 Error: ", "$result")
                     _uiState.update {
                         it.copy(isLoading = false, error = result.throwable)
                     }
                 }
                 is DataResource.Loading -> {
-                    Log.d("뷰모델에서 deposit 목록 Loading: ", "$result")
                     _uiState.update { it.copy(isLoading = true) }
                 }
             }

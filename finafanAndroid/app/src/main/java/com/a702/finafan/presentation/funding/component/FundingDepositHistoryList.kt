@@ -49,9 +49,43 @@ fun DepositHistoryItem(
 
 @Composable
 fun DepositHistoryList(deposits: List<Deposit>) {
+    val groupedDeposits = deposits
+        .sortedByDescending { it.createdAt }
+        .groupBy { it.createdAt.year }
+        .mapValues { (_, yearGroup) ->
+            yearGroup.groupBy { it.createdAt.toLocalDate() }
+        }
+
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
-        deposits.forEach { deposit ->
-            DepositHistoryItem(deposit.message, deposit.createdAt, deposit.balance)
+        groupedDeposits.forEach { (year, dateMap) ->
+            Text(
+                text = "${year}년",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = Pretendard,
+                color = MainBlack,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            )
+
+            dateMap.toSortedMap(compareByDescending { it })
+                .forEach { (date, dailyDeposits) ->
+                    Text(
+                        text = "${date.monthValue}월 ${date.dayOfMonth}일",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = Pretendard,
+                        color = MainBlack,
+                        modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+                    )
+
+                    dailyDeposits.forEach { deposit ->
+                        DepositHistoryItem(
+                            depositorName = deposit.message,
+                            time = deposit.createdAt,
+                            amount = deposit.balance
+                        )
+                    }
+                }
         }
     }
 }
