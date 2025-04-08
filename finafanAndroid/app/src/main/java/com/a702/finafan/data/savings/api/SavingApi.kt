@@ -34,10 +34,10 @@ interface SavingApi {
 
     // 입금하기
     @Multipart
-    @PUT("v1/star/deposit")
+    @POST("v1/star/deposit")
     suspend fun deposit(
         @PartMap map: Map<String, RequestBody>,
-        @Part imageFile: MultipartBody.Part?
+        @Part("imageFile") imageFile: MultipartBody.Part?
     ): ApiResponse<SavingDepositResponse>
 
     // 적금 계좌 개설
