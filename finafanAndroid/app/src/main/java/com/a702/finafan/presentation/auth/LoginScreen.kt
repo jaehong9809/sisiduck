@@ -18,14 +18,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
-
+import com.a702.finafan.presentation.navigation.NavRoutes
 
 
 @Composable
 fun LoginScreen(
+    navController: NavHostController,
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -74,9 +76,13 @@ fun LoginScreen(
     }
 
     if (uiState.value.isLoggedIn) {
-        // TO DO: 로그인 성공 후 이동 or UI 표시 navController?.navigate("HomeScreen")
         LaunchedEffect(Unit) {
-
+            Log.d("LoginScreen", "✅ Login 성공, 메인으로 이동합니다!")
+            navController.navigate(NavRoutes.Main.route) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
+
 }

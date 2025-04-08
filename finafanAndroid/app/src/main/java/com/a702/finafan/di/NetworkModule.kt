@@ -2,6 +2,7 @@ package com.a702.finafan.di
 
 import android.content.Context
 import com.a702.finafan.BuildConfig
+import com.a702.finafan.infrastructure.util.AuthInterceptor
 import com.a702.finafan.infrastructure.util.UserIdManager
 import dagger.Module
 import dagger.Provides
@@ -36,20 +37,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(
+        @ApplicationContext context: Context
+    ): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY // 요청/응답 내용 전체를 로그로 찍음
+            level = HttpLoggingInterceptor.Level.BODY
         }
 
         return OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
             .addInterceptor(loggingInterceptor)
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer ") // 추후 토큰 추가
-                    .build()
-                chain.proceed(request)
-            }
+            .addInterceptor(AuthInterceptor(context))
             .build()
     }
 

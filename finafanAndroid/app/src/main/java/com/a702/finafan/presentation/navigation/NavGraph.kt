@@ -55,7 +55,7 @@ fun NavGraph(
             }
 
             composable(NavRoutes.Login.route) {
-                LoginScreen()
+                LoginScreen(navController)
             }
 
             composable(NavRoutes.Chat.route) {
