@@ -107,7 +107,7 @@ public class DemandDepositFacade {
     public AccountTransactionHistoriesResponse.REC inquireHistories(
             TransactionHistoriesRequest transactionHistoriesRequest
     ) {
-        Account depositAccount = inquireDemandDepositAccountService.findAccountById(transactionHistoriesRequest.accountId());
+        EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(transactionHistoriesRequest.accountId());
         return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/inquireTransactionHistoryList",
                 apiName -> financialRequestFactory.inquireHistories(
@@ -161,7 +161,9 @@ public class DemandDepositFacade {
     ) {
         User user = userService.findUserByEmail(email);
         String productUniqueNo = getEntertainerProductUniqueNo();
+        log.info("beforeExternalRequest");
         REC createDemandDepositAccount = createAccount(email, productUniqueNo);
+        log.info("afterExternalRequest : " + createDemandDepositAccount);
         return ApiCreateAccountResponse.of(
             user.getUserId(),
             user.getSocialEmail(),
