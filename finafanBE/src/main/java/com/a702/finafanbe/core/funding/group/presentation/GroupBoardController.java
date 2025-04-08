@@ -26,43 +26,37 @@ public class GroupBoardController {
     @PostMapping("/{fundingId}/board/create")
     public ResponseEntity<?> createGroupBoard(
             @RequestBody CreateGroupBoardRequest request,
-            @PathVariable Long fundingId
-            //@AuthMember User user
+            @PathVariable Long fundingId,
+            @AuthMember User user
     ) {
-        User user = userRepository.findById(1L).get();
         fundingGroupBoardService.createBoard(request, user, fundingId);
         return ResponseUtil.success();
     }
 
     @GetMapping("/{fundingId}/board")
     public ResponseEntity<ResponseData<GetGroupBoardResponse>> getGroupBoard(
-            @PathVariable Long fundingId
-            //@AuthMember User user
+            @PathVariable Long fundingId,
+            @AuthMember User user
     ) {
-        User user = userRepository.findById(1L).get();
         return ResponseUtil.success(fundingGroupBoardService.getGroupBoard(fundingId));
     }
 
     @PutMapping("/{fundingId}/board/update")
     public ResponseEntity<?> updateGroupBoard(
             @RequestBody UpdateGroupBoardRequest request,
-            @PathVariable Long fundingId
-            //@AuthMember User user
+            @PathVariable Long fundingId,
+            @AuthMember User user
     ) {
-        User user = userRepository.findById(1L).get();
         fundingGroupBoardService.updateGroupBoard(request, user, fundingId);
         return ResponseUtil.success();
     }
 
     @DeleteMapping("/{fundingId}/board/delete")
     public ResponseEntity<?> deleteGroupBoard(
-            @PathVariable Long fundingId
-            //@AuthMember User user
+            @PathVariable Long fundingId,
+            @AuthMember User user
     ) {
-        User user = userRepository.findById(1L).get();
         fundingGroupBoardService.deleteGroupBoard(user, fundingId);
         return ResponseUtil.success();
-
     }
-
 }

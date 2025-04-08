@@ -84,7 +84,6 @@ public class FundingGroupBoardService {
         groupBoardRepository.delete(board);
     }
 
-    // 해당 유저가 그룹에 속하는지 확인 + 그룹 ADMIN인지 확인 + funding이 끝났는지 확인
     private void fundingBoardCheck(Long userId, Long fundingId) {
         GroupUser groupUser = groupUserRepository.findByUserIdAndFundingGroupId(userId, fundingId)
                 .orElseThrow(() -> new RuntimeException("해당 그룹에 속해있지 않습니다."));
@@ -97,5 +96,4 @@ public class FundingGroupBoardService {
             throw new RuntimeException("성공하지 않은 펀딩의 게시판은 접근할 수 없습니다.");
         }
     }
-
 }

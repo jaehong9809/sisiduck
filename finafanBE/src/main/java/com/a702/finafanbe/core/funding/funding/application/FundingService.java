@@ -37,17 +37,11 @@ public class FundingService {
     private final GroupBoardRepository groupBoardRepository;
     private final FundingQueryRepository fundingQueryRepository;
 
-    // 펀딩 생성
     @Transactional
     public void createFunding(CreateFundingRequest request, User user) {
-
-        // ApiCreateAccountResponse response = apiSavingsAccountService.createFundingAccount(userId);
-        // System.out.println("API Answer : " + response.accountTypeUniqueNo() + " " + response.accountNo());
         String accountNo = "1111";
         String accountTypeUniqueNo = "001-1-f5f1f9ee427d47";
         SavingsAccount fundingAccount = fundingAccountService.createFundingAccount(request, user.getUserId(), accountNo, accountTypeUniqueNo);
-        //System.out.println("fundingAccount Answer : " + fundingAccount.getAccountNickname());
-
         fundingGroupService.createFundingGroup(request, user.getUserId(), fundingAccount.getId());
     }
 
@@ -106,14 +100,12 @@ public class FundingService {
 
     @Transactional
     public void withdrawFunding(User user, Long fundingId, WithdrawTransactionRequest request) {
-
         if(!checkFundingStatus(fundingId).equals(FundingStatus.INPROGRESS)) {
             throw new RuntimeException("펀딩이 진행 중일 때만 입금을 취소할 수 있습니다.");
         }
         for (Long id : request.transactions()) {
             fundingPendingTransactionRepository.deleteById(id);
         }
-
     }
 
     @Transactional
