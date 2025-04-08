@@ -27,17 +27,3 @@ fun FundingResponse.toDomain(): Funding {
     )
 
 }
-
-//fun Funding.toSavingAccount(): SavingAccount {
-//    return SavingAccount(
-//        accountId = this.id,
-//        accountNo = this.accountNo,
-//        accountName = this.title,
-//        amount = this.currentAmount,
-//        createdDate = "",
-//        interestRate = "",
-//        duration = 0,
-//        imageUrl = "",
-//        withdrawalAccount = Account()
-//    )
-//}
