@@ -2,6 +2,7 @@ package com.a702.finafan.presentation.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.user.local.UserPreferences
 import com.a702.finafan.domain.main.model.MainRanking
 import com.a702.finafan.domain.main.model.MainSaving
@@ -31,8 +32,8 @@ class MainViewModel @Inject constructor(
     val isLoggedIn = userPreferences.userStateFlow
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
-    private val _userInfo = MutableStateFlow<User?>(null)
-    val userInfo = _userInfo.asStateFlow()
+    private val _userState = MutableStateFlow<DataResource<User>>(DataResource.Loading())
+    val userState = _userState.asStateFlow()
 
     private val _mainSavingState = MutableStateFlow(MainSavingState())
     val mainSavingState: StateFlow<MainSavingState> = _mainSavingState.asStateFlow()
@@ -72,12 +73,10 @@ class MainViewModel @Inject constructor(
 
     fun fetchUserInfo() {
         viewModelScope.launch {
-            try {
-                val user = getUserInfoUseCase()
-                _userInfo.value = user
-            } catch (e: Exception) {
-                _userInfo.value = null
-            }
+            _userState.value = DataResource.Loading()
+
+            val result = getUserInfoUseCase()
+            _userState.value = result
         }
     }
 }
