@@ -17,6 +17,7 @@ data class SavingAccountResponse(
     val createdDate: String,
     val interestRate: String,
     val duration: Int,
+    val maintenanceDays: Int,
     val imageUrl: String,
     val withdrawalAccount: Account
 )
@@ -36,7 +37,7 @@ fun SavingAccountResponse.toDomain(): SavingAccount {
         amount = this.amount,
         createdDate = this.createdDate,
         interestRate = this.interestRate,
-        duration = this.duration,
+        duration = this.maintenanceDays,
         imageUrl = this.imageUrl,
         withdrawalAccount = this.withdrawalAccount
     )

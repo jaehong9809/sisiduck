@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
+import com.a702.finafan.domain.account.model.Account
 import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
@@ -80,7 +81,8 @@ class SavingViewModel @Inject constructor(
                 is DataResource.Success -> {
                     _savingState.update {
                         it.copy(
-                            savingInfo = result.data,
+                            savingAccount = result.data.savingAccount,
+                            transactions = result.data.transactions,
                             isLoading = false
                         )
                     }
@@ -193,7 +195,7 @@ class SavingViewModel @Inject constructor(
                 is DataResource.Success -> {
                     _savingState.update {
                         it.copy(
-                            accountName = result.data,
+                            savingAccount = result.data,
                             isLoading = false
                         )
                     }

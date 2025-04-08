@@ -15,6 +15,6 @@ interface MainApi {
     @GET("v1/ranking/weekly/entertainers")
     suspend fun getWeeklyTop3(): ApiResponse<List<MainRankingResponse>>
 
-    // TODO: API 연결
+    @GET("v1/ranking/total/top3")
     suspend fun getTotalTop3(): ApiResponse<List<MainRankingResponse>>
 }

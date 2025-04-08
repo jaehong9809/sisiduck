@@ -1,4 +1,4 @@
-package com.a702.finafan.presentation.funding
+package com.a702.finafan.presentation.funding.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,13 +25,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.a702.finafan.common.ui.theme.MainBgGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.funding.model.Funding
+import com.a702.finafan.domain.funding.model.FundingStatus
 import com.a702.finafan.domain.funding.model.Star
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -58,6 +57,7 @@ fun FundingDetailHeader(
             .padding(top = 10.dp, start = 25.dp, end = 25.dp)
 
     ) {
+        Text(text = FundingStatus.valueOf(funding.status).toString())
         ScreenTitle(funding.title, modifier = Modifier.padding(vertical = 8.dp))
         Text(funding.star.name, modifier = Modifier.padding(bottom = 10.dp),
             fontSize = 16.sp,

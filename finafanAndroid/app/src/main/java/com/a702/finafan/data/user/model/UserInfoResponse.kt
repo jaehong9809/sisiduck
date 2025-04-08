@@ -11,7 +11,7 @@ data class UserInfoResponse(
     override fun toDomain() : User {
         return User(
             userId = userId,
-            userName = userName,
+            userName = userName.substringBefore('#'),
             userEmail = userEmail,
             profileUrl = ""
         )

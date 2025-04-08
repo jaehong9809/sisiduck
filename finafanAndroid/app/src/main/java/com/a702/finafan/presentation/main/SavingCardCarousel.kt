@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -22,13 +23,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.domain.main.model.MainSaving
-import com.a702.finafan.domain.user.model.User
 
 
 @Composable
@@ -38,16 +37,18 @@ fun CardCarousel(
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val cardWidth = screenWidth * 0.8f
-    val peekWidth = (screenWidth - cardWidth) / 2
-    val listState = rememberLazyListState()
 
     val cards: List<@Composable () -> Unit> = when {
         !isLoggedIn -> listOf({ LoginContent(navController) })
         savings.isEmpty() -> listOf({ CreateSavingContent() })
         else -> savings.map { saving -> { SavingContent(saving) } }
     }
+
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val cardWidth = if (cards.size == 1) screenWidth - 32.dp else screenWidth * 0.8f
+    val peekWidth = (screenWidth - cardWidth) / 2
+
+    val listState = rememberLazyListState()
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.isScrollInProgress }
@@ -57,16 +58,23 @@ fun CardCarousel(
                     val offset = listState.firstVisibleItemScrollOffset
                     val targetIndex = if (offset > cardWidth.value / 2) index + 1 else index
 
-                    listState.scrollToItem(targetIndex, scrollOffset = 0)
+                    listState.animateScrollToItem(targetIndex, scrollOffset = 0)
                 }
             }
     }
 
+    val contentPadding = if (cards.size == 1) {
+        PaddingValues(horizontal = 16.dp)
+    } else {
+        PaddingValues(start = peekWidth, end = peekWidth)
+    }
+
     LazyRow(
         state = listState,
-        contentPadding = PaddingValues(start = peekWidth, end = peekWidth),
+        contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.fillMaxWidth()
+            .padding(vertical = 8.dp)
 
     ) {
         items(cards) { card ->

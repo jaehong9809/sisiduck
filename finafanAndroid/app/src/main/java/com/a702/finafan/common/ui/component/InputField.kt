@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -18,6 +19,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -149,8 +152,8 @@ fun CommonTextField(
     isSearch: Boolean = false,
     isPassword: Boolean = false,
     maxLength: Int = 0,
-    onClick: (() -> Unit)? = null
-) {
+    onClick: (() -> Unit)? = null,
+    ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -177,7 +180,7 @@ fun CommonTextField(
             keyboardOptions = KeyboardOptions(
                 keyboardType =
                     if (isPassword) KeyboardType.Password
-                    else if(isNumber) KeyboardType.Number
+                    else if(isNumber || isMoney) KeyboardType.Number
                     else KeyboardType.Text,
                 imeAction = if (isSearch) ImeAction.Search else ImeAction.Done
             ),
@@ -256,6 +259,139 @@ fun CommonTextField(
         )
     }
 }
+
+// value가 바뀔 때마다 ViewModel의 값을 업데이트 하도록 커스텀 onValueChange를 받음
+@Composable
+fun LiveTextField(
+    modifier: Modifier = Modifier,
+    label: String? = null,
+    hint: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    isNumber: Boolean = false,
+    isMoney: Boolean = false,
+    maxLength: Int = 0,
+    onClick: (() -> Unit)? = null,
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MainWhite)
+    ) {
+        label?.let {
+            TextItem(label, MainBlack, 16.sp, true)
+        }
+
+        BasicTextField(
+            value = value,
+            onValueChange = { newText ->
+                if (maxLength == 0 || newText.length <= maxLength) {
+                    val processed = if (isMoney) StringUtil.formatEditMoney(newText) else newText
+                    onValueChange(processed)
+                }
+            },
+            textStyle = TextStyle(color = MainBlack, fontSize = 20.sp),
+            keyboardOptions = KeyboardOptions(
+                keyboardType =
+                    if (isNumber || isMoney) KeyboardType.Number
+                    else KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    keyboardController?.hide()
+                    onClick?.invoke()
+                }
+            ),
+            visualTransformation = VisualTransformation.None,
+            decorationBox = { innerTextField ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = EditBgGray, shape = RoundedCornerShape(18.dp))
+                        .padding(all = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Box(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        if (value.isEmpty()) {
+                            TextItem(hint, EditTextGray, 20.sp)
+                        }
+
+                        innerTextField()
+                    }
+
+                    if (isMoney) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.money_label_default),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MainBlack
+                        )
+                    }
+                }
+            }
+        )
+    }
+}
+
+
+@Composable
+fun LiveTextArea(
+    modifier: Modifier = Modifier,
+    description: MutableState<String>,
+    placeholder: String? = null,
+    charLimit: Int? = null,
+    onValueChange: (String) -> Unit,
+) {
+    Column(modifier = modifier) {
+       TextField(
+            value = description.value,
+            onValueChange = {
+                if (charLimit == null || it.length <= charLimit) {
+                    description.value = it
+                    onValueChange(it)
+                }
+            },
+            placeholder = { Text(text = placeholder?:"", color = Color.Gray, fontSize = 20.sp, fontWeight = FontWeight.Medium) },
+           textStyle = TextStyle(
+               fontSize = 20.sp,
+               fontWeight = FontWeight.Medium,
+               color = MainBlack
+           ),
+           modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+                .background(MainBgLightGray, shape = RoundedCornerShape(18.dp)),
+            shape = RoundedCornerShape(18.dp),
+           colors = TextFieldDefaults.colors(
+               focusedContainerColor = MainBgLightGray,
+               unfocusedContainerColor = MainBgLightGray,
+               disabledContainerColor = MainBgLightGray,
+               errorContainerColor = MainBgLightGray,
+               focusedIndicatorColor = Color.Transparent,
+               unfocusedIndicatorColor = Color.Transparent,
+               disabledIndicatorColor = Color.Transparent,
+               errorIndicatorColor = Color.Transparent
+           )
+        )
+
+        charLimit?.let {
+            Text(
+                text = "${description.value.length} / $charLimit",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 4.dp, start = 4.dp)
+            )
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable

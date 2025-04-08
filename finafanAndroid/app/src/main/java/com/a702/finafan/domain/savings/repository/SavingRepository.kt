@@ -23,7 +23,7 @@ interface SavingRepository {
 
     suspend fun savingAccounts(): DataResource<SavingAccountInfo>
 
-    suspend fun changeSavingName(savingAccountId: Long, name: String): DataResource<String>
+    suspend fun changeSavingName(savingAccountId: Long, name: String): DataResource<SavingAccount>
 
     suspend fun deleteSavingAccount(savingAccountId: Long): DataResource<Boolean>
 
@@ -34,5 +34,4 @@ interface SavingRepository {
     suspend fun totalStarRanking(): DataResource<List<Ranking>>
 
     suspend fun rankingDetail(starId: Long, type: RankingType): DataResource<Ranking>
-
 }

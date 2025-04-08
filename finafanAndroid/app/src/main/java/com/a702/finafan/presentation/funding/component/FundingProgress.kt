@@ -1,4 +1,4 @@
-package com.a702.finafan.presentation.funding
+package com.a702.finafan.presentation.funding.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

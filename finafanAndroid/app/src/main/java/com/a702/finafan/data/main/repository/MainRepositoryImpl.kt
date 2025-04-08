@@ -6,7 +6,6 @@ import com.a702.finafan.domain.main.model.MainRanking
 import com.a702.finafan.domain.main.model.MainSaving
 import com.a702.finafan.domain.main.repository.MainRepository
 import javax.inject.Inject
-import kotlin.collections.map
 
 class MainRepositoryImpl @Inject constructor(
     private val api: MainApi
@@ -41,8 +40,7 @@ class MainRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTotalTop3(): List<MainRanking> {
-        // TODO: 누적 랭킹 API 구현되면 API 교체
-        val response = api.getWeeklyTop3()
+        val response = api.getTotalTop3()
         return if (response.code == "S0000" && response.data != null) {
             response.data.map { it.toDomain() }
         } else {
