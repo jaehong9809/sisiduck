@@ -42,7 +42,7 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(nullable = false, name = "withdrawal_account_id")
     private Long withdrawalAccountId;
 
-    @Column(nullable = false, name = "]t_name")
+    @Column(nullable = false, name = "product_name")
     private String productName;
 
     @Column(nullable = false, name = "interest_rate")
@@ -121,5 +121,9 @@ public class EntertainerSavingsAccount extends BaseEntity {
     }
     public void updateAccountName(String newName){
         this.productName = newName;
+    }
+
+    public void addAmount(Long amount) {
+        this.amount = this.amount.add(BigDecimal.valueOf(Long.parseLong(String.valueOf(amount))));
     }
 }

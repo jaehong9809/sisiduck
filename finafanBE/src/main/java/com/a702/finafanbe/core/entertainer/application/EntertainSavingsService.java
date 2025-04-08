@@ -41,8 +41,6 @@ import static com.a702.finafanbe.global.common.exception.ErrorCode.*;
 @Slf4j
 public class EntertainSavingsService {
 
-    private static final String EMAIL = "lsc7134@naver.com";
-
     private final EntertainerRepository entertainRepository;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
     private final UserRepository userRepository;
@@ -52,10 +50,11 @@ public class EntertainSavingsService {
 
     @Transactional
     public StarAccountResponse createEntertainerSavings(
+            String userEmail,
             CreateStarAccountRequest createStartAccountRequest,
             ApiCreateAccountResponse accountResponse
     ) {
-        User user = findUser(EMAIL);
+        User user = findUser(userEmail);
         Long entertainerId = findEntertainerId(createStartAccountRequest.entertainerId());
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
@@ -84,9 +83,10 @@ public class EntertainSavingsService {
 
     @Transactional
     public EntertainerResponse choiceStar(
+            String userEmail,
             SelectStarRequest selectStarRequest
     ) {
-        User user = findUser(EMAIL);
+        User user = findUser(userEmail);
         user.updateFavoriteEntertainer(findEntertainerId(selectStarRequest.entertainerId()));
         Entertainer entertainer = entertainRepository.findByEntertainerId(selectStarRequest.entertainerId()).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
         return EntertainerResponse.of(
@@ -234,5 +234,10 @@ public class EntertainSavingsService {
 
     public EntertainerSavingsAccount findEntertainerAccountByAccountNo(String depositAccountNo) {
         return entertainerSavingsAccountRepository.findByAccountNo(depositAccountNo).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
+    }
+
+    @Transactional
+    public void updateAccount(EntertainerSavingsAccount savingsAccount, Long amount) {
+        savingsAccount.addAmount(amount);
     }
 }

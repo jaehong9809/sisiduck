@@ -50,8 +50,6 @@ import static com.a702.finafanbe.global.common.financialnetwork.util.ApiConstant
 @Slf4j
 public class DemandDepositFacade {
 
-    private static final String EMAIL = "lsc7134@naver.com";
-
     private final ExternalDemandDepositApiService externalDemandDepositApiService;
     private final EntertainSavingsService entertainSavingsService;
     private final DepositTransactionService depositTransactionService;
@@ -88,13 +86,14 @@ public class DemandDepositFacade {
     }
 
     public ResponseEntity<DeleteAccountResponse> deleteAccount(
+            User user,
             String accountNo,
             String refundAccountNo
     ) {
         return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/deleteDemandDepositAccount",
                 apiName -> financialRequestFactory.deleteAccountRequest(
-                        EMAIL,
+                        user.getSocialEmail(),
                         accountNo,
                         apiName,
                         refundAccountNo
@@ -105,13 +104,14 @@ public class DemandDepositFacade {
     }
 
     public AccountTransactionHistoriesResponse.REC inquireHistories(
+            User user,
             TransactionHistoriesRequest transactionHistoriesRequest
     ) {
-        Account depositAccount = inquireDemandDepositAccountService.findAccountById(transactionHistoriesRequest.accountId());
+        EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(transactionHistoriesRequest.accountId());
         return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                 "/demandDeposit/inquireTransactionHistoryList",
                 apiName -> financialRequestFactory.inquireHistories(
-                        EMAIL,
+                        user.getSocialEmail(),
                         apiName,
                         depositAccount.getAccountNo(),
                         "00000101",
@@ -161,7 +161,9 @@ public class DemandDepositFacade {
     ) {
         User user = userService.findUserByEmail(email);
         String productUniqueNo = getEntertainerProductUniqueNo();
+        log.info("beforeExternalRequest");
         REC createDemandDepositAccount = createAccount(email, productUniqueNo);
+        log.info("afterExternalRequest : " + createDemandDepositAccount);
         return ApiCreateAccountResponse.of(
             user.getUserId(),
             user.getSocialEmail(),
@@ -231,11 +233,12 @@ public class DemandDepositFacade {
         ).getBody();
     }
 
-    public StarAccountResponse createEntertainerSavings(CreateStarAccountRequest createStarAccountRequest){
+    public StarAccountResponse createEntertainerSavings(User user, CreateStarAccountRequest createStarAccountRequest){
         ApiCreateAccountResponse response = createAccount(
-            EMAIL
+            user.getSocialEmail()
         );
         return entertainSavingsService.createEntertainerSavings(
+                user.getSocialEmail(),
                 createStarAccountRequest,
                 response
         );
@@ -305,12 +308,13 @@ public class DemandDepositFacade {
 
 
     public InquireEntertainerHistoriesResponse inquireEntertainerHistories(
+            User user,
             Long savingAccountId
     ) {
 
         EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
 
-        AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = entertainerAccountHistories(depositAccount);
+        AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = entertainerAccountHistories(user, depositAccount);
 
         List<EntertainerSavingsTransactionDetail> transactionDetails = depositTransactionService.getEntertainerAccountTransactionsByAccountId(
             depositAccount.getId());
@@ -347,7 +351,8 @@ public class DemandDepositFacade {
                     transaction.transactionAfterBalance(),
                     transaction.transactionBalance(),
                     transaction.transactionMemo(),
-                    imageUrl
+                    imageUrl,
+                    detail.getCreatedAt()
                 );
             })
             .collect(Collectors.toList());
@@ -358,8 +363,8 @@ public class DemandDepositFacade {
         );
     }
 
-    private AccountTransactionHistoriesResponse.REC entertainerAccountHistories(EntertainerSavingsAccount depositAccount) {
-        return inquireHistories(TransactionHistoriesRequest.of(depositAccount.getId()));
+    private AccountTransactionHistoriesResponse.REC entertainerAccountHistories(User user, EntertainerSavingsAccount depositAccount) {
+        return inquireHistories(user, TransactionHistoriesRequest.of(depositAccount.getId()));
     }
 
     public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transferAccount(
@@ -395,10 +400,11 @@ public class DemandDepositFacade {
                     withdrawalAccount.getAccountNo(),
                     ""
             );
+            User user = userService.findUserById(entertainerSavingsAccount.getUserId());
             return externalDemandDepositApiService.DemandDepositRequestWithFactory(
                     "/demandDeposit/updateDemandDepositAccountTransfer",
                     apiName -> financialRequestFactory.transferAccount(
-                            EMAIL,
+                            user.getSocialEmail(),
                             apiName,
                             transferRequest.depositAccountNo(),
                             transferRequest.depositTransactionSummary(),
@@ -429,8 +435,7 @@ public class DemandDepositFacade {
                 .collect(Collectors.toList());
     }
 
-    public List<EntertainerResponse> getPossessionEntertainer() {
-        String userEmail = EMAIL;
+    public List<EntertainerResponse> getPossessionEntertainer(String userEmail) {
         User user = userService.findUserByEmail(userEmail);
 
         List<EntertainerSavingsAccount> accounts =
@@ -454,21 +459,20 @@ public class DemandDepositFacade {
                 .collect(Collectors.toList());
     }
 
-    public void deleteStarAccount(Long savingAccountId) {
+    public void deleteStarAccount(User user, Long savingAccountId) {
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
-        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
-        log.info("Waccount {}" , withdrawalAccount.getAccountNo());
+        log.info("Waccount {}" , savingsAccount.getAccountNo());
         DeleteAccountResponse.REC deleteResponse = deleteAccountService.deleteAccount(
                 "/demandDeposit/deleteDemandDepositAccount",
                 financialRequestFactory.deleteAccountRequest(
-                        EMAIL,
+                        user.getSocialEmail(),
                         savingsAccount.getAccountNo(),
                         "deleteDemandDepositAccount",
-                        withdrawalAccount.getAccountNo()
+                        savingsAccount.getAccountNo()
                 )
         ).REC();
 
-        Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(deleteResponse.accountNo());
+        EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountByAccountNo(deleteResponse.accountNo());
         if (savingsAccount.getAmount() != null && savingsAccount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
             if (savingsAccount.isPresent()) {
                 double amountToDeduct = savingsAccount.getAmount().negate().doubleValue();
@@ -480,7 +484,7 @@ public class DemandDepositFacade {
             }
         }
 
-        entertainSavingsService.deleteByAccountId(depositAccount.getAccountId());
+        entertainSavingsService.deleteByAccountId(depositAccount.getId());
         deleteAccountService.deleteById(savingsAccount.getId());
     }
 
@@ -527,9 +531,9 @@ public class DemandDepositFacade {
             .getAccountTypeUniqueNo();
     }
 
-    public List<BankAccountResponse> findUserAccountsByBanks(List<Long> bankIds) {
+    public List<BankAccountResponse> findUserAccountsByBanks(User user, List<Long> bankIds) {
 
-        List<InquireDemandDepositAccountListResponse.REC> userAccounts = getDemandDepositListAccount("lsc7134@naver.com").getBody().REC();
+        List<InquireDemandDepositAccountListResponse.REC> userAccounts = getDemandDepositListAccount(user.getSocialEmail()).getBody().REC();
 
         if (userAccounts == null || userAccounts.isEmpty()) {
             return List.of();
@@ -569,14 +573,14 @@ public class DemandDepositFacade {
             .collect(Collectors.toList());
     }
 
-    public List<BankAccountConnectionResponse> connectUserAccounts(List<String> accountNos) {
+    public List<BankAccountConnectionResponse> connectUserAccounts(User user, List<String> accountNos) {
 
         if (accountNos == null || accountNos.isEmpty()) {
             return List.of();
         }
 
         ResponseEntity<InquireDemandDepositAccountListResponse> response =
-            getDemandDepositListAccount(EMAIL);
+            getDemandDepositListAccount(user.getSocialEmail());
 
         List<InquireDemandDepositAccountListResponse.REC> allAccounts = response.getBody().REC();
 

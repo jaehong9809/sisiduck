@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.a702.finafan.R
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.ui.component.ImageItem
 import com.a702.finafan.common.ui.component.MainSquareIconButton
 import com.a702.finafan.common.ui.component.MainWideButton
@@ -59,7 +60,7 @@ fun MainScreen(
 
     val mainSavingState by viewModel.mainSavingState.collectAsState()
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
-    val userInfo by viewModel.userInfo.collectAsState()
+    val userState by viewModel.userState.collectAsState()
 
     val blePermissionLauncher = rememberBlePermissionLauncher(
         onGranted = {

@@ -20,21 +20,20 @@ import static com.a702.finafanbe.global.common.financialnetwork.util.ApiConstant
 @RequiredArgsConstructor
 public class KRW1certificationService {
 
-    private static final String EMAIL = "lsc7134@naver.com";
-
     private final ApiClientUtil apiClientUtil;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
     private final FinancialRequestFactory financialRequestFactory;
     private final BankService bankService;
 
     public KRW1CertificationResponse.REC registerKRW1Certification(
+        String userEmail,
         KRW1Request krw1Request
     ) {
         String bankName = bankService.findBankById(krw1Request.bankId()).getBankName();
         return apiClientUtil.callFinancialNetwork(
             OPEN_AUTH_PATH,
             KRW1CertificationRequest.of(
-                financialRequestFactory.createRequestHeaderWithUserKey(EMAIL,extractApiName(OPEN_AUTH_PATH)),
+                financialRequestFactory.createRequestHeaderWithUserKey(userEmail,extractApiName(OPEN_AUTH_PATH)),
                 inquireDemandDepositAccountService.findAccountByAccountNo(krw1Request.accountNo()).getAccountNo(),
                 bankName
             ),
@@ -43,13 +42,14 @@ public class KRW1certificationService {
     }
 
     public KRW1CertificationValidateResponse.REC checkKRW1Certification(
+        String userEmail,
         KRW1ValidateRequest krw1ValidateRequest
     ) {
         Account account = inquireDemandDepositAccountService.findAccountById(krw1ValidateRequest.accountId());
         return apiClientUtil.callFinancialNetwork(
             VALIDATE_AUTH_PATH,
             KRW1CertificationValidateRequest.of(
-                    financialRequestFactory.createRequestHeaderWithUserKey(EMAIL,extractApiName(VALIDATE_AUTH_PATH)),
+                    financialRequestFactory.createRequestHeaderWithUserKey(userEmail,extractApiName(VALIDATE_AUTH_PATH)),
                     account.getAccountNo(),
                     bankService.findBankById(account.getBankId()).getBankName(),
                     krw1ValidateRequest.code()

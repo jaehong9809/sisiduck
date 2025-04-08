@@ -116,4 +116,8 @@ public class UserService {
             )
         );
     }
+
+    public User findUserById(Long userId) {
+        return userRepository.findByUserId(userId).orElseThrow(()-> new BadRequestException(ResponseData.createResponse(ErrorCode.NotFoundUser)));
+    }
 }
