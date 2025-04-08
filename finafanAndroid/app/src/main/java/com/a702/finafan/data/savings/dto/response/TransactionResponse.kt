@@ -13,7 +13,7 @@ data class TransactionResponse(
     val transactionBalance: Long = 0,
     val transactionMemo: String = "",
     val imageUrl: String = "",
-    val date: String = ""
+    val transactionTime: String = ""
 )
 
 fun TransactionResponse.toDomain(): Transaction {
@@ -23,6 +23,6 @@ fun TransactionResponse.toDomain(): Transaction {
         balance = this.transactionBalance,
         message = this.transactionMemo,
         imageUrl = this.imageUrl,
-        date = this.date
+        date = this.transactionTime
     )
 }
