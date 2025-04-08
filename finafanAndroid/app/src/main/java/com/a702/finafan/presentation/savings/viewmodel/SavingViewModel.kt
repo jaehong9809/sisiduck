@@ -81,7 +81,8 @@ class SavingViewModel @Inject constructor(
                 is DataResource.Success -> {
                     _savingState.update {
                         it.copy(
-                            savingInfo = result.data,
+                            savingAccount = result.data.savingAccount,
+                            transactions = result.data.transactions,
                             isLoading = false
                         )
                     }
@@ -194,7 +195,7 @@ class SavingViewModel @Inject constructor(
                 is DataResource.Success -> {
                     _savingState.update {
                         it.copy(
-                            accountName = result.data,
+                            savingAccount = result.data,
                             isLoading = false
                         )
                     }

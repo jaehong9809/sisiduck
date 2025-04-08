@@ -428,12 +428,14 @@ fun CommonAccountItem(
         ) {
             Row(
                 modifier = Modifier
-                    .padding(vertical = 15.dp, horizontal = 26.dp)
+                    .padding(vertical = 15.dp, horizontal = 24.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
                     Text(
                         text = stringResource(R.string.saving_item_name, accountName),
                         color = MainBlack,
@@ -451,11 +453,10 @@ fun CommonAccountItem(
                         lineHeight = 24.sp,
                     )
                 }
-
+                
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
                     text = StringUtil.formatCurrency(amount),
                     color = MainBlack,
                     fontSize = 18.sp,
@@ -463,6 +464,7 @@ fun CommonAccountItem(
                     lineHeight = 24.sp,
                 )
             }
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))

@@ -59,7 +59,7 @@ fun SavingAccountManageScreen(
 ) {
 
     val savingState by viewModel.savingState.collectAsState()
-    val accountInfo = savingState.savingInfo.savingAccount
+    val accountInfo = savingState.savingAccount
 
     val showBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showDialog = rememberSaveable { mutableStateOf(false) }
@@ -67,6 +67,14 @@ fun SavingAccountManageScreen(
 
     val changeName = rememberSaveable { mutableStateOf(accountInfo.accountName) }
     val originName = rememberSaveable { mutableStateOf(accountInfo.accountName) }
+
+    LaunchedEffect(accountInfo) {
+        showBottomSheet.value = false
+
+        if (accountInfo.accountName.isNotEmpty()) {
+            originName.value = accountInfo.accountName
+        }
+    }
 
     if (showBottomSheet.value) {
         SavingNameBottomSheet(changeName, showBottomSheet) {
@@ -82,15 +90,6 @@ fun SavingAccountManageScreen(
                 showDialog.value = false
             }
         )
-    }
-
-    // 이름 변경 완료 후에 기존 이름 변경
-    LaunchedEffect(savingState.accountName) {
-        showBottomSheet.value = false
-
-        if (savingState.accountName.isNotEmpty()) {
-            originName.value = savingState.accountName
-        }
     }
 
     LaunchedEffect(savingState.error) {

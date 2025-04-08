@@ -42,7 +42,7 @@ fun SavingCancelScreen(
     val context = LocalContext.current
 
     val savingState by viewModel.savingState.collectAsState()
-    val accountInfo = savingState.savingInfo.savingAccount
+    val accountInfo = savingState.savingAccount
     val withdrawalAccount = accountInfo.withdrawalAccount
 
     val showDialog = rememberSaveable { mutableStateOf(false) }
