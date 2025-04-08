@@ -5,7 +5,7 @@
 ## 팀명 : [A702]
 | [강진주]                           | [권민채]                                  | [김예진]                                                 | [김진영]                                                                | [이재홍]                                          | [이주호]                                        |
 |---------------------------------|----------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------|----------------------------------------------|
-| - 팀장<br>- 프론트엔드<br>- 캐싱<br>- BLE 구현 | - 프론트엔드<br>- UX/UI 디자인<br>- UX/UI Lead | - 프론트엔드<br>- 기획<br>- UX/UI 디자인<br>- DB 설계<br>- API 개발 | - 백엔드<br>- DB 설계<br>- API 개발<br>- Batch처리| - 백엔드<br>- AI 모델 연동<br>- 서버 아키텍처<br>- DevOps| - 백엔드<br>- 금융망 연동<br>- 연예인 적금 랭킹<br>- DevOps |
+| - 팀장<br>- 프론트엔드<br>- 캐싱<br>- BLE 구현 | - 프론트엔드<br>- UX/UI 디자인<br>- UX/UI Lead | - 프론트엔드<br>- 기획<br>- UX/UI 디자인<br>- DB 설계<br>- API 개발 | - 백엔드<br>- DB 설계<br>- API 개발<br>- Batch처리| - 백엔드<br>- AI 모델 개발<br>- 서버 아키텍처<br>- DevOps| - 백엔드<br>- 금융망 연동<br>- 연예인 적금 랭킹<br>- DevOps |
 
 ## 💁‍♂️ Detail Role
 [강진주]
@@ -39,7 +39,7 @@ Spring Batch를 활용한 정산 및 배치 작업 구현
 
 [이재홍]
 
-LangChain 기반 AI 챗봇(덕순이) 개발
+LangChain Agent 기반 AI 챗봇 개발
 백엔드 서버 아키텍처 설계 및 구현
 클라우드 인프라 관리 및 최적화
 
@@ -67,7 +67,7 @@ Kotlin Java Python
 ![QueryDSL](https://img.shields.io/badge/QueryDSL-007ACC?style=flat-square&logo=java&logoColor=white)
 ![WebSocket](https://img.shields.io/badge/WebSocket-010101?style=flat-square&logo=socketdotio&logoColor=white)
 ![LangChain](https://img.shields.io/badge/LangChain-3178C6?style=flat-square&logo=chainlink&logoColor=white)
-
+![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)
 ## 📝 목차
 - [개요](#개요)
 - [Pain Point](#pain-point)
@@ -108,7 +108,7 @@ Kotlin Java Python
 - 오프라인 팬 커뮤니티 형성 지원
 
 ### 덕순이 AI 챗봇
-- LangChain 기반의 공감형 AI 대화 시스템
+- LangChain Agent 기반의 공감형 AI 대화 시스템
 - 연예인 정보, 뉴스, 영상 등 맞춤형 정보 제공
 - 사용자의 감정을 이해하고 공감하는 대화 능력
 
@@ -126,7 +126,8 @@ Kotlin Java Python
 - **백엔드**: Spring Boot (RESTful API, WebSocket)
 - **데이터베이스**: MySQL (주 데이터 저장), Redis (캐싱, 랭킹)
 - **인프라**: AWS EC2, S3
-- **CI/CD**: Jenkins, Docker
+- **CI/CD**: Jenkins, Docker, Gitlab Webhook
+- **AI**: gpt-4, LangChain Agent
 
 ### 핵심 컴포넌트
 - **RankingService**: 연예인 및 팬 랭킹 계산 로직
@@ -141,7 +142,7 @@ Kotlin Java Python
 2. 연예인 적금 입금 → RankingService 랭킹 재계산 → WebSocket으로 실시간 전송
 3. 모금 통장 생성/참여 → FundingService → 목표 달성 시 알림
 4. 주변 동료 탐색 요청 → BLEService → UUID 변환 및 매칭
-5. LLM 요청 → 최적합 RAG 경로 탐색 -> 프롬프트 엔지니어링 처리 -> 결과 반환 
+5. 챗봇 질문 요청 → 분기 LLM → Agent or Chat → 결과 반환
 
 ### 보안 구조
 - JWT 기반 인증/인가
@@ -177,10 +178,10 @@ Kotlin Java Python
 - 같은 연예인 적금 가입자 발견 시 알림 및 프로필 표시
 - 향후 오프라인 이벤트 및 모임 연계 가능성
 
-### 덕순이 AI 챗봇
+### AI 챗봇
 ![덕순이 AI 챗봇](readmeimg/chatbot.png)
-- LangChain LCEL을 활용한 유연한 대화 처리
-- 질문 유형에 따라 최적의 정보 소스 선택
+- LangChain LCEL을 활용한 유연한 대화 분기 처리
+- Agent를 사용해 질문 유형에 따라 최적의 정보 소스 선택
 - 연예인 정보, 뉴스, 영상 등 다양한 컨텐츠 제공
 - 공감과 정보 전달을 균형있게 제공하는 대화 모델
 
@@ -264,16 +265,15 @@ Kotlin Java Python
     - 마스터 노드 장애 시 자동 장애 조치로 서비스 중단 최소화
     - ZSet을 활용한 효율적인 랭킹 계산 및 조회
 
-### LangChain LCEL
+### LangChain Agent
 - **도입 배경**: 유연하고 확장 가능한 AI 챗봇 시스템 필요
 - **대안과의 비교**:
-    - 단순 LLM 사용: 구현 간단하나 기능 확장 어려움
-    - Agent 방식: 유연하나 처리 속도 느림
-    - LCEL: 속도와 유연성의 균형, 모듈식 구성 가능
+    - 단순 LLM 방식: 구현 간단하나 기능 확장 어려움
+    - 단순 RAG 방식: 최신 정보 반영을 위한 작업 필요
 - **실제 적용 결과**:
-    - 질문 유형에 따른 최적 모듈 라우팅으로 처리 속도 향상
-    - 다양한 정보 소스 통합 가능 (뉴스, 영상, 금융 정보 등)
-    - 새로운 기능 추가가 용이한 모듈식 구조
+    - 질문 유형을 분석하여 일반 채팅과 질문을 분류하여 처리 속도 향상
+    - 다양한 툴로 정보 소스 활용 가능 (뉴스, 영상, 웹 정보 등)
+    - 새로운 기능 추가가 용이한 구조
 
 ### Spring Batch
 - **도입 배경**: 대량의 거래 데이터 처리 및 정산 작업 필요
@@ -309,7 +309,7 @@ Kotlin Java Python
 ### 프로젝트 성과
 - **기술적 성과**:
     - Redis Sentinel을 활용한 고가용성 랭킹 시스템 구축
-    - LangChain 기반 AI 챗봇 시스템 개발
+    - LangChain Agent 기반 AI 챗봇 시스템 개발
     - BLE 기술을 활용한 주변 팬 탐색 기능 구현
     - Spring Batch를 활용한 안정적인 배치 작업 시스템
 
@@ -332,13 +332,12 @@ Kotlin Java Python
 
 ### 아쉬운 점 & 개선 방향
 - **한계점**:
-    - LLM 모델의 정확도 및 응답 속도 개선 필요
+    - LLM 모델의 응답 속도 개선 필요
     - 모바일 기기별 BLE 구현 차이로 인한 호환성 문제
     - 대규모 사용자 테스트 부족
 
 - **추후 개선 방향**:
   ![LLM 개선 방향](readmeimg/llm.png)
-    - RAG 기반 모델 도입으로 정보 정확도 향상
     - 오프라인 이벤트 연계 기능 강화
     - 모임 통장 기능 확장 (목표 달성 시 자동 기부 등)
     - 다양한 연예인 계약 및 제휴 모델 개발
