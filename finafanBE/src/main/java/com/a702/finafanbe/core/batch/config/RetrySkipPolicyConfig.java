@@ -15,10 +15,10 @@ public class RetrySkipPolicyConfig {
         return new SimpleRetryPolicy(3);
     }
 
-    @Bean
-    public SkipPolicy skipPolicy() {
-        return (throwable, skipCount) -> {
-           //return throwable instanceof
-        }
-    }
+//    @Bean
+//    public SkipPolicy skipPolicy() {
+//        return (throwable, skipCount) -> {
+//           //return throwable instanceof
+//        }
+//    }
 }

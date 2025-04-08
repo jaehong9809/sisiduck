@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface SkippedTransactionRepository extends JpaRepository<SkippedTransaction, Long> {
 
-    List<SkippedTransaction> findByRe
 }

@@ -56,8 +56,8 @@ public class FundingBatchConfig {
                 .writer(transactionWriter)
                 .faultTolerant()
                 .retry(RetryableTransactionException.class)
-                .skip()
-                .listener(new SkippedTransactionListener())
+                //.skip()
+                //.listener(new SkippedTransactionListener())
                 .build();
     }
 }
