@@ -37,6 +37,7 @@ sealed class NavRoutes(val route: String) {
     object AccountCode : NavRoutes("account_code")
     object AccountCodeConfirm : NavRoutes("account_code_confirm")
     object ConnectAccount : NavRoutes("connect_account")
+    object SelectAccount : NavRoutes("select_account")
 
     /* Ranking */
     object RankingMain : NavRoutes("ranking_main")

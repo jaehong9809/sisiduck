@@ -50,7 +50,7 @@ fun StarSearchScreen(
 
     val starState by viewModel.starState.collectAsState()
 
-    val selectStar = remember { mutableStateOf(Star()) }
+    val selectStar = rememberSaveable { mutableStateOf(Star()) }
     val showDialog = rememberSaveable { mutableStateOf(false) }
 
     if (showDialog.value) {
@@ -108,7 +108,7 @@ fun StarSearchScreen(
                 // 검색창
                 val name = remember { mutableStateOf("") }
                 SearchField(
-                    modifier = Modifier.padding(bottom = 22.dp),
+                    modifier = Modifier.padding(bottom = 14.dp),
                     text = name,
                     onClick = {
                         // 스타 검색
@@ -141,12 +141,18 @@ fun StarSearchScreen(
                             }
                         }
                         else -> {
+                            item {
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+
                             items(starState.stars) { starItem ->
                                 StarItem(
                                     starItem,
                                     isSelected = starItem.starId == selectStar.value.starId,
                                     onSelect = { selectStar.value = it }
                                 )
+
+                                Spacer(modifier = Modifier.height(16.dp))
                             }
                         }
                     }

@@ -42,10 +42,22 @@ object StringUtil {
             return ""
         }
 
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val dateTime = LocalDateTime.parse(dateString, formatter)
 
         val outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+        return dateTime.format(outputFormatter)
+    }
+
+    fun formatDetailDate(dateString: String): String {
+        if (dateString.isEmpty()) {
+            return ""
+        }
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val dateTime = LocalDateTime.parse(dateString, formatter)
+
+        val outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
         return dateTime.format(outputFormatter)
     }
 

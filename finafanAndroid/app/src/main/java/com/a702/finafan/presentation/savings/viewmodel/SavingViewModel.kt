@@ -2,29 +2,22 @@ package com.a702.finafan.presentation.savings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.a702.finafan.data.funding.dto.response.toSavingAccount
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
-import com.a702.finafan.domain.funding.model.FundingFilter
-import com.a702.finafan.domain.funding.repository.FundingRepository
 import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
-import com.a702.finafan.domain.savings.model.SavingAccountInfo
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
-import com.a702.finafan.domain.savings.usecase.DeleteConnectAccountUseCase
 import com.a702.finafan.domain.savings.usecase.DeleteSavingAccountUseCase
 import com.a702.finafan.domain.savings.usecase.DepositUseCase
-import com.a702.finafan.domain.savings.usecase.GetBankUseCase
 import com.a702.finafan.domain.savings.usecase.GetRankingDetailUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingAccountUseCase
 import com.a702.finafan.domain.savings.usecase.GetSavingUseCase
 import com.a702.finafan.domain.savings.usecase.GetStarRankingUseCase
 import com.a702.finafan.domain.savings.usecase.GetStarUseCase
-import com.a702.finafan.domain.savings.usecase.GetWithdrawalAccountUseCase
 import com.a702.finafan.domain.savings.usecase.UpdateSavingNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,13 +32,10 @@ class SavingViewModel @Inject constructor(
     private val getStarUseCase: GetStarUseCase,
     private val getSavingUseCase: GetSavingUseCase,
     private val createSavingUseCase: CreateSavingUseCase,
-    private val getWithdrawalAccountUseCase: GetWithdrawalAccountUseCase,
     private val depositUseCase: DepositUseCase,
     private val getSavingAccountUseCase: GetSavingAccountUseCase,
-    private val getBankUseCase: GetBankUseCase,
     private val updateSavingNameUseCase: UpdateSavingNameUseCase,
     private val deleteSavingAccountUseCase: DeleteSavingAccountUseCase,
-    private val deleteConnectAccountUseCase: DeleteConnectAccountUseCase,
     private val getStarRankingUseCase: GetStarRankingUseCase,
     private val getRankingDetailUseCase: GetRankingDetailUseCase,
 ): ViewModel() {
@@ -58,22 +48,27 @@ class SavingViewModel @Inject constructor(
 
     fun fetchStars(keyword: String? = null) {
         viewModelScope.launch {
-            _starState.update { it.copy(isLoading = true) }
+            _starState.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                val stars = getStarUseCase(keyword)
-
-                _starState.update {
-                    it.copy(
-                        stars = stars,
-                        isLoading = false
-                    )
+            when (val result = getStarUseCase(keyword)) {
+                is DataResource.Success -> {
+                    _starState.update {
+                        it.copy(
+                            stars = result.data,
+                            isLoading = false
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                _starState.update {
-                    it.copy(
-                        error = e
-                    )
+                is DataResource.Error -> {
+                    _starState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _starState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -81,22 +76,27 @@ class SavingViewModel @Inject constructor(
 
     fun fetchSavingInfo(savingAccountId: Long) {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
+            _savingState.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                val savingInfo = getSavingUseCase(savingAccountId)
-
-                _savingState.update {
-                    it.copy(
-                        savingInfo = savingInfo,
-                        isLoading = false
-                    )
+            when (val result = getSavingUseCase(savingAccountId)) {
+                is DataResource.Success -> {
+                    _savingState.update {
+                        it.copy(
+                            savingInfo = result.data,
+                            isLoading = false
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        error = e
-                    )
+                is DataResource.Error -> {
+                    _savingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _savingState.update { it.copy(isLoading = true) }
                 }
             }
 
@@ -105,47 +105,27 @@ class SavingViewModel @Inject constructor(
 
     fun createSaving(request: SavingCreateRequest) {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
+            _savingState.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                val accountId = createSavingUseCase(request)
-
-                _savingState.update {
-                    it.copy(
-                        createAccountId = accountId,
-                        isLoading = false,
-                    )
+            when (val result = createSavingUseCase(request)) {
+                is DataResource.Success -> {
+                    _savingState.update {
+                        it.copy(
+                            createAccountId = result.data,
+                            isLoading = false
+                        )
+                    }
                 }
-
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = e
-                    )
+                is DataResource.Error -> {
+                    _savingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
                 }
-            }
-        }
-    }
-
-    fun fetchWithdrawalAccount() {
-        viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
-
-            try {
-                val withdrawalAccounts = getWithdrawalAccountUseCase()
-
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        withdrawalAccounts = withdrawalAccounts
-                    )
-                }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        error = e
-                    )
+                is DataResource.Loading -> {
+                    _savingState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -153,23 +133,27 @@ class SavingViewModel @Inject constructor(
 
     fun depositSaving(request: SavingDepositRequest) {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
+            _savingState.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                val accountId = depositUseCase(request)
-
-                _savingState.update {
-                    it.copy(
-                        depositAccountId = accountId,
-                        isLoading = false
-                    ) }
-
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = e
-                    )
+            when (val result = depositUseCase(request)) {
+                is DataResource.Success -> {
+                    _savingState.update {
+                        it.copy(
+                            depositAccountId = result.data,
+                            isLoading = false
+                        )
+                    }
+                }
+                is DataResource.Error -> {
+                    _savingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _savingState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -177,7 +161,7 @@ class SavingViewModel @Inject constructor(
 
     fun fetchSavingAccount() {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
+            _savingState.update { it.copy(isLoading = true, error = null) }
 
             try {
                 val savingAccountInfo = getSavingAccountUseCase()
@@ -198,38 +182,6 @@ class SavingViewModel @Inject constructor(
         }
     }
 
-    fun fetchFundingAsSavingAccounts() {
-        viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
-
-            try {
-                val fundingList = fundingRepository.getFundingList(FundingFilter.MY)
-                val fundingAsSavingAccounts = fundingList.map { it.toSavingAccount() }
-
-                val fundingAsSavingAccountInfo = SavingAccountInfo(
-                    total = fundingAsSavingAccounts.size,
-                    accountAmount = fundingAsSavingAccounts.sumOf { it.amount },
-                    accounts = fundingAsSavingAccounts
-                )
-
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        savingAccountInfo = fundingAsSavingAccountInfo
-                    )
-                }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = e
-                    )
-                }
-            }
-        }
-    }
-
-
     fun fetchBankList() {
         viewModelScope.launch {
             _savingState.update { it.copy(isLoading = true) }
@@ -243,11 +195,8 @@ class SavingViewModel @Inject constructor(
                         bankList = bankList
                     )
                 }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        error = e
-                    )
+                is DataResource.Loading -> {
+                    _savingState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -255,23 +204,27 @@ class SavingViewModel @Inject constructor(
 
     fun changeSavingName(savingAccountId: Long, name: String) {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
+            _savingState.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                val changeName = updateSavingNameUseCase(savingAccountId, name)
-
-                _savingState.update {
-                    it.copy(
-                        isLoading = true,
-                        accountName = changeName
-                    )
+            when (val result = updateSavingNameUseCase(savingAccountId, name)) {
+                is DataResource.Success -> {
+                    _savingState.update {
+                        it.copy(
+                            accountName = result.data,
+                            isLoading = false
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = e
-                    )
+                is DataResource.Error -> {
+                    _savingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _savingState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -279,47 +232,27 @@ class SavingViewModel @Inject constructor(
 
     fun deleteSavingAccount(savingAccountId: Long) {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
+            _savingState.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                val result = deleteSavingAccountUseCase(savingAccountId)
-
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        isCancel = result,
-                    )
+            when (val result = deleteSavingAccountUseCase(savingAccountId)) {
+                is DataResource.Success -> {
+                    _savingState.update {
+                        it.copy(
+                            isCancel = result.data,
+                            isLoading = false
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = e
-                    )
+                is DataResource.Error -> {
+                    _savingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
                 }
-            }
-        }
-    }
-
-    fun deleteConnectAccount(accountId: Long) {
-        viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
-
-            try {
-                val result = deleteConnectAccountUseCase(accountId)
-
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        isCancel = result,
-                    )
-                }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = e
-                    )
+                is DataResource.Loading -> {
+                    _savingState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -327,22 +260,27 @@ class SavingViewModel @Inject constructor(
 
     fun fetchStarRanking(type: RankingType) {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
+            _savingState.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                val rankingList = getStarRankingUseCase(type)
-
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        rankingList = rankingList
-                    )
+            when (val result = getStarRankingUseCase(type)) {
+                is DataResource.Success -> {
+                    _savingState.update {
+                        it.copy(
+                            rankingList = result.data,
+                            isLoading = false
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        error = e
-                    )
+                is DataResource.Error -> {
+                    _savingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _savingState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -350,22 +288,27 @@ class SavingViewModel @Inject constructor(
 
     fun fetchStarRankingDetail(starId: Long, type: RankingType) {
         viewModelScope.launch {
-            _savingState.update { it.copy(isLoading = true) }
+            _savingState.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                val ranking = getRankingDetailUseCase(starId, type)
-
-                _savingState.update {
-                    it.copy(
-                        isLoading = false,
-                        ranking = ranking
-                    )
+            when (val result = getRankingDetailUseCase(starId, type)) {
+                is DataResource.Success -> {
+                    _savingState.update {
+                        it.copy(
+                            ranking = result.data,
+                            isLoading = false
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                _savingState.update {
-                    it.copy(
-                        error = e
-                    )
+                is DataResource.Error -> {
+                    _savingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _savingState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -387,24 +330,12 @@ class SavingViewModel @Inject constructor(
         _savingState.update { it.copy(accountName = accountName) }
     }
 
-    fun updateConnectAccount(account: Account) {
-        _savingState.update { it.copy(connectAccount = account) }
+    fun updateSelectAccount(account: Account) {
+        _savingState.update { it.copy(selectAccount = account) }
     }
 
     fun setTransaction(transaction: Transaction) {
         _savingState.update { it.copy(transaction = transaction) }
-    }
-
-    fun updateBank(bank: Bank) {
-        _savingState.update { it.copy(selectBank = bank) }
-    }
-
-    fun updateInputAccountNo(accountNo: String) {
-        _savingState.update { it.copy(inputAccountNo = accountNo) }
-    }
-
-    fun setRanking(ranking: Ranking) {
-        _savingState.update { it.copy(ranking = ranking) }
     }
 
     fun resetCancelState() {

@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -27,7 +27,7 @@ fun ThreeTabRow(
     containerColor: Color,
     selectedTabColor: Color,
     onTabSelected: List<() -> Unit>, // 호출할 API 메서드 리스트
-    selectedIndex: MutableIntState = remember { mutableIntStateOf(0) },
+    selectedIndex: MutableIntState = rememberSaveable { mutableIntStateOf(0) },
     modifier: Modifier = Modifier
 ) {
 

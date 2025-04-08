@@ -1,5 +1,6 @@
 package com.a702.finafan.di
 
+import com.a702.finafan.data.account.api.AccountApi
 import com.a702.finafan.data.chatbot.api.ChatApi
 import com.a702.finafan.data.funding.api.FundingApi
 import com.a702.finafan.data.main.api.MainApi
@@ -39,13 +40,22 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideFundingApi(@NetworkModule.MainRetrofit retrofit: Retrofit): FundingApi {
+    fun provideFundingApi(@NetworkModule.MainRetrofit retrofit: Retrofit)
+    : FundingApi {
         return retrofit.create(FundingApi::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideUserApi(@NetworkModule.MainRetrofit retrofit: Retrofit): UserApi {
+    fun provideUserApi(@NetworkModule.MainRetrofit retrofit: Retrofit)
+    : UserApi {
         return retrofit.create(UserApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAccountApi(@NetworkModule.MainRetrofit retrofit: Retrofit)
+    : AccountApi {
+        return retrofit.create(AccountApi::class.java)
     }
 }
