@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -26,13 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradButton
 import com.a702.finafan.common.ui.theme.MainBgLightGray
-import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import java.util.UUID
 import kotlin.math.cos
 import kotlin.math.sin
+
 
 // ---------- model ----------
 data class Fan(
@@ -40,69 +42,83 @@ data class Fan(
     val profileUrl: String        // URL 로 변경
 )
 
-// ---------- public API ----------
+
 @Composable
 fun FanRadarScreen(
-    modifier: Modifier = Modifier,
     myProfileUrl: String,
-    fans: List<Fan>,              // fans.isEmpty() == 스캔 중
+    fans: List<Fan>,
+    modifier: Modifier = Modifier,
     onShowCheerClick: () -> Unit = {}
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MainWhite)
-            .padding(horizontal = 20.dp)
-    ) {
-
-        // ① 레이더 + 아바타들
-        Radar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .align(Alignment.TopCenter),
-            myProfileUrl = myProfileUrl,
-            fans = fans
-        )
-
-        // ② 말풍선 / 스캔 중 문구
-        if (fans.isNotEmpty()) {
-            SpeechBubble(
-                text = buildAnnotatedString {
-                    append("주변에 ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("${fans.size}명의 ")
-                    }
-                    append("팬이 있어요!")
-                },
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 72.dp)
+    Scaffold(
+        topBar = {
+            CommonBackTopBar(
+                text = "주변 팬 찾기",
+                isTextCentered = true
             )
-        } else {
-            Text(
-                text = "주위에 팬을 찾고 있어요",
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 56.dp)
-            )
-        }
+        },
+        containerColor = MainWhite
+    ) { innerPadding ->
 
-        // ③ 하단 버튼
-        if (fans.isNotEmpty()) {
-            PrimaryGradButton(
-                text = "가까운 팬 응원글 보기",
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(Modifier.height(16.dp))
+
+            Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(56.dp),
-                onClick = onShowCheerClick
-            )
+                    .aspectRatio(1f)
+            ) {
+                Radar(
+                    modifier = Modifier.fillMaxSize(),
+                    myProfileUrl = myProfileUrl,
+                    fans = fans
+                )
+
+                if (fans.isNotEmpty()) {
+                    SpeechBubble(
+                        text = buildAnnotatedString {
+                            append("주변에 ")
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("${fans.size}명의 ")
+                            }
+                            append("팬이 있어요!")
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 72.dp)
+                    )
+                } else {
+                    Text(
+                        text = "주위에 팬을 찾고 있어요",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+
+            if (fans.isNotEmpty()) {
+                PrimaryGradButton(
+                    text = "가까운 팬 응원글 보기",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(bottom = 24.dp),
+                    onClick = onShowCheerClick
+                )
+            }
         }
     }
 }
+
 
 
 @Composable
@@ -116,8 +132,12 @@ private fun Radar(
             min(maxWidth, maxHeight).toPx() / 2f
         }
 
-        // concentric circles
-        Canvas(Modifier.matchParentSize()) {
+        // circles
+        Canvas(
+            Modifier
+                .matchParentSize()
+                .scale(1.75f)
+        ) {
             val radiusStep = parentRadiusPx / 4f
             repeat(4) { i ->
                 drawCircle(
@@ -129,7 +149,7 @@ private fun Radar(
             }
         }
 
-        // 내 아바타
+        // 내 사진
         Avatar(
             url = myProfileUrl,
             label = "나",
@@ -181,6 +201,7 @@ private fun Avatar(
     }
 }
 
+
 // ---------- Util ----------
 private fun polarToOffset(r: Float, deg: Float): Offset {
     val rad = Math.toRadians(deg.toDouble())
@@ -189,6 +210,7 @@ private fun polarToOffset(r: Float, deg: Float): Offset {
         (r * sin(rad)).toFloat()
     )
 }
+
 
 // ---------- SpeechBubble ----------
 @Composable
@@ -205,6 +227,7 @@ private fun SpeechBubble(
         Text(text, style = MaterialTheme.typography.bodyLarge)
     }
 }
+
 
 // ---------- Preview ----------
 @Preview(showBackground = true, widthDp = 360, heightDp = 760)
