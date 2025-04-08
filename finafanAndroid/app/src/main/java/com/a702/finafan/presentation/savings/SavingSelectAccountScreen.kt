@@ -23,6 +23,7 @@ import com.a702.finafan.common.ui.component.SelectAccountField
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.data.savings.dto.request.toData
 import com.a702.finafan.domain.savings.model.SavingCreate
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -30,13 +31,16 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 // 적금 출금 계좌 선택 화면
 @Composable
 fun SavingSelectAccountScreen(
-    viewModel: SavingViewModel = viewModel(),
+    savingViewModel: SavingViewModel = viewModel(),
+    accountViewModel: AccountViewModel = viewModel()
 ) {
 
     val navController = LocalNavController.current
 
     val context = LocalContext.current
-    val savingState by viewModel.savingState.collectAsState()
+
+    val accountState by accountViewModel.accountState.collectAsState()
+    val savingState by savingViewModel.savingState.collectAsState()
 
     val showDialog = remember { mutableStateOf(false) }
     val dialogContent = remember { mutableStateOf("") }
@@ -45,18 +49,18 @@ fun SavingSelectAccountScreen(
 
     // 출금계좌 목록 조회
     LaunchedEffect(Unit) {
-        viewModel.fetchWithdrawalAccount()
+        accountViewModel.fetchWithdrawalAccount()
     }
 
-    LaunchedEffect(savingState.withdrawalAccounts) {
+    LaunchedEffect(accountState.withdrawalAccounts) {
         if (!savingState.isLoading) {
-            if (savingState.withdrawalAccounts.isEmpty()) {
+            if (accountState.withdrawalAccounts.isEmpty()) {
                 // 출금 계좌가 없으면 계좌 연결 페이지로 이동
                 showAccountDialog.value = true
             } else {
                 // 출금 계좌가 있으면 첫 번째 계좌를 연결
-                val firstAccount = savingState.withdrawalAccounts.first()
-                viewModel.updateConnectAccount(firstAccount)
+                val firstAccount = accountState.withdrawalAccounts.first()
+                savingViewModel.updateConnectAccount(firstAccount)
             }
         }
     }
@@ -78,7 +82,7 @@ fun SavingSelectAccountScreen(
             showDialog.value = true
             dialogContent.value = it.message ?: context.getString(R.string.saving_item_create_fail)
 
-            viewModel.clearError()
+            savingViewModel.clearError()
         }
     }
 
@@ -121,7 +125,7 @@ fun SavingSelectAccountScreen(
             )
 
             val request = savingCreate.toData()
-            viewModel.createSaving(request)
+            savingViewModel.createSaving(request)
         }
     ) {
 
@@ -135,7 +139,7 @@ fun SavingSelectAccountScreen(
             textAlign = TextAlign.Start
         )
 
-        SelectAccountField(viewModel, savingState.withdrawalAccounts)
+        SelectAccountField(savingViewModel, accountState.withdrawalAccounts)
 
     }
 }

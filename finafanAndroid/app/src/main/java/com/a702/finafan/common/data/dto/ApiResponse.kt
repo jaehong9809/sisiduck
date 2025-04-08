@@ -14,7 +14,6 @@ inline fun <T, R> ApiResponse<T>.getOrThrow(mapper: (T) -> R): R {
     }
 }
 
-
 inline fun <T, R> ApiResponse<T>.getOrThrowNull(mapper: (T?) -> R): R {
     if (code == "S0000") {
         return mapper(data)

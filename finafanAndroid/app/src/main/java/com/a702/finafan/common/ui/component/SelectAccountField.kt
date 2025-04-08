@@ -36,8 +36,8 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.EditBgGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.account.model.Account
+import com.a702.finafan.domain.account.model.Bank
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 출금 계좌 선택 박스

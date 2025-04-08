@@ -26,7 +26,7 @@ import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.gradientBlue
-import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.account.model.Bank
 
 @Composable
 fun BankItem(

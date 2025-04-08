@@ -34,17 +34,17 @@ import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 
 // 은행 선택 화면
 @Composable
 fun ConnectBankScreen(
-    viewModel: SavingViewModel = viewModel(),
+    viewModel: AccountViewModel = viewModel(),
     onComplete: () -> Unit
 ) {
 
     val selectedBankIds = remember { mutableStateListOf<Long>() }
-    val savingState by viewModel.savingState.collectAsState()
+    val accountState by viewModel.accountState.collectAsState()
 
     // 은행 목록
     LaunchedEffect(Unit) {
@@ -111,14 +111,14 @@ fun ConnectBankScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
 
-                if (savingState.isLoading) {
+                if (accountState.isLoading) {
                     item {
                         CommonProgress()
                     }
                 } else {
 
-                    items(savingState.bankList.size) { index ->
-                        val bank = savingState.bankList[index]
+                    items(accountState.bankList.size) { index ->
+                        val bank = accountState.bankList[index]
                         val isSelected = selectedBankIds.any { it == bank.bankId }
 
                         BankItem(

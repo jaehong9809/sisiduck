@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 import com.a702.finafan.presentation.savings.SavingAccountManageScreen
 import com.a702.finafan.presentation.savings.SavingCancelScreen
 import com.a702.finafan.presentation.savings.SavingDepositScreen
@@ -24,7 +25,8 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 fun NavGraphBuilder.savingGraph(
     navController: NavHostController,
-    savingViewModel: SavingViewModel
+    savingViewModel: SavingViewModel,
+    accountViewModel: AccountViewModel
 ) {
     navigation(
         startDestination = NavRoutes.Main.route, route = NavRoutes.Saving.route
@@ -76,7 +78,8 @@ fun NavGraphBuilder.savingGraph(
 
         composable(NavRoutes.SavingSelectAccount.route) {
             SavingSelectAccountScreen(
-                savingViewModel
+                savingViewModel,
+                accountViewModel
             )
         }
 

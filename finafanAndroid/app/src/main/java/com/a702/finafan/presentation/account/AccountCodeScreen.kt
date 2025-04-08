@@ -18,20 +18,20 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.NumberField
 import com.a702.finafan.common.ui.component.SubButton
 import com.a702.finafan.common.ui.theme.MainTextGray
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
+import com.a702.finafan.domain.account.model.Account
+import com.a702.finafan.domain.account.model.Bank
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 
 // 인증 코드 입력 화면
 @Composable
 fun AccountCodeScreen(
-    viewModel: SavingViewModel = viewModel(),
+    viewModel: AccountViewModel = viewModel(),
     onComplete: () -> Unit,
     onNavigateClick: () -> Unit
 ) {
 
-    val savingState by viewModel.savingState.collectAsState()
-    val selectBank = savingState.selectBank
+    val accountState by viewModel.accountState.collectAsState()
+    val selectBank = accountState.selectBank
     val code = remember { mutableStateOf("") }
 
     ConnectAccountLayout (
@@ -47,7 +47,7 @@ fun AccountCodeScreen(
             AccountInfoItem(
                 modifier = Modifier.padding(top = 34.dp),
                 account = Account(
-                    accountNo = savingState.inputAccountNo,
+                    accountNo = accountState.inputAccountNo,
                     bank = Bank(
                         bankId = selectBank.bankId,
                         bankCode = selectBank.bankCode,

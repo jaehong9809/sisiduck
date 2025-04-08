@@ -1,4 +1,4 @@
-package com.a702.finafan.domain.savings.model
+package com.a702.finafan.domain.account.model
 
 data class Bank(
     val bankId: Long = 0,
