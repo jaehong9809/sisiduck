@@ -34,13 +34,13 @@ fun AddStarDialog(
     ) {
         CircleBorderImage(
             modifier = Modifier.size(50.dp),
-            imageUrl = star.entertainerProfileUrl
+            imageUrl = star.starImageUrl
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = star.entertainerName,
+            text = star.starName,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium,
             color = MainBlack,
@@ -53,5 +53,5 @@ fun AddStarDialog(
 @Composable
 fun AddStarDialogPreview() {
     AddStarDialog (showDialog = remember { mutableStateOf(false) },
-        Star(entertainerName = "이찬원"), onClickConfirm = {  })
+        Star(starName = "이찬원"), onClickConfirm = {  })
 }

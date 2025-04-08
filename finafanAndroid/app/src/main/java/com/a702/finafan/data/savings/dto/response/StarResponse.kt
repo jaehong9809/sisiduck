@@ -12,10 +12,10 @@ data class StarResponse(
 
 fun StarResponse.toDomain(): Star {
     return Star(
-        entertainerId = this.entertainerId,
-        entertainerName = this.entertainerName,
+        starId = this.entertainerId,
+        starName = this.entertainerName,
         birthDate = this.birthDate,
-        entertainerProfileUrl = this.entertainerProfileUrl,
+        starImageUrl = this.entertainerProfileUrl,
         fandomName = this.fandomName
     )
 }

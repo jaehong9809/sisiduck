@@ -3,6 +3,9 @@ package com.a702.finafan.presentation.navigation
 sealed class NavRoutes(val route: String) {
     object Main : NavRoutes("main")
 
+    /* Login */
+    object Login : NavRoutes("login")
+
     /* Chat */
     object Chat : NavRoutes("chat")
 
@@ -37,7 +40,7 @@ sealed class NavRoutes(val route: String) {
 
     /* Ranking */
     object RankingMain : NavRoutes("ranking_main")
-    object RankingHistory : NavRoutes("ranking_history")
+    object RankingDetail : NavRoutes("ranking_detail")
 
     /* Funding */
     object Funding : NavRoutes("funding")
@@ -48,4 +51,5 @@ sealed class NavRoutes(val route: String) {
 
     /* AllAccount */
     object AllAccount : NavRoutes("all_account")
+    object AllAccountParam : NavRoutes("all_account?selectedTabIndex={selectedTabIndex}")
 }

@@ -2,6 +2,8 @@ package com.a702.finafan.presentation.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,6 +46,8 @@ import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.main.model.MainRanking
 import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.presentation.main.viewmodel.MainViewModel
+import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 import kotlinx.coroutines.delay
 
 @Composable
@@ -129,10 +133,19 @@ fun AutoScrollingRankList(
 
 @Composable
 fun RankingCard(ranking: MainRanking, rankingType: RankingType) {
+
+    val navController = LocalNavController.current
+
     val rankingPeriodText = when (rankingType) {
         RankingType.DAILY -> stringResource(R.string.ranking_card_daily_label)
         RankingType.WEEKLY -> stringResource(R.string.ranking_card_weekly_label)
         RankingType.TOTAL -> stringResource(R.string.ranking_card_total_label)
+    }
+
+    val selectedTabIndex = when (rankingType) {
+        RankingType.DAILY -> 0
+        RankingType.WEEKLY -> 1
+        RankingType.TOTAL -> 2
     }
 
     Row(
@@ -155,6 +168,13 @@ fun RankingCard(ranking: MainRanking, rankingType: RankingType) {
                     colors = listOf(MainGradBlue, MainGradViolet)
                 ),
                 shape = RoundedCornerShape(25.dp)
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = {
+                    navController.navigate(NavRoutes.RankingMain.route + "?selectedTabIndex=${selectedTabIndex}")
+                }
             ),
     ) {
         Column(

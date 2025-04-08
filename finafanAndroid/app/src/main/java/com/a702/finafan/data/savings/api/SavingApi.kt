@@ -4,15 +4,19 @@ import com.a702.finafan.common.data.dto.ApiResponse
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.response.AccountResponse
 import com.a702.finafan.data.savings.dto.response.BankResponse
+import com.a702.finafan.data.savings.dto.response.RankingDetailResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountInfoResponse
 import com.a702.finafan.data.savings.dto.response.SavingAccountResponse
 import com.a702.finafan.data.savings.dto.response.SavingCreateResponse
 import com.a702.finafan.data.savings.dto.response.SavingDepositResponse
+import com.a702.finafan.data.savings.dto.response.SavingRankingResponse
 import com.a702.finafan.data.savings.dto.response.StarResponse
 import com.a702.finafan.data.savings.dto.response.TransactionInfo
+import com.a702.finafan.domain.savings.model.SavingAccount
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -62,4 +66,38 @@ interface SavingApi {
     // 은행 목록 조회
     @GET("v1/code/bank")
     suspend fun bankList(): ApiResponse<List<BankResponse>>
+
+    // 적금 계좌 이름 변경
+    @PUT("v1/star/alias/{savingAccountId}")
+    suspend fun updateSavingName(
+        @Path("savingAccountId") savingAccountId: Long,
+        @Body request: HashMap<String, String>
+    ): ApiResponse<SavingAccount>
+
+    // 적금 계좌 해지하기
+    @DELETE("v1/star/account/{savingAccountId}")
+    suspend fun deleteSavingAccount(@Path("savingAccountId") savingAccountId: Long): ApiResponse<Unit>
+
+    // 연결 계좌 삭제
+    @DELETE("v1/star/{depositAccountId}/withdrawal-connection")
+    suspend fun deleteConnectAccount(@Path("depositAccountId") depositAccountId: Long): ApiResponse<Unit>
+
+    // 적금 일간 랭킹 조회
+    @GET("v1/ranking/daily/all-entertainers")
+    suspend fun dailyStarRanking(): ApiResponse<List<SavingRankingResponse>>
+
+    // 적금 주간 랭킹 조회
+    @GET("v1/ranking/weekly/all-entertainers")
+    suspend fun weeklyStarRanking(): ApiResponse<List<SavingRankingResponse>>
+
+    // 적금 누적 랭킹 조회
+    @GET("v1/ranking/total/entertainers")
+    suspend fun totalStarRanking(): ApiResponse<List<SavingRankingResponse>>
+
+    @GET("v1/star/{entertainerId}/top-transactions")
+    suspend fun starSavingHistory(
+        @Path("entertainerId") starId: Long,
+        @Query("period") type: String
+    ): ApiResponse<RankingDetailResponse>
+
 }

@@ -1,5 +1,6 @@
 package com.a702.finafan.common.domain
 
+import android.util.Log
 import com.a702.finafan.common.data.dto.ErrorResponse
 import com.google.gson.Gson
 import retrofit2.HttpException
@@ -7,6 +8,8 @@ import java.io.IOException
 
 object ExceptionHandler {
     fun handle(e: Exception): String {
+        Log.d("exception handler", e.toString())
+
         return when (e) {
             is IOException -> "인터넷 연결을 확인해주세요."
             is HttpException -> {
@@ -28,7 +31,11 @@ object ExceptionHandler {
             val errorResponse =
                 Gson().fromJson(e.response()?.errorBody()?.string(), ErrorResponse::class.java)
 
-            errorResponse.message
+            if (errorResponse.code == "E8007") {
+                "스타 적금과 연결된 계좌입니다."
+            } else {
+                errorResponse.message
+            }
         } catch (ex: Exception) {
             null
         }

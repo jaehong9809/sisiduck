@@ -52,14 +52,12 @@ import com.a702.finafan.presentation.navigation.NavRoutes
 fun MainScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    viewModel: MainViewModel = hiltViewModel()
 ) {
-    val viewModel: MainViewModel = hiltViewModel()
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchMainSavings()
-    }
-
     val mainSavingState by viewModel.mainSavingState.collectAsState()
+    val mainRankingState by viewModel.mainRankingState.collectAsState()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+    val userInfo by viewModel.userInfo.collectAsState()
 
     val context = LocalContext.current
 
@@ -74,6 +72,21 @@ fun MainScreen(
         }
     )
 
+    LaunchedEffect(isLoggedIn) {
+        viewModel.fetchMainSavings()
+        if (isLoggedIn) {
+            viewModel.fetchUserInfo()
+        }
+        // TODO: 랭킹 UI 구현 후 연결
+        // viewModel.fetchMainRanking(RankingType.DAILY)
+    }
+
+    val nameText = when {
+        !isLoggedIn -> "로그인 후 이용해 주세요"
+        userInfo?.userName != null -> "${userInfo!!.userName}님"
+        else -> ""
+    }
+
     Column(modifier = modifier
         .fillMaxSize()
         .background(color = MainBgLightGray)
@@ -83,30 +96,45 @@ fun MainScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // TODO: 로그인 구현 후 상태에서 유저 이름 가져오기
-            Text(text = "....님",
+            Text(text = nameText,
                 modifier = Modifier.fillMaxWidth()
                     .padding(start = 40.dp, top = 30.dp),
                 textAlign = TextAlign.Left,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
             )
-            CardCarousel(mainSavingState.savings,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp))
+
+            CardCarousel(
+                isLoggedIn = isLoggedIn,
+                savings = mainSavingState.savings,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 14.dp),
+                navController = navController
+            )
 
             MainWideButton(
-                modifier = Modifier.height(60.dp),
+                modifier = Modifier
+                    .height(60.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 onClick = {
                     navController.navigate(NavRoutes.AllAccount.route)
                 },
                 text = stringResource(R.string.all_acount_button)
             )
+        }
 
             Spacer(modifier = Modifier.padding(8.dp))
 
             Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 MainSquareIconButton(
+                    modifier = Modifier.weight(1f),
                     onClick = {
                         blePermissionLauncher.launch(
                             arrayOf(
@@ -132,6 +160,7 @@ fun MainScreen(
                 )
 
                 MainSquareIconButton(
+                    modifier = Modifier.weight(1f),
                     onClick = {
                         navController.navigate(NavRoutes.FundingMain.route)
                     },
@@ -153,6 +182,9 @@ fun MainScreen(
             Spacer(modifier = Modifier.padding(8.dp))
 
             MainWideIconButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 onClick = {
                     navController.navigate(NavRoutes.Chat.route)
                 },
@@ -169,6 +201,7 @@ fun MainScreen(
                 },
                 text = "덕순이랑 놀기"
             )
+
             Text(
                 text = "스타별 적금 랭킹",
                 modifier = Modifier.fillMaxWidth()
@@ -178,7 +211,7 @@ fun MainScreen(
                 fontWeight = FontWeight.SemiBold
             )
 
-            MainRanking(viewModel)
+            MainRanking(viewModel, modifier = Modifier.padding(horizontal = 40.dp))
         }
     }
 }

@@ -87,7 +87,12 @@ class SpeechRecognizerHelper(
         speechRecognizer.stopListening()
     }
 
+    fun cancelListening() {
+        speechRecognizer.cancel()
+    }
+
     fun destroy() {
         speechRecognizer.destroy()
     }
+
 }

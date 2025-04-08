@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE user SET delete_at = CURRENT_TIMESTAMP WHERE id = ?")
-//@SQLRestriction("deleted_at = false")
+@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE user_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class User extends BaseEntity {
     private static final int MAX_SOCIAL_EMAIL_LENGTH = 255;
 
@@ -25,13 +25,13 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name = "member_role", nullable = false)
+    @Column(name = "member_role")
     private String memberRole;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Size(max = MAX_SOCIAL_EMAIL_LENGTH)
@@ -42,16 +42,16 @@ public class User extends BaseEntity {
     @Column(name = "social_type")
     private SocialType socialType;
 
-    @Column(name = "user_key", nullable = false)
+    @Column(name = "user_key")
     private String userKey;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     private LocalDateTime birthDate;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     private String address;
 
-    @Column(name = "credit_point", nullable = false)
+    @Column(name = "credit_point")
     private String creditPoint;
 
     @Column(name = "entertainer_id")
@@ -59,6 +59,9 @@ public class User extends BaseEntity {
 
     @Column(name = "represent_account_id")
     private Long representAccountId;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public void updateFavoriteEntertainer(Long entertainerId) {
         this.entertainerId = entertainerId;

@@ -27,6 +27,7 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +42,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.BlackButton
+import com.a702.finafan.common.ui.component.CommonProgress
+import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.AccountBoxGray
 import com.a702.finafan.common.ui.theme.MainBgLightGray
@@ -103,6 +106,18 @@ fun AllAccountScreen(
                 else -> emptyList()
             }
         }
+    }
+
+    val showDialog = remember { mutableStateOf(false) }
+
+    if (showDialog.value) {
+        ConfirmDialog(
+            showDialog,
+            content = context.getString(R.string.saving_item_limit),
+            onClickConfirm = {
+                showDialog.value = false
+            }
+        )
     }
 
     val buttonText by remember(selectedTabIndex) {
@@ -177,7 +192,13 @@ fun AllAccountScreen(
                         .fillMaxWidth(),
                     onClick = {
                         when (selectedTabIndex.intValue) {
-                            0 -> navController.navigate(NavRoutes.SavingDesc.route)
+                            0 -> {
+                                if (savingState.savingAccountInfo.accounts.size == 3) {
+                                    showDialog.value = true
+                                } else {
+                                    navController.navigate(NavRoutes.SavingDesc.route)
+                                }
+                            }
                             1 -> "" // TODO: 모금통장 가입 화면으로 이동
                             2 -> navController.navigate(NavRoutes.Account.route)
                         }
@@ -199,42 +220,48 @@ fun AllAccountScreen(
                     .padding(horizontal = 16.dp)
             ) {
 
-                if (accountList.isEmpty()) {
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = stringResource(R.string.all_account_list_empty),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MainTextGray,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 30.sp
-                        )
+                when {
+                    savingState.isLoading -> {
+                        item { CommonProgress() }
                     }
-                } else {
-                    items(accountList) { account ->
-                        when (selectedTabIndex.intValue) {
-                            0 -> SavingAccountItem(
-                                account as SavingAccount,
-                                onSelect = {
-                                    navController.navigate(NavRoutes.SavingMain.route + "/${account.accountId}")
-                                }
+                    accountList.isEmpty() -> {
+                        item {
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = stringResource(R.string.all_account_list_empty),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MainTextGray,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 30.sp
                             )
-                            1 -> SavingAccountItem(
-                                account as SavingAccount,
-                                onSelect = {
-                                    navController.navigate(NavRoutes.FundingDetail.route + "/${account.accountId}")
-                                }
-                            )
-                            2 -> WithdrawalAccountItem(
-                                account as Account,
-                                onSelect = {
-                                    savingViewModel.updateConnectAccount(account)
-                                    navController.navigate(NavRoutes.ConnectAccount.route)
-                                }
-                            )
+                        }
+                    }
+                    else -> {
+                        items(accountList) { account ->
+                            when (selectedTabIndex.intValue) {
+                                0 -> SavingAccountItem(
+                                    account as SavingAccount,
+                                    onSelect = {
+                                        navController.navigate(NavRoutes.SavingMain.route + "/${account.accountId}")
+                                    }
+                                )
+                                1 -> SavingAccountItem(
+                                    account as SavingAccount,
+                                    onSelect = {
+                                        navController.navigate(NavRoutes.FundingDetail.route + "/${account.accountId}")
+                                    }
+                                )
+                                2 -> WithdrawalAccountItem(
+                                    account as Account,
+                                    onSelect = {
+                                        savingViewModel.updateConnectAccount(account)
+                                        navController.navigate(NavRoutes.ConnectAccount.route)
+                                    }
+                                )
+                            }
                         }
                     }
                 }

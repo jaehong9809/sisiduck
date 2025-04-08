@@ -13,7 +13,6 @@ import com.a702.finafanbe.core.entertainer.dto.response.EntertainerSearchRespons
 import com.a702.finafanbe.core.entertainer.dto.response.InquireEntertainerAccountResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
-import com.a702.finafanbe.core.savings.application.SavingsAccountService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.EntertainerSavingsAccountRepository;
@@ -25,6 +24,8 @@ import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,6 @@ public class EntertainSavingsService {
     private final EntertainerRepository entertainRepository;
     private final EntertainerSavingsAccountRepository entertainerSavingsAccountRepository;
     private final UserRepository userRepository;
-    private final AccountRepository accountRepository;
     private final EntertainerSavingsTransactionDetailRepository entertainerSavingsTransactionDetailRepository;
     private final BankService bankService;
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
@@ -60,78 +60,26 @@ public class EntertainSavingsService {
 
         validateNoExistingAccount(user.getUserId(), entertainerId);
         Bank bank = bankService.findBankByCode(accountResponse.bankCode());
-        Account createdAccount = accountRepository.save(Account.of(
+        EntertainerSavingsAccount createdAccount = entertainerSavingsAccountRepository.save(EntertainerSavingsAccount.of(
             user.getUserId(),
-            accountResponse.accountNo(),
-            accountResponse.currency(),
+            entertainerId,
+            bank.getBankId(),
             createStartAccountRequest.productName(),
-            accountResponse.accountTypeUniqueNo(),
-            bank.getBankId()
+            accountResponse.accountNo(),
+            createStartAccountRequest.withdrawalAccountId(),
+            0.05,
+            60L,
+            "example.com"
+
         ));
 
-        EntertainerSavingsAccount entertainerSavingsAccount = saveEntertainerSavingsAccount(
-                user.getUserId(),
-                entertainerId,
-                createStartAccountRequest.productName(),
-                createdAccount.getAccountId(),
-                createStartAccountRequest.withdrawalAccountId()
-        );
         return StarAccountResponse.of(
-                entertainerSavingsAccount.getUserId(),
-                entertainerSavingsAccount.getEntertainerId(),
-                entertainerSavingsAccount.getDepositAccountId(),
-                entertainerSavingsAccount.getWithdrawalAccountId(),
-                bank
+            createdAccount.getUserId(),
+            createdAccount.getEntertainerId(),
+            createdAccount.getId(),
+            createdAccount.getWithdrawalAccountId(),
+            bank
         );
-    }
-
-    private EntertainerSavingsAccount saveEntertainerSavingsAccount(
-            Long userId,
-            Long entertainerId,
-            String productName,
-            Long depositAccountId,
-            Long withdrawalAccountId
-    ) {
-        return entertainerSavingsAccountRepository.save(
-                EntertainerSavingsAccount.of(
-                    userId,
-                    entertainerId,
-                    productName,
-                    depositAccountId,
-                    withdrawalAccountId,
-                    0.05,
-                    5L,
-                    "example.com"
-                )
-        );
-    }
-
-    private void validateNoExistingAccount(Long userId, Long entertainerId) {
-        if(existEntertainerSavings(userId, entertainerId)){
-            throw new BadRequestException(ResponseData.createResponse(EXIST_SAVINGS_PRODUCT));
-        }
-    }
-
-    private boolean existEntertainerSavings(
-            Long userId,
-            Long entertainerId
-    ) {
-        return entertainerSavingsAccountRepository.existsByUserIdAndEntertainerId(
-                userId,
-                entertainerId
-        );
-    }
-
-    private Long findEntertainerId(Long entertainerId) {
-        return entertainRepository.findByEntertainerId(entertainerId)
-                .orElseThrow(()-> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)))
-                .getEntertainerId();
-    }
-
-    private User findUser(String userEmail) {
-        log.info("Find user by email: " + userEmail);
-        return userRepository.findBySocialEmail(userEmail)
-                .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
     }
 
     @Transactional
@@ -142,17 +90,19 @@ public class EntertainSavingsService {
         user.updateFavoriteEntertainer(findEntertainerId(selectStarRequest.entertainerId()));
         Entertainer entertainer = entertainRepository.findByEntertainerId(selectStarRequest.entertainerId()).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
         return EntertainerResponse.of(
+                entertainer.getEntertainerId(),
                 entertainer.getEntertainerName(),
                 entertainer.getEntertainerProfileUrl(),
                 entertainer.getFandomName()
         );
     }
 
+    @Transactional(readOnly = true)
     public List<Entertainer> findStars() {
         return entertainRepository.findAll();
     }
 
-
+    @Transactional
     public EntertainerDepositResponse deposit(
             String userEmail,
             Long depositAccountId,
@@ -186,15 +136,23 @@ public class EntertainSavingsService {
         );
     }
 
-    public EntertainerSavingsAccount findEntertainerAccountByDepositAccountId(Long savingAccountId) {
-        return entertainerSavingsAccountRepository.findByDepositAccountId(savingAccountId).orElseThrow(
+    @Transactional(readOnly = true)
+    public EntertainerSavingsAccount findEntertainerAccountById(Long savingAccountId) {
+        return entertainerSavingsAccountRepository.findById(savingAccountId).orElseThrow(
             () -> new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
+    @Transactional(readOnly = true)
+    public boolean existsEntertainerAccountByWithdrawalAccountId(Long savingAccountId) {
+        return entertainerSavingsAccountRepository.existsByWithdrawalAccountId(savingAccountId);
+    }
+
+    @Transactional(readOnly = true)
     public List<EntertainerSavingsAccount> findAccountByUserId(Long userId) {
         return entertainerSavingsAccountRepository.findByUserId(userId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundUser)));
     }
 
+    @Transactional(readOnly = true)
     public List<EntertainerSearchResponse> searchEntertainers(String keyword) {
         List<Entertainer> entertainers;
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -207,28 +165,71 @@ public class EntertainSavingsService {
             .collect(Collectors.toList());
     }
 
+    @Transactional
     public InquireEntertainerAccountResponse putAccountAlias(
             Long savingAccountId,
             String newName
     ) {
-        EntertainerSavingsAccount savingsAccount = findEntertainerAccountByDepositAccountId(savingAccountId);
+        EntertainerSavingsAccount savingsAccount = findEntertainerAccountById(savingAccountId);
+        long maintenanceDays = savingsAccount.getMaintenanceDays(savingsAccount);
         Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
         Bank bank = bankService.findBankById(account.getBankId());
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
-        savingsAccount.updateProductName(newName);
+        account.updateName(newName);
         return InquireEntertainerAccountResponse.of(
-                savingsAccount.getDepositAccountId(),
+                savingsAccount.getId(),
                 account.getAccountNo(),
                 account.getAccountName(),
                 account.getAmount(),
                 account.getCreatedAt(),
                 savingsAccount.getInterestRate(),
                 savingsAccount.getDuration(),
+                maintenanceDays,
                 savingsAccount.getImageUrl(),
                 withdrawalAccount,
                 bank,
                 withdrawalBank
         );
+    }
+
+    @Transactional
+    public void deleteByAccountId(Long accountId) {
+        entertainerSavingsAccountRepository.deleteById(accountId);
+    }
+
+    public boolean existsEntertainerAccountById(Long accountId) {
+        return entertainerSavingsAccountRepository.existsById(accountId);
+    }
+
+    private void validateNoExistingAccount(Long userId, Long entertainerId) {
+        if(existEntertainerSavings(userId, entertainerId)){
+            throw new BadRequestException(ResponseData.createResponse(EXIST_SAVINGS_PRODUCT));
+        }
+    }
+
+    private boolean existEntertainerSavings(
+            Long userId,
+            Long entertainerId
+    ) {
+        return entertainerSavingsAccountRepository.existsByUserIdAndEntertainerIdAndDeletedAtNull(
+                userId,
+                entertainerId
+        );
+    }
+
+    private Long findEntertainerId(Long entertainerId) {
+        return entertainRepository.findByEntertainerId(entertainerId)
+                .orElseThrow(()-> new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)))
+                .getEntertainerId();
+    }
+
+    private User findUser(String userEmail) {
+        return userRepository.findBySocialEmail(userEmail)
+                .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(NotFoundUser)));
+    }
+
+    public List<String> findAllAccountNos() {
+        return entertainerSavingsAccountRepository.findAllAccountNos();
     }
 }

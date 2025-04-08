@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">FinAFan</string>
+    <string name="app_name">시시덕</string>
+
+    <!-- Login Screen -->
+    <string name="ssafy_login">SSAFY 금융망 로그인</string>
+    <string name="login">로그인</string>
 
     <!-- Main Screen -->
     <string name="card_login_button">로그인</string>
@@ -26,6 +30,7 @@
     <string name="error_recongnizer">음성 인식 중 오류가 발생했어요.</string>
     <string name="not_found_audio">말씀을 잘 못 알아들었어요.</string>
     <string name="down_scroll">⬇</string>
+    <string name="chatbot_input_hint">덕순이에게 말을 걸어보세요!</string>
 
     <!-- TopBar Title -->
     <string name="saving_item_star_list_title">스타 목록</string>
@@ -157,9 +162,12 @@
     <string name="saving_item_star_not_exist">입력한 스타가\n존재하지 않습니다.</string>
     <string name="saving_item_exist">이미 가입한\n스타 적금입니다.</string>
     <string name="saving_item_change_name">적금 이름 변경</string>
-    <string name="saving_item_cancel_complete">적금 해지가 완료되었어요!</string>
+    <string name="saving_item_saving_cancel_complete">적금 해지가 완료되었어요!</string>
+    <string name="saving_item_connect_cancel_complete">연결 계좌 삭제가 완료되었어요!</string>
+    <string name="saving_item_connect_cancel_confirm">연결된 계좌를 삭제하시겠어요?</string>
     <string name="saving_item_deposit_complete">입금이 완료되었어요!</string>
     <string name="saving_item_withdrawal_empty">출금 가능 계좌가 없어요.\n계좌 연결을 해 볼까요?</string>
+    <string name="saving_item_limit">적금은 3개까지 가입이 가능해요!</string>
 
     <!-- Saving Ranking -->
     <string name="ranking_daily_title">일간</string>
@@ -167,6 +175,7 @@
     <string name="ranking_together">같이 덕질하기</string>
     <string name="ranking_daily_star">오늘의 1등 스타</string>
     <string name="ranking_weekly_star">이번 주 1등 스타</string>
+    <string name="ranking_total_star">지금까지 1등 스타</string>
     <string name="ranking_history_title">랭킹 보기</string>
     <string name="ranking_history">응원글 보기</string>
     <string name="ranking_my_history">나의 응원 내역</string>

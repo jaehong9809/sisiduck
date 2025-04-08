@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.compose.ui.viewbinding)
 
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.datastore.core.android)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -101,4 +103,9 @@ dependencies {
     implementation(libs.coil)
     implementation ("androidx.palette:palette:1.0.0")
     implementation(libs.androidx.compose.runtime)
+
+    implementation(libs.datastore.preferences)
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
+    implementation("androidx.compose.material:material-icons-extended")
+
 }

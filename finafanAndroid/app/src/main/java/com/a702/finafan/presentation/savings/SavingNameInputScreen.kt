@@ -33,7 +33,7 @@ fun SavingNameInputScreen(
     val savingState by viewModel.savingState.collectAsState()
 
     val star = savingState.selectStar
-    val savingName = remember { mutableStateOf(star.entertainerName) }
+    val savingName = remember { mutableStateOf(star.starName) }
 
     SavingScreenLayout(
         topBarTitle = stringResource(R.string.saving_item_create_top_bar),
@@ -50,7 +50,7 @@ fun SavingNameInputScreen(
         // 적금 이름 필드 (선택한 스타 이름이 자동으로 들어감)
         StringField(modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
             label = stringResource(R.string.saving_item_name_label),
-            hint = star.entertainerName,
+            hint = star.starName,
             text = savingName,
             isSaving = true)
 

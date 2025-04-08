@@ -1,25 +1,31 @@
 package com.a702.finafanbe.core.entertainer.presentation;
 
+import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.demanddeposit.application.InquireDemandDepositAccountService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.*;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
 import com.a702.finafanbe.core.demanddeposit.facade.*;
 import com.a702.finafanbe.core.entertainer.application.EntertainSavingsService;
+import com.a702.finafanbe.core.entertainer.application.EntertainerSavingsSchedulerService;
+import com.a702.finafanbe.core.entertainer.application.TopTransactionsService;
 import com.a702.finafanbe.core.entertainer.dto.request.SelectStarRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.CreateStarAccountRequest;
 import com.a702.finafanbe.core.entertainer.dto.request.StarTransferRequest;
+import com.a702.finafanbe.core.entertainer.dto.request.TerminateSavingsRequest;
 import com.a702.finafanbe.core.entertainer.dto.response.*;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.ranking.application.RankingWebSocketService;
 import com.a702.finafanbe.core.s3.service.S3Service;
 import com.a702.finafanbe.core.savings.application.SavingsAccountService;
+import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +35,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/star")
 @RequiredArgsConstructor
+@Slf4j
 public class EntertainSavingsController {
 
     private static final String EMAIL = "lsc7134@naver.com";
@@ -40,13 +47,14 @@ public class EntertainSavingsController {
     private final InquireDemandDepositAccountService inquireDemandDepositAccountService;
     private final RankingWebSocketService rankingWebSocketService;
     private final EntertainSavingsService entertainSavingsService;
+    private final TopTransactionsService topTransactionsService;
+    private final EntertainerSavingsSchedulerService schedulerService;
 
     @GetMapping("/account/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> getEntertainerAccount(
         @PathVariable Long savingAccountId
     ) {
         return ResponseUtil.success(demandDepositFacade.getEntertainerAccount(
-            EMAIL,
             savingAccountId
         ));
     }
@@ -107,12 +115,12 @@ public class EntertainSavingsController {
                 withdrawalAccount.getAccountId(),
                 depositAccount.addAmount(new BigDecimal(starTransferRequest.transactionBalance())),
                 new BigDecimal(starTransferRequest.transactionBalance()),
-                exchange.getBody().REC().get(0).transactionUniqueNo(),
+                exchange.getBody().REC().get(1).transactionUniqueNo(),
                 starTransferRequest.message(),
                 image
             );
 
-            EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountByDepositAccountId(
+            EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(
                     starTransferRequest.depositAccountId()
             );
 
@@ -151,6 +159,11 @@ public class EntertainSavingsController {
         return ResponseUtil.success(entertainService.findStars());
     }
 
+    @GetMapping("/favorite")
+    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers() {
+        return ResponseUtil.success(demandDepositFacade.getPossessionEntertainer());
+    }
+
     @GetMapping("/search")
     public ResponseEntity<ResponseData<List<EntertainerSearchResponse>>> searchEntertainers(
         @RequestParam(required = false) String keyword
@@ -162,25 +175,67 @@ public class EntertainSavingsController {
     public ResponseEntity<ResponseData<List<WithdrawalAccountResponse>>> getWithdrawalAccounts(
 //        @AuthMember User user;
     ) {
-        String email = EMAIL;
-
-        List<WithdrawalAccountResponse> accounts = savingsAccountService.getWithdrawalAccounts(email);
-        return ResponseUtil.success(accounts);
+        return ResponseUtil.success(savingsAccountService.getWithdrawalAccounts(EMAIL));
     }
 
     @PutMapping("/alias/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> updateAccountAlias(
             @PathVariable Long savingAccountId,
-            String newName
+            @RequestBody  UpdateSavingsRequest updateSavingsRequest
     ){
         return ResponseUtil.success(entertainSavingsService.putAccountAlias(
                 savingAccountId,
-                newName
+                updateSavingsRequest.newName()
         ));
     }
 
-//    @DeleteMapping("/{savingAccountId}")
-//    public ResponseEntity<ResponseData<Void>> deleteAccountAlias(@PathVariable Long savingAccountId){
-//        return ResponseUtil.success(entertainSavingsService.del)
-//    }
+    @DeleteMapping("/{savingAccountId}")
+    public ResponseEntity<ResponseData<Void>> deleteAccount(@PathVariable Long savingAccountId){
+        demandDepositFacade.deleteStarAccount(savingAccountId);
+        return ResponseUtil.success();
+    }
+
+    @DeleteMapping("/{depositAccountId}/withdrawal-connection")
+    public ResponseEntity<ResponseData<Void>> disconnectWithdrawalAccount(@PathVariable Long depositAccountId) {
+        demandDepositFacade.deleteStarWithdrawalAccount(depositAccountId);
+        return ResponseUtil.success();
+    }
+
+    @GetMapping("/{entertainerId}/top-transactions")
+    public ResponseEntity<ResponseData<TopTransactionsResponse>> getTopTransactions(
+        @PathVariable Long entertainerId,
+        @RequestParam(defaultValue = "daily") String period) {
+
+        log.info("Getting top transactions for entertainer: {}, period: {}",
+            entertainerId, period);
+
+        TopTransactionsResponse response =
+            topTransactionsService.getTopTransactions(entertainerId, period);
+
+        return ResponseUtil.success(response);
+    }
+
+    @PostMapping("/terminate/{savingsAccountId}")
+    public ResponseEntity<ResponseData<Void>> terminateSavingsAccount(
+            @AuthMember User user,
+            @PathVariable Long savingsAccountId,
+            @RequestBody(required = false) TerminateSavingsRequest request) {
+
+        EntertainerSavingsAccount account = entertainSavingsService.findEntertainerAccountById(savingsAccountId);
+
+        if (!account.getUserId().equals(user.getUserId())) {
+            throw new BadRequestException(ResponseData.createResponse(ErrorCode.DATA_FORBIDDEN_ACCESS));
+        }
+
+        String reason = (request != null && request.terminationReason() != null)
+                ? request.terminationReason()
+                : "사용자 요청에 의한 중도해지";
+
+        log.info("연예인 적금 중도해지 요청: 계좌ID={}, 사용자ID={}, 사유={}",
+                savingsAccountId, user.getUserId(), reason);
+
+        schedulerService.processEarlyTermination(savingsAccountId, reason);
+
+        return ResponseUtil.success();
+    }
 }

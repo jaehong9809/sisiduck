@@ -2,7 +2,6 @@ INSERT INTO accounts (
     user_id,
     account_no,
     amount,
-    interest_rate,
     status,
     bank_id,
     account_pw,
@@ -15,15 +14,12 @@ INSERT INTO accounts (
     one_time_transfer_limit,
     last_transaction_date,
     account_expiry_date,
-    min_subscription_balance,
-    max_subscription_balance,
     created_at,
     modified_at
 ) VALUES (
              1, -- user_id
-             '0013509698246275', -- account_no
+             '0010047340147585', -- account_no
              10000.00, -- amount
-             0.015, -- interest_rate (1.5%)
              'ACTIVE', -- status
              1, -- bank_code
              1234, -- account_pw
@@ -36,8 +32,6 @@ INSERT INTO accounts (
              1000000.00, -- one_time_transfer_limit
              NOW(), -- last_transaction_date
              DATE_ADD(NOW(), INTERVAL 2 YEAR), -- account_expiry_date (2년 후)
-             1000.00, -- min_subscription_balance
-             10000000.00, -- max_subscription_balance
              NOW(), -- created_at
              NOW() -- updated_at
          );
