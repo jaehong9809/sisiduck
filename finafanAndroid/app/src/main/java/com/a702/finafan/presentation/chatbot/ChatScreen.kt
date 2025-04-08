@@ -1,5 +1,7 @@
 package com.a702.finafan.presentation.chatbot
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -45,41 +47,49 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
+
+    /* ─── State & helpers ─── */
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
+    /* 새 메시지 도착 시 자동 스크롤 */
     LaunchedEffect(uiState.messages.size, uiState.streamingText) {
-        coroutineScope.launch {
-            listState.animateScrollToItem(uiState.messages.size)
-        }
+        scope.launch { listState.animateScrollToItem(uiState.messages.size) }
     }
 
-    val showScrollToBottomButton by remember {
+    /* “맨 아래로” 버튼 표시 여부 */
+    val showScrollToBottom by remember {
         derivedStateOf {
-            val isNotAtBottom = listState.firstVisibleItemIndex < uiState.messages.lastIndex
-            val isScrollable = listState.layoutInfo.totalItemsCount > 5
-            isNotAtBottom && isScrollable
+            val notAtBottom = listState.firstVisibleItemIndex < uiState.messages.lastIndex
+            val scrollable  = listState.layoutInfo.totalItemsCount > 5
+            notAtBottom && scrollable
         }
     }
 
+    /* RECORD_AUDIO 권한 런처 */
     val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            viewModel.startListening()
-        } else {
-            Toast.makeText(context, context.getString(R.string.permission_audio_required), Toast.LENGTH_SHORT).show()
-        }
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) viewModel.startListening()
+        else Toast.makeText(
+            context,
+            context.getString(R.string.permission_audio_required),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
+    /* 오류·토스트 처리 */
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
-            Toast.makeText(context, it.message ?: context.getString(R.string.error_audio), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                it.message ?: context.getString(R.string.error_audio),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
-
     LaunchedEffect(uiState.toastMessage) {
         uiState.toastMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -87,64 +97,80 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(top = 12.dp)
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+    /* ─── Scaffold ─── */
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = { ChatInputBar(viewModel) },                 // 입력창
+        floatingActionButton = {
+            VoiceFab (
+                onClick = {
+                    if (context.checkSelfPermission(Manifest.permission.RECORD_AUDIO)
+                        == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        viewModel.startListening()
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                    }
+                }
+            )
+        },
+        floatingActionButtonPosition = FabPosition.End,
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets
+    ) { innerPadding ->
+
+        /* ─── 본문(Box) ─── */
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)  // bottomBar + 시스템 inset
+        ) {
+            /* 메시지 리스트 */
             LazyColumn(
                 state = listState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(bottom = 84.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(
+                    top = 12.dp,
+                    bottom = 28.dp
+                )
             ) {
                 items(uiState.messages) { ChatBubble(it) }
 
                 if (uiState.isStreaming && uiState.streamingText.isNotBlank()) {
-                    item {
-                        ChatBubble(ChatMessage(uiState.streamingText, isUser = false))
-                    }
+                    item { ChatBubble(ChatMessage(uiState.streamingText, isUser = false)) }
                 }
             }
-        }
 
-        if (uiState.isListening) {
-            ListeningDialog(
-                onStopListening = { viewModel.cancelListening() }
-            )
-        }
-
-        ChatInputBar(
-            viewModel = viewModel,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-
-        AnimatedVisibility(
-            visible = showScrollToBottomButton,
-            enter = fadeIn() + slideInVertically { it },
-            exit = fadeOut() + slideOutVertically { it },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 96.dp)
-        ) {
-            FloatingActionButton(
-                onClick = {
-                    coroutineScope.launch {
-                        listState.animateScrollToItem(uiState.messages.size)
-                    }
-                },
-                modifier = Modifier.size(48.dp),
-                containerColor = MainWhite,
-                shape = CircleShape,
-                elevation = FloatingActionButtonDefaults.elevation(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = stringResource(R.string.down_scroll),
-                    tint = MainBlack
+            if (uiState.isListening) {
+                ListeningDialog(
+                    onStopListening = { viewModel.cancelListening() }
                 )
+            }
+
+            /* “맨 아래로” 버튼 */
+            AnimatedVisibility(
+                visible = showScrollToBottom,
+                enter = fadeIn() + slideInVertically { it },
+                exit  = fadeOut() + slideOutVertically { it },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 96.dp)                    // 입력창 위에 띄우기
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch { listState.animateScrollToItem(uiState.messages.size) }
+                    },
+                    modifier = Modifier.size(48.dp),
+                    containerColor = MainWhite,
+                    shape = CircleShape,
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = stringResource(R.string.down_scroll),
+                        tint = MainBlack
+                    )
+                }
             }
         }
     }
