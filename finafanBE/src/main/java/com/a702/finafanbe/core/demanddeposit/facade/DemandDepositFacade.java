@@ -28,6 +28,8 @@ import com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -243,6 +245,7 @@ public class DemandDepositFacade {
             Long savingAccountId
     ) {
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
+        long maintenanceDays = savingsAccount.getMaintenanceDays(savingsAccount);
         Bank bank = bankService.findBankById(savingsAccount.getBankId());
         Account withDrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         Bank withdrawalBank = bankService.findBankById(withDrawalAccount.getBankId());
@@ -254,6 +257,7 @@ public class DemandDepositFacade {
             savingsAccount.getCreatedAt(),
             savingsAccount.getInterestRate(),
             savingsAccount.getDuration(),
+            maintenanceDays,
             savingsAccount.getImageUrl(),
             withDrawalAccount,
             bank,
@@ -274,6 +278,7 @@ public class DemandDepositFacade {
                         .map(savingsAccount -> {
                             EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(
                                     savingsAccount.getId());
+                            long maintenanceDays = savingsAccount.getMaintenanceDays(depositAccount);
                             Bank bank = bankService.findBankById(depositAccount.getBankId());
                             Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
                                     savingsAccount.getWithdrawalAccountId());
@@ -286,6 +291,7 @@ public class DemandDepositFacade {
                                     depositAccount.getCreatedAt(),
                                     savingsAccount.getInterestRate(),
                                     savingsAccount.getDuration(),
+                                    maintenanceDays,
                                     savingsAccount.getImageUrl(),
                                     withdrawalAccount,
                                     bank,
@@ -295,6 +301,8 @@ public class DemandDepositFacade {
                         .collect(Collectors.toList())
         );
     }
+
+
 
     public InquireEntertainerHistoriesResponse inquireEntertainerHistories(
             Long savingAccountId
