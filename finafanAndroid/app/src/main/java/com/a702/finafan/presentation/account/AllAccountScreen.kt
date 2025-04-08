@@ -80,7 +80,7 @@ fun AllAccountScreen(
         }
     }
 
-    val count by remember(selectedTabIndex, accountState) {
+    val count by remember(selectedTabIndex, savingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accounts.size
@@ -91,7 +91,7 @@ fun AllAccountScreen(
         }
     }
 
-    val accountAmount by remember(selectedTabIndex, accountState) {
+    val accountAmount by remember(selectedTabIndex, savingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.total
@@ -101,13 +101,24 @@ fun AllAccountScreen(
         }
     }
 
-    val accountList by remember(selectedTabIndex, accountState) {
+    val accountList by remember(selectedTabIndex, savingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accounts
                 1 -> emptyList() // TODO: 모금 통장 리스트
                 2 -> accountState.withdrawalAccounts
                 else -> emptyList()
+            }
+        }
+    }
+
+    val isLoading by remember(selectedTabIndex, savingState, accountState) {
+        derivedStateOf {
+            when (selectedTabIndex.intValue) {
+                0 -> savingState.isLoading
+                1 -> true // TODO: 모금 통장 로딩
+                2 -> accountState.isLoading
+                else -> true
             }
         }
     }
@@ -164,7 +175,6 @@ fun AllAccountScreen(
                     onTabSelected = listOf(
                         {
                             selectedTabIndex.intValue = 0
-                            // 적금 계좌 목록
                             savingViewModel.fetchSavingAccount()
                         },
                         {
@@ -173,7 +183,6 @@ fun AllAccountScreen(
                         },
                         {
                             selectedTabIndex.intValue = 2
-                            // 출금 계좌 목록
                             accountViewModel.fetchWithdrawalAccount()
                         }
                     ),
@@ -224,7 +233,7 @@ fun AllAccountScreen(
             ) {
 
                 when {
-                    accountState.isLoading -> {
+                    isLoading -> {
                         item { CommonProgress() }
                     }
                     accountList.isEmpty() -> {
