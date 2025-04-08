@@ -200,4 +200,8 @@ class AccountViewModel @Inject constructor(
         _accountState.update { it.copy(isConnect = false) }
     }
 
+    fun updateSelectAccount(account: Account) {
+        _accountState.update { it.copy(selectAccount = account) }
+    }
+
 }
