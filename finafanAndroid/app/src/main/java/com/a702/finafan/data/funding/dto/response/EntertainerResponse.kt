@@ -1,4 +1,4 @@
-package com.a702.finafan.data.funding.dto
+package com.a702.finafan.data.funding.dto.response
 
 import com.a702.finafan.domain.funding.model.Star
 

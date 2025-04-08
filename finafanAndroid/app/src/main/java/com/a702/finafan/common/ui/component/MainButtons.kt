@@ -50,7 +50,7 @@ fun MainSquareIconButton(
 ) {
     Box(
         modifier = modifier
-            .size(156.dp)
+            .size(180.dp)
             .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(24.dp))
             .background(MainWhite, shape = RoundedCornerShape(24.dp))
             .clickable(
@@ -65,10 +65,10 @@ fun MainSquareIconButton(
             text?.let {
                 Text(
                     text = it,
-                    fontSize = 24.sp,
+                    fontSize = 26.sp,
                     fontWeight = FontWeight.Medium,
                     color = MainBlack,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 10.dp)
                 )
             }
         }
@@ -85,7 +85,7 @@ fun MainWideIconButton(
 ) {
     Box(
         modifier = modifier
-            .width(332.dp)
+            .width(380.dp)
             .height(120.dp)
             .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp))
             .background(MainWhite, shape = RoundedCornerShape(20.dp))
@@ -102,7 +102,7 @@ fun MainWideIconButton(
             text.let {
                 Text(
                     text = it,
-                    fontSize = 24.sp,
+                    fontSize = 26.sp,
                     fontWeight = FontWeight.Medium,
                     color = MainBlack,
                     modifier = Modifier.padding(top = 8.dp)
@@ -120,7 +120,7 @@ fun MainWideButton(
 ) {
     Box(
         modifier = modifier
-            .width(332.dp)
+            .width(380.dp)
             .shadow(10.dp, spotColor = MainBlack.copy(alpha = 0.05f), shape = RoundedCornerShape(20.dp))
             .background(MainWhite, shape = RoundedCornerShape(20.dp))
             .clickable(

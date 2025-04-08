@@ -34,5 +34,4 @@ interface SavingRepository {
     suspend fun totalStarRanking(): DataResource<List<Ranking>>
 
     suspend fun rankingDetail(starId: Long, type: RankingType): DataResource<Ranking>
-
 }

@@ -1,4 +1,4 @@
-package com.a702.finafan.presentation.funding
+package com.a702.finafan.presentation.funding.screen
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -24,7 +24,7 @@ import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
 @Composable
 fun FundingTermScreen(
     navController: NavController,
-    fundingId: Long
+    fundingId: Long,
 ) {
     val viewModel: FundingDetailViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -55,9 +55,6 @@ fun FundingTermScreen(
                 .align(Alignment.BottomCenter),
             onLeftClick = {
                 viewModel.joinFunding(fundingId) // 모금 참가 API
-//                viewModel.fetchFundingDetail(fundingId)
-//                Log.d("joinFunding: (TermScreen) ", "${viewModel.uiState.value.isParticipant}")
-//                navController.popBackStack()
             },
             onRightClick = {
                 navController.popBackStack()
@@ -73,9 +70,3 @@ fun FundingTermScreen(
         }
     }
 }
-
-//@Composable
-//@Preview
-//fun FundingTermScreenPreview() {
-//    FundingTermScreen()
-//}
