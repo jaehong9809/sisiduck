@@ -5,7 +5,7 @@
 ## 팀명 : [A702]
 | [강진주]                           | [권민채]                                  | [김예진]                                                 | [김진영]                                                                | [이재홍]                                          | [이주호]                                        |
 |---------------------------------|----------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------|----------------------------------------------|
-| - 팀장<br>- 프론트엔드<br>- 캐싱<br>- BLE 구현 | - 프론트엔드<br>- UX/UI 디자인<br>- UX/UI Lead | - 프론트엔드<br>- 기획<br>- UX/UI 디자인<br>- DB 설계<br>- API 개발 | - 백엔드<br>- DB 설계<br>- API 개발<br>- Batch처리| - 백엔드<br>- AI 모델 개발<br>- 서버 아키텍처<br>- DevOps| - 백엔드<br>- 금융망 연동<br>- 연예인 적금 랭킹<br>- DevOps |
+| - 팀장<br>- 프론트엔드<br>- 캐싱<br>- BLE 구현<br>- API 개발  | - 프론트엔드<br>- UX/UI 디자인<br>- UX/UI Lead | - 프론트엔드<br>- 기획<br>- UX/UI 디자인<br>- DB 설계<br>- API 개발 | - 백엔드<br>- DB 설계<br>- API 개발| - 백엔드<br>- AI 모델 개발<br>- 서버 아키텍처<br>- DevOps| - 백엔드<br>- 금융망 연동<br>- 연예인 적금 랭킹<br>- DevOps |
 
 ## 💁‍♂️ Detail Role
 [강진주]
@@ -35,7 +35,6 @@ Redis 기반 캐싱 시스템 적용 및 성능 최적화
 백엔드 API 설계 및 구현
 데이터베이스 스키마 설계 및 쿼리 최적화
 결제 및 거래 처리 시스템 개발
-Spring Batch를 활용한 정산 및 배치 작업 구현
 
 [이재홍]
 
@@ -58,7 +57,6 @@ CI/CD 파이프라인 구축 및 배포 자동화
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
-![Spring Batch](https://img.shields.io/badge/Spring%20Batch-6DB33F?style=flat-square&logo=spring&logoColor=white)
 ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
 ![GitLab](https://img.shields.io/badge/GitLab-FCA121?style=flat-square&logo=gitlab&logoColor=white)
 ![Jira](https://img.shields.io/badge/Jira-0052CC?style=flat-square&logo=jira&logoColor=white)
@@ -164,7 +162,6 @@ CI/CD 파이프라인 구축 및 배포 자동화
 - 연예인 모금 통장 개설 및 목표 금액 설정 기능
 - 모금 진행 상황 시각화 및 참여자 목록 제공
 - 모임장 교체 및 중도 해지 로직 구현
-- Spring Batch를 활용한 Chunk 단위 처리로 대량 데이터 효율적 관리
 
 ### 연예인 적금
 ![연예인 적금](readmeimg/entersaving.png)
@@ -252,10 +249,6 @@ CI/CD 파이프라인 구축 및 배포 자동화
 - 동시 사용자 1,000명 기준 응답 시간 < 500ms 목표
 - 랭킹 시스템 실시간 업데이트 성능 검증
 
-### 모니터링 시스템
-![모니터링 대시보드](readmeimg/monitoring.png)
-- Redis-stat을 통한 Redis 캐시 모니터링 //TODO
-
 ## 💎 왜 이 기술을 사용했는가?
 ### Redis Sentinel
 - **도입 배경**: 랭킹 시스템의 고가용성과 실시간 데이터 처리 필요
@@ -277,29 +270,7 @@ CI/CD 파이프라인 구축 및 배포 자동화
     - 다양한 툴로 정보 소스 활용 가능 (뉴스, 영상, 웹 정보 등)
     - 새로운 기능 추가가 용이한 구조
 
-### Spring Batch
-- **도입 배경**: 대량의 거래 데이터 처리 및 정산 작업 필요
-- **대안과의 비교**:
-    - 커스텀 스케줄러: 구현 자유도 높으나 재시도, 오류 처리 등 직접 구현 필요
-    - Quartz: 스케줄링에 강점이나 배치 처리 기능 부족
-    - Spring Batch: 대용량 처리, 트랜잭션 관리, 재시작 기능 내장
-- **실제 적용 결과**:
-    - Chunk 기반 처리로 메모리 효율성 향상
-    - 실패 지점부터 재시작 가능한 견고한 배치 작업
-    - 모금 통장 정산 및 적금 이자 계산 자동화
-
 ## 🚀 리팩토링 & 성능 개선
-### 랭킹 시스템 성능 개선
-![랭킹 시스템 개선](readmeimg/ranking_improvement.png)
-- **문제점**: 랭킹 계산 시 DB 부하 증가 및 응답 지연
-- **개선 방법**:
-    - Redis ZSet을 활용한 랭킹 데이터 캐싱
-    - 실시간 업데이트와 배치 업데이트 병행
-    - 키 구조 최적화 (일간, 주간, 전체 분리)
-- **개선 결과**:
-    - 랭킹 조회 응답 시간 ???로 단축
-    - DB 부하 ??? 감소
-    - 실시간성 확보로 사용자 경험 향상
 
 ### BLE 통신 최적화
 ![BLE 최적화](readmeimg/ble_improvement.png)
@@ -313,7 +284,6 @@ CI/CD 파이프라인 구축 및 배포 자동화
     - Redis Sentinel을 활용한 고가용성 랭킹 시스템 구축
     - LangChain Agent 기반 AI 챗봇 시스템 개발
     - BLE 기술을 활용한 주변 팬 탐색 기능 구현
-    - Spring Batch를 활용한 안정적인 배치 작업 시스템
 
 - **비즈니스 성과**:
     - 핀테크 특화 프로젝트 우수상 수상
