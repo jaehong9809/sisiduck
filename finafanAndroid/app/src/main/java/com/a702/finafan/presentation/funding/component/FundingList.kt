@@ -1,4 +1,4 @@
-package com.a702.finafan.presentation.funding
+package com.a702.finafan.presentation.funding.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize

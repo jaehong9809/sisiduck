@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
+import com.a702.finafan.domain.account.model.Account
 import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
