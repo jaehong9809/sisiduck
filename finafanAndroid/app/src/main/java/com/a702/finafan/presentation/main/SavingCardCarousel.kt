@@ -49,6 +49,19 @@ fun CardCarousel(
 
     val listState = rememberLazyListState()
 
+//    LaunchedEffect(listState) {
+//        snapshotFlow { listState.isScrollInProgress }
+//            .collect { isScrolling ->
+//                if (!isScrolling) {
+//                    val index = listState.firstVisibleItemIndex
+//                    val offset = listState.firstVisibleItemScrollOffset
+//                    val targetIndex = if (offset > cardWidth.value / 2) index + 1 else index
+//
+//                    listState.scrollToItem(targetIndex, scrollOffset = 0)
+//                }
+//            }
+//    }
+
     LaunchedEffect(listState) {
         snapshotFlow { listState.isScrollInProgress }
             .collect { isScrolling ->
@@ -57,7 +70,7 @@ fun CardCarousel(
                     val offset = listState.firstVisibleItemScrollOffset
                     val targetIndex = if (offset > cardWidth.value / 2) index + 1 else index
 
-                    listState.scrollToItem(targetIndex, scrollOffset = 0)
+                    listState.animateScrollToItem(targetIndex, scrollOffset = 0)
                 }
             }
     }
