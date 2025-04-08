@@ -4,8 +4,6 @@ import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.main.model.RankingType
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
 import com.a702.finafan.domain.savings.model.Ranking
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.SavingAccountInfo
@@ -25,15 +23,9 @@ interface SavingRepository {
 
     suspend fun savingAccounts(): DataResource<SavingAccountInfo>
 
-    suspend fun withdrawAccount(): DataResource<List<Account>>
-
-    suspend fun bankList(): DataResource<List<Bank>>
-
     suspend fun changeSavingName(savingAccountId: Long, name: String): DataResource<String>
 
     suspend fun deleteSavingAccount(savingAccountId: Long): DataResource<Boolean>
-
-    suspend fun deleteConnectAccount(accountId: Long): DataResource<Boolean>
 
     suspend fun dailyStarRanking(): DataResource<List<Ranking>>
 
@@ -43,7 +35,4 @@ interface SavingRepository {
 
     suspend fun rankingDetail(starId: Long, type: RankingType): DataResource<Ranking>
 
-    suspend fun selectBanks(bankIds: List<Long>): DataResource<List<Account>>
-
-    suspend fun selectAccounts(accountNos: List<String>): DataResource<List<Account>>
 }

@@ -11,19 +11,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainTextGray
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
+import com.a702.finafan.domain.account.model.Account
+import com.a702.finafan.domain.account.model.Bank
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 
 // 1원 송금 확인 화면
 @Composable
 fun AccountSendScreen(
-    viewModel: SavingViewModel = viewModel(),
+    viewModel: AccountViewModel = viewModel(),
     onComplete: () -> Unit
 ) {
 
-    val savingState by viewModel.savingState.collectAsState()
-    val selectBank = savingState.selectBank
+    val accountState by viewModel.accountState.collectAsState()
+    val selectBank = accountState.selectBank
 
     ConnectAccountLayout (
         title = stringResource(R.string.connect_account_send_money_title, selectBank.bankName),
@@ -36,7 +36,7 @@ fun AccountSendScreen(
         AccountInfoItem(
             modifier = Modifier.padding(top = 34.dp),
             account = Account(
-                accountNo = savingState.inputAccountNo,
+                accountNo = accountState.inputAccountNo,
                 bank = Bank(
                     bankId = selectBank.bankId,
                     bankCode = selectBank.bankCode,

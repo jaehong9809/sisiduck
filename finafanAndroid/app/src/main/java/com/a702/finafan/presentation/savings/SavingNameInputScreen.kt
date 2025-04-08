@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,7 +33,7 @@ fun SavingNameInputScreen(
     val savingState by viewModel.savingState.collectAsState()
 
     val star = savingState.selectStar
-    val savingName = remember { mutableStateOf(star.starName) }
+    val savingName = rememberSaveable { mutableStateOf(star.starName) }
 
     SavingScreenLayout(
         topBarTitle = stringResource(R.string.saving_item_create_top_bar),

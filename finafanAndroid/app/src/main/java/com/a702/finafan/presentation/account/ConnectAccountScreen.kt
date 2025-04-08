@@ -17,19 +17,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.theme.MainTextGray
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 
 // 연결 계좌 확인 화면
 @Composable
 fun ConnectAccountScreen(
-    viewModel: SavingViewModel = viewModel(),
+    viewModel: AccountViewModel = viewModel(),
     onComplete: () -> Unit
 ) {
 
     val context = LocalContext.current
 
-    val savingState by viewModel.savingState.collectAsState()
-    val account = savingState.connectAccount
+    val accountState by viewModel.accountState.collectAsState()
+    val account = accountState.connectAccount
 
     val showDeleteDialog = rememberSaveable { mutableStateOf(false) }
     val showDialog = rememberSaveable { mutableStateOf(false) }
@@ -53,7 +53,7 @@ fun ConnectAccountScreen(
             onClickConfirm = {
                 showDialog.value = false
 
-                if (savingState.isCancel) {
+                if (accountState.isCancel) {
                     viewModel.resetCancelState() // 상태 초기화
                     onComplete()
                 }
@@ -61,17 +61,17 @@ fun ConnectAccountScreen(
         )
     }
 
-    LaunchedEffect(savingState.isCancel) {
-        if (savingState.isCancel) {
+    LaunchedEffect(accountState.isCancel) {
+        if (accountState.isCancel) {
             showDialog.value = true
             dialogContent.value = context.getString(R.string.saving_item_connect_cancel_complete)
         }
     }
 
-    LaunchedEffect(savingState.error) {
-        savingState.error?.let {
+    LaunchedEffect(accountState.error) {
+        accountState.error?.let {
             showDialog.value = true
-            dialogContent.value = savingState.error?.message.toString()
+            dialogContent.value = accountState.error?.message.toString()
 
             viewModel.clearError()
         }
