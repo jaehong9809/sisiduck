@@ -1,64 +1,47 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
-import com.a702.finafanbe.core.demanddeposit.dto.request.InquireAccountBalanceRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.InquireAccountHolderNameRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountListRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.request.InquireDemandDepositAccountRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountBalanceResponse;
-import com.a702.finafanbe.core.demanddeposit.dto.response.InquireAccountHolderNameResponse;
-import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountListResponse;
-import com.a702.finafanbe.core.demanddeposit.dto.response.InquireDemandDepositAccountResponse;
+import static com.a702.finafanbe.global.common.exception.ErrorCode.NOT_FOUND_ACCOUNT;
+
+import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
-import com.a702.finafanbe.global.common.util.ApiClientUtil;
+import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
+import com.a702.finafanbe.global.common.response.ResponseData;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class InquireDemandDepositAccountService {
 
-    private final ApiClientUtil apiClientUtil;
     private final AccountRepository accountRepository;
 
-    public ResponseEntity<InquireDemandDepositAccountResponse> retrieveDemandDepositAccount(
-            String path,
-            InquireDemandDepositAccountRequest retrieveDemandDepositRequest
-    ) {
-        return apiClientUtil.callFinancialNetwork(
-                path,
-                retrieveDemandDepositRequest,
-                InquireDemandDepositAccountResponse.class
-        );
+    @Transactional(readOnly = true)
+    public Account findAccountById(Long accountId) {
+        return accountRepository.findByAccountId(accountId).orElseThrow(()->new BadRequestException(
+            ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
-    public ResponseEntity<InquireDemandDepositAccountListResponse> retrieveDemandDepositAccountList(
-            String path,
-            InquireDemandDepositAccountListRequest inquireDemandDepositAccountListRequest
-    ) {
-        return apiClientUtil.callFinancialNetwork(
-                path,
-                inquireDemandDepositAccountListRequest,
-                InquireDemandDepositAccountListResponse.class
-        );
+    @Transactional(readOnly = true)
+    public Account findAccountByAccountNo(String accountNo) {
+        return accountRepository.findByAccountNo(accountNo).orElseThrow(()->new BadRequestException(
+            ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
 
-    public ResponseEntity<InquireAccountHolderNameResponse> inquireAccountHolderName(String path,
-        InquireAccountHolderNameRequest inquireAccountHolderNameRequest) {
-        return apiClientUtil.callFinancialNetwork(
-            path,
-            inquireAccountHolderNameRequest,
-            InquireAccountHolderNameResponse.class
-        );
+    public List<Account> findAccountByUserId(Long userId) {
+        return accountRepository.findByUserId(userId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(
+            ErrorCode.NOT_FOUND_ACCOUNT)));
     }
 
-    public ResponseEntity<InquireAccountBalanceResponse> inquireBalanceName(String path,
-        InquireAccountBalanceRequest inquireAccountBalanceRequest) {
-        return apiClientUtil.callFinancialNetwork(
-            path,
-            inquireAccountBalanceRequest,
-            InquireAccountBalanceResponse.class
-        );
+    public Set<String> findAllAccountsNo() {
+        return accountRepository.findAll().stream()
+            .map(Account::getAccountNo)
+            .collect(Collectors.toSet());
     }
 }
 

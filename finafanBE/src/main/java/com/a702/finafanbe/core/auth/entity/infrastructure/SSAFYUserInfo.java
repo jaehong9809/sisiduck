@@ -3,27 +3,19 @@ package com.a702.finafanbe.core.auth.entity.infrastructure;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
+@Getter
 public class SSAFYUserInfo {
 
-    @Getter
-    @JsonProperty("id")
-    private String socialId;
+    @JsonProperty("userId")
+    private String userId;
 
-    @JsonProperty("ssafy_member")
-    private SSAFYMember ssafyMember;
+    @JsonProperty("email")
+    private String email;
 
-    public String getNickname(){
-        return ssafyMember.ssafyProfile.nickname;
-    }
+    @JsonProperty("name")
+    private String name;
 
-    private static class SSAFYMember {
-        @JsonProperty("profile")
-        private SSAFYProfile ssafyProfile;
-    }
-
-    private static class SSAFYProfile {
-        @JsonProperty("nickname")
-        private String nickname;
-        //TODO 필요하다면 프로필 추가내용 추가[주호]
+    public String toString(){
+        return "userId: " + userId + ",\n email: " + email + ",\n name: " + name;
     }
 }

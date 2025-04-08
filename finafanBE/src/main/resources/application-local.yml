@@ -50,3 +50,8 @@ jwt:
   token-validity-in-seconds: 86400
   access-token-validity-in-seconds: ${JWT_ACCESS_VALIDITY:32140800}
   refresh-token-validity-in-seconds: ${JWT_REFRESH_VALIDITY:1209600}
+
+ssafy:
+  api-key: ${FINANCIAL_NETWORK_API_KEY:test}
+  institution-code: ${INSTITUTION_CODE:test}
+  fintech-app-no: ${FINTECH_APP_NO:test}

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -23,6 +24,7 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"${project.findProperty("BASE_URL")}\"")
+            buildConfigField("String", "AI_URL", "\"${project.findProperty("AI_URL")}\"")
         }
         release {
             isMinifyEnabled = false
@@ -55,6 +57,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.compose.ui:ui:1.7.6")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -68,6 +71,8 @@ dependencies {
     implementation(libs.compose.ui.viewbinding)
 
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.datastore.core.android)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -84,6 +89,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
 
+    implementation(libs.lottie.compose)
+    implementation(libs.dotlottie)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -91,4 +99,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.coil)
+    implementation ("androidx.palette:palette:1.0.0")
+    implementation(libs.androidx.compose.runtime)
+
+    implementation(libs.datastore.preferences)
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
+    implementation("androidx.compose.material:material-icons-extended")
+
 }

@@ -1,26 +1,18 @@
 package com.a702.finafanbe.core.demanddeposit.application;
 
-import com.a702.finafanbe.core.demanddeposit.dto.request.CreateAccountRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
-import com.a702.finafanbe.global.common.util.ApiClientUtil;
+import com.a702.finafanbe.core.demanddeposit.entity.Account;
+import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class CreateAccountService {
 
-    private final ApiClientUtil apiClientUtil;
+    private final AccountRepository accountRepository;
 
-    public ResponseEntity<CreateAccountResponse> createAccount(
-            String path,
-            CreateAccountRequest createAccountRequest
-    ) {
-        return apiClientUtil.callFinancialNetwork(
-                path,
-                createAccountRequest,
-                CreateAccountResponse.class
-        );
+    public List<Account> connectAll(List<Account> accountsToSave) {
+        return accountRepository.saveAll(accountsToSave);
     }
 }

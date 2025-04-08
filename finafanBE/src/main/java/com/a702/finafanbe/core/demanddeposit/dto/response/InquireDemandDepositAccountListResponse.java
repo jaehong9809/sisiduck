@@ -1,7 +1,6 @@
 package com.a702.finafanbe.core.demanddeposit.dto.response;
 
-import com.a702.finafanbe.global.common.header.BaseResponseHeaderIncludeInstitutionCode;
-import lombok.Getter;
+import com.a702.finafanbe.global.common.financialnetwork.header.BaseResponseHeaderIncludeInstitutionCode;
 
 import java.util.List;
 
@@ -9,7 +8,7 @@ public record InquireDemandDepositAccountListResponse(
     BaseResponseHeaderIncludeInstitutionCode Header,
     List<REC> REC
 ) {
-    private record REC (
+    public record REC (
         String bankCode,
         String bankName,
         String userName,

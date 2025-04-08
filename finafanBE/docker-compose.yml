@@ -2,6 +2,7 @@ services:
   mysql:
     image: mysql:8.0
     container_name: mysql
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -29,7 +30,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_PROFILES_ACTIVE: "local"
+      SPRING_PROFILES_ACTIVE: "local,redis-sentinel"
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
@@ -42,24 +43,87 @@ services:
       mysql:
         condition: service_healthy
 
-  ai-server:
-    container_name: ai-server  # ← 여기 추가!
-    build:
-      context: ../finafanAI
-      dockerfile: Dockerfile
-    restart: always
+  redis-slave-1:
+    image: redis:6.2
+    container_name: redis-slave-1
     ports:
-      - "8000:8000"  
-    env_file:
-      - .env
+      - "6380:6379"
+    command: redis-server --slaveof redis-server 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
     networks:
       - app-network
+
+  redis-slave-2:
+    image: redis:6.2
+    container_name: redis-slave-2
+    ports:
+      - "6381:6379"
+    command: redis-server --slaveof redis-server 6379 --requirepass ${REDIS_PASSWORD} --masterauth ${REDIS_PASSWORD}
+    networks:
+      - app-network
+
+  redis-sentinel-1:
+    image: redis:6.2
+    container_name: redis-sentinel-1
+    restart: always
+    ports:
+      - "26379:26379"
     environment:
-      - TZ=Asia/Seoul
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: |
+      bash -c "mkdir -p /etc/redis &&
+      echo 'port 26379
+      sentinel monitor mymaster 172.21.0.2 6379 2
+      sentinel down-after-milliseconds mymaster 5000
+      sentinel failover-timeout mymaster 60000
+      sentinel parallel-syncs mymaster 1
+      sentinel auth-pass mymaster '${REDIS_PASSWORD} > /etc/redis/sentinel.conf &&
+      redis-sentinel /etc/redis/sentinel.conf"
+    networks:
+      - app-network
+
+  redis-sentinel-2:
+    image: redis:6.2
+    container_name: redis-sentinel-2
+    restart: always
+    ports:
+      - "26380:26379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: |
+      bash -c "mkdir -p /etc/redis &&
+      echo 'port 26379
+      sentinel monitor mymaster 172.21.0.2 6379 2
+      sentinel down-after-milliseconds mymaster 5000
+      sentinel failover-timeout mymaster 60000
+      sentinel parallel-syncs mymaster 1
+      sentinel auth-pass mymaster '${REDIS_PASSWORD} > /etc/redis/sentinel.conf &&
+      redis-sentinel /etc/redis/sentinel.conf"
+    networks:
+      - app-network
+
+  redis-sentinel-3:
+    image: redis:6.2
+    container_name: redis-sentinel-3
+    restart: always
+    ports:
+      - "26381:26379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: |
+      bash -c "mkdir -p /etc/redis &&
+      echo 'port 26379
+      sentinel monitor mymaster 172.21.0.2 6379 2
+      sentinel down-after-milliseconds mymaster 5000
+      sentinel failover-timeout mymaster 60000
+      sentinel parallel-syncs mymaster 1
+      sentinel auth-pass mymaster '${REDIS_PASSWORD} > /etc/redis/sentinel.conf &&
+      redis-sentinel /etc/redis/sentinel.conf"
+    networks:
+      - app-network
 
 networks:
   app-network:
-    driver: bridge
+    external: true  # 기존에 생성된 네트워크 사용
 
 volumes:
   mysql-data:

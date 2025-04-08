@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,30 +15,28 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "accounts")
+@SQLDelete(sql = "UPDATE accounts SET deleted_at = CURRENT_TIMESTAMP WHERE account_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Account extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
-    @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(name = "account_no", nullable = false)
     private String accountNo;
 
-    /*precision : 소수점을 포함한 전체 자리 수*/
-    @Column(name = "balance", nullable = false, precision = 50)
-    private BigDecimal balance;
-
-    @Column(name = "interest_rate", nullable = false)
-    private BigDecimal interestRate;
+    @Column(name = "amount", nullable = false, precision = 50)
+    private BigDecimal amount;
 
     @Column(name = "status", nullable = false, length = 20)
     private String status;
 
-    @Column(name = "bank_code", nullable = false, length = 3)
-    private String bankCode;
+    @Column(name = "bank_id", nullable = false)
+    private Long bankId;
 
     @Column(name = "account_pw", nullable = false)
     private int accountPw;
@@ -68,18 +68,52 @@ public class Account extends BaseEntity {
     @Column(name = "account_expiry_date", nullable = false, length = 8)
     private LocalDateTime accountExpiryDate;
 
-    @Column(name = "rate_description")
-    private String rateDescription;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
-    @Column(name = "min_subscription_balance", nullable = false)
-    private BigDecimal minSubscriptionBalance;
+    public BigDecimal addAmount(BigDecimal amount) {
+        return this.amount.add(amount);
+    }
 
-    @Column(name = "max_subscription_balance", nullable = false)
-    private BigDecimal maxSubscriptionBalance;
+    public static Account of(
+        Long userId,
+        String accountNo,
+        String currency,
+        String accountName,
+        String accountTypeUniqueNo,
+        Long bankId
+    ) {
+        Account account = new Account(userId, accountNo, currency,accountName, accountTypeUniqueNo,bankId);
+        account.accountDescription = "기본 계좌 설명";
+        account.accountExpiryDate = LocalDateTime.now().plusYears(5);
+        account.accountPw = 1234;
+        account.accountTypeCode = "1";
+        account.amount = BigDecimal.ZERO;
+        account.status = "ACTIVE";
+        account.dailyTransferLimit = new BigDecimal("5000000");
+        account.oneTimeTransferLimit = new BigDecimal("1000000");
+        account.lastTransactionDate = LocalDateTime.now();
 
-    @Column(name = "subscription_period")
-    private LocalDateTime subscriptionPeriod;
+        return account;
+    }
 
-    @Column(name = "isRepresentative")
-    private Boolean isRepresentative;
+    private Account(
+            Long userId,
+            String accountNo,
+            String currency,
+            String accountName,
+            String accountTypeUniqueNo,
+            Long bankId
+    ){
+        this.userId = userId;
+        this.accountNo = accountNo;
+        this.currency = currency;
+        this.accountName = accountName;
+        this.accountTypeUniqueNo = accountTypeUniqueNo;
+        this.bankId = bankId;
+    }
+
+    public void updateName(String newName) {
+        this.accountName = newName;
+    }
 }

@@ -1,27 +1,28 @@
 package com.a702.finafanbe.core.demanddeposit.presentation;
 
-import com.a702.finafanbe.core.demanddeposit.application.CreateAccountService;
-import com.a702.finafanbe.core.demanddeposit.dto.request.CreateAccountRequest;
-import com.a702.finafanbe.core.demanddeposit.dto.response.CreateAccountResponse;
+import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
+import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
+import com.a702.finafanbe.global.common.response.ResponseData;
+import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/create-account")
+@RequestMapping("/api/v1/demand-deposit")
 @RequiredArgsConstructor
 public class CreateAccountController {
 
-    private final CreateAccountService createAccountService;
+    private final DemandDepositFacade demandDepositFacade;
 
-    @PostMapping
-    public ResponseEntity<CreateAccountResponse> createAccount(@RequestBody CreateAccountRequest createAccountRequest){
-        return createAccountService.createAccount(
-                "/demandDeposit/createDemandDepositAccount",
-                createAccountRequest
-        );
+    @PostMapping("/account")
+    public ResponseEntity<ResponseData<ApiCreateAccountResponse>> createAccount(
+            String email
+    ){
+        return ResponseUtil.success(demandDepositFacade.createAccount(
+                email
+        ));
     }
 }
