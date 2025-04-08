@@ -80,12 +80,6 @@ fun MainScreen(
         }
     }
 
-    val nameText = when {
-        !isLoggedIn -> "로그인 후 이용해 주세요"
-        userInfo?.userName != null -> "${userInfo!!.userName}님"
-        else -> ""
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -96,15 +90,18 @@ fun MainScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // TODO: 로그인 구현 후 상태에서 유저 이름 가져오기
             Text(
-                text = nameText,
+                text = when (val state = userState) {
+                    is DataResource.Success -> "${state.data.userName}님"
+                    else -> "로그인이 필요합니다"
+                },
                 modifier = Modifier.fillMaxWidth()
                     .padding(start = 20.dp, top = 30.dp, bottom = 6.dp),
                 textAlign = TextAlign.Left,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
             )
+
 
             CardCarousel(
                 isLoggedIn = isLoggedIn,
