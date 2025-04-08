@@ -5,6 +5,7 @@ import com.a702.finafanbe.global.common.exception.InvalidJwtException;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.util.Date;
 
 import static com.a702.finafanbe.global.common.exception.ErrorCode.INVALID_TOKEN_REQUEST;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -32,6 +34,7 @@ public class JwtUtil {
     }
 
     public AuthTokens createLoginToken(String subject) {
+        log.info("✅ [JwtUtil] subject value check: '{}'", subject);
         String refreshToken = createToken("", refreshTokenExpiry);
         String accessToken = createToken(subject, accessTokenExpiry);
         return new AuthTokens(refreshToken, accessToken);
