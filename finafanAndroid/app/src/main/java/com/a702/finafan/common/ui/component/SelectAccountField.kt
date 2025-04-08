@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -93,11 +94,14 @@ fun SelectAccountField(
         ) {
             accounts.forEach { item ->
                 DropdownMenuItem(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
                     text = {
                         Text(
                             text = item.bank.bankName + " " + item.accountNo,
                             fontSize = 20.sp,
                             color = MainBlack,
+                            lineHeight = 24.sp,
                             fontWeight = FontWeight.Normal
                         )
                     },
@@ -106,6 +110,8 @@ fun SelectAccountField(
                         expandStatus = false
                     }
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
