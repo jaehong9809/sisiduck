@@ -235,4 +235,9 @@ public class EntertainSavingsService {
     public EntertainerSavingsAccount findEntertainerAccountByAccountNo(String depositAccountNo) {
         return entertainerSavingsAccountRepository.findByAccountNo(depositAccountNo).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
     }
+
+    @Transactional
+    public void updateAccount(EntertainerSavingsAccount savingsAccount, Long amount) {
+        savingsAccount.addAmount(amount);
+    }
 }

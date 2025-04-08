@@ -124,6 +124,8 @@ public class EntertainSavingsController {
                     starTransferRequest.depositAccountId()
             );
 
+            entertainSavingsService.updateAccount(savingsAccount, starTransferRequest.transactionBalance());
+
             rankingWebSocketService.updateAndBroadcastRanking(
                     savingsAccount.getUserId(),
                     savingsAccount.getEntertainerId(),
