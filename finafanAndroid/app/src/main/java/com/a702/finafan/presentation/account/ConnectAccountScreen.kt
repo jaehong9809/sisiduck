@@ -17,9 +17,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.theme.MainTextGray
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
-import com.a702.finafan.presentation.savings.AccountInfoItem
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 연결 계좌 확인 화면
@@ -94,14 +91,7 @@ fun ConnectAccountScreen(
         Column {
             AccountInfoItem(
                 modifier = Modifier.padding(top = 34.dp),
-                account = Account(
-                    accountNo = account.accountNo,
-                    bank = Bank(
-                        bankId = account.bank.bankId,
-                        bankCode = account.bank.bankCode,
-                        bankName = account.bank.bankName
-                    )
-                ),
+                account = account,
                 fontColor = MainTextGray
             )
         }

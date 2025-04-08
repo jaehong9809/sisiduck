@@ -1,5 +1,6 @@
 package com.a702.finafan.domain.savings.repository
 
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.main.model.RankingType
@@ -12,33 +13,37 @@ import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 
 interface SavingRepository {
-    suspend fun getStars(keyword: String?): List<Star>
+    suspend fun getStars(keyword: String?): DataResource<List<Star>>
 
-    suspend fun deposit(request: SavingDepositRequest): Long
+    suspend fun deposit(request: SavingDepositRequest): DataResource<Long>
 
-    suspend fun createSaving(request: SavingCreateRequest): Long
+    suspend fun createSaving(request: SavingCreateRequest): DataResource<Long>
 
-    suspend fun history(savingAccountId: Long): List<Transaction>
+    suspend fun history(savingAccountId: Long): DataResource<List<Transaction>>
 
-    suspend fun accountInfo(savingAccountId: Long): SavingAccount
+    suspend fun accountInfo(savingAccountId: Long): DataResource<SavingAccount>
 
-    suspend fun savingAccounts(): SavingAccountInfo
+    suspend fun savingAccounts(): DataResource<SavingAccountInfo>
 
-    suspend fun withdrawAccount(): List<Account>
+    suspend fun withdrawAccount(): DataResource<List<Account>>
 
-    suspend fun bankList(): List<Bank>
+    suspend fun bankList(): DataResource<List<Bank>>
 
-    suspend fun changeSavingName(savingAccountId: Long, name: String): String
+    suspend fun changeSavingName(savingAccountId: Long, name: String): DataResource<String>
 
-    suspend fun deleteSavingAccount(savingAccountId: Long): Boolean
+    suspend fun deleteSavingAccount(savingAccountId: Long): DataResource<Boolean>
 
-    suspend fun deleteConnectAccount(accountId: Long): Boolean
+    suspend fun deleteConnectAccount(accountId: Long): DataResource<Boolean>
 
-    suspend fun dailyStarRanking(): List<Ranking>
+    suspend fun dailyStarRanking(): DataResource<List<Ranking>>
 
-    suspend fun weeklyStarRanking(): List<Ranking>
+    suspend fun weeklyStarRanking(): DataResource<List<Ranking>>
 
-    suspend fun totalStarRanking(): List<Ranking>
+    suspend fun totalStarRanking(): DataResource<List<Ranking>>
 
-    suspend fun rankingDetail(starId: Long, type: RankingType): Ranking
+    suspend fun rankingDetail(starId: Long, type: RankingType): DataResource<Ranking>
+
+    suspend fun selectBanks(bankIds: List<Long>): DataResource<List<Account>>
+
+    suspend fun selectAccounts(accountNos: List<String>): DataResource<List<Account>>
 }

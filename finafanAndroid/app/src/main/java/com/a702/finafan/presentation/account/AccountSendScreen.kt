@@ -13,7 +13,6 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
-import com.a702.finafan.presentation.savings.AccountInfoItem
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 1원 송금 확인 화면

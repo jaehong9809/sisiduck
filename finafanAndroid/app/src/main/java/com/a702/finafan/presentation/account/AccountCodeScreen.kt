@@ -20,7 +20,6 @@ import com.a702.finafan.common.ui.component.SubButton
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.domain.savings.model.Account
 import com.a702.finafan.domain.savings.model.Bank
-import com.a702.finafan.presentation.savings.AccountInfoItem
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 인증 코드 입력 화면

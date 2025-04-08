@@ -15,6 +15,7 @@ import com.a702.finafan.presentation.account.AccountSendScreen
 import com.a702.finafan.presentation.account.AllAccountScreen
 import com.a702.finafan.presentation.account.ConnectAccountScreen
 import com.a702.finafan.presentation.account.ConnectBankScreen
+import com.a702.finafan.presentation.account.SelectBankAccountScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 fun NavGraphBuilder.accountGraph(
@@ -26,7 +27,15 @@ fun NavGraphBuilder.accountGraph(
     ) {
         composable(NavRoutes.ConnectBank.route) {
             ConnectBankScreen(savingViewModel, onComplete = {
-                navController.navigate(NavRoutes.AccountInput.route)
+                navController.navigate(NavRoutes.SelectAccount.route)
+            })
+        }
+
+        composable(NavRoutes.SelectAccount.route) {
+            SelectBankAccountScreen(savingViewModel, onComplete = {
+                navController.navigate(NavRoutes.AllAccount.route + "?selectedTabIndex=2") {
+                    popUpTo(NavRoutes.AllAccount.route)
+                }
             })
         }
 
