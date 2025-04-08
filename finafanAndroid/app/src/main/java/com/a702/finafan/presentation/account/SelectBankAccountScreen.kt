@@ -36,34 +36,34 @@ import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainWhite
-import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 
 // 계좌 선택 화면
 @Composable
 fun SelectBankAccountScreen(
-    viewModel: SavingViewModel = viewModel(),
+    viewModel: AccountViewModel = viewModel(),
     onComplete: () -> Unit
 ) {
 
     val context = LocalContext.current
 
     val selectedAccountNos = remember { mutableStateListOf<String>() }
-    val savingState by viewModel.savingState.collectAsState()
+    val accountState by viewModel.accountState.collectAsState()
 
     val showDialog = rememberSaveable { mutableStateOf(false) }
     val dialogContent = rememberSaveable { mutableStateOf("") }
 
-    LaunchedEffect(savingState.error) {
-        savingState.error?.let {
+    LaunchedEffect(accountState.error) {
+        accountState.error?.let {
             showDialog.value = true
-            dialogContent.value = savingState.error?.message.toString()
+            dialogContent.value = accountState.error?.message.toString()
 
             viewModel.clearError()
         }
     }
 
-    LaunchedEffect(savingState.isConnect) {
-        if (savingState.isConnect) {
+    LaunchedEffect(accountState.isConnect) {
+        if (accountState.isConnect) {
             showDialog.value = true
             dialogContent.value = context.getString(R.string.saving_item_connect_account_complete)
         }
@@ -76,7 +76,7 @@ fun SelectBankAccountScreen(
             onClickConfirm = {
                 showDialog.value = false
 
-                if (savingState.isConnect) {
+                if (accountState.isConnect) {
                     viewModel.resetConnectState()
                     onComplete()
                 }
@@ -140,12 +140,12 @@ fun SelectBankAccountScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
 
-                if (savingState.isLoading) {
+                if (accountState.isLoading) {
                     item {
                         CommonProgress()
                     }
                 } else {
-                    items(savingState.accounts) { item ->
+                    items(accountState.accounts) { item ->
                         val account = item
                         val isSelected = selectedAccountNos.any { it == account.accountNo }
 

@@ -1,7 +1,7 @@
-package com.a702.finafan.data.savings.dto.response
+package com.a702.finafan.data.account.dto.response
 
-import com.a702.finafan.domain.savings.model.Account
-import com.a702.finafan.domain.savings.model.Bank
+import com.a702.finafan.domain.account.model.Account
+import com.a702.finafan.domain.account.model.Bank
 
 data class AccountResponse(
     val accountId: Long = 0,

@@ -16,23 +16,25 @@ import com.a702.finafan.presentation.account.AllAccountScreen
 import com.a702.finafan.presentation.account.ConnectAccountScreen
 import com.a702.finafan.presentation.account.ConnectBankScreen
 import com.a702.finafan.presentation.account.SelectBankAccountScreen
+import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 fun NavGraphBuilder.accountGraph(
     savingViewModel: SavingViewModel,
+    accountViewModel: AccountViewModel,
     navController: NavHostController
 ) {
     navigation(
         startDestination = NavRoutes.ConnectBank.route, route = NavRoutes.Account.route
     ) {
         composable(NavRoutes.ConnectBank.route) {
-            ConnectBankScreen(savingViewModel, onComplete = {
+            ConnectBankScreen(accountViewModel, onComplete = {
                 navController.navigate(NavRoutes.SelectAccount.route)
             })
         }
 
         composable(NavRoutes.SelectAccount.route) {
-            SelectBankAccountScreen(savingViewModel, onComplete = {
+            SelectBankAccountScreen(accountViewModel, onComplete = {
                 navController.navigate(NavRoutes.AllAccount.route + "?selectedTabIndex=2") {
                     popUpTo(NavRoutes.AllAccount.route)
                 }
@@ -40,19 +42,19 @@ fun NavGraphBuilder.accountGraph(
         }
 
         composable(NavRoutes.AccountInput.route) {
-            AccountInputScreen(savingViewModel, onComplete = {
+            AccountInputScreen(accountViewModel, onComplete = {
                     navController.navigate(NavRoutes.AccountSend.route)
                 })
         }
 
         composable(NavRoutes.AccountSend.route) {
-            AccountSendScreen(savingViewModel, onComplete = {
+            AccountSendScreen(accountViewModel, onComplete = {
                 navController.navigate(NavRoutes.AccountCode.route)
             })
         }
 
         composable(NavRoutes.AccountCode.route) {
-            AccountCodeScreen(savingViewModel,
+            AccountCodeScreen(accountViewModel,
                 onComplete = {
                     navController.navigate(NavRoutes.AccountCodeConfirm.route)
                 },
@@ -64,12 +66,12 @@ fun NavGraphBuilder.accountGraph(
         }
 
         composable(NavRoutes.AccountCodeConfirm.route) {
-            AccountCodeConfirmScreen(savingViewModel)
+            AccountCodeConfirmScreen(accountViewModel)
         }
 
         composable(NavRoutes.ConnectAccount.route) {
             ConnectAccountScreen(
-                savingViewModel,
+                accountViewModel,
                 onComplete = {
                     navController.popBackStack()
                 }
@@ -89,7 +91,7 @@ fun NavGraphBuilder.accountGraph(
                 )
             }
 
-            AllAccountScreen(selectedTabIndex, savingViewModel)
+            AllAccountScreen(selectedTabIndex, savingViewModel, accountViewModel)
         }
 
     }
