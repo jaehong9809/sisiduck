@@ -8,6 +8,7 @@ import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
@@ -54,6 +56,8 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
 
         if(jwtUtil.isTokenValid(accessToken)){
             String subject = jwtUtil.getSubject(accessToken);
+            log.info("✅ check subject : {}", subject);
+
             Long userId = Long.valueOf(subject);
             return userRepository.findById(userId).orElseThrow(()->new BadRequestException(ResponseData.<Void>builder()
                     .code(ErrorCode.NotFoundUser.getCode())
