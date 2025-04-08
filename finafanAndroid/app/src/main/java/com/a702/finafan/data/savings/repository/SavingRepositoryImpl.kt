@@ -2,6 +2,7 @@ package com.a702.finafan.data.savings.repository
 
 import com.a702.finafan.common.data.dto.getOrThrow
 import com.a702.finafan.common.data.dto.getOrThrowNull
+import com.a702.finafan.common.data.toDomain
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.savings.api.SavingApi
@@ -62,9 +63,12 @@ class SavingRepositoryImpl @Inject constructor(
         api.savingAccounts().getOrThrow { it.toDomain() }
     }
 
-    override suspend fun changeSavingName(savingAccountId: Long, name: String): DataResource<String> = safeApiCall {
+    override suspend fun changeSavingName(
+        savingAccountId: Long,
+        name: String
+    ): DataResource<SavingAccount> = safeApiCall {
         val request = mapOf("newName" to name)
-        api.updateSavingName(savingAccountId, request).getOrThrow { it.accountName }
+        api.updateSavingName(savingAccountId, request).getOrThrow { it.toDomain() }
     }
 
     override suspend fun deleteSavingAccount(savingAccountId: Long): DataResource<Boolean> = safeApiCall {
