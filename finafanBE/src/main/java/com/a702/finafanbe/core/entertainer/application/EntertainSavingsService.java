@@ -231,4 +231,8 @@ public class EntertainSavingsService {
     public List<String> findAllAccountNos() {
         return entertainerSavingsAccountRepository.findAllAccountNos();
     }
+
+    public EntertainerSavingsAccount findEntertainerAccountByAccountNo(String depositAccountNo) {
+        return entertainerSavingsAccountRepository.findByAccountNo(depositAccountNo).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NOT_FOUND_ACCOUNT)));
+    }
 }
