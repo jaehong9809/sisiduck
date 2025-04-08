@@ -2,6 +2,7 @@ package com.a702.finafan.presentation.funding.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.domain.funding.model.FundingCreateForm
 import com.a702.finafan.domain.funding.model.MyStar
 import com.a702.finafan.domain.funding.usecase.GetMyStarsUseCase
@@ -26,8 +27,30 @@ class FundingCreateViewModel @Inject constructor(
 
     fun fetchMyStars() {
         viewModelScope.launch {
-            val myStars: List<MyStar> = getMyStarsUseCase()
-            _uiState.value = _uiState.value.copy(myStars = myStars)
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            when (val result = getMyStarsUseCase()) {
+                is DataResource.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            myStars = result.data,
+                            isLoading = false
+                        )
+                    }
+                }
+                is DataResource.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                            toastMessage = "스타 정보를 불러오는 데 실패했어요: ${result.throwable.message}"
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _uiState.update { it.copy(isLoading = true) }
+                }
+            }
         }
     }
 
@@ -59,7 +82,6 @@ class FundingCreateViewModel @Inject constructor(
 
     fun createFunding() {
         viewModelScope.launch {
-
             val state = uiState.value
 
             if (state.selectedStar == null ||
@@ -74,30 +96,39 @@ class FundingCreateViewModel @Inject constructor(
                 return@launch
             }
 
-            try {
-                _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, error = null) }
 
-                startFundingUseCase(
-                    FundingCreateForm(
-                        title = uiState.value.fundingTitle,
-                        description = uiState.value.fundingDescription,
-                        starId = uiState.value.selectedStar!!.id,
-                        expiryDate = uiState.value.fundingExpiryDate!!,
-                        goalAmount = uiState.value.fundingGoal!!
-                    )
+            when (val result = startFundingUseCase(
+                FundingCreateForm(
+                    title = state.fundingTitle,
+                    description = state.fundingDescription,
+                    starId = state.selectedStar.id,
+                    expiryDate = state.fundingExpiryDate,
+                    goalAmount = state.fundingGoal
                 )
-
-                _uiState.update { it.copy(isLoading = false, toastMessage = "펀딩이 성공적으로 생성되었습니다!") }
-
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = e,
-                        toastMessage = "펀딩 생성 중 오류 발생: ${e.message}"
-                    )
+            )) {
+                is DataResource.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            toastMessage = "펀딩이 성공적으로 생성되었습니다!"
+                        )
+                    }
+                }
+                is DataResource.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                            toastMessage = "펀딩 생성 중 오류 발생: ${result.throwable.message}"
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _uiState.update { it.copy(isLoading = true) }
                 }
             }
         }
     }
+
 }

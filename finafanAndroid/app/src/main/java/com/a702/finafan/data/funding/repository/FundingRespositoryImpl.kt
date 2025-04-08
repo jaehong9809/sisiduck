@@ -1,6 +1,8 @@
 package com.a702.finafan.data.funding.repository
 
-import android.util.Log
+import com.a702.finafan.common.data.dto.getOrThrow
+import com.a702.finafan.common.domain.DataResource
+import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.funding.api.FundingApi
 import com.a702.finafan.data.funding.dto.request.toData
 import com.a702.finafan.data.funding.dto.response.toDomain
@@ -16,130 +18,69 @@ import javax.inject.Inject
 
 class FundingRepositoryImpl @Inject constructor(
     private val api: FundingApi
-): FundingRepository {
-    override suspend fun getFunding(fundingId: Long): FundingDetail {
-        val response = api.getFundingDetail(fundingId)
-        
-        Log.d("getFundingDetail: ", "${response.data}")
+) : FundingRepository {
 
-        return if (response.code == "S0000" && response.data != null) {
-            response.data.toDomain(fundingId)
-        } else {
-            throw Exception(response.message)
-        }
+    override suspend fun getFunding(fundingId: Long): DataResource<FundingDetail> = safeApiCall {
+        api.getFundingDetail(fundingId).getOrThrow { it.toDomain(fundingId) }
     }
 
-    override suspend fun getFundingList(filter: FundingFilter): List<Funding> {
-        Log.d("FundingRepositoryImpl", ">>> getFundingList() 호출됨")
-        return try {
-            val response = api.getFundingList(filter.toString())
-            Log.d("FundingRepositoryImpl", ">>> API 응답 성공: ${response.data}")
-
-            if (response.code == "S0000" && response.data != null) {
-                response.data.map { it.toDomain() }
-            } else {
-                throw Exception(response.message)
-            }
-        } catch (e: Exception) {
-            Log.e("FundingRepositoryImpl", "❌ 예외 발생: ${e.message}", e)
-
-            // Retrofit이 뱉는 HTTP 에러 확인
-            if (e is retrofit2.HttpException) {
-                val errorBody = e.response()?.errorBody()?.string()
-                Log.e("FundingRepositoryImpl", "❌ HTTP 상태코드: ${e.code()}, 에러 바디: $errorBody")
-            }
-
-            // Gson 등 JSON 파싱 예외 확인
-            if (e is com.google.gson.JsonParseException) {
-                Log.e("FundingRepositoryImpl", "❌ JSON 파싱 에러: ${e.message}")
-            }
-
-            throw e
-        }
+    override suspend fun getFundingList(filter: FundingFilter): DataResource<List<Funding>> = safeApiCall {
+        api.getFundingList(filter.toString()).getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
-    override suspend fun joinFunding(fundingId: Long): Boolean {
-        val response = api.joinFunding(fundingId)
-
-        Log.d("joinFunding: (RepoImpl)", "${response}")
-
-        if(response.code == "S0000") {
-            return true
-        } else {
-            throw Exception(response.message)
-        }
+    override suspend fun joinFunding(fundingId: Long): DataResource<Boolean> = safeApiCall {
+        api.joinFunding(fundingId).getOrThrow { true }
     }
 
-    override suspend fun leaveFunding(fundingId: Long): Boolean {
+    override suspend fun leaveFunding(fundingId: Long): DataResource<Boolean> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun createDeposit(deposit: Deposit): Boolean {
+    override suspend fun createDeposit(deposit: Deposit): DataResource<Boolean> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun withDrawDeposit(): Boolean {
+    override suspend fun withDrawDeposit(): DataResource<Boolean> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun createPost(): Boolean {
+    override suspend fun createPost(): DataResource<Boolean> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getPost() {
+    override suspend fun getPost(): DataResource<Unit> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updatePost() {
+    override suspend fun updatePost(): DataResource<Unit> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deletePost(): Boolean {
+    override suspend fun deletePost(): DataResource<Boolean> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getDepositHistory(
-        fundingId: Long,
-        filter: DepositFilter
-    ): List<Deposit> {
-        val response = api.getFundingDepositHistory(fundingId, filter.toString())
-
-        return if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+    override suspend fun getDepositHistory(fundingId: Long, filter: DepositFilter): DataResource<List<Deposit>> = safeApiCall {
+        api.getFundingDepositHistory(fundingId, filter.toString()).getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 
-    override suspend fun startFunding(form: FundingCreateForm): Boolean {
-        val response = api.startFunding(form.toData())
-
-        if(response.code == "S0000") {
-            return true
-        } else {
-            throw Exception(response.message)
-        }
+    override suspend fun startFunding(form: FundingCreateForm): DataResource<Boolean> = safeApiCall {
+        api.startFunding(form.toData()).getOrThrow { true }
     }
 
-    override suspend fun cancelFunding(cancelDescription: String): Boolean {
+    override suspend fun cancelFunding(cancelDescription: String): DataResource<Boolean> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun terminateFunding(): Boolean {
+    override suspend fun terminateFunding(): DataResource<Boolean> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateFundingDesc(fundingDescription: String): Boolean {
+    override suspend fun updateFundingDesc(fundingDescription: String): DataResource<Boolean> = safeApiCall {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getMyStars(): List<MyStar> {
-        val response = api.getMyStars()
-
-        return if (response.code == "S0000" && response.data != null) {
-            response.data.map { it.toDomain() }
-        } else {
-            throw Exception(response.message)
-        }
+    override suspend fun getMyStars(): DataResource<List<MyStar>> = safeApiCall {
+        api.getMyStars().getOrThrow { it.map { dto -> dto.toDomain() } }
     }
 }
