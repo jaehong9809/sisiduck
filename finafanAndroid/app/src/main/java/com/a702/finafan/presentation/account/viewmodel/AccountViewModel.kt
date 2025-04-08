@@ -46,6 +46,10 @@ class AccountViewModel @Inject constructor(
                             dialogShow = empty
                         )
                     }
+
+                    if (result.data.isNotEmpty()) {
+                        updateSelectAccount(result.data.first())
+                    }
                 }
                 is DataResource.Error -> {
                     _accountState.update {
@@ -132,12 +136,7 @@ class AccountViewModel @Inject constructor(
                         it.copy(
                             accounts = result.data,
                             isLoading = false,
-                            dialogShow = true
                         )
-                    }
-
-                    if (result.data.isNotEmpty()) {
-                        updateSelectAccount(result.data.first())
                     }
                 }
                 is DataResource.Error -> {
