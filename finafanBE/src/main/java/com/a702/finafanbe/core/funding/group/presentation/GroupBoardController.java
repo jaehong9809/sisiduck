@@ -23,7 +23,7 @@ public class GroupBoardController {
     private final FundingGroupBoardService fundingGroupBoardService;
     private final UserRepository userRepository;
 
-    @PostMapping("/{fundingId}/boards/create")
+    @PostMapping("/{fundingId}/board/create")
     public ResponseEntity<?> createGroupBoard(
             @RequestBody CreateGroupBoardRequest request,
             @PathVariable Long fundingId
@@ -34,7 +34,7 @@ public class GroupBoardController {
         return ResponseUtil.success();
     }
 
-    @GetMapping("/{fundingId}/boards")
+    @GetMapping("/{fundingId}/board")
     public ResponseEntity<ResponseData<GetGroupBoardResponse>> getGroupBoard(
             @PathVariable Long fundingId
             //@AuthMember User user
@@ -43,26 +43,24 @@ public class GroupBoardController {
         return ResponseUtil.success(fundingGroupBoardService.getGroupBoard(fundingId));
     }
 
-    @PutMapping("/{fundingId}/boards/{boardId}")
+    @PutMapping("/{fundingId}/board/update")
     public ResponseEntity<?> updateGroupBoard(
             @RequestBody UpdateGroupBoardRequest request,
-            @PathVariable Long fundingId,
-            @PathVariable Long boardId
+            @PathVariable Long fundingId
             //@AuthMember User user
     ) {
         User user = userRepository.findById(1L).get();
-        fundingGroupBoardService.updateGroupBoard(request, user, fundingId, boardId);
+        fundingGroupBoardService.updateGroupBoard(request, user, fundingId);
         return ResponseUtil.success();
     }
 
-    @DeleteMapping("/{fundingId}/boards/{boardId}/delete")
+    @DeleteMapping("/{fundingId}/board/delete")
     public ResponseEntity<?> deleteGroupBoard(
-            @PathVariable Long fundingId,
-            @PathVariable Long boardId
+            @PathVariable Long fundingId
             //@AuthMember User user
     ) {
         User user = userRepository.findById(1L).get();
-        fundingGroupBoardService.deleteGroupBoard(user, fundingId, boardId);
+        fundingGroupBoardService.deleteGroupBoard(user, fundingId);
         return ResponseUtil.success();
 
     }

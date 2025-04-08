@@ -42,8 +42,8 @@ public class FundingGroupBoardService {
         groupBoardImageRepository.saveAll(images);
     }
 
-    public GetGroupBoardResponse getGroupBoard(Long boardId) {
-        GroupBoard board = groupBoardRepository.findById(boardId)
+    public GetGroupBoardResponse getGroupBoard(Long fundingId) {
+        GroupBoard board = groupBoardRepository.findByFundingId(fundingId)
                 .orElseThrow(() -> new RuntimeException("해당 펀딩에 게시판이 생성되지 않았습니다."));
 
         List<AmountDto> amounts = groupBoardAmountRepository.findAllByBoardId(board.getId()).stream()
@@ -52,14 +52,13 @@ public class FundingGroupBoardService {
 
         List<String> images = groupBoardImageRepository.findAllImageUrlsByBoardId(board.getId());
 
-        return GetGroupBoardResponse.of(board.getId(), board.getContent(), amounts, images);
+        return GetGroupBoardResponse.of(board.getContent(), amounts, images);
     }
 
     @Transactional
-    public void updateGroupBoard(UpdateGroupBoardRequest request, User user, Long fundingId, Long boardId) {
+    public void updateGroupBoard(UpdateGroupBoardRequest request, User user, Long fundingId) {
         fundingBoardCheck(user.getUserId(), fundingId);
-        GroupBoard board = groupBoardRepository.findById(boardId)
-                .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
+        GroupBoard board = groupBoardRepository.findByFundingId(fundingId).orElseThrow();
         board.update(request.content());
 
         groupBoardAmountRepository.deleteAllByBoardId(board.getId());
@@ -77,9 +76,9 @@ public class FundingGroupBoardService {
     }
 
     @Transactional
-    public void deleteGroupBoard(User user, Long fundingId, Long groupBoardId) {
+    public void deleteGroupBoard(User user, Long fundingId) {
         fundingBoardCheck(user.getUserId(), fundingId);
-        GroupBoard board = groupBoardRepository.findById(groupBoardId).orElseThrow(() -> new RuntimeException("펀딩"));
+        GroupBoard board = groupBoardRepository.findByFundingId(fundingId).orElseThrow(() -> new RuntimeException("펀딩"));
         groupBoardAmountRepository.deleteAllByBoardId(board.getId());
         groupBoardImageRepository.deleteAllByBoardId(board.getId());
         groupBoardRepository.delete(board);

@@ -140,7 +140,6 @@ public class FundingService {
                 .orElseThrow(() -> new RuntimeException("해당 펀딩에 대한 증빙 서류가 제출되지 않았습니다."));
         Long sum = groupBoardRepository.sumBoardAmount(board.getId());
         Long totalAmount = fundingPendingTransactionRepository.sumByFundingId(fundingId);
-
         if (!sum.equals(totalAmount)) {
             throw new RuntimeException("게시판에 펀딩 총액을 정확하게 입력해주세요.");
         }
