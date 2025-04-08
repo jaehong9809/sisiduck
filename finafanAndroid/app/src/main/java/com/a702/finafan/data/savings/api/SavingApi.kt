@@ -65,7 +65,7 @@ interface SavingApi {
     ): ApiResponse<SavingAccount>
 
     // 적금 계좌 해지하기
-    @DELETE("v1/star/account/{savingAccountId}")
+    @DELETE("v1/star/{savingAccountId}")
     suspend fun deleteSavingAccount(@Path("savingAccountId") savingAccountId: Long): ApiResponse<Unit>
 
     // 적금 일간 랭킹 조회
