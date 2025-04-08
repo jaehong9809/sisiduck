@@ -1,6 +1,7 @@
 package com.a702.finafanbe.core.batch.config;
 
 import com.a702.finafanbe.core.batch.dto.TransactionRequest;
+import com.a702.finafanbe.core.batch.entity.Infrastructure.SkippedTransactionRepository;
 import com.a702.finafanbe.core.batch.exception.RetryableTransactionException;
 import com.a702.finafanbe.core.batch.listener.SkippedTransactionListener;
 import com.a702.finafanbe.core.batch.processor.FundingTransactionProcessor;
@@ -15,6 +16,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.skip.SkipException;
 import org.springframework.batch.core.step.skip.SkipPolicy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +41,8 @@ public class FundingBatchConfig {
     private final FundingTransactionProcessor transactionProcessor;
 
     private final FundingTransactionWriter transactionWriter;
+
+    //private final SkippedTransactionRepository skippedTransactionRepository;
 
     @Bean
     public Job transactionJob() {

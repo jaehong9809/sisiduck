@@ -3,9 +3,10 @@ package com.a702.finafanbe.core.funding.group.presentation;
 import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.funding.group.application.FundingGroupBoardService;
 import com.a702.finafanbe.core.funding.group.dto.CreateGroupBoardRequest;
-import com.a702.finafanbe.core.funding.group.dto.GetGroupBoardDetailResponse;
+import com.a702.finafanbe.core.funding.group.dto.GetGroupBoardResponse;
 import com.a702.finafanbe.core.funding.group.dto.UpdateGroupBoardRequest;
 import com.a702.finafanbe.core.user.entity.User;
+import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,31 +21,36 @@ import java.util.List;
 public class GroupBoardController {
 
     private final FundingGroupBoardService fundingGroupBoardService;
+    private final UserRepository userRepository;
 
     @PostMapping("/{fundingId}/boards/create")
     public ResponseEntity<?> createGroupBoard(
             @RequestBody CreateGroupBoardRequest request,
-            @PathVariable Long fundingId,
-            @AuthMember User user
+            @PathVariable Long fundingId
+            //@AuthMember User user
     ) {
+        User user = userRepository.findById(1L).get();
         fundingGroupBoardService.createBoard(request, user, fundingId);
         return ResponseUtil.success();
     }
 
     @GetMapping("/{fundingId}/boards")
-    public ResponseEntity<ResponseData<List<GetGroupBoardDetailResponse>>> getGroupBoardDetail(
+    public ResponseEntity<ResponseData<GetGroupBoardResponse>> getGroupBoard(
             @PathVariable Long fundingId
+            //@AuthMember User user
     ) {
-        return ResponseUtil.success(fundingGroupBoardService.getGroupBoardDetail(fundingId));
+        User user = userRepository.findById(1L).get();
+        return ResponseUtil.success(fundingGroupBoardService.getGroupBoard(fundingId));
     }
 
     @PutMapping("/{fundingId}/boards/{boardId}")
     public ResponseEntity<?> updateGroupBoard(
             @RequestBody UpdateGroupBoardRequest request,
             @PathVariable Long fundingId,
-            @PathVariable Long boardId,
-            @AuthMember User user
+            @PathVariable Long boardId
+            //@AuthMember User user
     ) {
+        User user = userRepository.findById(1L).get();
         fundingGroupBoardService.updateGroupBoard(request, user, fundingId, boardId);
         return ResponseUtil.success();
     }
@@ -52,9 +58,10 @@ public class GroupBoardController {
     @DeleteMapping("/{fundingId}/boards/{boardId}/delete")
     public ResponseEntity<?> deleteGroupBoard(
             @PathVariable Long fundingId,
-            @PathVariable Long boardId,
-            @AuthMember User user
+            @PathVariable Long boardId
+            //@AuthMember User user
     ) {
+        User user = userRepository.findById(1L).get();
         fundingGroupBoardService.deleteGroupBoard(user, fundingId, boardId);
         return ResponseUtil.success();
 

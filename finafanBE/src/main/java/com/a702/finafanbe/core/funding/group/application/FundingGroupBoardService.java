@@ -2,15 +2,12 @@ package com.a702.finafanbe.core.funding.group.application;
 
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
+import com.a702.finafanbe.core.funding.group.dto.AmountDto;
 import com.a702.finafanbe.core.funding.group.dto.CreateGroupBoardRequest;
-import com.a702.finafanbe.core.funding.group.dto.GetGroupBoardDetailResponse;
+import com.a702.finafanbe.core.funding.group.dto.GetGroupBoardResponse;
 import com.a702.finafanbe.core.funding.group.dto.UpdateGroupBoardRequest;
-import com.a702.finafanbe.core.funding.group.entity.GroupBoard;
-import com.a702.finafanbe.core.funding.group.entity.GroupUser;
-import com.a702.finafanbe.core.funding.group.entity.Role;
-import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingGroupRepository;
-import com.a702.finafanbe.core.funding.group.entity.infrastructure.GroupBoardRepository;
-import com.a702.finafanbe.core.funding.group.entity.infrastructure.GroupUserRepository;
+import com.a702.finafanbe.core.funding.group.entity.*;
+import com.a702.finafanbe.core.funding.group.entity.infrastructure.*;
 import com.a702.finafanbe.core.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,25 +22,37 @@ public class FundingGroupBoardService {
     private final GroupBoardRepository groupBoardRepository;
     private final GroupUserRepository groupUserRepository;
     private final FundingGroupRepository fundingGroupRepository;
+    private final GroupBoardAmountRepository groupBoardAmountRepository;
+    private final GroupBoardImageRepository groupBoardImageRepository;
 
     @Transactional
     public void createBoard(CreateGroupBoardRequest request, User user, Long fundingId) {
         fundingBoardCheck(user.getUserId(), fundingId);
-        GroupBoard groupBoard = GroupBoard.create(fundingId, request.getTitle(), request.getContent(), request.getAmount(), request.getImgUrl());
-        groupBoardRepository.save(groupBoard);
+        GroupBoard board = GroupBoard.create(fundingId, request.content());
+        groupBoardRepository.save(board);
+
+        List<GroupBoardAmount> amounts = request.amounts().stream()
+                .map(dto -> GroupBoardAmount.create(dto, board.getId()))
+                .toList();
+        groupBoardAmountRepository.saveAll(amounts);
+
+        List<GroupBoardImage> images = request.imageUrl().stream()
+                .map(url -> GroupBoardImage.create(url, board.getId()))
+                .toList();
+        groupBoardImageRepository.saveAll(images);
     }
 
-    public List<GetGroupBoardDetailResponse> getGroupBoardDetail(Long fundingId) {
-        List<GroupBoard> boards = groupBoardRepository.findAllByFundingGroupId(fundingId);
-        return boards.stream().
-                map(b -> GetGroupBoardDetailResponse.of(
-                        b.getId(),
-                        b.getTitle(),
-                        b.getContent(),
-                        b.getAmount(),
-                        b.getImageUrl()
-                ))
+    public GetGroupBoardResponse getGroupBoard(Long boardId) {
+        GroupBoard board = groupBoardRepository.findById(boardId)
+                .orElseThrow(() -> new RuntimeException("해당 펀딩에 게시판이 생성되지 않았습니다."));
+
+        List<AmountDto> amounts = groupBoardAmountRepository.findAllByBoardId(board.getId()).stream()
+                .map(amount -> AmountDto.of(amount.getContent(), amount.getAmount()))
                 .toList();
+
+        List<String> images = groupBoardImageRepository.findAllImageUrlsByBoardId(board.getId());
+
+        return GetGroupBoardResponse.of(board.getId(), board.getContent(), amounts, images);
     }
 
     @Transactional
@@ -51,14 +60,29 @@ public class FundingGroupBoardService {
         fundingBoardCheck(user.getUserId(), fundingId);
         GroupBoard board = groupBoardRepository.findById(boardId)
                 .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
-        board.updateBoard(request);
+        board.update(request.content());
+
+        groupBoardAmountRepository.deleteAllByBoardId(board.getId());
+        groupBoardImageRepository.deleteAllByBoardId(board.getId());
+
+        List<GroupBoardAmount> amounts = request.amounts().stream()
+                .map(dto -> GroupBoardAmount.create(dto, board.getId()))
+                .toList();
+        groupBoardAmountRepository.saveAll(amounts);
+
+        List<GroupBoardImage> images = request.imageUrl().stream()
+                .map(url -> GroupBoardImage.create(url, board.getId()))
+                .toList();
+        groupBoardImageRepository.saveAll(images);
     }
 
     @Transactional
     public void deleteGroupBoard(User user, Long fundingId, Long groupBoardId) {
         fundingBoardCheck(user.getUserId(), fundingId);
-        GroupBoard groupBoard = groupBoardRepository.findById(groupBoardId).orElseThrow();
-        groupBoardRepository.delete(groupBoard);
+        GroupBoard board = groupBoardRepository.findById(groupBoardId).orElseThrow(() -> new RuntimeException("펀딩"));
+        groupBoardAmountRepository.deleteAllByBoardId(board.getId());
+        groupBoardImageRepository.deleteAllByBoardId(board.getId());
+        groupBoardRepository.delete(board);
     }
 
     // 해당 유저가 그룹에 속하는지 확인 + 그룹 ADMIN인지 확인 + funding이 끝났는지 확인
@@ -74,4 +98,5 @@ public class FundingGroupBoardService {
             throw new RuntimeException("성공하지 않은 펀딩의 게시판은 접근할 수 없습니다.");
         }
     }
+
 }

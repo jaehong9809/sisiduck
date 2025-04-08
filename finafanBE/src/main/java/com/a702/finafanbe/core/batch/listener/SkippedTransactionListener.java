@@ -14,5 +14,8 @@ public class SkippedTransactionListener implements ChunkListener {
 
     private final SkippedTransactionRepository skippedTransactionRepository;
 
-
+//    @Override
+//    public void beforeStep(StepExecution stepExecution) {
+//        log.info("Step : {} is Starting...", stepExecution.getStepName());
+//    }
 }

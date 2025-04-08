@@ -4,6 +4,7 @@ import com.a702.finafanbe.core.funding.funding.dto.*;
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
 import com.a702.finafanbe.core.funding.group.application.FundingGroupService;
+import com.a702.finafanbe.core.funding.group.entity.GroupBoard;
 import com.a702.finafanbe.core.funding.group.entity.GroupUser;
 import com.a702.finafanbe.core.funding.group.entity.Role;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingGroupRepository;
@@ -135,7 +136,9 @@ public class FundingService {
         if (!checkFundingStatus(fundingId).equals(FundingStatus.SUCCESS)) {
             throw new RuntimeException("펀딩이 종료되지 않았습니다.");
         }
-        Long sum = groupBoardRepository.sumByFundingGroupId(fundingId);
+        GroupBoard board = groupBoardRepository.findByFundingId(fundingId)
+                .orElseThrow(() -> new RuntimeException("해당 펀딩에 대한 증빙 서류가 제출되지 않았습니다."));
+        Long sum = groupBoardRepository.sumBoardAmount(board.getId());
         Long totalAmount = fundingPendingTransactionRepository.sumByFundingId(fundingId);
 
         if (!sum.equals(totalAmount)) {
