@@ -50,7 +50,9 @@ LangChain Agent 기반 AI 챗봇 개발
 CI/CD 파이프라인 구축 및 배포 자동화
 
 ## Languages
-Kotlin Java Python
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
+![Java](https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=java&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
 
 ## Technologies
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white)
@@ -69,18 +71,18 @@ Kotlin Java Python
 ![LangChain](https://img.shields.io/badge/LangChain-3178C6?style=flat-square&logo=chainlink&logoColor=white)
 ![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)
 ## 📝 목차
-- [개요](#개요)
-- [Pain Point](#pain-point)
-- [Idea / Solution](#idea--solution)
-- [아키텍처](#아키텍처)
-- [결과물](#결과물)
-- [협업 방식](#협업-방식)
-- [팀의 개발 문화](#팀의-개발-문화)
-- [ERD](#erd)
-- [테스트 및 모니터링](#테스트-및-모니터링)
-- [왜 이 기술을 사용했는가?](#왜-이-기술을-사용했는가)
-- [리팩토링 & 성능 개선](#리팩토링--성능-개선)
-- [성과 및 회고](#성과-및-회고)
+- [개요](#-개요)
+- [Pain Point](#-pain-point)
+- [Idea / Solution](#-idea--solution)
+- [아키텍처](#-아키텍처)
+- [결과물](#-결과물)
+- [협업 방식](#-협업-방식)
+- [팀의 개발 문화](#-팀의-개발-문화)
+- [ERD](#-erd)
+- [테스트 및 모니터링](#-테스트-및-모니터링)
+- [왜 이 기술을 사용했는가?](#-왜-이-기술을-사용했는가)
+- [리팩토링 & 성능 개선](#-리팩토링--성능-개선)
+- [성과 및 회고](#-성과-및-회고)
 
 ## 📝 개요
 시시덕은 시니어 금융 기반 덕질 플랫폼으로, 연예인 적금과 모임 통장을 제공하고 AI 비서(덕순이)를 통해 연예인과 연관된 공감형 대화를 수행하는 서비스입니다. 기존 금융 서비스에 엔터테인먼트 요소를 결합하여 새로운 형태의 팬 활동과 저축 문화를 형성하고자 합니다. 특히 시니어 사용자를 위한 특화된 UX/UI를 제공하여 디지털 금융 접근성을 높이는 것을 목표로 합니다.
