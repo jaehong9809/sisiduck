@@ -60,12 +60,12 @@ class ChatViewModel @Inject constructor(
         repository.streamMessage(
             message = message,
             onChunk = { chunk ->
-                builder.append(chunk)
+                Log.d("✅ Streaming Chunk: ", chunk)
                 _uiState.update {
-                    it.copy(streamingText = builder.toString())
+                    builder.append(chunk)
+                    it.copy(streamingText = it.streamingText + chunk)
                 }
             },
-
             onComplete = {
                 Log.d("ChatViewModel", "✅ onComplete 실행")
                 val finalText = builder.toString()
@@ -77,7 +77,6 @@ class ChatViewModel @Inject constructor(
                     )
                 }
             },
-
             onError = { throwable ->
                 _uiState.update {
                     it.copy(error = throwable, isStreaming = false)
@@ -97,13 +96,8 @@ class ChatViewModel @Inject constructor(
     fun sendTextMessage() {
         val text = uiState.value.inputText.trim()
         if (text.isNotEmpty()) {
-            _uiState.update {
-                it.copy(
-                    messages = it.messages + ChatMessage(text, isUser = true),
-                    inputText = ""
-                )
-            }
-            // TODO: 서버로 전송 로직 호출
+            _uiState.update { it.copy(inputText = "") }
+            streamUserMessage(text)
         }
     }
 

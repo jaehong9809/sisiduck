@@ -45,7 +45,9 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
+fun ChatScreen(
+    viewModel: ChatViewModel = viewModel()
+) {
 
     /* ─── State & helpers ─── */
     val context = LocalContext.current
@@ -136,7 +138,9 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                 items(uiState.messages) { ChatBubble(it) }
 
                 if (uiState.isStreaming && uiState.streamingText.isNotBlank()) {
-                    item { ChatBubble(ChatMessage(uiState.streamingText, isUser = false)) }
+                    item(key = "streaming") {
+                        ChatBubble(ChatMessage(uiState.streamingText, isUser = false))
+                    }
                 }
             }
 
