@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.a702.finafan.R
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.ui.component.ImageItem
 import com.a702.finafan.common.ui.component.MainSquareIconButton
 import com.a702.finafan.common.ui.component.MainWideButton
@@ -59,7 +60,7 @@ fun MainScreen(
 
     val mainSavingState by viewModel.mainSavingState.collectAsState()
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
-    val userInfo by viewModel.userInfo.collectAsState()
+    val userState by viewModel.userState.collectAsState()
 
     val blePermissionLauncher = rememberBlePermissionLauncher(
         onGranted = {
@@ -72,18 +73,12 @@ fun MainScreen(
         }
     )
 
-    LaunchedEffect(isLoggedIn) {
+    LaunchedEffect(Unit) {
         viewModel.fetchMainSavings()
 
         if (isLoggedIn) {
             viewModel.fetchUserInfo()
         }
-    }
-
-    val nameText = when {
-        !isLoggedIn -> "로그인 후 이용해 주세요"
-        userInfo?.userName != null -> "${userInfo!!.userName}님"
-        else -> ""
     }
 
     Column(modifier = modifier
@@ -94,8 +89,11 @@ fun MainScreen(
         Column(modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // TODO: 로그인 구현 후 상태에서 유저 이름 가져오기
-            Text(text = nameText,
+            Text(
+                text = when (val state = userState) {
+                    is DataResource.Success -> "${state.data.userName}님"
+                    else -> "로그인이 필요합니다"
+                },
                 modifier = Modifier.fillMaxWidth()
                     .padding(start = 20.dp, top = 30.dp, bottom = 6.dp),
                 textAlign = TextAlign.Left,
