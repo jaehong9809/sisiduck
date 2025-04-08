@@ -1,5 +1,6 @@
 package com.a702.finafan.data.user.repository
 
+import com.a702.finafan.common.data.toDomain
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.user.api.UserApi
@@ -11,6 +12,6 @@ class UserRepositoryImpl @Inject constructor(
     private val userApi : UserApi
 ) : UserRepository {
     override suspend fun getUserInfo(): DataResource<User> {
-        return safeApiCall { userApi.getUserInfo().toDomain() }
+        return safeApiCall { userApi.getUserInfo().toDomain()}
     }
 }

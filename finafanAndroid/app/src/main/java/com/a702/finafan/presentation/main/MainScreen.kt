@@ -74,18 +74,14 @@ fun MainScreen(
         }
     )
 
-    LaunchedEffect(isLoggedIn) {
+    LaunchedEffect(Unit) {
         viewModel.fetchMainSavings()
+
         if (isLoggedIn) {
             viewModel.fetchUserInfo()
         }
         // TODO: 랭킹 UI 구현 후 연결
         // viewModel.fetchMainRanking(RankingType.DAILY)
-    }
-
-    val nameText = when (val state = userState) {
-        is DataResource.Success -> "${state.data.userName}님"
-        else -> "로그인이 필요합니다"
     }
 
     Column(modifier = modifier
@@ -96,8 +92,11 @@ fun MainScreen(
         Column(modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // TODO: 로그인 구현 후 상태에서 유저 이름 가져오기
-            Text(text = nameText,
+            Text(
+                text = when (val state = userState) {
+                    is DataResource.Success -> "${state.data.userName}님"
+                    else -> "로그인이 필요합니다"
+                },
                 modifier = Modifier.fillMaxWidth()
                     .padding(start = 40.dp, top = 30.dp),
                 textAlign = TextAlign.Left,
