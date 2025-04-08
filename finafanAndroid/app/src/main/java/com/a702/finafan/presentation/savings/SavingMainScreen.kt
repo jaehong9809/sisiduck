@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.savings
 
+import android.graphics.drawable.BitmapDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,12 +20,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -34,12 +40,16 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.palette.graphics.Palette
+import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.CommonProgress
+import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainBlackWithTransparency
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -130,6 +140,31 @@ fun SavingMainScreen(
 @Composable
 fun SavingHeader(account: SavingAccount) {
 
+    val context = LocalContext.current
+    val imageUrl = account.imageUrl
+
+    var textColor by remember { mutableStateOf(MainWhite) }
+
+    // 이미지 색상 분석
+    LaunchedEffect(imageUrl) {
+        val loader = ImageLoader(context)
+        val request = ImageRequest.Builder(context)
+            .data(imageUrl)
+            .allowHardware(false)
+            .build()
+
+        val result = loader.execute(request)
+        val bitmap = (result.drawable as? BitmapDrawable)?.bitmap
+
+        bitmap?.let {
+            Palette.from(it).generate { palette ->
+                val dominant = palette?.getDominantColor(Color.White.toArgb()) ?: Color.White.toArgb()
+                val luminance = ColorUtils.calculateLuminance(dominant)
+                textColor = if (luminance < 0.5) MainWhite else MainBlack
+            }
+        }
+    }
+
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(account.imageUrl)
@@ -167,7 +202,7 @@ fun SavingHeader(account: SavingAccount) {
             text = "DAY ${account.duration}",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
-            color = MainWhite,
+            color = textColor,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp)
@@ -184,19 +219,22 @@ fun SavingHeader(account: SavingAccount) {
                 text = stringResource(R.string.saving_item_name, account.accountName),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = MainWhite
+                lineHeight = 40.sp,
+                color = textColor
             )
             Text(
                 text = StringUtil.formatCurrency(account.amount),
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
-                color = MainWhite
+                lineHeight = 40.sp,
+                color = textColor
             )
             Text(
                 text = account.accountNo,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
-                color = MainWhite,
+                color = textColor,
+                lineHeight = 40.sp,
                 textDecoration = TextDecoration.Underline,
             )
         }
