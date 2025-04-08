@@ -308,12 +308,12 @@ public class DemandDepositFacade {
             Long savingAccountId
     ) {
 
-        Account depositAccount = inquireDemandDepositAccountService.findAccountById(savingAccountId);
+        EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
 
         AccountTransactionHistoriesResponse.REC inquireTransactionHistoryList = entertainerAccountHistories(depositAccount);
 
         List<EntertainerSavingsTransactionDetail> transactionDetails = depositTransactionService.getEntertainerAccountTransactionsByAccountId(
-            depositAccount.getAccountId());
+            depositAccount.getId());
         Map<Long, EntertainerSavingsTransactionDetail> transactionImageMap = transactionDetails.stream().collect(
                 Collectors.toMap(
                         EntertainerSavingsTransactionDetail::getTransactionUniqueNo,
@@ -358,8 +358,8 @@ public class DemandDepositFacade {
         );
     }
 
-    private AccountTransactionHistoriesResponse.REC entertainerAccountHistories(Account depositAccount) {
-        return inquireHistories(TransactionHistoriesRequest.of(depositAccount.getAccountId()));
+    private AccountTransactionHistoriesResponse.REC entertainerAccountHistories(EntertainerSavingsAccount depositAccount) {
+        return inquireHistories(TransactionHistoriesRequest.of(depositAccount.getId()));
     }
 
     public ResponseEntity<UpdateDemandDepositAccountTransferResponse> transferAccount(
@@ -455,25 +455,23 @@ public class DemandDepositFacade {
     }
 
     public void deleteStarAccount(Long savingAccountId) {
-        Account account = inquireDemandDepositAccountService.findAccountById(savingAccountId);
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
         Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
-        log.info("account {}" , account.getAccountNo());
         log.info("Waccount {}" , withdrawalAccount.getAccountNo());
         DeleteAccountResponse.REC deleteResponse = deleteAccountService.deleteAccount(
                 "/demandDeposit/deleteDemandDepositAccount",
                 financialRequestFactory.deleteAccountRequest(
                         EMAIL,
-                        account.getAccountNo(),
+                        savingsAccount.getAccountNo(),
                         "deleteDemandDepositAccount",
                         withdrawalAccount.getAccountNo()
                 )
         ).REC();
 
         Account depositAccount = inquireDemandDepositAccountService.findAccountByAccountNo(deleteResponse.accountNo());
-        if (account.getAmount() != null && account.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+        if (savingsAccount.getAmount() != null && savingsAccount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
             if (savingsAccount.isPresent()) {
-                double amountToDeduct = account.getAmount().negate().doubleValue();
+                double amountToDeduct = savingsAccount.getAmount().negate().doubleValue();
                 rankingService.updateRanking(
                         savingsAccount.getUserId(),
                         savingsAccount.getEntertainerId(),
@@ -483,7 +481,7 @@ public class DemandDepositFacade {
         }
 
         entertainSavingsService.deleteByAccountId(depositAccount.getAccountId());
-        deleteAccountService.deleteById(account.getAccountId());
+        deleteAccountService.deleteById(savingsAccount.getId());
     }
 
     public void deleteStarWithdrawalAccount(Long accountId) {
