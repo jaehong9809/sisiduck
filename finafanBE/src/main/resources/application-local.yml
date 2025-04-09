@@ -2,6 +2,8 @@ spring:
   config:
     activate:
       on-profile: local
+  application:
+    name: finafan-service
   batch:
     job:
       enabled: false
@@ -13,11 +15,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
-  # Spring Data JDBC 구성 - 명시적으로 방언 설정
-  #  data:
-  #    jdbc:
-  #      repositories:
-  #        enabled: true
+    data:
+      jdbc:
+        repositories:
+          enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DATABASE_URL:test}
@@ -32,16 +33,12 @@ management:
   metrics:
     export:
       prometheus:
-        enabled: false
+        enabled: true
   endpoint:
     health:
       show-details: always
     prometheus:
       enabled: true
-    endpoints:
-      web:
-        exposure:
-          include: health,info,prometheus,metrics
 
 logging:
   level:
