@@ -83,12 +83,12 @@ public class AuthService {
         }catch (Exception e) {
             log.error("Failed to request financial network for user: {}, error: {}", userEmail, e.getMessage());
         }
-
-        REC dummyAccount = createDummyAccount(userEmail, "001-1-56b59a5f38c04f");
+        User user = saveUser(userEmail, userKey, name);
+        REC dummyAccount = createDummyAccount(user.getSocialEmail(), "001-1-56b59a5f38c04f");
         depositToDummyAccount(userEmail,
             new DepositRequest(dummyAccount.getAccountNo(), 100000000L, ""));
 
-        return saveUser(userEmail, userKey, name);
+        return user;
     }
 
     private ResponseEntity<UpdateDemandDepositAccountDepositResponse> depositToDummyAccount(
