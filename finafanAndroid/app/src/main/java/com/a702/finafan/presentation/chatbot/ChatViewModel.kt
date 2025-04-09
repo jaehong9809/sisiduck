@@ -1,8 +1,11 @@
 package com.a702.finafan.presentation.chatbot
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.a702.finafan.common.utils.SpeechRecognizerHelper
+import com.a702.finafan.common.utils.SpeechRecognizerManager
 import com.a702.finafan.domain.chatbot.model.ChatMessage
 import com.a702.finafan.domain.chatbot.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,35 +18,37 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val repository: ChatRepository,
-    private val speechRecognizerHelper: SpeechRecognizerHelper
+    private val speechRecognizerHelper: SpeechRecognizerHelper,
+    app: Application
 ) : ViewModel() {
+
+    private val manager = SpeechRecognizerManager(app)
 
     private val _uiState = MutableStateFlow(ChatState())
     val uiState: StateFlow<ChatState> = _uiState.asStateFlow()
 
-    init {
-        speechRecognizerHelper.setOnResultListener { text ->
-            streamUserMessage(text)
-            _uiState.update { it.copy(isListening = false) }
-        }
+    fun attachLifecycle(owner: LifecycleOwner) =
+        owner.lifecycle.addObserver(manager)
 
-        speechRecognizerHelper.setOnErrorListener {
-            _uiState.update { it.copy(isListening = false, toastMessage = "음성 인식 중 오류가 발생했어요.") }
-        }
-
-        speechRecognizerHelper.setOnNoResultListener {
-            _uiState.update { it.copy(isListening = false, toastMessage = "말씀을 잘 못 알아들었어요.") }
-        }
-    }
+    fun detachLifecycle(owner: LifecycleOwner) =
+        owner.lifecycle.removeObserver(manager)
 
     fun startListening() {
+        manager.start(
+            onResult = { text ->
+                streamUserMessage(text)
+                _uiState.update { it.copy(isListening = false) }
+            },
+            onErrorToast = { msg ->
+                _uiState.update { it.copy(isListening = false, toastMessage = msg) }
+            }
+        )
         _uiState.update { it.copy(isListening = true) }
-        speechRecognizerHelper.startListening()
     }
 
     fun cancelListening() {
+        manager.cancel()
         _uiState.update { it.copy(isListening = false) }
-        speechRecognizerHelper.stopListening()
     }
 
     fun streamUserMessage(message: String) {

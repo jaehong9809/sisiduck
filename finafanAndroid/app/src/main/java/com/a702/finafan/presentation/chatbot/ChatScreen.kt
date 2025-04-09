@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.BackWhite
@@ -54,6 +55,7 @@ fun ChatScreen(
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+    val owner = LocalLifecycleOwner.current
 
     /* 새 메시지 도착 시 자동 스크롤 */
     LaunchedEffect(uiState.messages.size, uiState.streamingText) {
@@ -81,7 +83,13 @@ fun ChatScreen(
         ).show()
     }
 
-    /* 오류·토스트 처리 */
+    /* Speech Manager 통한 LifeCycle 관리 */
+    DisposableEffect(owner) {
+        viewModel.attachLifecycle(owner)
+        onDispose { viewModel.detachLifecycle(owner) }
+    }
+
+    /* Error Toast */
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
             Toast.makeText(
@@ -101,7 +109,7 @@ fun ChatScreen(
     /* ─── Scaffold ─── */
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = { ChatInputBar(viewModel) },                 // 입력창
+        bottomBar = { ChatInputBar(viewModel) },
         floatingActionButton = {
             VoiceFab (
                 onClick = {
@@ -150,14 +158,14 @@ fun ChatScreen(
                 )
             }
 
-            /* “맨 아래로” 버튼 */
+            /* 맨 아래 이동 버튼 */
             AnimatedVisibility(
                 visible = showScrollToBottom,
                 enter = fadeIn() + slideInVertically { it },
                 exit  = fadeOut() + slideOutVertically { it },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 96.dp)                    // 입력창 위에 띄우기
+                    .padding(bottom = 96.dp)
             ) {
                 FloatingActionButton(
                     onClick = {

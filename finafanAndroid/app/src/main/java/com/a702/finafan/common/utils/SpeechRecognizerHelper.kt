@@ -8,13 +8,12 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import java.util.Locale
 
-class SpeechRecognizerHelper(
-    private val context: Context
-) {
-    private val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
-    private var onResult: ((String) -> Unit)? = null
-    private var onError: (() -> Unit)? = null
-    private var onNoResult: (() -> Unit)? = null
+class SpeechRecognizerHelper(context: Context) {
+
+    private val recognizer = SpeechRecognizer.createSpeechRecognizer(context)
+    private var onResult: (String) -> Unit = {}
+    private var onError : (Int) -> Unit = {}
+    private var onNoResult: () -> Unit = {}
 
     private val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
         putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -22,77 +21,34 @@ class SpeechRecognizerHelper(
     }
 
     init {
-        speechRecognizer.setRecognitionListener(object : RecognitionListener {
+        recognizer.setRecognitionListener(object : RecognitionListener {
             override fun onResults(results: Bundle?) {
-                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                if (!matches.isNullOrEmpty()) {
-                    onResult?.invoke(matches.first())
-                }
-                else {
-                    onNoResult?.invoke()
-                }
+                val text = results
+                    ?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                    ?.firstOrNull()
+
+                if (text != null) onResult(text) else onNoResult()
             }
 
-            override fun onPartialResults(p0: Bundle?) {
-
-            }
-
-            override fun onEvent(p0: Int, p1: Bundle?) {
-
-            }
-
-            override fun onReadyForSpeech(p0: Bundle?) {
-
-            }
-
-            override fun onBeginningOfSpeech() {
-
-            }
-
-            override fun onRmsChanged(p0: Float) {
-
-            }
-
-            override fun onBufferReceived(p0: ByteArray?) {
-
-            }
-
-            override fun onEndOfSpeech() {
-
-            }
-
-            override fun onError(error: Int) {
-                onError?.invoke()
-            }
+            override fun onError(error: Int) {onError(error)}
+            override fun onEndOfSpeech() {}
+            override fun onReadyForSpeech(params: Bundle?) {}
+            override fun onBeginningOfSpeech() {}
+            override fun onRmsChanged(rmsdB: Float) {}
+            override fun onBufferReceived(buffer: ByteArray?) {}
+            override fun onPartialResults(partialResults: Bundle?) {}
+            override fun onEvent(eventType: Int, params: Bundle?) {}
         })
     }
 
-    fun setOnResultListener(listener: (String) -> Unit) {
-        onResult = listener
-    }
+    /* ---------- public API ---------- */
+    fun start()  = recognizer.startListening(intent)
+    fun stop()   = recognizer.stopListening()
+    fun cancel() = recognizer.cancel()
+    fun destroy()= recognizer.destroy()
 
-    fun setOnErrorListener(listener: () -> Unit) {
-        onError = listener
-    }
-
-    fun setOnNoResultListener(listener: () -> Unit) {
-        onNoResult = listener
-    }
-
-    fun startListening() {
-        speechRecognizer.startListening(intent)
-    }
-
-    fun stopListening() {
-        speechRecognizer.stopListening()
-    }
-
-    fun cancelListening() {
-        speechRecognizer.cancel()
-    }
-
-    fun destroy() {
-        speechRecognizer.destroy()
-    }
-
+    fun setOnResult(block: (String) -> Unit) { onResult = block }
+    fun setOnError (block: (Int) -> Unit)    { onError  = block }
+    fun setOnNoResult(block: () -> Unit)     { onNoResult = block }
 }
+
