@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
@@ -56,6 +56,7 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Shadow.innerShadow
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.savings.model.SavingAccount
+import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -122,11 +123,8 @@ fun SavingMainScreen(
                         }
                     }
                     else -> {
-                        items(savingState.transactions) { transaction ->
-                            TransactionItem(transaction, onSelect = {
-                                viewModel.setTransaction(transaction)
-                                navController.navigate(NavRoutes.TransactionDetail.route)
-                            })
+                        item {
+                            SavingHistoryList(navController, viewModel, savingState.transactions)
                         }
                     }
                 }
@@ -237,6 +235,56 @@ fun SavingHeader(account: SavingAccount) {
                 lineHeight = 40.sp,
                 textDecoration = TextDecoration.Underline,
             )
+        }
+    }
+}
+
+@Composable
+fun SavingHistoryList(
+    navController: NavController,
+    viewModel: SavingViewModel,
+    transactions: List<Transaction>
+) {
+    val groupedTransactions = transactions
+        .sortedByDescending { it.createdAt }
+        .groupBy { it.createdAt.year }
+        .mapValues { (_, yearGroup) ->
+            yearGroup.groupBy { it.createdAt.toLocalDate() }
+        }
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp)
+    ) {
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        groupedTransactions.forEach { (year, dateMap) ->
+            Text(
+                text = "${year}년",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = MainTextGray,
+                modifier = Modifier.padding(top = 12.dp)
+            )
+
+            dateMap.toSortedMap(compareByDescending { it })
+                .forEach { (date, transactions) ->
+                    Text(
+                        text = "${date.monthValue}월 ${date.dayOfMonth}일",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MainTextGray,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+
+                    transactions.forEach { transaction ->
+                        TransactionItem(transaction, onSelect = {
+                            viewModel.setTransaction(transaction)
+                            navController.navigate(NavRoutes.TransactionDetail.route)
+                        })
+                    }
+                }
         }
     }
 }

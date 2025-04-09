@@ -34,22 +34,8 @@ fun TransactionItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(vertical = 16.dp)
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            // 해당 날짜의 첫 번째 항목인 경우에만 날짜 표시
-//            if (transaction.isFirst) {
-//                Text(
-//                    text = "3월 24일",
-//                    fontSize = 18.sp,
-//                    color = MainTextGray,
-//                    fontWeight = FontWeight.Normal,
-//                    modifier = Modifier.padding(bottom = 24.dp)
-//                )
-//            }
-        }
 
         Row(
             modifier = Modifier
@@ -76,7 +62,7 @@ fun TransactionItem(
                     )
 
                 Text(
-                    text = StringUtil.formatDetailDate(transaction.date),
+                    text = StringUtil.formatTime(transaction.date),
                     fontSize = 16.sp,
                     color = MainTextGray,
                     fontWeight = FontWeight.Normal,
