@@ -15,4 +15,6 @@ public interface FundingGroupRepository extends JpaRepository<FundingGroup, Long
 
     @Query("SELECT f FROM FundingGroup f WHERE f.fundingExpiryDate < :now AND f.status = :status")
     List<FundingGroup> findExpiredFunding(@Param("now") LocalDate now, @Param("status") FundingStatus status);
+
+
 }

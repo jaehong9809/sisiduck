@@ -4,5 +4,5 @@ public enum FundingTransactionStatus {
     PENDING,
     SUCCESS,
     FAILED,
-    SKIPPERD
+    SKIPPED
 }

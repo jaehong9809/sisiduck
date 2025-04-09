@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.batch.reader;
 
+import com.a702.finafanbe.core.batch.entity.Infrastructure.FundingBatchQueryRepository;
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
 import com.a702.finafanbe.core.funding.funding.entity.FundingPendingTransaction;
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
@@ -10,27 +11,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 
+import java.util.Iterator;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class FundingTransactionReader implements ItemReader<FundingGroup> {
+public class FundingTransactionReader implements ItemReader<FundingPendingTransaction> {
 
-    private final FundingGroupRepository fundingGroupRepository;
-    private List<FundingGroup> fundings;
-
-    private int nextIndex;
+    private final FundingBatchQueryRepository fundingBatchQueryRepository;
+    private Iterator<FundingPendingTransaction> fundingIterator;
 
     @Override
-    public FundingGroup read() throws Exception {
-
-        if (fundings == null) {
-            fundings = fundingGroupRepository.findAllByStatus(FundingStatus.SUCCESS);
+    public FundingPendingTransaction read() {
+        if (fundingIterator == null) {
+            List<FundingPendingTransaction> transactions = fundingBatchQueryRepository.findSuccessFunding();
+            fundingIterator = transactions.iterator();
         }
-        if (nextIndex < fundings.size()) {
-            return fundings.get(nextIndex++);
-        } else {
-            return null;
-        }
+        return fundingIterator.hasNext() ? fundingIterator.next() : null;
     }
 }
