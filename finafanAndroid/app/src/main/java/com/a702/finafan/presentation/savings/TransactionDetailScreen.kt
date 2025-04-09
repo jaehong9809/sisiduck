@@ -157,7 +157,7 @@ fun TransactionDetailScreen(
                     )
 
                     Text(
-                        text = "+ " + StringUtil.formatCurrency(transaction.amount),
+                        text = "+ " + StringUtil.formatCurrency(transaction.balance),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = textColor,
