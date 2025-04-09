@@ -6,11 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,7 +35,7 @@ fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
 
     Box(modifier = Modifier
         .fillMaxWidth()
-        .height(70.dp)
+        .wrapContentHeight()
         .background(MainWhite, shape = RoundedCornerShape(18.dp))
         .then(
             if (isSelected) {
@@ -52,23 +54,27 @@ fun StarItem(star: Star, isSelected: Boolean, onSelect: (Star) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(70.dp)
-                .padding(start = 28.dp, end = 28.dp),
+                .padding(horizontal = 30.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             CircleBorderImage(
-                modifier = Modifier.size(50.dp),
+                modifier = Modifier.size(60.dp),
                 imageUrl = star.starImageUrl
             )
 
-            Text(
-                text = star.starName,
-                fontSize = 24.sp,
-                color = MainBlack,
-                fontWeight = FontWeight.Normal
-            )
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = star.starName,
+                    fontSize = 26.sp,
+                    color = MainBlack,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 
