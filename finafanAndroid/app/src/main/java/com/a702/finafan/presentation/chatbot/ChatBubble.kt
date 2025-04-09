@@ -39,6 +39,17 @@ fun ChatBubble(chatMessage: ChatMessage) {
             .padding(horizontal = 12.dp),
         horizontalArrangement = alignment
     ) {
+
+        if (!chatMessage.isUser) {
+            Image(
+                painter = painterResource(id = R.drawable.duck),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(36.dp)
+                    .padding(end = 8.dp)
+            )
+        }
+
         Box(
             modifier = Modifier
                 .background(backgroundColor, shape = RoundedCornerShape(16.dp))
@@ -64,7 +75,7 @@ fun LoadingChatBubble() {
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.Bottom
     ) {
-        // 🐥 덕순이 이미지
+
         Image(
             painter = painterResource(id = R.drawable.duck),
             contentDescription = null,
