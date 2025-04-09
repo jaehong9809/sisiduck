@@ -192,7 +192,7 @@ fun ThirdDesc() {
             color = MainBlack,
         )
 
-        TermsButtonList()
+//        TermsButtonList()
     }
 }
 

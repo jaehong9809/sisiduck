@@ -35,8 +35,8 @@ interface SavingApi {
     @Multipart
     @POST("v1/star/deposit")
     suspend fun deposit(
-        @PartMap map: Map<String, RequestBody>,
-        @Part("imageFile") imageFile: MultipartBody.Part?
+        @PartMap map: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part imageFile: MultipartBody.Part?
     ): ApiResponse<SavingDepositResponse>
 
     // 적금 계좌 개설
