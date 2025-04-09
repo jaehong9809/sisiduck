@@ -77,6 +77,8 @@ fun AllAccountScreen(
     val fundingState by fundingViewModel.fundingState.collectAsState()
     val accountState by accountViewModel.accountState.collectAsState()
 
+    val isLoggedIn by savingViewModel.isLoggedIn.collectAsState()
+
     LaunchedEffect(Unit) {
         when (selectedTabIndex.intValue) {
             0 -> savingViewModel.fetchSavingAccount()
@@ -218,7 +220,11 @@ fun AllAccountScreen(
                             }
                             1 -> navController.navigate(NavRoutes.FundingCreate.route)
                             2 -> {
-                                navController.navigate(NavRoutes.ConnectBank.from("allAccount"))
+                                if (isLoggedIn) {
+                                    navController.navigate(NavRoutes.ConnectBank.from("allAccount"))
+                                } else {
+                                    navController.navigate("login")
+                                }
                             }
                         }
                     },
