@@ -91,7 +91,7 @@ fun TransactionItem(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = StringUtil.formatCurrency(transaction.amount),
+                    text = StringUtil.formatCurrency(transaction.balance),
                     fontSize = 20.sp,
                     color = MainTextBlue,
                     fontWeight = FontWeight.Bold,
@@ -99,7 +99,7 @@ fun TransactionItem(
                 )
 
                 Text(
-                    text = StringUtil.formatCurrency(transaction.balance),
+                    text = StringUtil.formatCurrency(transaction.amount),
                     fontSize = 16.sp,
                     color = MainTextGray,
                     fontWeight = FontWeight.Medium,
