@@ -352,7 +352,7 @@ public class DemandDepositFacade {
                     transaction.transactionUniqueNo(),
                     transaction.transactionAfterBalance(),
                     transaction.transactionBalance(),
-                    transaction.transactionMemo(),
+                    detail.getMessage(),
                     imageUrl,
                     detail.getCreatedAt()
                 );
