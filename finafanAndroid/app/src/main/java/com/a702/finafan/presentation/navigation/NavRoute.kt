@@ -31,13 +31,19 @@ sealed class NavRoutes(val route: String) {
 
     /* ConnectAccount */
     object Account : NavRoutes("account")
-    object ConnectBank : NavRoutes("connect_bank")
     object AccountInput : NavRoutes("account_input")
     object AccountSend : NavRoutes("account_send")
     object AccountCode : NavRoutes("account_code")
     object AccountCodeConfirm : NavRoutes("account_code_confirm")
     object ConnectAccount : NavRoutes("connect_account")
-    object SelectAccount : NavRoutes("select_account")
+
+    object ConnectBank : NavRoutes("connect_bank?from={from}") {
+        fun from(from: String) = "connect_bank?from=$from"
+    }
+
+    object SelectAccount : NavRoutes("select_account?from={from}") {
+        fun from(from: String) = "select_account?from=$from"
+    }
 
     /* Ranking */
     object RankingMain : NavRoutes("ranking_main")

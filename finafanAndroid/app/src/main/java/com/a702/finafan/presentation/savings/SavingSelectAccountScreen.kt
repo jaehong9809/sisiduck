@@ -61,7 +61,8 @@ fun SavingSelectAccountScreen(
             isConfirm = false,
             onClickConfirm = {
                 accountViewModel.setDialogShow(false) // 다이얼로그 닫기
-                navController.navigate(NavRoutes.Account.route)
+                navController.navigate(NavRoutes.ConnectBank.from("savingSelectAccount"))
+//                navController.navigate(NavRoutes.ConnectBank.route + "?from=savingSelectAccount")
             }
         )
     }
@@ -137,7 +138,8 @@ fun SavingSelectAccountScreen(
             text = stringResource(R.string.saving_item_connect_account_title),
             fontSize = 16.sp
         ) {
-            navController.navigate(NavRoutes.Account.route)
+//            navController.navigate(NavRoutes.Account.route)
+            navController.navigate(NavRoutes.ConnectBank.from("savingSelectAccount"))
         }
 
     }
