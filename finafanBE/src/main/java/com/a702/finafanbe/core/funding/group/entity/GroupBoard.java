@@ -22,21 +22,13 @@ public class GroupBoard extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "funding_group_id", nullable = false)
-    private Long fundingGroupId;
-
-    @Column(length = 50, nullable = false)
-    private String title;
+    @Column(name = "funding_id", nullable = false)
+    private Long fundingId;
 
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private Long amount;
-
-    @Column(nullable = false)
-    private String imageUrl;
-
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @PrePersist
@@ -45,28 +37,19 @@ public class GroupBoard extends BaseEntity {
     }
 
     @Builder
-    private GroupBoard(Long fundingGroupId, String title, String content, Long amount, String imageUrl) {
-        this.fundingGroupId = fundingGroupId;
-        this.title = title;
+    private GroupBoard(Long fundingId, String content) {
+        this.fundingId = fundingId;
         this.content = content;
-        this.amount = amount;
-        this.imageUrl = imageUrl;
     }
 
-    public static GroupBoard create(Long fundingGroupId, String title, String content, Long amount, String imageUrl) {
+    public static GroupBoard create(Long fundingId, String content) {
         return GroupBoard.builder()
-                        .fundingGroupId(fundingGroupId)
-                        .title(title)
+                        .fundingId(fundingId)
                         .content(content)
-                        .amount(amount)
-                        .imageUrl(imageUrl)
                         .build();
     }
 
-    public void updateBoard(UpdateGroupBoardRequest request) {
-        this.title = request.title();
-        this.content = request.content();
-        this.amount = request.amount();
-        this.imageUrl = request.imgUrl();
+    public void update(String content) {
+        this.content = content;
     }
 }

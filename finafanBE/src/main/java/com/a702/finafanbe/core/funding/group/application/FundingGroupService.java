@@ -11,6 +11,7 @@ import com.a702.finafanbe.core.funding.group.entity.Role;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingGroupRepository;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingQueryRepository;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.GroupUserRepository;
+import com.a702.finafanbe.core.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,36 +32,33 @@ public class FundingGroupService {
         GroupUser groupUser = GroupUser.create(userId, newFunding.getId(), Role.ADMIN);
         fundingGroupRepository.save(funding);
         groupUserRepository.save(groupUser);
+        System.out.println(groupUser.getUserId());
     }
 
-    // 그룹 가입
-    public void joinFundingGroup(Long userId, Long groupId) {
+    public void joinFundingGroup(User user, Long groupId) {
 
         fundingCheck(groupId);
-        // 기존에 가입했던 그룹이라 있다면 그에 대한 deletedAt을 업데이트 해줘야 함
-        groupUserRepository.findById(userId);
-        GroupUser groupUser = GroupUser.create(userId, groupId, Role.USER);
-        // 이미 가입한 유저인지 검증 필요
+        groupUserRepository.findById(user.getUserId());
+        GroupUser groupUser = GroupUser.create(user.getUserId(), groupId, Role.USER);
         groupUserRepository.save(groupUser);
     }
 
-    public List<GetFundingResponse> getFundings(Long userId, String filter) {
-        return fundingQueryRepository.findFundings(userId, filter);
+    public List<GetFundingResponse> getFundings(User user, String filter) {
+        return fundingQueryRepository.findFundings(user.getUserId(), filter);
     }
 
-    public GetFundingDetailResponse getFundingDetail(Long fundingId, Long userId) {
-        return fundingQueryRepository.findFundingDetail(userId, fundingId);
+    public GetFundingDetailResponse getFundingDetail(Long fundingId, User user) {
+        return fundingQueryRepository.findFundingDetail(user.getUserId(), fundingId);
 
     }
 
     @Transactional
-    public void updateFundingDescription(UpdateFundingDescriptionRequest request, Long fundingId, Long userId) {
+    public void updateFundingDescription(UpdateFundingDescriptionRequest request, Long fundingId, User user) {
         FundingGroup funding = fundingGroupRepository.findById(fundingId)
                 .orElseThrow(() -> new RuntimeException("해당 그룹이 존재하지 않습니다."));
         funding.updateDescription(request.description());
     }
 
-    // 그룹 탈퇴
     public void leaveGroup(Long userId, Long groupId) {
         fundingCheck(groupId);
         GroupUser groupUser = groupUserRepository.findByUserIdAndFundingGroupId(userId, groupId)
@@ -68,7 +66,6 @@ public class FundingGroupService {
         groupUserRepository.delete(groupUser);
     }
 
-    // 그룹 중도 삭제 - 펀딩 해지와 관련된 로직
     public void abortGroup(Long fundingId) {
         fundingCheck(fundingId);
         groupUserRepository.deleteAllByFundingGroupId(fundingId);
