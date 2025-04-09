@@ -11,9 +11,11 @@ import java.util.Locale
 class SpeechRecognizerHelper(context: Context) {
 
     private val recognizer = SpeechRecognizer.createSpeechRecognizer(context)
-    private var onResult: (String) -> Unit = {}
-    private var onError : (Int) -> Unit = {}
-    private var onNoResult: () -> Unit = {}
+    private var onResultCallback: (String) -> Unit = {}
+    private var onErrorCallback : (Int) -> Unit = {}
+    private var onNoResultCallback: () -> Unit = {}
+
+    private var userCanceled = false
 
     private val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
         putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -23,14 +25,21 @@ class SpeechRecognizerHelper(context: Context) {
     init {
         recognizer.setRecognitionListener(object : RecognitionListener {
             override fun onResults(results: Bundle?) {
+                if (userCanceled) return
+
                 val text = results
                     ?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     ?.firstOrNull()
 
-                if (text != null) onResult(text) else onNoResult()
+                if (text != null) onResultCallback(text)
+                else onNoResultCallback()
             }
 
-            override fun onError(error: Int) {onError(error)}
+            override fun onError(error: Int) {
+                if (userCanceled) return
+                onErrorCallback(error)
+            }
+
             override fun onEndOfSpeech() {}
             override fun onReadyForSpeech(params: Bundle?) {}
             override fun onBeginningOfSpeech() {}
@@ -42,13 +51,28 @@ class SpeechRecognizerHelper(context: Context) {
     }
 
     /* ---------- public API ---------- */
-    fun start()  = recognizer.startListening(intent)
-    fun stop()   = recognizer.stopListening()
-    fun cancel() = recognizer.cancel()
-    fun destroy()= recognizer.destroy()
+    fun start() {
+        userCanceled = false
+        recognizer.startListening(intent)
+    }
 
-    fun setOnResult(block: (String) -> Unit) { onResult = block }
-    fun setOnError (block: (Int) -> Unit)    { onError  = block }
-    fun setOnNoResult(block: () -> Unit)     { onNoResult = block }
+    fun stop() = recognizer.stopListening()
+
+    fun cancel() {
+        if (userCanceled) return
+        userCanceled = true
+        recognizer.cancel()
+    }
+
+    fun destroy() {
+        userCanceled = true
+        recognizer.destroy()
+    }
+
+    /* ---------- 콜백 주입 ---------- */
+    fun setOnResult(block: (String) -> Unit) { onResultCallback = block }
+    fun setOnError(block: (Int) -> Unit)   { onErrorCallback  = block }
+    fun setOnNoResult(block: () -> Unit)    { onNoResultCallback = block }
 }
+
 

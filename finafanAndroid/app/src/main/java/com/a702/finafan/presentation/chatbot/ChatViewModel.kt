@@ -55,7 +55,7 @@ class ChatViewModel @Inject constructor(
 
     fun cancelListening() {
         manager.cancel()
-        _uiState.update { it.copy(isListening = false) }
+        _uiState.update { it.copy(isListening = false, error = null) }
     }
 
 
@@ -115,10 +115,9 @@ class ChatViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-
     override fun onCleared() {
         super.onCleared()
-        speechRecognizerHelper.destroy()
+        manager.cancel()
     }
 }
 
