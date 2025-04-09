@@ -45,7 +45,7 @@ class ChatRemoteDataSource @Inject constructor(
                             if (line.startsWith("data: ")) {
                                 val cleanLine = line.removePrefix("data: ").trim() + " "
                                 if (cleanLine.isNotEmpty()) {
-                                    onChunk(cleanLine) // prefix 제거하고 chunk 추가
+                                    onChunk(cleanLine)
                                 }
                             }
                         }
