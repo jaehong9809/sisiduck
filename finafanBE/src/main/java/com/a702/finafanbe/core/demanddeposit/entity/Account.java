@@ -1,6 +1,7 @@
 package com.a702.finafanbe.core.demanddeposit.entity;
 
 import com.a702.finafanbe.global.common.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -83,14 +84,13 @@ public class Account extends BaseEntity {
         String accountTypeUniqueNo,
         Long bankId,
         Long accountBalance,
-        String accountExpiryDate,
         String accountTypeCode,
         Long dailyTransferLimit,
         Long oneTimeTransferLimit
     ) {
         Account account = new Account(
                 userId, accountNo, currency,accountName, accountTypeUniqueNo,
-                bankId, accountBalance, accountExpiryDate, accountTypeCode,
+                bankId, accountBalance, accountTypeCode,
                 dailyTransferLimit, oneTimeTransferLimit
         );
         account.accountDescription = "기본 계좌 설명";
@@ -109,7 +109,6 @@ public class Account extends BaseEntity {
             String accountTypeUniqueNo,
             Long bankId,
             Long accountBalance,
-            String accountExpiryDate,
             String accountTypeCode,
             Long dailyTransferLimit,
             Long oneTimeTransferLimit
@@ -121,7 +120,7 @@ public class Account extends BaseEntity {
         this.accountTypeUniqueNo = accountTypeUniqueNo;
         this.bankId = bankId;
         this.amount = BigDecimal.valueOf(accountBalance);
-        this.accountExpiryDate = LocalDateTime.now().plusYears(Long.parseLong(accountExpiryDate));
+        this.accountExpiryDate = LocalDateTime.now().plusYears(5);
         this.accountTypeCode = accountTypeCode;
         this.dailyTransferLimit = BigDecimal.valueOf(dailyTransferLimit);
         this.oneTimeTransferLimit = BigDecimal.valueOf(oneTimeTransferLimit);
