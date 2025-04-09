@@ -44,9 +44,8 @@ public class FundingTransactionProcessor implements ItemProcessor<FundingPending
 
     @Override
     public TransactionResponse process(FundingPendingTransaction tx) throws Exception {
-        System.out.println("process" + tx.getId());
-        return TransactionResponse.of(1L, FundingTransactionStatus.SUCCESS);
-        // return apiTransaction(transactionDtoFactory(tx));
+        return TransactionResponse.of(tx.getId(), FundingTransactionStatus.FAILED);
+        //return apiTransaction(transactionDtoFactory(tx));
     }
 
     private TransactionRequest transactionDtoFactory(FundingPendingTransaction tx) {
@@ -65,7 +64,7 @@ public class FundingTransactionProcessor implements ItemProcessor<FundingPending
     }
 
     private TransactionResponse apiTransaction(TransactionRequest request) {
-        try {
+        try {;
             UpdateDemandDepositAccountTransferResponse response = externalDemandDepositApiService.DemandDepositRequestWithFactory(
                     "/demandDeposit/updateDemandDepositAccountTransfer",
                     apiName -> financialRequestFactory.transferAccount(
@@ -82,9 +81,12 @@ public class FundingTransactionProcessor implements ItemProcessor<FundingPending
             ).getBody();
 
             String responseCode = response.Header().getResponseCode();
+            log.info("***** responseCode: {} *****", responseCode);
+            System.out.println(responseCode + "!!!!!!responseCode!!!!!");
+            System.out.println(request.userEmail() + "!!!!!!requestuser!!!!!");
             if (responseCode.equals(NO_MONEY) || responseCode.equals(CANT_SEND_MONEY)) {
                 log.info("잔액 부족 또는 한도 초과 계좌 : {}", request.userEmail());
-                return TransactionResponse.of(request.id(), FundingTransactionStatus.SKIPPERD);
+                return TransactionResponse.of(request.id(), FundingTransactionStatus.SKIPPED);
             } else if (responseCode.equals(SUCCESS_CODE)) {
                 log.info("입금 성공 계좌  : {}", request.userEmail());
                 return TransactionResponse.of(request.id(), FundingTransactionStatus.SUCCESS);
