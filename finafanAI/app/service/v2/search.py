@@ -58,6 +58,16 @@ def duckduckgo_search(query: str, max_results: int = 5) -> str:
             [f"{r['title']} - {r['href']}" for r in results if "href" in r]
         )
 
+def shorten_url(long_url: str) -> str:
+    api_url = f"http://tinyurl.com/api-create.php?url={long_url}"
+    try:
+        response = requests.get(api_url, timeout=3)
+        if response.status_code == 200:
+            return response.text
+        else:
+            return long_url  # 실패하면 원래 URL 반환
+    except Exception:
+        return long_url
 
 # 뉴스 검색
 def fast_news_search(query: str, max_results: int = 3) -> str:
@@ -70,7 +80,7 @@ def fast_news_search(query: str, max_results: int = 3) -> str:
     if not entries:
         return "관련된 뉴스 기사를 찾지 못했어ㅠㅠ"
 
-    results = [f"{entry.title} - {entry.link}" for entry in entries]
+    results = [f"{entry.title} - {shorten_url(entry.link)}" for entry in entries]
 
     return "\n".join(results)
 
