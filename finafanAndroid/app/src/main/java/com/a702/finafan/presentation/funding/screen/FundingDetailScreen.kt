@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.funding.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -92,6 +93,8 @@ fun FundingDetailScreen(
             }
         }
     }
+
+    Log.d("hostState: ", "${hostInfo}")
 
     Scaffold(
         topBar = {

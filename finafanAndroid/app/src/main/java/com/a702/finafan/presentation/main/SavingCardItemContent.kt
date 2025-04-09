@@ -172,11 +172,9 @@ fun SavingContent(saving: MainSaving) {
             Image(
                 painter = rememberAsyncImagePainter(saving.starImageUrl),
                 contentDescription = saving.starName,
-                modifier = Modifier
+                modifier = Modifier.align(Alignment.Bottom)
             )
         }
-
-        Spacer(modifier = Modifier.weight(1f))
 
         Box(
             modifier = Modifier
