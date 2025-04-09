@@ -108,4 +108,5 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
     implementation("androidx.compose.material:material-icons-extended")
 
+    implementation(libs.jsoup)
 }
