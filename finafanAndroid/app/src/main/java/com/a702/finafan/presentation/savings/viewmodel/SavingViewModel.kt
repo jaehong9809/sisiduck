@@ -6,6 +6,7 @@ import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
 import com.a702.finafan.domain.main.model.RankingType
+import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
@@ -91,7 +92,14 @@ class SavingViewModel @Inject constructor(
                     }
                 }
                 is DataResource.Loading -> {
-                    _savingState.update { it.copy(isLoading = true, error = null) }
+                    _savingState.update {
+                        it.copy(
+                            savingAccount = SavingAccount(),
+                            transactions = emptyList(),
+                            isLoading = true,
+                            error = null
+                        )
+                    }
                 }
             }
 
