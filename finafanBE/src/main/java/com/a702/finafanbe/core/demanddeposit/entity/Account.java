@@ -1,6 +1,7 @@
 package com.a702.finafanbe.core.demanddeposit.entity;
 
 import com.a702.finafanbe.global.common.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -81,17 +82,20 @@ public class Account extends BaseEntity {
         String currency,
         String accountName,
         String accountTypeUniqueNo,
-        Long bankId
+        Long bankId,
+        Long accountBalance,
+        String accountTypeCode,
+        Long dailyTransferLimit,
+        Long oneTimeTransferLimit
     ) {
-        Account account = new Account(userId, accountNo, currency,accountName, accountTypeUniqueNo,bankId);
+        Account account = new Account(
+                userId, accountNo, currency,accountName, accountTypeUniqueNo,
+                bankId, accountBalance, accountTypeCode,
+                dailyTransferLimit, oneTimeTransferLimit
+        );
         account.accountDescription = "기본 계좌 설명";
-        account.accountExpiryDate = LocalDateTime.now().plusYears(5);
         account.accountPw = 1234;
-        account.accountTypeCode = "1";
-        account.amount = BigDecimal.ZERO;
         account.status = "ACTIVE";
-        account.dailyTransferLimit = new BigDecimal("5000000");
-        account.oneTimeTransferLimit = new BigDecimal("1000000");
         account.lastTransactionDate = LocalDateTime.now();
 
         return account;
@@ -103,7 +107,11 @@ public class Account extends BaseEntity {
             String currency,
             String accountName,
             String accountTypeUniqueNo,
-            Long bankId
+            Long bankId,
+            Long accountBalance,
+            String accountTypeCode,
+            Long dailyTransferLimit,
+            Long oneTimeTransferLimit
     ){
         this.userId = userId;
         this.accountNo = accountNo;
@@ -111,6 +119,11 @@ public class Account extends BaseEntity {
         this.accountName = accountName;
         this.accountTypeUniqueNo = accountTypeUniqueNo;
         this.bankId = bankId;
+        this.amount = BigDecimal.valueOf(accountBalance);
+        this.accountExpiryDate = LocalDateTime.now().plusYears(5);
+        this.accountTypeCode = accountTypeCode;
+        this.dailyTransferLimit = BigDecimal.valueOf(dailyTransferLimit);
+        this.oneTimeTransferLimit = BigDecimal.valueOf(oneTimeTransferLimit);
     }
 
     public void updateName(String newName) {

@@ -277,27 +277,31 @@ public class DemandDepositFacade {
                 totalValue,
                 starAccounts.stream()
                         .map(savingsAccount -> {
-                            EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(
-                                    savingsAccount.getId());
-                            long maintenanceDays = savingsAccount.getMaintenanceDays(depositAccount);
-                            Bank bank = bankService.findBankById(depositAccount.getBankId());
-                            Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
-                                    savingsAccount.getWithdrawalAccountId());
-                            Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
-                            return InquireEntertainerAccountResponse.of(
-                                    depositAccount.getId(),
-                                    depositAccount.getAccountNo(),
-                                    depositAccount.getProductName(),
-                                    depositAccount.getAmount(),
-                                    depositAccount.getCreatedAt(),
-                                    savingsAccount.getInterestRate(),
-                                    savingsAccount.getDuration(),
-                                    maintenanceDays,
-                                    savingsAccount.getImageUrl(),
-                                    withdrawalAccount,
-                                    bank,
-                                    withdrawalBank
-                            );
+                            try{
+                                EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(
+                                        savingsAccount.getId());
+                                long maintenanceDays = savingsAccount.getMaintenanceDays(depositAccount);
+                                Bank bank = bankService.findBankById(depositAccount.getBankId());
+                                Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
+                                        savingsAccount.getWithdrawalAccountId());
+                                Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
+                                return InquireEntertainerAccountResponse.of(
+                                        depositAccount.getId(),
+                                        depositAccount.getAccountNo(),
+                                        depositAccount.getProductName(),
+                                        depositAccount.getAmount(),
+                                        depositAccount.getCreatedAt(),
+                                        savingsAccount.getInterestRate(),
+                                        savingsAccount.getDuration(),
+                                        maintenanceDays,
+                                        savingsAccount.getImageUrl(),
+                                        withdrawalAccount,
+                                        bank,
+                                        withdrawalBank
+                                );
+                            }catch (Exception e){
+                                return null;
+                            }
                         })
                         .collect(Collectors.toList())
         );
@@ -348,7 +352,7 @@ public class DemandDepositFacade {
                     transaction.transactionUniqueNo(),
                     transaction.transactionAfterBalance(),
                     transaction.transactionBalance(),
-                    transaction.transactionMemo(),
+                    detail.getMessage(),
                     imageUrl,
                     detail.getCreatedAt()
                 );
@@ -474,6 +478,8 @@ public class DemandDepositFacade {
         if (savingsAccount.getAmount() != null && savingsAccount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
             if (savingsAccount.isPresent()) {
                 double amountToDeduct = savingsAccount.getAmount().negate().doubleValue();
+                Account account = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
+                account.addAmount(savingsAccount.getAmount());
                 rankingService.updateRanking(
                         savingsAccount.getUserId(),
                         savingsAccount.getEntertainerId(),
@@ -481,9 +487,7 @@ public class DemandDepositFacade {
                 );
             }
         }
-
         entertainSavingsService.deleteByAccountId(depositAccount.getId());
-        deleteAccountService.deleteById(savingsAccount.getId());
     }
 
     public void deleteStarWithdrawalAccount(Long accountId) {
@@ -493,6 +497,8 @@ public class DemandDepositFacade {
         if(entertainSavingsService.existsEntertainerAccountById(accountId)){
             throw new BadRequestException(ResponseData.createResponse(ErrorCode.ENTERTAINER_SAVINGS));
         }
+        EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(accountId);
+        savingsAccount.deleteWithdrawalAccountId();
         deleteAccountService.deleteById(accountId);
     }
 
@@ -611,13 +617,16 @@ public class DemandDepositFacade {
 
                 // 계좌 객체 생성
                 Account account = Account.of(
-//                    user.getUserId(),
-                    1L,
+                    user.getUserId(),
                     acc.accountNo(),
                     "KRW",
                     acc.accountName(),
                     "GENERAL001",
-                    bank.getBankId()
+                    bank.getBankId(),
+                    acc.accountBalance(),
+                    acc.accountTypeCode(),
+                    acc.dailyTransferLimit(),
+                    acc.oneTimeTransferLimit()
                 );
                 accountsToSave.add(account);
             }

@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -67,7 +69,8 @@ fun FundingCreateScreen(
             MyStarRow(
                 myStars = myStars,
                 selectedStar = uiState.selectedStar,
-                onStarSelected = { fundingCreateViewModel.updateSelectedStar(it) }
+                onStarSelected = { fundingCreateViewModel.updateSelectedStar(it) },
+                modifier = Modifier.padding(bottom = 10.dp)
             )
 
             MenuTitle(stringResource(R.string.funding_create_title_label))
@@ -80,7 +83,7 @@ fun FundingCreateScreen(
                     fundingCreateViewModel.updateFundingTitle(it)
                 }
             )
-
+            Spacer(Modifier.height(45.dp))
 
             MenuTitle(stringResource(R.string.funding_create_goal_amount_label))
             MenuDescription(stringResource(R.string.funding_create_goal_amount_description))
@@ -94,11 +97,15 @@ fun FundingCreateScreen(
                 }
             )
 
+            Spacer(Modifier.height(45.dp))
+
             MenuTitle(stringResource(R.string.funding_create_goal_date_label))
             DatePicker { selectedDate ->
                 expiryDate.value = selectedDate
                 fundingCreateViewModel.updateFundingExpiryDate(selectedDate)
             }
+
+            Spacer(Modifier.height(30.dp))
 
             Box(modifier = Modifier.background(color = TermBoxGray)) {
                 Column(modifier = Modifier.padding(5.dp)) {
@@ -106,6 +113,8 @@ fun FundingCreateScreen(
                     MenuDescription(stringResource(R.string.funding_create_caution_description))
                 }
             }
+
+            Spacer(Modifier.height(45.dp))
 
             MenuTitle(stringResource(R.string.funding_create_content_label))
             MenuDescription(stringResource(R.string.funding_create_content_description))
@@ -118,6 +127,8 @@ fun FundingCreateScreen(
                     fundingCreateViewModel.updateFundingDescription(it)
                 }
             )
+
+            Spacer(Modifier.height(45.dp))
 
             Column(
                 modifier = Modifier

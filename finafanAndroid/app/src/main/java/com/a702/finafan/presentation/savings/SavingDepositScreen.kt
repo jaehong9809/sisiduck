@@ -58,8 +58,10 @@ fun SavingDepositScreen(
 
                 // 입금 완료 시 완료 후에 적금 내역으로 이동
                 if (savingState.depositAccountId > 0) {
-                    navController.navigate(NavRoutes.SavingMain.route + "/${savingState.depositAccountId}") {
-                        popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
+                    navController.navigate(NavRoutes.SavingMain.route + "/${savingAccountId}") {
+                        popUpTo(NavRoutes.SavingDeposit.route + "/${savingAccountId}") {
+                            inclusive = true
+                        }
                         launchSingleTop = true
                     }
                 }

@@ -16,6 +16,9 @@ import com.a702.finafan.presentation.auth.LoginScreen
 import com.a702.finafan.presentation.ble.UuidListScreen
 import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.chatbot.ChatViewModel
+import com.a702.finafan.presentation.funding.viewmodel.FundingCreateViewModel
+import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
+import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 import com.a702.finafan.presentation.main.MainScreen
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -28,6 +31,10 @@ fun NavGraph(
     NavControllerProvider(navController = navController) {
         val savingViewModel: SavingViewModel = hiltViewModel()
         val accountViewModel: AccountViewModel = hiltViewModel()
+
+        val fundingViewModel: FundingViewModel = hiltViewModel()
+        val fundingDetailViewModel: FundingDetailViewModel = hiltViewModel()
+        val fundingCreateViewModel: FundingCreateViewModel = hiltViewModel()
 
         val systemUiController = rememberSystemUiController()
         val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -76,10 +83,17 @@ fun NavGraph(
             accountGraph(
                 navController = navController,
                 savingViewModel = savingViewModel,
+                fundingViewModel = fundingViewModel,
                 accountViewModel = accountViewModel
             )
 
-            fundingGraph(navController)
+            fundingGraph(
+                navController = navController,
+                fundingViewModel = fundingViewModel,
+                fundingDetailViewModel = fundingDetailViewModel,
+                fundingCreateViewModel = fundingCreateViewModel,
+                accountViewModel = accountViewModel
+            )
 
         }
     }

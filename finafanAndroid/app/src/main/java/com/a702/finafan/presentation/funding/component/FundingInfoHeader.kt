@@ -22,15 +22,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.Badge
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.starThemes
+import com.a702.finafan.common.utils.StringUtil.getFundingProgressText
+import com.a702.finafan.common.utils.StringUtil.getRemainingAmountText
+import com.a702.finafan.common.utils.StringUtil.getRemainingDaysText
 import com.a702.finafan.domain.funding.model.Funding
 
 @Composable
@@ -75,9 +80,14 @@ fun FundingInfoHeader(
                     Badge(funding.star.name, MainWhite, starThemes[funding.star.index].mid)
                     Spacer(modifier = Modifier.width(8.dp))
                     Column() {
-                        Text("종료까지 7일", fontSize = 12.sp, color = MainTextGray)
+                        Text(text = getRemainingDaysText(funding.fundingExpiryDate),
+                            fontSize = 12.sp,
+                            color = MainTextGray)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("현재 91% 달성", fontSize = 12.sp, color = starThemes[funding.star.index].end)
+                        Text(
+                            text = getFundingProgressText(funding.currentAmount, funding.goalAmount),
+                            fontSize = 12.sp,
+                            color = starThemes[funding.star.index].end)
                     }
                 }
             }
@@ -85,10 +95,12 @@ fun FundingInfoHeader(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("뮤비 촬영장 커피차 서포트", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(text = funding.title,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "목표금액까지 180,000원 남았어요!",
+            text = getRemainingAmountText(funding.currentAmount, funding.goalAmount),
             fontSize = 16.sp,
             color = starThemes[funding.star.index].mid,
             fontWeight = FontWeight.Bold
@@ -108,7 +120,7 @@ fun FundingInfoHeader(
                 .padding(horizontal = 16.dp, vertical = 10.dp)
         ) {
             Text(
-                text = "모금 상세",
+                text = stringResource(R.string.funding_detail),
                 color = MainWhite,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.align(Alignment.Center)
