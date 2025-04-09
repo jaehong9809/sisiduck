@@ -618,7 +618,6 @@ public class DemandDepositFacade {
                     "GENERAL001",
                     bank.getBankId(),
                     acc.accountBalance(),
-                    acc.accountExpiryDate(),
                     acc.accountTypeCode(),
                     acc.dailyTransferLimit(),
                     acc.oneTimeTransferLimit()
