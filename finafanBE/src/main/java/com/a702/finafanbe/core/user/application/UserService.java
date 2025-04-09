@@ -27,25 +27,10 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class UserService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
-    private final RestTemplate restTemplate;
     private final UserRepository userRepository;
-    private final FinancialNetworkUtil financialNetworkUtil;
 
     public User getUser(Long userId) {
         return findUserOrThrow(userId);
-    }
-
-    public UserResponse getUserWithFinancialNetwork(String userEmail) {
-        User user = findUserByEmail(userEmail);
-        UserFinancialNetworkResponse userFinancialNetworkResponse = requestFinancialNetwork(
-            "https://finopenapi.ssafy.io/ssafy/api/v1/member/search",
-            user.getSocialEmail()
-        );
-        return new UserResponse(
-            userFinancialNetworkResponse.userId(),
-            userFinancialNetworkResponse.userName()
-        );
     }
 
     public User findUserByEmail(String userEmail) {
@@ -53,30 +38,6 @@ public class UserService {
                 .code(ErrorCode.NotFoundUser.getCode())
                 .message(ErrorCode.NotFoundUser.getMessage())
                 .build()));
-    }
-
-    public UserFinancialNetworkResponse requestFinancialNetwork(
-            String url,
-            String userEmail
-    ) {
-        UserFinancialNetworkRequest userFinancialNetworkRequest = new UserFinancialNetworkRequest(
-                financialNetworkUtil.getApiKey(),
-                userEmail
-        );
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<UserFinancialNetworkRequest> httpEntity = new HttpEntity<>(
-                userFinancialNetworkRequest,
-                headers
-        );
-        log.info(url + " " + userEmail);
-        return restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                httpEntity,
-                UserFinancialNetworkResponse.class
-        ).getBody();
     }
 
     @Cacheable(value = "starId", key = "'user:' + #userId + ':starId'")
@@ -101,20 +62,6 @@ public class UserService {
                                 .code(ErrorCode.NotFoundUser.getCode())
                                 .message(ErrorCode.NotFoundUser.getMessage())
                                 .build()));
-    }
-
-    @Transactional
-    public User createUser(String userEmail, String userKey) {
-        if(userRepository.existsBySocialEmail(userEmail)){
-            throw new BadRequestException(ResponseData.createResponse(ErrorCode.DUPLICATE_EMAIL));
-        }
-        return userRepository.save(
-            User.of(
-                userEmail,
-                userKey,
-                "SSAFY"
-            )
-        );
     }
 
     public User findUserById(Long userId) {

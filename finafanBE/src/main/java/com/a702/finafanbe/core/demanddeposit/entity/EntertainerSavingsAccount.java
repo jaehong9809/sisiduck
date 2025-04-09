@@ -126,4 +126,12 @@ public class EntertainerSavingsAccount extends BaseEntity {
     public void addAmount(Long amount) {
         this.amount = this.amount.add(BigDecimal.valueOf(Long.parseLong(String.valueOf(amount))));
     }
+
+    public void deleteWithdrawalAccountId() {
+        this.withdrawalAccountId = null;
+    }
+
+    public void deleteWithdrawalAccountId(Long withdrawalAccountId) {
+        this.withdrawalAccountId = withdrawalAccountId;
+    }
 }

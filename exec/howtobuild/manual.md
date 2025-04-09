@@ -2,10 +2,13 @@
 
 ## 1. 개발 환경 및 빌드 정보
 
-### 1.1 JVM, WAS, IDE 버전
+### 1.1 JVM, WAS, Python, IDE, Nginx 버전
 - **JVM**: Azul Zulu 17.0.13
 - **웹서버**: Spring Boot 내장 Apache Tomcat/10.1.36
 - **IDE**: IntelliJ IDEA 2024.3.2
+- **Python**: 3.10-slim
+- **Python IDE**: Visual Studio Code
+- **Nginx**: nginx/1.18.0
 
 ### 1.2 빌드 시 필요한 환경 변수
 프로젝트 루트 디렉토리에 `.env` 파일을 생성하고 환경 변수들을 설정해야 합니다:
@@ -28,46 +31,36 @@
 
 ### 2.3 OpenAI API
 - **용도**: 챗봇(덕순이) 기능 제공
-- **모델**: gpt-4-turbo
+- **모델**: gpt-4-turbo, gpt-3.5-turbo
 - **인증 방식**: API Key
 - **주요 파라미터**:
-    - 온도(temperature): 0.7
-    - 최대 토큰(max_tokens): 3000
+    - 온도(temperature): 0.7, 0.1
 
-## 3. 시연 시나리오
+## 3. 배포시 특이사항
 
-### 3.1 연예인 적금 가입 및 응원하기
-1. 애플리케이션 로그인 (테스트 계정: `lsc7134@naver.com`)
-2. 메인 화면에서 '연예인 적금' 메뉴 선택
-3. 좋아하는 연예인 선택 (예: '임영웅')
-4. 적금 상품 선택 및 가입 조건 확인
-5. '가입하기' 버튼 클릭 후 적금 가입 완료
-6. '응원하기' 버튼을 클릭하여 응원 메시지와 함께 입금(최소 1000원)
-7. 랭킹 화면에서 본인의 랭킹 확인
+### 3.1 Jenkins 사용
 
-### 3.2 모임 통장 개설 및 모금
-1. 메인 화면에서 '모임 통장' 메뉴 선택
-2. '새 모임 통장 만들기' 버튼 클릭
-3. 모임 통장 이름, 목표 금액, 마감일, 설명 입력
-4. 연예인 선택 (예: '이창섭 생일 서포트')
-5. '개설하기' 버튼 클릭
-6. 생성된 모임 통장 링크를 복사하여 공유
-7. 테스트 계정으로 모임 통장에 참여 및 금액 입금
-
-### 3.3 덕순이 AI 챗봇 사용
-1. 메인 화면에서 '덕순이와 대화하기' 메뉴 선택
-2. 연예인 관련 질문 입력 (예: '임영웅의 최근 활동 알려줘')
-3. 덕순이의 응답 확인
-4. 추가 질문 입력 (예: '다음 컴백 일정은 언제야?')
-5. 연속 대화 기능 테스트
-
-### 3.4 주변 팬 탐색 기능
-1. 메인 화면에서 '주변 팬 찾기' 메뉴 선택
-2. BLE 권한 허용
-3. 스캔 시작 버튼 클릭
-4. 주변의 같은 연예인 적금 가입자 표시 확인 (테스트 목적으로 시뮬레이션 가능)
-
-### 3.5 랭킹 시스템 확인
-1. 메인 화면에서 '랭킹' 메뉴 선택
-2. 일간/주간/전체 탭을 전환하여 다양한 기간별 랭킹 확인
-3. 연예인별 랭킹 필터링
+### 3.2 우분투 방화벽
+- [ 1] 22                         ALLOW IN    Anywhere
+- [ 2] 80                         ALLOW IN    Anywhere
+- [ 3] 44                         ALLOW IN    Anywhere
+- [ 4] 8989                       ALLOW IN    Anywhere
+- [ 5] 8088/tcp                   ALLOW IN    Anywhere
+- [ 6] 8080                       ALLOW IN    Anywhere
+- [ 7] 8088                       ALLOW IN    Anywhere
+- [ 8] 443                        ALLOW IN    Anywhere
+- [ 9] 6379                       ALLOW IN    Anywhere
+- [10] 9006                       ALLOW IN    Anywhere
+- [11] 9000                       ALLOW IN    Anywhere
+- [12] 3306                       ALLOW IN    Anywhere
+- [13] 22 (v6)                    ALLOW IN    Anywhere (v6)
+- [14] 80 (v6)                    ALLOW IN    Anywhere (v6)
+- [15] 44 (v6)                    ALLOW IN    Anywhere (v6)
+- [16] 8989 (v6)                  ALLOW IN    Anywhere (v6)
+- [17] 8088/tcp (v6)              ALLOW IN    Anywhere (v6)
+- [18] 8080 (v6)                  ALLOW IN    Anywhere (v6)
+- [19] 8088 (v6)                  ALLOW IN    Anywhere (v6)
+- [20] 443 (v6)                   ALLOW IN    Anywhere (v6)
+- [21] 6379 (v6)                  ALLOW IN    Anywhere (v6)
+- [22] 9006 (v6)                  ALLOW IN    Anywhere (v6)
+- [23] 9000 (v6)                  ALLOW IN    Anywhere (v6)

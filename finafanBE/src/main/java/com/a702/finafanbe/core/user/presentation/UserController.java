@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.user.presentation;
 
+import com.a702.finafanbe.core.auth.application.AuthService;
 import com.a702.finafanbe.core.auth.presentation.annotation.AuthMember;
 import com.a702.finafanbe.core.demanddeposit.dto.request.ApiCreateAccountResponse;
 import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
@@ -24,20 +25,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final AuthService authService;
     private final DemandDepositFacade demandDepositFacade;
-
-    @PostMapping
-    public ResponseEntity<ResponseData<ApiCreateAccountResponse>> signUpWithFinancialNetwork(
-        @RequestBody UserEmailRequest userEmailRequest
-    ) {
-        return ResponseUtil.success(demandDepositFacade.signUpWithFinancialNetwork(userEmailRequest.userEmail()));
-    }
 
     @GetMapping
     public ResponseEntity<ResponseData<UserResponse>> getUser(
         @RequestBody UserEmailRequest userEmailRequest
     ) {
-        return ResponseUtil.success(userService.getUserWithFinancialNetwork(
+        return ResponseUtil.success(authService.getUserWithFinancialNetwork(
             userEmailRequest.userEmail()));
     }
 
