@@ -44,8 +44,8 @@ public class FundingTransactionProcessor implements ItemProcessor<FundingPending
 
     @Override
     public TransactionResponse process(FundingPendingTransaction tx) throws Exception {
-        return TransactionResponse.of(tx.getId(), FundingTransactionStatus.FAILED);
-        //return apiTransaction(transactionDtoFactory(tx));
+        //return TransactionResponse.of(tx.getId(), FundingTransactionStatus.FAILED);
+        return apiTransaction(transactionDtoFactory(tx));
     }
 
     private TransactionRequest transactionDtoFactory(FundingPendingTransaction tx) {
