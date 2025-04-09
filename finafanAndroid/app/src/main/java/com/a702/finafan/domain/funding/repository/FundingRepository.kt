@@ -15,14 +15,14 @@ interface FundingRepository {
     suspend fun getDepositHistory(fundingId: Long, filter: DepositFilter): DataResource<List<Deposit>>
 
     suspend fun startFunding(form: FundingCreateForm): DataResource<Boolean>
-    suspend fun cancelFunding(cancelDescription: String): DataResource<Boolean>
-    suspend fun terminateFunding(): DataResource<Boolean>
+    suspend fun cancelFunding(fundingId: Long, cancelDescription: String): DataResource<Boolean>
+    suspend fun terminateFunding(fundingId: Long): DataResource<Boolean>
     suspend fun updateFundingDesc(fundingDescription: String): DataResource<Boolean>
 
     suspend fun joinFunding(fundingId: Long): DataResource<Boolean>
     suspend fun leaveFunding(fundingId: Long): DataResource<Boolean>
-    suspend fun createDeposit(deposit: Deposit): DataResource<Boolean>
-    suspend fun withDrawDeposit(): DataResource<Boolean> // TODO: WithdrawDeposits 모델 파라미터로 추가
+    suspend fun createDeposit(fundingId: Long, deposit: Deposit): DataResource<Boolean>
+    suspend fun withdrawDeposit(fundingId: Long, deposits: List<Long>): DataResource<Boolean>
 
     // TODO: 아래 메서드들 모델, Request, Response DTO 설계 필요
     suspend fun createPost(): DataResource<Boolean>

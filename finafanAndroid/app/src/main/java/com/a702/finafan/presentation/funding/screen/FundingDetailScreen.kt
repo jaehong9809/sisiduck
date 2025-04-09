@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.BottomSheetLayout
 import com.a702.finafan.common.ui.component.Card
@@ -52,9 +51,9 @@ import com.a702.finafan.presentation.navigation.NavRoutes
 
 @Composable
 fun FundingDetailScreen(
-    fundingId: Long
+    fundingId: Long,
+    viewModel: FundingDetailViewModel
 ) {
-    val viewModel: FundingDetailViewModel = hiltViewModel()
     val navController = LocalNavController.current
 
     val uiState by viewModel.uiState.collectAsState()
@@ -67,13 +66,22 @@ fun FundingDetailScreen(
         else -> ""
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchFundingDetail(fundingId)
-        val status = uiState.funding?.let { FundingStatus.valueOf(it.status) }
-        if (status == FundingStatus.CANCELED || status == FundingStatus.FAILED) {
-            showBottomSheet.value = true
+    LaunchedEffect(uiState.funding) {
+        uiState.funding?.let {
+            viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL)
+
+            val status = FundingStatus.valueOf(it.status)
+            if (status == FundingStatus.CANCELED || status == FundingStatus.FAILED) {
+                showBottomSheet.value = true
+            }
         }
     }
+
+    LaunchedEffect(fundingId) {
+        viewModel.fetchFundingDetail(fundingId)
+        viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL)
+    }
+
 
     val colorSet: List<Color> = listOf(
         starThemes[uiState.funding?.star?.index?:0].start,
@@ -93,9 +101,17 @@ fun FundingDetailScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 60.dp)
         ) {
-            CommonBackTopBar(modifier = Modifier.background(Color.Transparent), text = "모금 보기")
+            Box {
+                uiState.funding?.let {
+                    FundingDetailHeader(it, it.star, colorSet)
+                }
 
-            uiState.funding?.let { FundingDetailHeader(it, uiState.funding!!.star, colorSet) }
+                CommonBackTopBar(
+                    text = "모금 보기",
+                    backgroundColor = Color.Transparent,
+                    modifier = Modifier.align(Alignment.TopStart)
+                )
+            }
 
             if(uiState.isParticipant) {
                 Column(
@@ -166,7 +182,9 @@ fun FundingDetailScreen(
             GradSelectBottomButton(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
-                onLeftClick = {},
+                onLeftClick = {
+                    navController.navigate(NavRoutes.FundingDeposit.route)
+                },
                 onRightClick = {},
                 left = "입금하기",
                 right = "참여 취소하기",
@@ -179,7 +197,7 @@ fun FundingDetailScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
                 onClick = {
-                    navController.navigate(NavRoutes.FundingJoin.route + "/${fundingId}")
+                    navController.navigate(NavRoutes.FundingJoin.withId(fundingId))
                 },
                 text = "참가하기",
                 gradientColor = listOf(

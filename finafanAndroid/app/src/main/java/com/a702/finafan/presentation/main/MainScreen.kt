@@ -2,7 +2,6 @@ package com.a702.finafan.presentation.main
 
 import android.Manifest
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -83,11 +82,6 @@ fun MainScreen(
         }
     }
 
-    // Logging userState
-    LaunchedEffect(userState) {
-        Log.d("Compose", "userState changed: $userState")
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -109,6 +103,7 @@ fun MainScreen(
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
             )
+
 
             CardCarousel(
                 isLoggedIn = isLoggedIn,
