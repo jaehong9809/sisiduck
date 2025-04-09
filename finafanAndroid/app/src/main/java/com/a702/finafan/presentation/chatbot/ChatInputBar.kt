@@ -47,7 +47,10 @@ fun ChatInputBar(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val inputTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp)
+    val inputTextStyle = MaterialTheme.typography.bodyLarge.copy(
+        fontSize = 20.sp,
+        lineHeight = 28.sp
+    )
 
     Row(
         modifier = modifier
