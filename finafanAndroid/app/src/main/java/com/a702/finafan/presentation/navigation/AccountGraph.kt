@@ -57,14 +57,16 @@ fun NavGraphBuilder.accountGraph(
                                 popUpTo(NavRoutes.ConnectBank.route) {
                                     inclusive = true
                                 }
+                                launchSingleTop = true
                             }
                         }
 
                         "savingSelectAccount" -> {
                             navController.navigate(NavRoutes.SavingSelectAccount.route) {
-                                popUpTo(NavRoutes.ConnectBank.route) {
+                                popUpTo(NavRoutes.SavingSelectAccount.route) {
                                     inclusive = true
                                 }
+                                launchSingleTop = true
                             }
                         }
                     }
