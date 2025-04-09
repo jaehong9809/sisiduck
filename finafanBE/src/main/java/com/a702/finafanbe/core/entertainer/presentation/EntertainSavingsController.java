@@ -159,7 +159,7 @@ public class EntertainSavingsController {
     }
 
     @GetMapping("/favorite")
-    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers(User user) {
+    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers(@AuthMember User user) {
         return ResponseUtil.success(demandDepositFacade.getPossessionEntertainer(user.getSocialEmail()));
     }
 

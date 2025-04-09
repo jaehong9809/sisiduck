@@ -277,27 +277,31 @@ public class DemandDepositFacade {
                 totalValue,
                 starAccounts.stream()
                         .map(savingsAccount -> {
-                            EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(
-                                    savingsAccount.getId());
-                            long maintenanceDays = savingsAccount.getMaintenanceDays(depositAccount);
-                            Bank bank = bankService.findBankById(depositAccount.getBankId());
-                            Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
-                                    savingsAccount.getWithdrawalAccountId());
-                            Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
-                            return InquireEntertainerAccountResponse.of(
-                                    depositAccount.getId(),
-                                    depositAccount.getAccountNo(),
-                                    depositAccount.getProductName(),
-                                    depositAccount.getAmount(),
-                                    depositAccount.getCreatedAt(),
-                                    savingsAccount.getInterestRate(),
-                                    savingsAccount.getDuration(),
-                                    maintenanceDays,
-                                    savingsAccount.getImageUrl(),
-                                    withdrawalAccount,
-                                    bank,
-                                    withdrawalBank
-                            );
+                            try{
+                                EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(
+                                        savingsAccount.getId());
+                                long maintenanceDays = savingsAccount.getMaintenanceDays(depositAccount);
+                                Bank bank = bankService.findBankById(depositAccount.getBankId());
+                                Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
+                                        savingsAccount.getWithdrawalAccountId());
+                                Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
+                                return InquireEntertainerAccountResponse.of(
+                                        depositAccount.getId(),
+                                        depositAccount.getAccountNo(),
+                                        depositAccount.getProductName(),
+                                        depositAccount.getAmount(),
+                                        depositAccount.getCreatedAt(),
+                                        savingsAccount.getInterestRate(),
+                                        savingsAccount.getDuration(),
+                                        maintenanceDays,
+                                        savingsAccount.getImageUrl(),
+                                        withdrawalAccount,
+                                        bank,
+                                        withdrawalBank
+                                );
+                            }catch (Exception e){
+                                return null;
+                            }
                         })
                         .collect(Collectors.toList())
         );
@@ -611,13 +615,16 @@ public class DemandDepositFacade {
 
                 // 계좌 객체 생성
                 Account account = Account.of(
-//                    user.getUserId(),
-                    1L,
+                    user.getUserId(),
                     acc.accountNo(),
                     "KRW",
                     acc.accountName(),
                     "GENERAL001",
-                    bank.getBankId()
+                    bank.getBankId(),
+                    acc.accountBalance(),
+                    acc.accountTypeCode(),
+                    acc.dailyTransferLimit(),
+                    acc.oneTimeTransferLimit()
                 );
                 accountsToSave.add(account);
             }

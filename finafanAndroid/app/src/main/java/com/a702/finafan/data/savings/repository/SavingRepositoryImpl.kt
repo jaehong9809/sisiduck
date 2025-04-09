@@ -15,7 +15,7 @@ import com.a702.finafan.domain.savings.model.SavingAccountInfo
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.repository.SavingRepository
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
@@ -33,14 +33,14 @@ class SavingRepositoryImpl @Inject constructor(
         val map = mutableMapOf<String, RequestBody>().apply {
             put(
                 "depositAccountId",
-                request.depositAccountId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                request.depositAccountId.toString().toRequestBody("text/plain".toMediaType())
             )
             put(
                 "transactionBalance",
                 request.transactionBalance.toString()
-                    .toRequestBody("text/plain".toMediaTypeOrNull())
+                    .toRequestBody("text/plain".toMediaType())
             )
-            put("message", request.message.toRequestBody("text/plain".toMediaTypeOrNull()))
+            put("message", request.message.toRequestBody("text/plain".toMediaType()))
         }
 
         api.deposit(map, request.imageFile).getOrThrow { it.depositAccountId }
