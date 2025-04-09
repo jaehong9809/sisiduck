@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
-import com.a702.finafan.common.ui.component.DatePicker
+import com.a702.finafan.common.ui.component.ConfirmDialog
+import com.a702.finafan.common.ui.component.DatePickerView
 import com.a702.finafan.common.ui.component.LiveTextArea
 import com.a702.finafan.common.ui.component.LiveTextField
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
@@ -36,6 +38,7 @@ import com.a702.finafan.presentation.funding.component.MenuDescription
 import com.a702.finafan.presentation.funding.component.MenuTitle
 import com.a702.finafan.presentation.funding.component.MyStarRow
 import com.a702.finafan.presentation.funding.viewmodel.FundingCreateViewModel
+import com.a702.finafan.presentation.navigation.NavRoutes
 import java.time.LocalDate
 
 @Composable
@@ -44,9 +47,11 @@ fun FundingCreateScreen(
     fundingCreateViewModel: FundingCreateViewModel
 ) {
     val uiState by fundingCreateViewModel.uiState.collectAsState()
+    val showDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         fundingCreateViewModel.fetchMyStars()
+        fundingCreateViewModel.updateSelectedStar(null)
     }
 
     val myStars = uiState.myStars
@@ -55,12 +60,26 @@ fun FundingCreateScreen(
     val description = remember { mutableStateOf("") }
     val expiryDate = remember { mutableStateOf<LocalDate?>(null) }
 
-    Column {
-        CommonBackTopBar(text = stringResource(R.string.funding_create_title))
+    Scaffold(
+        topBar = {
+            CommonBackTopBar(text = stringResource(R.string.funding_create_title))
+        },
+        bottomBar = {
+            PrimaryGradBottomButton(
+                text = "개설",
+                isEnabled = uiState.isFormValid,
+                onClick = {
+                    fundingCreateViewModel.createFunding()
+                    showDialog.value = true
+                }
+            )
+        },
+        containerColor = MainWhite
+    ) { paddingValues ->
         Column(
             modifier = Modifier
-                .background(color = MainWhite)
-                .padding(20.dp)
+                .padding(paddingValues)
+                .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -73,6 +92,8 @@ fun FundingCreateScreen(
                 modifier = Modifier.padding(bottom = 10.dp)
             )
 
+            Spacer(Modifier.height(45.dp))
+
             MenuTitle(stringResource(R.string.funding_create_title_label))
             MenuDescription(stringResource(R.string.funding_create_title_description))
             LiveTextField(
@@ -83,6 +104,7 @@ fun FundingCreateScreen(
                     fundingCreateViewModel.updateFundingTitle(it)
                 }
             )
+
             Spacer(Modifier.height(45.dp))
 
             MenuTitle(stringResource(R.string.funding_create_goal_amount_label))
@@ -99,11 +121,14 @@ fun FundingCreateScreen(
 
             Spacer(Modifier.height(45.dp))
 
-            MenuTitle(stringResource(R.string.funding_create_goal_date_label))
-            DatePicker { selectedDate ->
-                expiryDate.value = selectedDate
-                fundingCreateViewModel.updateFundingExpiryDate(selectedDate)
-            }
+            DatePickerView(
+                label = stringResource(R.string.funding_create_goal_date_label),
+                selectedDate = expiryDate.value,
+                onDateSelected = {
+                    expiryDate.value = it
+                    fundingCreateViewModel.updateFundingExpiryDate(it)
+                }
+            )
 
             Spacer(Modifier.height(30.dp))
 
@@ -155,15 +180,20 @@ fun FundingCreateScreen(
                 }
             }
 
-            PrimaryGradBottomButton(
-                text = "개설",
-                isEnabled = uiState.isFormValid,
-                onClick = {
-                    fundingCreateViewModel.createFunding()
-                }
-            )
+            Spacer(Modifier.height(80.dp)) // 아래 버튼 가리기 방지용 여유
         }
     }
+
+    if (showDialog.value) {
+        ConfirmDialog(
+            showDialog = showDialog,
+            content = "펀딩이 성공적으로 생성되었습니다!",
+            onClickConfirm = {
+                showDialog.value = false
+                navController.navigate(NavRoutes.Funding.route) {
+                    popUpTo(0)
+                }
+            }
+        )
+    }
 }
-
-

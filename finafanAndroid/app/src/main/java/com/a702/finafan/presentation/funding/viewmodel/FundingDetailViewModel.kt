@@ -3,6 +3,7 @@ package com.a702.finafan.presentation.funding.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
+import com.a702.finafan.data.funding.dto.response.AdminUser
 import com.a702.finafan.domain.funding.model.Deposit
 import com.a702.finafan.domain.funding.model.DepositFilter
 import com.a702.finafan.domain.funding.usecase.CreateDepositUseCase
@@ -40,6 +41,13 @@ class FundingDetailViewModel @Inject constructor(
                             funding = fundingDetail.funding,
                             isParticipant = fundingDetail.participated,
                             deposits = fundingDetail.depositHistory ?: emptyList(),
+                            hostInfo = AdminUser(
+                                adminId = fundingDetail.hostId,
+                                adminName = fundingDetail.host,
+                                fundingCount = fundingDetail.hostFundingCount,
+                                fundingSuccessCount = fundingDetail.hostSuccessCount
+                            ),
+                            description = fundingDetail.description,
                             isLoading = false
                         )
                     }

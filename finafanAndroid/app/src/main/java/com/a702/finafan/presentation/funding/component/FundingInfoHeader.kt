@@ -120,7 +120,7 @@ fun FundingInfoHeader(
                 .padding(horizontal = 16.dp, vertical = 10.dp)
         ) {
             Text(
-                text = stringResource(R.string.funding_detail),
+                text = stringResource(R.string.funding_detail_host_title),
                 color = MainWhite,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.align(Alignment.Center)

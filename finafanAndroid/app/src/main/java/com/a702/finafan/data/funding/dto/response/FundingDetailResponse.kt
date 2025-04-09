@@ -24,6 +24,7 @@ data class Entertainer(
 )
 
 data class AdminUser(
+    val adminId: Long,
     val adminName: String,
     val fundingCount: Int,
     val fundingSuccessCount: Int
@@ -49,6 +50,7 @@ fun FundingDetailResponse.toDomain(id: Long): FundingDetail {
         ),
         description = description,
         host = adminUser.adminName,
+        hostId = adminUser.adminId,
         hostFundingCount = adminUser.fundingCount,
         hostSuccessCount = adminUser.fundingSuccessCount,
         participated = participated

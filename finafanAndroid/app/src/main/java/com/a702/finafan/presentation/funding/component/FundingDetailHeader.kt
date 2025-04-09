@@ -54,13 +54,13 @@ fun FundingDetailHeader(
             .background(brush = Brush.linearGradient(
                 colors = listOf(colorSet[0].copy(alpha = 0.1f), colorSet[2].copy(alpha = 0.1f))
             ))
-            .padding(top = 60.dp, start = 25.dp, end = 25.dp)
+            .padding(top = 15.dp, start = 25.dp, end = 25.dp)
 
     ) {
         Text(text = FundingStatus.valueOf(funding.status).toString(), style = Typography.headlineSmall,
             color = colorSet[2])
         ScreenTitle(funding.title, modifier = Modifier.padding(vertical = 8.dp))
-        Text(funding.star.name, modifier = Modifier.padding(bottom = 10.dp),
+        Text(funding.star.name, modifier = Modifier.padding(bottom = 5.dp),
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             fontFamily = Pretendard
@@ -77,7 +77,7 @@ fun FundingDetailHeader(
 
         Row(
             modifier = Modifier.fillMaxWidth()
-                .padding(vertical = 30.dp),
+                .padding(top = 25.dp, bottom = 10.dp),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.Bottom
         ) {
@@ -100,7 +100,7 @@ fun FundingDetailHeader(
             }
             Column(
                 modifier = Modifier.align(Alignment.Bottom)
-                    .padding(start = 30.dp)
+                    .padding(start = 20.dp)
             ) {
                 Text(text = "목표 금액",
                     style = Typography.displaySmall,
@@ -114,24 +114,37 @@ fun FundingDetailHeader(
                 )
             }
         }
-        Row ( modifier = Modifier.fillMaxSize() ) {
+        Row(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = painter,
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.weight(0.6f)
+                modifier = Modifier
+                    .weight(0.6f)
                     .clipToBounds()
                     .align(Alignment.Bottom)
             )
-            Text("${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingExpiryDate)}일 뒤 종료",
-                textAlign = TextAlign.End,
-                style = Typography.displaySmall,
-                color = colorSet[2],
-                modifier = Modifier.weight(0.4f)
-                    .align(Alignment.Bottom)
-                    .padding(vertical = 25.dp)
-                )
 
+            Column(
+                modifier = Modifier
+                    .weight(0.4f)
+                    .align(Alignment.Bottom)
+                    .padding(vertical = 20.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                if (funding.currentAmount >= funding.goalAmount) {
+                    SuccessBadge(size = 120.dp, color = colorSet[2])
+                    Spacer(modifier = Modifier.height(15.dp))
+                }
+
+                Text(
+                    "${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingExpiryDate)}일 뒤 종료",
+                    textAlign = TextAlign.End,
+                    style = Typography.displaySmall,
+                    color = colorSet[2]
+                )
+            }
         }
+
     }
 }

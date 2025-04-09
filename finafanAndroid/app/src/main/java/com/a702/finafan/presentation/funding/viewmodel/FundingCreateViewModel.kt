@@ -54,7 +54,7 @@ class FundingCreateViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedStar(star: MyStar) {
+    fun updateSelectedStar(star: MyStar?) {
         _uiState.value = _uiState.value.copy(selectedStar = star)
     }
 
@@ -78,6 +78,13 @@ class FundingCreateViewModel @Inject constructor(
 
     fun updateTermAgreed(check: Boolean) {
         _uiState.value = _uiState.value.copy(isTermAgreed = check)
+    }
+
+
+    fun resetFundingCreated() {
+        _uiState.update {
+            it.copy(isFundingCreated = false)
+        }
     }
 
     fun createFunding() {
@@ -111,7 +118,8 @@ class FundingCreateViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            toastMessage = "펀딩이 성공적으로 생성되었습니다!"
+                            toastMessage = "펀딩이 성공적으로 생성되었습니다!",
+                            isFundingCreated = true
                         )
                     }
                 }
@@ -130,5 +138,4 @@ class FundingCreateViewModel @Inject constructor(
             }
         }
     }
-
 }

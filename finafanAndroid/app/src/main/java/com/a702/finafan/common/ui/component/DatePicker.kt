@@ -16,33 +16,38 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.EditBgGray
 import com.a702.finafan.common.ui.theme.EditTextGray
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainGradMidBlue
+import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.presentation.funding.component.MenuTitle
 import java.time.LocalDate
 import java.util.Calendar
 
 @Composable
-fun DatePicker(onDateSelected: (LocalDate) -> Unit) {
+fun DatePickerView(
+    label: String,
+    selectedDate: LocalDate?,
+    onDateSelected: (LocalDate) -> Unit
+) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-    val date = remember { mutableStateOf<LocalDate?>(null) }
 
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
             val selected = LocalDate.of(year, month + 1, dayOfMonth)
-            date.value = selected
             onDateSelected(selected)
         },
         calendar.get(Calendar.YEAR),
@@ -50,45 +55,59 @@ fun DatePicker(onDateSelected: (LocalDate) -> Unit) {
         calendar.get(Calendar.DAY_OF_MONTH)
     )
 
-    val selectedDate = date.value
-    val year = selectedDate?.year?.toString() ?: ""
-    val month = selectedDate?.monthValue?.toString()?.padStart(2, '0') ?: ""
-    val day = selectedDate?.dayOfMonth?.toString()?.padStart(2, '0') ?: ""
-
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            DisplayOnlyTextField(value = year, hint = "", width = 80.dp)
-            Text("년", fontSize = 20.sp)
-
-            DisplayOnlyTextField(value = month, hint = "", width = 60.dp)
-            Text("월", fontSize = 20.sp)
-
-            DisplayOnlyTextField(value = day, hint = "", width = 60.dp)
-            Text("일", fontSize = 20.sp)
+            MenuTitle(label)
+            Button(
+                onClick = { datePickerDialog.show() },
+                colors = ButtonDefaults.buttonColors(containerColor = MainGradMidBlue),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.height(38.dp)
+            ) {
+                Text(text = stringResource(R.string.funding_create_goal_date_btn), color = MainWhite, fontSize = 14.sp)
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Button(
-            onClick = { datePickerDialog.show() },
-            colors = ButtonDefaults.buttonColors(containerColor = EditBgGray),
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.padding(end = 4.dp)
-        ) {
-            Text("날짜 선택", color = MainBlack)
-        }
+        DateDisplay(selectedDate = selectedDate)
     }
 }
+
+@Composable
+fun DateDisplay(
+    selectedDate: LocalDate?,
+) {
+    val year = selectedDate?.year?.toString() ?: ""
+    val month = selectedDate?.monthValue?.toString()?.padStart(2, '0') ?: ""
+    val day = selectedDate?.dayOfMonth?.toString()?.padStart(2, '0') ?: ""
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        DisplayOnlyTextField(value = year, hint = "", width = 80.dp)
+        Text(text = stringResource(R.string.funding_create_goal_date_year), fontSize = 20.sp)
+
+        DisplayOnlyTextField(value = month, hint = "", width = 60.dp)
+        Text(text = stringResource(R.string.funding_create_goal_date_month), fontSize = 20.sp)
+
+        DisplayOnlyTextField(value = day, hint = "", width = 60.dp)
+        Text(text = stringResource(R.string.funding_create_goal_date_day), fontSize = 20.sp)
+    }
+}
+
 
 @Composable
 fun DisplayOnlyTextField(
     value: String,
     hint: String,
-    width: Dp = 100.dp // 기본값 넣어둠
+    width: Dp = 100.dp
 ) {
     BasicTextField(
         value = value,
