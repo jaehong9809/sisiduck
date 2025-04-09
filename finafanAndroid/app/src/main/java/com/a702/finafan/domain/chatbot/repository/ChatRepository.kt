@@ -1,11 +1,9 @@
 package com.a702.finafan.domain.chatbot.repository
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+
 
 interface ChatRepository {
-    fun streamMessage(
-        message: String,
-        onChunk: (String) -> Unit,
-        onComplete: () -> Unit,
-        onError: (Throwable) -> Unit
-    )
+    fun streamMessage(question: String): Flow<String>
 }

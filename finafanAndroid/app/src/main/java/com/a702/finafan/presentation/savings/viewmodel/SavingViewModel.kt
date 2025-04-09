@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.savings.dto.request.SavingCreateRequest
 import com.a702.finafan.data.savings.dto.request.SavingDepositRequest
+import com.a702.finafan.data.user.local.UserPreferences
 import com.a702.finafan.domain.main.model.RankingType
+import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.usecase.CreateSavingUseCase
@@ -19,14 +21,17 @@ import com.a702.finafan.domain.savings.usecase.GetStarUseCase
 import com.a702.finafan.domain.savings.usecase.UpdateSavingNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SavingViewModel @Inject constructor(
+    private val userPreferences: UserPreferences,
     private val getStarUseCase: GetStarUseCase,
     private val getSavingUseCase: GetSavingUseCase,
     private val createSavingUseCase: CreateSavingUseCase,
@@ -37,6 +42,9 @@ class SavingViewModel @Inject constructor(
     private val getStarRankingUseCase: GetStarRankingUseCase,
     private val getRankingDetailUseCase: GetRankingDetailUseCase,
 ): ViewModel() {
+
+    val isLoggedIn = userPreferences.userStateFlow
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     private val _savingState = MutableStateFlow(SavingState())
     val savingState: StateFlow<SavingState> = _savingState.asStateFlow()
@@ -91,7 +99,14 @@ class SavingViewModel @Inject constructor(
                     }
                 }
                 is DataResource.Loading -> {
-                    _savingState.update { it.copy(isLoading = true, error = null) }
+                    _savingState.update {
+                        it.copy(
+                            savingAccount = SavingAccount(),
+                            transactions = emptyList(),
+                            isLoading = true,
+                            error = null
+                        )
+                    }
                 }
             }
 
@@ -118,7 +133,13 @@ class SavingViewModel @Inject constructor(
                     }
                 }
                 is DataResource.Loading -> {
-                    _savingState.update { it.copy(isLoading = true, error = null) }
+                    _savingState.update {
+                        it.copy(
+                            createAccountId = 0,
+                            isLoading = true,
+                            error = null
+                        )
+                    }
                 }
             }
         }
@@ -144,7 +165,12 @@ class SavingViewModel @Inject constructor(
                     }
                 }
                 is DataResource.Loading -> {
-                    _savingState.update { it.copy(isLoading = true, error = null) }
+                    _savingState.update {
+                        it.copy(
+                            depositAccountId = 0,
+                            isLoading = true,
+                            error = null
+                        ) }
                 }
             }
         }
@@ -300,6 +326,14 @@ class SavingViewModel @Inject constructor(
 
     fun resetCancelState() {
         _savingState.update { it.copy(isCancel = false) }
+    }
+
+    fun resetDeposit() {
+        _savingState.update { it.copy(depositAccountId = 0) }
+    }
+
+    fun resetCreate() {
+        _savingState.update { it.copy(createAccountId = 0) }
     }
 
 }

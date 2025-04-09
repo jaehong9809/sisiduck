@@ -55,7 +55,7 @@ fun NavGraphBuilder.savingGraph(
         }
 
         composable(NavRoutes.SavingDesc.route) {
-            SavingDescScreen()
+            SavingDescScreen(savingViewModel)
         }
 
         composable(NavRoutes.StarSearch.route) {

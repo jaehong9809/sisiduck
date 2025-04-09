@@ -84,6 +84,8 @@ fun SavingSelectAccountScreen(
 
                 // 개설 완료 시
                 if (savingState.createAccountId > 0) {
+                    savingViewModel.resetCreate()
+
                     navController.navigate(NavRoutes.SavingMain.route + "/${savingState.createAccountId}") {
                         popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
                         launchSingleTop = true
