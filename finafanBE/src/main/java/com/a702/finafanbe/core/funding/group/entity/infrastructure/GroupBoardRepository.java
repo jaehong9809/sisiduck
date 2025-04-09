@@ -5,11 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface GroupBoardRepository extends JpaRepository<GroupBoard, Long> {
-    List<GroupBoard> findAllByFundingGroupId(Long fundingId);
+    Optional<GroupBoard> findByFundingId(Long fundingId);
 
-    @Query("SELECT COALESCE(SUM(g.amount), 0) FROM GroupBoard g WHERE g.fundingGroupId = :fundingId")
-    Long sumByFundingGroupId(@Param("fundingId") Long fundingId);
+    @Query("SELECT COALESCE(SUM(b.amount), 0) FROM GroupBoardAmount b WHERE b.boardId = :boardId")
+    Long sumBoardAmount(@Param("boardId") Long boardId);
 }

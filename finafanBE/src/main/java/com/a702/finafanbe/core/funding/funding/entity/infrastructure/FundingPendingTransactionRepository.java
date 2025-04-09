@@ -9,6 +9,10 @@ import java.util.List;
 
 public interface FundingPendingTransactionRepository extends JpaRepository<FundingPendingTransaction, Long> {
 
+    List<FundingPendingTransaction> findAllByFundingId(Long fundingId);
+
+    List<FundingPendingTransaction> findAllByFundingIdAndUserId(Long fundingId, Long userId);
+
     void deleteAllByFundingId(Long fundingId);
 
     @Query("SELECT COALESCE(SUM(f.balance), 0) FROM FundingPendingTransaction f WHERE f.fundingId = :fundingId AND f.deletedAt IS NULL")

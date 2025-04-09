@@ -2,15 +2,13 @@ package com.a702.finafanbe.core.funding.group.application;
 
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
 import com.a702.finafanbe.core.funding.funding.entity.FundingStatus;
+import com.a702.finafanbe.core.funding.group.dto.AmountDto;
 import com.a702.finafanbe.core.funding.group.dto.CreateGroupBoardRequest;
-import com.a702.finafanbe.core.funding.group.dto.GetGroupBoardDetailResponse;
+import com.a702.finafanbe.core.funding.group.dto.GetGroupBoardResponse;
 import com.a702.finafanbe.core.funding.group.dto.UpdateGroupBoardRequest;
-import com.a702.finafanbe.core.funding.group.entity.GroupBoard;
-import com.a702.finafanbe.core.funding.group.entity.GroupUser;
-import com.a702.finafanbe.core.funding.group.entity.Role;
-import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingGroupRepository;
-import com.a702.finafanbe.core.funding.group.entity.infrastructure.GroupBoardRepository;
-import com.a702.finafanbe.core.funding.group.entity.infrastructure.GroupUserRepository;
+import com.a702.finafanbe.core.funding.group.entity.*;
+import com.a702.finafanbe.core.funding.group.entity.infrastructure.*;
+import com.a702.finafanbe.core.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,44 +22,70 @@ public class FundingGroupBoardService {
     private final GroupBoardRepository groupBoardRepository;
     private final GroupUserRepository groupUserRepository;
     private final FundingGroupRepository fundingGroupRepository;
+    private final GroupBoardAmountRepository groupBoardAmountRepository;
+    private final GroupBoardImageRepository groupBoardImageRepository;
 
     @Transactional
-    public void createBoard(CreateGroupBoardRequest request, Long userId, Long fundingId) {
-        fundingBoardCheck(fundingId, userId);
-        GroupBoard groupBoard = GroupBoard.create(fundingId, request.getTitle(), request.getContent(), request.getAmount(), request.getImgUrl());
-        groupBoardRepository.save(groupBoard);
-    }
+    public void createBoard(CreateGroupBoardRequest request, User user, Long fundingId) {
+        fundingBoardCheck(user.getUserId(), fundingId);
+        GroupBoard board = GroupBoard.create(fundingId, request.content());
+        groupBoardRepository.save(board);
 
-    public List<GetGroupBoardDetailResponse> getGroupBoardDetail(Long fundingId) {
-        List<GroupBoard> boards = groupBoardRepository.findAllByFundingGroupId(fundingId);
-        return boards.stream().
-                map(b -> GetGroupBoardDetailResponse.of(
-                        b.getId(),
-                        b.getTitle(),
-                        b.getContent(),
-                        b.getAmount(),
-                        b.getImageUrl()
-                ))
+        List<GroupBoardAmount> amounts = request.amounts().stream()
+                .map(dto -> GroupBoardAmount.create(dto, board.getId()))
                 .toList();
+        groupBoardAmountRepository.saveAll(amounts);
+
+        List<GroupBoardImage> images = request.imageUrl().stream()
+                .map(url -> GroupBoardImage.create(url, board.getId()))
+                .toList();
+        groupBoardImageRepository.saveAll(images);
+    }
+
+    public GetGroupBoardResponse getGroupBoard(Long fundingId) {
+        GroupBoard board = groupBoardRepository.findByFundingId(fundingId)
+                .orElseThrow(() -> new RuntimeException("해당 펀딩에 게시판이 생성되지 않았습니다."));
+
+        List<AmountDto> amounts = groupBoardAmountRepository.findAllByBoardId(board.getId()).stream()
+                .map(amount -> AmountDto.of(amount.getContent(), amount.getAmount()))
+                .toList();
+
+        List<String> images = groupBoardImageRepository.findAllImageUrlsByBoardId(board.getId());
+
+        return GetGroupBoardResponse.of(board.getContent(), amounts, images);
     }
 
     @Transactional
-    public void updateGroupBoard(UpdateGroupBoardRequest request, Long userId, Long fundingId, Long boardId) {
-        fundingBoardCheck(fundingId, userId);
-        GroupBoard board = groupBoardRepository.findById(boardId)
-                .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
-        board.updateBoard(request);
+    public void updateGroupBoard(UpdateGroupBoardRequest request, User user, Long fundingId) {
+        fundingBoardCheck(user.getUserId(), fundingId);
+        GroupBoard board = groupBoardRepository.findByFundingId(fundingId).orElseThrow();
+        board.update(request.content());
+
+        groupBoardAmountRepository.deleteAllByBoardId(board.getId());
+        groupBoardImageRepository.deleteAllByBoardId(board.getId());
+
+        List<GroupBoardAmount> amounts = request.amounts().stream()
+                .map(dto -> GroupBoardAmount.create(dto, board.getId()))
+                .toList();
+        groupBoardAmountRepository.saveAll(amounts);
+
+        List<GroupBoardImage> images = request.imageUrl().stream()
+                .map(url -> GroupBoardImage.create(url, board.getId()))
+                .toList();
+        groupBoardImageRepository.saveAll(images);
     }
 
     @Transactional
-    public void deleteGroupBoard(Long userId, Long fundingId, Long groupBoardId) {
-        GroupBoard groupBoard = groupBoardRepository.findById(groupBoardId).orElseThrow();
-        groupBoardRepository.delete(groupBoard);
+    public void deleteGroupBoard(User user, Long fundingId) {
+        fundingBoardCheck(user.getUserId(), fundingId);
+        GroupBoard board = groupBoardRepository.findByFundingId(fundingId).orElseThrow(() -> new RuntimeException("펀딩"));
+        groupBoardAmountRepository.deleteAllByBoardId(board.getId());
+        groupBoardImageRepository.deleteAllByBoardId(board.getId());
+        groupBoardRepository.delete(board);
     }
 
-    // 해당 유저가 그룹에 속하는지 확인 + 그룹 ADMIN인지 확인 + funding이 끝났는지 확인
     private void fundingBoardCheck(Long userId, Long fundingId) {
-        GroupUser groupUser = groupUserRepository.findByUserIdAndFundingGroupId(fundingId, userId)
+        GroupUser groupUser = groupUserRepository.findByUserIdAndFundingGroupId(userId, fundingId)
                 .orElseThrow(() -> new RuntimeException("해당 그룹에 속해있지 않습니다."));
         if (!groupUser.getRole().equals(Role.ADMIN)) {
             throw new RuntimeException("그룹 게시판에 대한 권한은 방장에게 있습니다.");
