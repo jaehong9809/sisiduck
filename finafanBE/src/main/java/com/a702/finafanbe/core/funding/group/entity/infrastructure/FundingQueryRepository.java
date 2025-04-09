@@ -95,8 +95,8 @@ public class FundingQueryRepository {
                 .where(groupUser.fundingGroupId.eq(fundingId), groupUser.role.eq(Role.ADMIN))
                 .fetchOne();
 
-        String adminName = queryFactory
-                .select(user.name)
+        Tuple adminUser = queryFactory
+                .select(user.userId, user.name)
                 .from(user)
                 .where(user.userId.eq(adminUserId))
                 .fetchFirst();
@@ -150,7 +150,8 @@ public class FundingQueryRepository {
                         result.get(entertainer.entertainerProfileUrl)
                 ),
                 new GetFundingAdminResponse(
-                        adminName,
+                        adminUser.get(user.userId),
+                        adminUser.get(user.name),
                         fundingCount != null ? fundingCount.intValue() : 0,
                         fundingSuccessCount != null ? fundingSuccessCount.intValue() : 0
                 ),
@@ -202,32 +203,4 @@ public class FundingQueryRepository {
                 )
                 .fetchFirst() != null;
     }
-
-//    public List<FundingGroup> selectExpiredFundingStatue() {
-//        return queryFactory
-//                .selectFrom(fundingGroup)
-//                .where(
-//                        fundingGroup.status.eq(FundingStatus.INPROGRESS),
-//                        fundingGroup.fundingExpiryDate.before(LocalDateTime.now()),
-//                        JPAExpressions
-//                                .select(transaction.balance.sum())
-//                                .where(transaction.id.eq(fundingGroup.id))
-//                                .goe(transaction.balance.sum())
-//                )
-//                .fetch();
-//    }
-//
-//    public void changeExpiredFundingState(List<FundingGroup> fundings, boolean isSuccess) {
-//        if (fundings == null || fundings.isEmpty()) return;
-//        FundingStatus status = isSuccess ? FundingStatus.SUCCESS : FundingStatus.FAILED;
-//        List<Long> ids = fundings.stream()
-//                .map(FundingGroup::getId)
-//                .toList();
-//
-//        queryFactory
-//                .update(fundingGroup)
-//                .set(fundingGroup.status, status)
-//                .where(fundingGroup.id.in(ids))
-//                .execute();
-//    }
 }
