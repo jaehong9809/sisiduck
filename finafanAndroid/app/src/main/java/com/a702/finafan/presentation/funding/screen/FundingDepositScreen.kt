@@ -1,129 +1,146 @@
 package com.a702.finafan.presentation.funding.screen
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
+import androidx.navigation.NavController
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.CommonTextField
+import com.a702.finafan.common.ui.component.ConfirmDialog
+import com.a702.finafan.common.ui.component.CustomGradBottomButton
 import com.a702.finafan.common.ui.component.LiveTextArea
-import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.component.SelectAccountField
 import com.a702.finafan.common.ui.theme.MainWhite
-import com.a702.finafan.domain.funding.model.Funding
-import com.a702.finafan.domain.funding.model.Star
+import com.a702.finafan.common.utils.StringUtil.formatNumber
+import com.a702.finafan.domain.funding.model.Deposit
 import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 import com.a702.finafan.presentation.funding.component.FundingInfoHeader
-import com.a702.finafan.presentation.navigation.LocalNavController
-import java.time.LocalDate
+import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
+import com.a702.finafan.presentation.navigation.NavRoutes
 
 @Composable
 fun FundingDepositScreen(
-    funding: Funding
+    navController: NavController,
+    fundingDetailViewModel: FundingDetailViewModel,
+    accountViewModel: AccountViewModel
 ) {
-    val accountViewModel: AccountViewModel = hiltViewModel()
-
     val accountState by accountViewModel.accountState.collectAsState()
-
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(funding.star.thumbnail)
-            .build()
-    )
+    val fundingState by fundingDetailViewModel.uiState.collectAsState()
 
     val amount = remember { mutableStateOf("") }
     val message = remember { mutableStateOf("") }
+    val showDialog = remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MainWhite)
-            .padding(horizontal = 20.dp)
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 상단 바
-        CommonBackTopBar(text = stringResource(R.string.funding_deposit_title))
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        FundingInfoHeader(funding)
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text("출금 계좌 선택", fontWeight = FontWeight.Medium, fontSize = 14.sp)
-        Spacer(modifier = Modifier.height(8.dp))
-        SelectAccountField(accountViewModel, accountState.withdrawalAccounts)
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text("금액", fontWeight = FontWeight.Medium, fontSize = 14.sp)
-        Spacer(modifier = Modifier.height(8.dp))
-        CommonTextField(
-            hint = "금액 입력",
-            text = amount,
-            isMoney = true
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text("메시지", fontWeight = FontWeight.Medium, fontSize = 14.sp)
-        Spacer(modifier = Modifier.height(8.dp))
-        LiveTextArea(
-            placeholder = "메시지 입력 (선택)",
-            description = message,
-            onValueChange = {}
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-
-        PrimaryGradBottomButton(
-            onClick = {},
-            text = "입금하기"
-        )
+    LaunchedEffect(Unit) {
+        accountViewModel.fetchWithdrawalAccount()
     }
-}
 
-@Preview
-@Composable
-fun FundingDepositScreenPreview() {
-    val fakeNavController = rememberNavController()
-    CompositionLocalProvider(LocalNavController provides fakeNavController) {
-        FundingDepositScreen(
-            Funding(
-            star = Star(
-                id = 1L,
-                name = "이찬원",
-                index = 0,
-                image = "https://example.com/image1.jpg",
-                thumbnail = "https://example.com/thumb1.jpg"
-            ),
-            id = 101L,
-            title = "뮤비 촬영장 커피차 서포트",
-            accountNo = "312-0139-3754-31",
-            status = "ONGOING",
-            currentAmount = 82000L,
-            goalAmount = 200000L,
-            fundingExpiryDate = LocalDate.now().plusDays(7)
-        ))
+    Scaffold(
+        containerColor = MainWhite,
+        topBar = {
+            CommonBackTopBar(text = stringResource(R.string.funding_deposit_title))
+        },
+        bottomBar = {
+            CustomGradBottomButton(
+                gradientColor = fundingState.colorSet,
+                onClick = {
+                    fundingState.funding?.let {
+                        fundingDetailViewModel.createDeposit(
+                            it.id,
+                            Deposit(
+                                accountId = accountState.selectAccount.accountId,
+                                balance = formatNumber(amount.value),
+                                name = "로그인해서 받아와야...",
+                                message = message.value
+                            )
+                        )
+                        showDialog.value = true
+                    }
+                },
+                text = stringResource(R.string.btn_deposit),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 24.dp)
+            ) {
+                fundingState.funding?.let {
+                    FundingInfoHeader(it)
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text("출금 계좌 선택", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                SelectAccountField(accountViewModel, accountState.withdrawalAccounts)
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text("금액", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                CommonTextField(
+                    hint = "금액 입력",
+                    text = amount,
+                    isMoney = true
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text("메시지", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                LiveTextArea(
+                    placeholder = stringResource(R.string.funding_deposit_message),
+                    description = message,
+                    onValueChange = {}
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+
+            if (showDialog.value) {
+                ConfirmDialog(
+                    showDialog = showDialog,
+                    content = "입금이 완료되었습니다!",
+                    onClickConfirm = {
+                        showDialog.value = false
+                        fundingState.funding?.let { funding ->
+                            navController.navigate(NavRoutes.FundingDetail.withId(funding.id)) {
+                                popUpTo(NavRoutes.FundingDeposit.route) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                )
+            }
+        }
     }
 }
