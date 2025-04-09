@@ -212,7 +212,9 @@ fun AllAccountScreen(
                                 }
                             }
                             1 -> "" // TODO: 모금통장 가입 화면으로 이동
-                            2 -> navController.navigate(NavRoutes.Account.route)
+                            2 -> {
+                                navController.navigate(NavRoutes.ConnectBank.from("allAccount"))
+                            }
                         }
                     },
                     text = buttonText.toString(),

@@ -71,7 +71,9 @@ fun NavGraphBuilder.savingGraph(
             SavingNameInputScreen(
                 savingViewModel,
                 onComplete = {
-                    navController.navigate(NavRoutes.SavingSelectAccount.route)
+                    navController.navigate(NavRoutes.SavingSelectAccount.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
