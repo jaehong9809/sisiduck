@@ -16,12 +16,13 @@ import com.a702.finafan.common.ui.theme.Typography
 
 @Composable
 fun Badge(
+    modifier: Modifier = Modifier,
     content: String,
     fontColor: Color,
     bgColor: Color,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .height(32.dp)
             .widthIn()
             .background(bgColor, shape = RoundedCornerShape(10.dp))

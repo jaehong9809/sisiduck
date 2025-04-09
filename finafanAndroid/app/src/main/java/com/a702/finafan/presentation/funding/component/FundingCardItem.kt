@@ -90,7 +90,7 @@ fun FundingCardItem(
                         )
                     }
                     Spacer(Modifier.width(12.dp))
-                    Badge(star.name, MainWhite, starThemes[star.index].mid)
+                    Badge(content = star.name, fontColor =  MainWhite, bgColor =  starThemes[star.index].mid)
                 }
                 Text(
                     "종료까지 ${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingExpiryDate)}일",

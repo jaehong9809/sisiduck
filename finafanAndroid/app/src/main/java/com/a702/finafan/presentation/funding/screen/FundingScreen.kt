@@ -14,8 +14,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.MainBgLightGray
@@ -43,7 +45,7 @@ fun FundingScreen(
     Scaffold(
         topBar = {
             CommonBackTopBar(
-                text = "모금",
+                text = stringResource(R.string.funding),
                 backgroundColor = Color.Transparent
             )
         },
@@ -62,10 +64,12 @@ fun FundingScreen(
                 modifier = Modifier.padding(bottom = 10.dp)
             )
 
-            MenuTitle("모금 보기", modifier = Modifier.padding(horizontal = 6.dp, vertical = 10.dp))
+            MenuTitle(stringResource(R.string.funding_page), modifier = Modifier.padding(horizontal = 6.dp, vertical = 10.dp))
 
             ThreeTabRow(
-                labels = listOf("전체", "참여", "내 모금"),
+                labels = listOf(stringResource(R.string.funding_list_tap_all),
+                    stringResource(R.string.funding_list_tap_participating),
+                    stringResource(R.string.funding_list_tap_my)),
                 containerColor = MainWhite,
                 selectedTabColor = MainBlack,
                 onTabSelected = listOf(

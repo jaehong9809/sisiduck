@@ -12,6 +12,7 @@ import com.a702.finafan.presentation.funding.screen.FundingDepositScreen
 import com.a702.finafan.presentation.funding.screen.FundingDetailScreen
 import com.a702.finafan.presentation.funding.screen.FundingScreen
 import com.a702.finafan.presentation.funding.screen.FundingTermScreen
+import com.a702.finafan.presentation.funding.screen.SubmitFormScreen
 import com.a702.finafan.presentation.funding.viewmodel.FundingCreateViewModel
 import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
 import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
@@ -58,6 +59,10 @@ fun NavGraphBuilder.fundingGraph(
         // 펀딩 입금
         composable(NavRoutes.FundingDeposit.route) {
             FundingDepositScreen(navController, fundingDetailViewModel, accountViewModel)
+        }
+
+        composable(NavRoutes.FundingSubmitForm.route) {
+            SubmitFormScreen(navController, fundingDetailViewModel)
         }
     }
 }

@@ -7,13 +7,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ fun MyStarRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier
             .fillMaxWidth()
+            .padding(vertical = 10.dp)
     ) {
         items(myStars) { star ->
             MyStarItem(
@@ -68,24 +70,23 @@ fun MyStarItem(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape)
-                .padding(10.dp)
-                .border(3.dp, borderColor, CircleShape)
-                .background(MainWhite, shape = RoundedCornerShape(8.dp))
-                .clickable { onClick() }
-        ) {
+        Box() {
             Image(
                 painter = painter,
                 contentDescription = "Star Image",
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(color = MainWhite)
+                    .align(Alignment.Center)
+                    .border(3.dp, brush = borderColor, shape = CircleShape)
+                    .clickable { onClick() }
             )
         }
+        Spacer(Modifier.height(10.dp))
         Text(
             text = star.name,
-            fontSize = 14.sp
+            fontSize = 16.sp
         )
     }
 }

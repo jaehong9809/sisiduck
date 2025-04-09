@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -29,8 +30,9 @@ import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.EditBgGray
 import com.a702.finafan.common.ui.theme.EditTextGray
 import com.a702.finafan.common.ui.theme.MainBlack
-import com.a702.finafan.common.ui.theme.MainGradMidBlue
+import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.presentation.funding.component.MenuDescription
 import com.a702.finafan.presentation.funding.component.MenuTitle
 import java.time.LocalDate
 import java.util.Calendar
@@ -38,6 +40,7 @@ import java.util.Calendar
 @Composable
 fun DatePickerView(
     label: String,
+    desc: String,
     selectedDate: LocalDate?,
     onDateSelected: (LocalDate) -> Unit
 ) {
@@ -64,14 +67,14 @@ fun DatePickerView(
             MenuTitle(label)
             Button(
                 onClick = { datePickerDialog.show() },
-                colors = ButtonDefaults.buttonColors(containerColor = MainGradMidBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = MainTextBlue),
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.height(38.dp)
+                modifier = Modifier.height(45.dp)
             ) {
-                Text(text = stringResource(R.string.funding_create_goal_date_btn), color = MainWhite, fontSize = 14.sp)
+                Text(text = stringResource(R.string.funding_create_goal_date_btn), color = MainWhite, fontSize = 16.sp, fontWeight = FontWeight.Medium)
             }
         }
-
+        MenuDescription(desc)
         Spacer(modifier = Modifier.height(12.dp))
 
         DateDisplay(selectedDate = selectedDate)
@@ -89,9 +92,9 @@ fun DateDisplay(
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        DisplayOnlyTextField(value = year, hint = "", width = 80.dp)
+        DisplayOnlyTextField(value = year, hint = "", width = 90.dp)
         Text(text = stringResource(R.string.funding_create_goal_date_year), fontSize = 20.sp)
 
         DisplayOnlyTextField(value = month, hint = "", width = 60.dp)

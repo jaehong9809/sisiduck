@@ -84,6 +84,11 @@
     <string name="saving_item_media_permission">미디어 권한에 동의하지 않았습니다.</string>
 
     <!-- Funding Screen -->
+    <string name="funding">모금</string>
+    <string name="funding_page">모금 보기</string>
+    <string name="funding_list_tap_all">전체</string>
+    <string name="funding_list_tap_participating">참여</string>
+    <string name="funding_list_tap_my">내 모금</string>
     <string name="funding_join_btn">참여하기</string>
     <string name="funding_join_alert">모금 참여를 시작합니다!</string>
     <string name="funding_create_star_label">스타 선택</string>
@@ -101,6 +106,8 @@
     <string name="funding_create_caution_title">☝ 주의사항</string>
     <string name="funding_create_caution_description">달성일 내에 목표 모금액 이상 모이지 않으면 모금은 자동 취소됩니다.</string>
     <string name="funding_create_content_label">모금 내용</string>
+    <string name="funding_create_term_title">상품 이용 약관</string>
+    <string name="funding_create_term_read">읽어보기</string>
     <string name="funding_create_content_description">모금액 사용 계획을 상세하게 적어주세요.</string>
     <string name="funding_create_content_placeholder">내용 (최소 100자 이상)</string>
     <string name="funding_remaining_days">종료까지 %1$d일</string>
@@ -111,7 +118,7 @@
     <string name="funding_deposit_title">모금 통장 입금하기</string>
     <string name="funding_detail_title">모금 상세</string>
     <string name="funding_detail_host_title">진행자 정보</string>
-    <string name="funding_detail_host_history">✅ 모금 진행 이력</string>
+    <string name="funding_detail_host_history">✅</string>
     <string name="funding_deposit_message">메시지 입력 (선택)</string>
     <string name="success_badge_text">달성 완료</string>
     <string name="funding_cancel_bottom_sheet_title">모금 진행 취소</string>

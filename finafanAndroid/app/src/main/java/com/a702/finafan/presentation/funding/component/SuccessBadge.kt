@@ -26,11 +26,12 @@ import com.a702.finafan.common.ui.theme.starGradTurquoise
 
 @Composable
 fun SuccessBadge(
+    modifier: Modifier = Modifier,
     size: Dp = 100.dp,
     color: Color? = starGradTurquoise
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(size)
             .background(
                 color = MainWhite,

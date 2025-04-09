@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +48,7 @@ import com.a702.finafan.presentation.funding.component.FundingDetailHeader
 import com.a702.finafan.presentation.funding.component.MenuTitle
 import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
+import com.a702.finafan.presentation.navigation.NavRoutes
 
 @Composable
 fun FundingDetailScreen(
@@ -127,6 +129,13 @@ fun FundingDetailScreen(
             }
 
             if (isParticipant) {
+                // 테스트용
+                Button(onClick = {
+                    navController.navigate(NavRoutes.FundingSubmitForm.route)
+                }) {
+                    Text("지출 내역 입력하러 가기")
+                }
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -173,7 +182,7 @@ fun FundingDetailScreen(
                             ImageItem(Modifier.padding(5.dp), {}, R.drawable.user_circle)
                             Column(modifier = Modifier.padding(5.dp)) {
                                 Text(displayName, fontSize = 14.sp, fontFamily = Pretendard, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(vertical = 5.dp))
-                                Text(stringResource(R.string.funding_detail_host_history), style = Typography.labelLarge)
+                                Text(stringResource(R.string.funding_detail_host_history) + " ${hostInfo?.fundingSuccessCount}회 이상 모금 진행 성공", style = Typography.labelLarge)
                             }
                         }
                     }
