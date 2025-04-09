@@ -25,16 +25,21 @@ services:
   spring-app1:
     env_file:
       - .env
-    image: ${DOCKER_USER}/backend:${BUILD_NUMBER}
+#    image: ${DOCKER_USER}/backend:${BUILD_NUMBER}
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: spring-app1
     ports:
-      - "8081:8081"
+      - "8084:8084"
     environment:
       SPRING_PROFILES_ACTIVE: "local,redis-sentinel"
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SERVER_PORT: "8081"
+      SERVER_PORT: "8084"
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,prometheus,metrics"
+      MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "true"
     volumes:
       - ./logs/app1:/app/logs
     networks:
@@ -46,7 +51,10 @@ services:
   spring-app2:
     env_file:
       - .env
-    image: ${DOCKER_USER}/backend:${BUILD_NUMBER}
+    #    image: ${DOCKER_USER}/backend:${BUILD_NUMBER}
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: spring-app2
     ports:
       - "8082:8082"
@@ -56,6 +64,8 @@ services:
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       SERVER_PORT: "8082"
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,prometheus,metrics"
+      MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "true"
     volumes:
       - ./logs/app2:/app/logs
     networks:
@@ -67,7 +77,10 @@ services:
   spring-app3:
     env_file:
       - .env
-    image: ${DOCKER_USER}/backend:${BUILD_NUMBER}
+    #    image: ${DOCKER_USER}/backend:${BUILD_NUMBER}
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: spring-app3
     ports:
       - "8083:8083"
@@ -77,6 +90,8 @@ services:
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       SERVER_PORT: "8083"
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,prometheus,metrics"
+      MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "true"
     volumes:
       - ./logs/app3:/app/logs
     networks:

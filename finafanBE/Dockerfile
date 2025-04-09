@@ -13,6 +13,9 @@ COPY --from=build /app/build/libs/*.jar app.jar
 ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+# 모니터링 도구 설치
+RUN apt-get update && apt-get install -y curl
+
 EXPOSE 8081
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dmanagement.endpoints.web.exposure.include=health,info,prometheus,metrics", "-Dmanagement.endpoint.prometheus.enabled=true", "-jar", "app.jar"]
