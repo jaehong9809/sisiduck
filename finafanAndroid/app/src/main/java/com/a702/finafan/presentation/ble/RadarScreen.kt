@@ -31,16 +31,10 @@ import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradButton
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.domain.ble.model.Fan
 import java.util.UUID
 import kotlin.math.cos
 import kotlin.math.sin
-
-
-// ---------- model ----------
-data class Fan(
-    val id: UUID,
-    val profileUrl: String        // URL 로 변경
-)
 
 
 @Composable
@@ -174,7 +168,7 @@ private fun Radar(
 }
 
 
-// ---------- Avatar ----------
+// ---------- Avatar(Profile) ----------
 @Composable
 private fun Avatar(
     url: String,
