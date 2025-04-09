@@ -8,13 +8,14 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import java.util.Locale
 
-class SpeechRecognizerHelper(
-    private val context: Context
-) {
-    private val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
-    private var onResult: ((String) -> Unit)? = null
-    private var onError: (() -> Unit)? = null
-    private var onNoResult: (() -> Unit)? = null
+class SpeechRecognizerHelper(context: Context) {
+
+    private val recognizer = SpeechRecognizer.createSpeechRecognizer(context)
+    private var onResultCallback: (String) -> Unit = {}
+    private var onErrorCallback : (Int) -> Unit = {}
+    private var onNoResultCallback: () -> Unit = {}
+
+    private var userCanceled = false
 
     private val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
         putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -22,77 +23,56 @@ class SpeechRecognizerHelper(
     }
 
     init {
-        speechRecognizer.setRecognitionListener(object : RecognitionListener {
+        recognizer.setRecognitionListener(object : RecognitionListener {
             override fun onResults(results: Bundle?) {
-                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                if (!matches.isNullOrEmpty()) {
-                    onResult?.invoke(matches.first())
-                }
-                else {
-                    onNoResult?.invoke()
-                }
-            }
+                if (userCanceled) return
 
-            override fun onPartialResults(p0: Bundle?) {
+                val text = results
+                    ?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                    ?.firstOrNull()
 
-            }
-
-            override fun onEvent(p0: Int, p1: Bundle?) {
-
-            }
-
-            override fun onReadyForSpeech(p0: Bundle?) {
-
-            }
-
-            override fun onBeginningOfSpeech() {
-
-            }
-
-            override fun onRmsChanged(p0: Float) {
-
-            }
-
-            override fun onBufferReceived(p0: ByteArray?) {
-
-            }
-
-            override fun onEndOfSpeech() {
-
+                if (text != null) onResultCallback(text)
+                else onNoResultCallback()
             }
 
             override fun onError(error: Int) {
-                onError?.invoke()
+                if (userCanceled) return
+                onErrorCallback(error)
             }
+
+            override fun onEndOfSpeech() {}
+            override fun onReadyForSpeech(params: Bundle?) {}
+            override fun onBeginningOfSpeech() {}
+            override fun onRmsChanged(rmsdB: Float) {}
+            override fun onBufferReceived(buffer: ByteArray?) {}
+            override fun onPartialResults(partialResults: Bundle?) {}
+            override fun onEvent(eventType: Int, params: Bundle?) {}
         })
     }
 
-    fun setOnResultListener(listener: (String) -> Unit) {
-        onResult = listener
+    /* ---------- public API ---------- */
+    fun start() {
+        userCanceled = false
+        recognizer.startListening(intent)
     }
 
-    fun setOnErrorListener(listener: () -> Unit) {
-        onError = listener
-    }
+    fun stop() = recognizer.stopListening()
 
-    fun setOnNoResultListener(listener: () -> Unit) {
-        onNoResult = listener
-    }
-
-    fun startListening() {
-        speechRecognizer.startListening(intent)
-    }
-
-    fun stopListening() {
-        speechRecognizer.stopListening()
-    }
-
-    fun cancelListening() {
-        speechRecognizer.cancel()
+    fun cancel() {
+        if (userCanceled) return
+        userCanceled = true
+        recognizer.cancel()
     }
 
     fun destroy() {
-        speechRecognizer.destroy()
+        userCanceled = true
+        recognizer.destroy()
     }
 
+    /* ---------- 콜백 주입 ---------- */
+    fun setOnResult(block: (String) -> Unit) { onResultCallback = block }
+    fun setOnError(block: (Int) -> Unit)   { onErrorCallback  = block }
+    fun setOnNoResult(block: () -> Unit)    { onNoResultCallback = block }
 }
+
+
