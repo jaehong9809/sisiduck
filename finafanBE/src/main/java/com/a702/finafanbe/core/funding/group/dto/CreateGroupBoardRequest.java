@@ -1,15 +1,11 @@
 package com.a702.finafanbe.core.funding.group.dto;
 
-import lombok.Getter;
+import java.util.List;
 
-@Getter
-public class CreateGroupBoardRequest {
+public record CreateGroupBoardRequest(
+    String content,
+    List<AmountDto> amounts,
+    List<String> imageUrl
+) {
 
-    private String title;
-
-    private String content;
-
-    private Long amount;
-
-    private String imgUrl;
 }

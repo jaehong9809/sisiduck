@@ -71,6 +71,8 @@
     <string name="saving_item_name">%s 적금</string>
     <string name="saving_item_create_fail">스타 적금 개설에 실패했습니다.</string>
     <string name="saving_item_product_name_title">스타적금</string>
+    <string name="saving_item_connect_account_title">계좌 연결하기</string>
+    <string name="saving_item_connect_account_empty">연결된 계좌가 없습니다</string>
 
     <string name="format_money">%s원</string>
     <string name="format_duration">%s ~ %s</string>

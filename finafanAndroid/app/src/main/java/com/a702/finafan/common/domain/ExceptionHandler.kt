@@ -13,7 +13,7 @@ object ExceptionHandler {
                 val errorMessage = extractErrorMessage(e)
                 HandledException(errorMessage ?: getDefaultHttpMessage(e.code()), e)
             }
-            else -> HandledException("알 수 없는 오류가 발생했습니다.", e)
+            else -> HandledException("오류가 발생했습니다.", e)
         }
     }
 
