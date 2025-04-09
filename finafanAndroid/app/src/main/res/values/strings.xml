@@ -34,6 +34,7 @@
     <string name="voice_input">목소리 녹음</string>
     <string name="voice_input_short">말하기</string>
     <string name="voice_cancel">말하기 취소</string>
+    <string name="ducksoon_is_thinking">"덕순이가 생각 중이에요..."</string>
 
     <!-- TopBar Title -->
     <string name="saving_item_star_list_title">스타 목록</string>

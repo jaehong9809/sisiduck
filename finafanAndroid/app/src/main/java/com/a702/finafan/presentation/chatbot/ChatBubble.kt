@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
@@ -92,7 +93,7 @@ fun LoadingChatBubble() {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "덕순이가 생각 중이에요...",
+                    text = stringResource(R.string.ducksoon_is_thinking),
                     fontSize = 18.sp,
                     color = TermTextGray
                 )
