@@ -20,7 +20,7 @@ public class FundingTransactionScheduler {
 
     private final Job transactionJob;
 
-    //@Scheduled(cron = "0 0 5 * * *")
+    @Scheduled(cron = "0 10 14 * * *")
     public void runTransactionJob() {
         try {
             log.info("*** Batch Scheduling funding transaction : {} ***", LocalDateTime.now());
