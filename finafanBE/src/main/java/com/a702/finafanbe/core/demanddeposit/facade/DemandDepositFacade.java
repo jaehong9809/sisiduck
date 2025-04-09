@@ -478,6 +478,8 @@ public class DemandDepositFacade {
         if (savingsAccount.getAmount() != null && savingsAccount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
             if (savingsAccount.isPresent()) {
                 double amountToDeduct = savingsAccount.getAmount().negate().doubleValue();
+                Account account = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
+                account.addAmount(savingsAccount.getAmount());
                 rankingService.updateRanking(
                         savingsAccount.getUserId(),
                         savingsAccount.getEntertainerId(),
@@ -485,9 +487,7 @@ public class DemandDepositFacade {
                 );
             }
         }
-
         entertainSavingsService.deleteByAccountId(depositAccount.getId());
-        deleteAccountService.deleteById(savingsAccount.getId());
     }
 
     public void deleteStarWithdrawalAccount(Long accountId) {
@@ -497,6 +497,8 @@ public class DemandDepositFacade {
         if(entertainSavingsService.existsEntertainerAccountById(accountId)){
             throw new BadRequestException(ResponseData.createResponse(ErrorCode.ENTERTAINER_SAVINGS));
         }
+        EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(accountId);
+        savingsAccount.deleteWithdrawalAccountId();
         deleteAccountService.deleteById(accountId);
     }
 
