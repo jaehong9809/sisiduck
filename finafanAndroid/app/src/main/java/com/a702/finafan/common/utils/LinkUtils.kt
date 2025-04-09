@@ -1,6 +1,7 @@
 package com.a702.finafan.common.utils
 
 
+import com.a702.finafan.domain.link.model.ExtractedLinksResult
 import com.a702.finafan.domain.link.model.LinkPreviewMeta
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -10,24 +11,18 @@ object LinkUtils {
     private val markdownLinkRegex = Regex("""\[(.*?)\]\((https?://[^\s)]+)\)""")
     private val urlRegex = Regex("""(https?://[^\s]+)""")
 
-    fun extractLinkAndCleanText(text: String): Pair<String, String?> {
-        val markdownMatch = markdownLinkRegex.find(text)
-        if (markdownMatch != null) {
-            val display = markdownMatch.groups[1]?.value ?: ""
-            val url = markdownMatch.groups[2]?.value
-            val cleaned = text.replace(markdownMatch.value, display)
-            return cleaned to url
-        }
+    fun extractLinksAndCleanText(
+        text: String
+    ): ExtractedLinksResult {
+        val regex = Regex("\\[(.*?)]\\((https?://.*?)\\)")
+        val matches = regex.findAll(text)
 
-        val rawUrlMatch = urlRegex.find(text)
-        if (rawUrlMatch != null) {
-            val url = rawUrlMatch.value
-            val cleaned = text.replace(url, "")
-            return cleaned.trim() to url
-        }
+        val links = matches.map { it.groupValues[2] }.toList()
+        val cleanText = regex.replace(text, "").trim()
 
-        return text to null
+        return ExtractedLinksResult(cleanText, links)
     }
+
 
     /**
      * OG(Open Graph) 메타데이터 비동기로 가져오기

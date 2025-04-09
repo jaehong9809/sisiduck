@@ -19,7 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,16 +43,13 @@ fun ChatBubble(chatMessage: ChatMessage) {
     val backgroundColor = if (chatMessage.isUser) BubbleBlue else BubbleWhite
     val alignment = if (chatMessage.isUser) Arrangement.End else Arrangement.Start
 
-    val (cleanText, url) = remember(chatMessage.message) {
-        LinkUtils.extractLinkAndCleanText(chatMessage.message)
+    val (cleanText, links) = remember(chatMessage.message) {
+        LinkUtils.extractLinksAndCleanText(chatMessage.message)
     }
 
-    var linkPreview by remember { mutableStateOf<LinkPreviewMeta?>(null) }
-
-    LaunchedEffect(url) {
-        url?.let {
-            linkPreview = LinkUtils.fetchMetadata(it)
-        }
+    val previews by produceState(initialValue = emptyList<LinkPreviewMeta>(), key1 = links) {
+        val result = links.mapNotNull { LinkUtils.fetchMetadata(it) }
+        value = result
     }
 
     Column(
@@ -86,19 +85,12 @@ fun ChatBubble(chatMessage: ChatMessage) {
                     )
                 }
 
-                if (!chatMessage.isUser && linkPreview != null) {
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    if (isYouTube(linkPreview!!.link)) {
-                        LinkPreviewCard(
-                            meta = linkPreview!!,
-                            modifier = Modifier.widthIn(max = 280.dp)
-                        )
+                previews.forEach { preview ->
+                    Spacer(Modifier.height(4.dp))
+                    if (isYouTube(preview.link)) {
+                        LinkPreviewCard(meta = preview, modifier = Modifier.widthIn(max = 280.dp))
                     } else {
-                        ArticleLinkBadge(
-                            link = linkPreview!!.link,
-                            modifier = Modifier.widthIn(max = 280.dp)
-                        )
+                        ArticleLinkBadge(link = preview.link, modifier = Modifier.widthIn(max = 280.dp))
                     }
                 }
             }
