@@ -38,7 +38,8 @@ fun ChatBubble(chatMessage: ChatMessage) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp),
-        horizontalArrangement = alignment
+        horizontalArrangement = alignment,
+        verticalAlignment = Alignment.Top
     ) {
 
         if (!chatMessage.isUser) {
@@ -74,7 +75,7 @@ fun LoadingChatBubble() {
             .fillMaxWidth()
             .padding(horizontal = 12.dp),
         horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Top
     ) {
 
         Image(
