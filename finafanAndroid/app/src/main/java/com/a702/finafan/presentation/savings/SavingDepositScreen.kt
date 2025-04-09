@@ -2,6 +2,7 @@ package com.a702.finafan.presentation.savings
 
 import android.content.ContentResolver
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -58,6 +59,8 @@ fun SavingDepositScreen(
 
                 // 입금 완료 시 완료 후에 적금 내역으로 이동
                 if (savingState.depositAccountId > 0) {
+                    viewModel.resetDeposit()
+
                     navController.navigate(NavRoutes.SavingMain.route + "/${savingAccountId}") {
                         popUpTo(NavRoutes.SavingDeposit.route + "/${savingAccountId}") {
                             inclusive = true
@@ -71,6 +74,7 @@ fun SavingDepositScreen(
 
     LaunchedEffect(savingState.depositAccountId) {
         if (savingState.depositAccountId > 0) {
+            Log.d("saving deposit", "111111111111111")
             showDialog.value = true
             dialogContent.value = context.getString(R.string.saving_item_deposit_complete)
         }
