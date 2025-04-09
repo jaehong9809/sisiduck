@@ -126,7 +126,13 @@ class SavingViewModel @Inject constructor(
                     }
                 }
                 is DataResource.Loading -> {
-                    _savingState.update { it.copy(isLoading = true, error = null) }
+                    _savingState.update {
+                        it.copy(
+                            createAccountId = 0,
+                            isLoading = true,
+                            error = null
+                        )
+                    }
                 }
             }
         }
