@@ -46,6 +46,12 @@ public class FundingPendingTransaction extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FundingTransactionStatus status;
 
+    @PrePersist
+    private void prePersist() {
+        this.deletedAt = null;
+        this.status = FundingTransactionStatus.PENDING;
+    }
+
     public void updateStatus(FundingTransactionStatus status) {
         this.status = status;
     }

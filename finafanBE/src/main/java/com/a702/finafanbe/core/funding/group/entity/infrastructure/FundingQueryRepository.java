@@ -95,8 +95,8 @@ public class FundingQueryRepository {
                 .where(groupUser.fundingGroupId.eq(fundingId), groupUser.role.eq(Role.ADMIN))
                 .fetchOne();
 
-        String adminName = queryFactory
-                .select(user.name)
+        Tuple adminUser = queryFactory
+                .select(user.userId, user.name)
                 .from(user)
                 .where(user.userId.eq(adminUserId))
                 .fetchFirst();
@@ -150,7 +150,8 @@ public class FundingQueryRepository {
                         result.get(entertainer.entertainerProfileUrl)
                 ),
                 new GetFundingAdminResponse(
-                        adminName,
+                        adminUser.get(user.userId),
+                        adminUser.get(user.name),
                         fundingCount != null ? fundingCount.intValue() : 0,
                         fundingSuccessCount != null ? fundingSuccessCount.intValue() : 0
                 ),
