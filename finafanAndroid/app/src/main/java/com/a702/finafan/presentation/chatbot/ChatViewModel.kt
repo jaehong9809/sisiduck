@@ -83,7 +83,8 @@ class ChatViewModel @Inject constructor(
                     it.copy(
                         messages      = it.messages + ChatMessage(message, isUser = true),
                         streamingText = "",          // 빈 봇 말풍선 내용
-                        isStreaming   = true
+                        isStreaming   = true,
+                        isLoading = true
                     )
                 }
             }
@@ -92,7 +93,10 @@ class ChatViewModel @Inject constructor(
             .onEach { chunk ->
                 Log.d("✅ StreamingChunk: ", "\"$chunk\"  (on ${Thread.currentThread().name})")
                 _uiState.update { state ->
-                    state.copy(streamingText = state.streamingText + chunk)
+                    state.copy(
+                        streamingText = state.streamingText + chunk,
+                        isLoading     = false
+                    )
                 }
             }
 
@@ -103,15 +107,16 @@ class ChatViewModel @Inject constructor(
                         state.copy(
                             messages      = state.messages + ChatMessage(state.streamingText, isUser = false),
                             streamingText = "",
-                            isStreaming   = false
+                            isStreaming   = false,
+                            isLoading     = false
                         )
-                    } else {                          // 예외 발생
-                        state.copy(error = cause, isStreaming = false)
+                    } else { // Exception
+                        state.copy(error = cause, isStreaming = false, isLoading = false)
                     }
                 }
             }
 
-            /* 4) Flow 실행 – viewModelScope 안에서 */
+            /* 4) Flow 실행 – viewModelScope 내부 */
             .launchIn(viewModelScope)
     }
 

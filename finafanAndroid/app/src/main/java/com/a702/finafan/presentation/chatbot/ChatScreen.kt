@@ -145,9 +145,10 @@ fun ChatScreen(
             ) {
                 items(uiState.messages) { ChatBubble(it) }
 
-                if (uiState.isStreaming && uiState.streamingText.isNotBlank()) {
+                if (uiState.isStreaming) {
                     item(key = "streaming") {
-                        ChatBubble(ChatMessage(uiState.streamingText, isUser = false))
+                        if (uiState.streamingText.isEmpty() && uiState.isLoading) LoadingChatBubble()
+                        else ChatBubble(ChatMessage(uiState.streamingText, isUser = false))
                     }
                 }
             }
