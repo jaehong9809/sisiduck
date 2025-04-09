@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -72,24 +73,41 @@ fun ChatBubble(chatMessage: ChatMessage) {
                 )
             }
 
-            Box(
-                modifier = Modifier
-                    .background(backgroundColor, shape = RoundedCornerShape(16.dp))
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .widthIn(max = 280.dp)
-            ) {
-                Text(
-                    text = cleanText,
-                    fontSize = 18.sp,
-                    lineHeight = 22.sp
-                )
+            Column(modifier = Modifier.widthIn(max = 280.dp)) {
+                Box(
+                    modifier = Modifier
+                        .background(backgroundColor, shape = RoundedCornerShape(16.dp))
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    Text(
+                        text = cleanText,
+                        fontSize = 18.sp,
+                        lineHeight = 22.sp
+                    )
+                }
+
+                if (!chatMessage.isUser && linkPreview != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    if (isYouTube(linkPreview!!.link)) {
+                        LinkPreviewCard(
+                            meta = linkPreview!!,
+                            modifier = Modifier.widthIn(max = 280.dp)
+                        )
+                    } else {
+                        ArticleLinkBadge(
+                            link = linkPreview!!.link,
+                            modifier = Modifier.widthIn(max = 280.dp)
+                        )
+                    }
+                }
             }
         }
-
-        if (linkPreview != null && !chatMessage.isUser) {
-            LinkPreviewCard(linkPreview!!)
-        }
     }
+}
+
+fun isYouTube(url: String): Boolean {
+    return url.contains("youtube.com") || url.contains("youtu.be")
 }
 
 

@@ -2,6 +2,7 @@ package com.a702.finafan.presentation.chatbot
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,17 +15,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.link.model.LinkPreviewMeta
 
 @Composable
 fun LinkPreviewCard(
-    meta: LinkPreviewMeta
+    meta: LinkPreviewMeta,
+    modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
 
@@ -55,5 +60,26 @@ fun LinkPreviewCard(
             Spacer(Modifier.height(4.dp))
             Text(meta.description, fontSize = 14.sp, color = MainTextGray)
         }
+    }
+}
+
+@Composable
+fun ArticleLinkBadge(
+    link: String,
+    modifier: Modifier = Modifier
+) {
+    val uriHandler = LocalUriHandler.current
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(MainGradViolet)
+            .clickable { uriHandler.openUri(link) }
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.article_badge),
+            color = MainWhite,
+            fontSize = 15.sp
+        )
     }
 }
