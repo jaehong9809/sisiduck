@@ -22,6 +22,7 @@ import com.a702.finafanbe.core.transaction.deposittransaction.entity.infrastruct
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.core.user.entity.infrastructure.UserRepository;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
+import com.a702.finafanbe.global.common.exception.ErrorCode;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -56,7 +57,7 @@ public class EntertainSavingsService {
     ) {
         User user = findUser(userEmail);
         Long entertainerId = findEntertainerId(createStartAccountRequest.entertainerId());
-
+        Entertainer entertainer = findEntertainer(entertainerId);
         validateNoExistingAccount(user.getUserId(), entertainerId);
         Bank bank = bankService.findBankByCode(accountResponse.bankCode());
         EntertainerSavingsAccount createdAccount = entertainerSavingsAccountRepository.save(EntertainerSavingsAccount.of(
@@ -68,7 +69,7 @@ public class EntertainSavingsService {
             createStartAccountRequest.withdrawalAccountId(),
             0.05,
             60L,
-            "example.com"
+            entertainer.getEntertainerProfileUrl()
 
         ));
 
@@ -79,6 +80,10 @@ public class EntertainSavingsService {
             createdAccount.getWithdrawalAccountId(),
             bank
         );
+    }
+
+    private Entertainer findEntertainer(Long entertainerId) {
+        return entertainRepository.findById(entertainerId).orElseThrow(()->new BadRequestException(ResponseData.createResponse(NotFoundEntertainer)));
     }
 
     @Transactional
