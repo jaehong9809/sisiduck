@@ -66,14 +66,22 @@ fun FundingDetailScreen(
         else -> ""
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchFundingDetail(fundingId)
-        viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL)
-        val status = uiState.funding?.let { FundingStatus.valueOf(it.status) }
-        if (status == FundingStatus.CANCELED || status == FundingStatus.FAILED) {
-            showBottomSheet.value = true
+    LaunchedEffect(uiState.funding) {
+        uiState.funding?.let {
+            viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL)
+
+            val status = FundingStatus.valueOf(it.status)
+            if (status == FundingStatus.CANCELED || status == FundingStatus.FAILED) {
+                showBottomSheet.value = true
+            }
         }
     }
+
+    LaunchedEffect(fundingId) {
+        viewModel.fetchFundingDetail(fundingId)
+        viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL)
+    }
+
 
     val colorSet: List<Color> = listOf(
         starThemes[uiState.funding?.star?.index?:0].start,
@@ -189,7 +197,7 @@ fun FundingDetailScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
                 onClick = {
-                    navController.navigate(NavRoutes.FundingJoin.route + "/${fundingId}")
+                    navController.navigate(NavRoutes.FundingJoin.withId(fundingId))
                 },
                 text = "참가하기",
                 gradientColor = listOf(

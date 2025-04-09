@@ -30,11 +30,12 @@ import com.a702.finafan.domain.funding.model.MyStar
 fun MyStarRow(
     myStars: List<MyStar>,
     selectedStar: MyStar?,
-    onStarSelected: (MyStar) -> Unit
+    onStarSelected: (MyStar) -> Unit,
+    modifier: Modifier
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {

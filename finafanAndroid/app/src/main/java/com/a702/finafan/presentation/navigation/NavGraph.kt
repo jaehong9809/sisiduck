@@ -83,6 +83,7 @@ fun NavGraph(
             accountGraph(
                 navController = navController,
                 savingViewModel = savingViewModel,
+                fundingViewModel = fundingViewModel,
                 accountViewModel = accountViewModel
             )
 

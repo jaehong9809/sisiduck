@@ -52,8 +52,12 @@ sealed class NavRoutes(val route: String) {
     /* Funding */
     object Funding : NavRoutes("funding")
     object FundingMain : NavRoutes("funding_main")
-    object FundingDetail : NavRoutes("funding_detail")
-    object FundingJoin : NavRoutes("funding_join")
+    object FundingDetail : NavRoutes("funding_detail/{fundingId}") {
+        fun withId(fundingId: Long) = "funding_detail/$fundingId"
+    }
+    object FundingJoin : NavRoutes("funding_join/{fundingId}") {
+        fun withId(fundingId: Long) = "funding_join/$fundingId"
+    }
     object FundingCreate : NavRoutes("funding_create")
     object FundingDeposit : NavRoutes("funding_deposit")
     object FundingWithdraw : NavRoutes("funding_withdraw")
