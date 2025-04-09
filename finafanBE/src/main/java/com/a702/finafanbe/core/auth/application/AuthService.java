@@ -82,6 +82,10 @@ public class AuthService {
             userKey= financialNetwork.getBody().userKey();
         }catch (Exception e) {
             log.error("Failed to request financial network for user: {}, error: {}", userEmail, e.getMessage());
+            userKey = requestFinancialNetwork(
+                    "https://finopenapi.ssafy.io/ssafy/api/v1/member/search",
+                    userEmail
+            ).getBody().userKey();
         }
         User user = saveUser(userEmail, userKey, name);
         REC dummyAccount = createDummyAccount(user.getSocialEmail(), "001-1-56b59a5f38c04f");
