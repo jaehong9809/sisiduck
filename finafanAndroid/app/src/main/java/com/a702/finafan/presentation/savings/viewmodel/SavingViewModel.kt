@@ -152,7 +152,12 @@ class SavingViewModel @Inject constructor(
                     }
                 }
                 is DataResource.Loading -> {
-                    _savingState.update { it.copy(isLoading = true, error = null) }
+                    _savingState.update {
+                        it.copy(
+                            depositAccountId = 0,
+                            isLoading = true,
+                            error = null
+                        ) }
                 }
             }
         }
@@ -308,6 +313,14 @@ class SavingViewModel @Inject constructor(
 
     fun resetCancelState() {
         _savingState.update { it.copy(isCancel = false) }
+    }
+
+    fun resetDeposit() {
+        _savingState.update { it.copy(depositAccountId = 0) }
+    }
+
+    fun resetCreate() {
+        _savingState.update { it.copy(createAccountId = 0) }
     }
 
 }
