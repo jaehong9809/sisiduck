@@ -46,23 +46,8 @@ fun ChatInputBar(
     viewModel: ChatViewModel,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val inputTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp)
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            viewModel.startListening()
-        } else {
-            Toast.makeText(
-                context,
-                context.getString(R.string.permission_audio_required),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
 
     Row(
         modifier = modifier

@@ -49,7 +49,6 @@ import kotlinx.coroutines.launch
 fun ChatScreen(
     viewModel: ChatViewModel = viewModel()
 ) {
-
     /* ─── State & helpers ─── */
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -62,12 +61,17 @@ fun ChatScreen(
         scope.launch { listState.animateScrollToItem(uiState.messages.size) }
     }
 
-    /* “맨 아래로” 버튼 표시 여부 */
+    /* “맨 아래로” 버튼 표시 */
     val showScrollToBottom by remember {
         derivedStateOf {
-            val notAtBottom = listState.firstVisibleItemIndex < uiState.messages.lastIndex
-            val scrollable  = listState.layoutInfo.totalItemsCount > 5
-            notAtBottom && scrollable
+            val layoutInfo = listState.layoutInfo
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            val totalItemsCount = layoutInfo.totalItemsCount
+
+            val atBottom = lastVisibleItemIndex == totalItemsCount - 1
+            val scrollable = totalItemsCount > 5
+
+            !atBottom && scrollable
         }
     }
 
@@ -140,7 +144,7 @@ fun ChatScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(
                     top = 12.dp,
-                    bottom = 28.dp
+                    bottom = 28.dp + 56.dp + 12.dp
                 )
             ) {
                 items(uiState.messages) { ChatBubble(it) }
