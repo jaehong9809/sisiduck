@@ -21,11 +21,7 @@ import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFa
 import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -77,15 +73,22 @@ public class AuthService {
 
     private User createUser(String userEmail, String name) {
         String generatedNickName = name + "#" + userEmail;
-        UserFinancialNetworkResponse financialNetwork = requestFinancialNetwork(
-            "https://finopenapi.ssafy.io/ssafy/api/v1/member",
-            userEmail
-        );
+        String userKey = "";
+        try {
+            ResponseEntity<UserFinancialNetworkResponse> financialNetwork = requestFinancialNetwork(
+                    "https://finopenapi.ssafy.io/ssafy/api/v1/member",
+                    userEmail
+            );
+            userKey= financialNetwork.getBody().userKey();
+        }catch (Exception e) {
+            log.error("Failed to request financial network for user: {}, error: {}", userEmail, e.getMessage());
+        }
+
         REC dummyAccount = createDummyAccount(userEmail, "001-1-56b59a5f38c04f");
         depositToDummyAccount(userEmail,
-            new DepositRequest(dummyAccount.getAccountNo(), 100000L, ""));
+            new DepositRequest(dummyAccount.getAccountNo(), 100000000L, ""));
 
-        return saveUser(userEmail, financialNetwork.userKey(), name);
+        return saveUser(userEmail, userKey, name);
     }
 
     private ResponseEntity<UpdateDemandDepositAccountDepositResponse> depositToDummyAccount(
@@ -134,7 +137,7 @@ public class AuthService {
         );
     }
 
-    public UserFinancialNetworkResponse requestFinancialNetwork(
+    public ResponseEntity<UserFinancialNetworkResponse> requestFinancialNetwork(
         String url,
         String userEmail
     ) {
@@ -155,7 +158,7 @@ public class AuthService {
             HttpMethod.POST,
             httpEntity,
             UserFinancialNetworkResponse.class
-        ).getBody();
+        );
     }
 
     public UserResponse getUserWithFinancialNetwork(String userEmail) {
@@ -163,7 +166,7 @@ public class AuthService {
         UserFinancialNetworkResponse userFinancialNetworkResponse = requestFinancialNetwork(
             "https://finopenapi.ssafy.io/ssafy/api/v1/member/search",
             user.getSocialEmail()
-        );
+        ).getBody();
         return new UserResponse(
             userFinancialNetworkResponse.userId(),
             userFinancialNetworkResponse.userName()

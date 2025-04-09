@@ -611,13 +611,17 @@ public class DemandDepositFacade {
 
                 // 계좌 객체 생성
                 Account account = Account.of(
-//                    user.getUserId(),
-                    1L,
+                    user.getUserId(),
                     acc.accountNo(),
                     "KRW",
                     acc.accountName(),
                     "GENERAL001",
-                    bank.getBankId()
+                    bank.getBankId(),
+                    acc.accountBalance(),
+                    acc.accountExpiryDate(),
+                    acc.accountTypeCode(),
+                    acc.dailyTransferLimit(),
+                    acc.oneTimeTransferLimit()
                 );
                 accountsToSave.add(account);
             }
