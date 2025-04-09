@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.user.local.UserPreferences
-import com.a702.finafan.domain.main.model.MainRanking
-import com.a702.finafan.domain.main.model.MainSaving
 import com.a702.finafan.domain.main.model.RankingType
 import com.a702.finafan.domain.main.usecase.GetMainRankingUseCase
 import com.a702.finafan.domain.main.usecase.GetMainSavingUseCase
@@ -43,30 +41,52 @@ class MainViewModel @Inject constructor(
 
     fun fetchMainSavings() {
         viewModelScope.launch {
-            _mainSavingState.update { it.copy(isLoading = true) }
-
-            val savings: List<MainSaving> = getMainSavingUseCase()
-
-            _mainSavingState.update {
-                it.copy(
-                    savings = savings,
-                    isLoading = false
-                )
+            when (val result = getMainSavingUseCase()) {
+                is DataResource.Success -> {
+                    _mainSavingState.update {
+                        it.copy(
+                            savings = result.data,
+                            isLoading = false
+                        )
+                    }
+                }
+                is DataResource.Error -> {
+                    _mainSavingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _mainSavingState.update { it.copy(isLoading = true) }
+                }
             }
         }
     }
 
     fun fetchMainRanking(type: RankingType) {
         viewModelScope.launch {
-            _mainRankingState.update { it.copy(isLoading = true) }
-
-            val rankings: List<MainRanking> = getMainRankingUseCase(type)
-
-            _mainRankingState.update {
-                it.copy(
-                    rankings = rankings,
-                    isLoading = false
-                )
+            when (val result = getMainRankingUseCase(type)) {
+                is DataResource.Success -> {
+                    _mainRankingState.update {
+                        it.copy(
+                            rankings = result.data,
+                            isLoading = false
+                        )
+                    }
+                }
+                is DataResource.Error -> {
+                    _mainRankingState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.throwable,
+                        )
+                    }
+                }
+                is DataResource.Loading -> {
+                    _mainRankingState.update { it.copy(isLoading = true) }
+                }
             }
         }
     }
