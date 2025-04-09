@@ -2,7 +2,6 @@ package com.a702.finafan.presentation.savings
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -74,7 +73,6 @@ fun SavingDepositScreen(
 
     LaunchedEffect(savingState.depositAccountId) {
         if (savingState.depositAccountId > 0) {
-            Log.d("saving deposit", "111111111111111")
             showDialog.value = true
             dialogContent.value = context.getString(R.string.saving_item_deposit_complete)
         }
