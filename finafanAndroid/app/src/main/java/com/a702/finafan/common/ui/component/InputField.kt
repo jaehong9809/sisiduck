@@ -281,6 +281,10 @@ fun LiveTextField(
     onClick: (() -> Unit)? = null,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val inputTextStyle = MaterialTheme.typography.bodyLarge.copy(
+        fontSize = 20.sp,
+        lineHeight = 28.sp
+    )
 
     Column(
         modifier = modifier
@@ -299,7 +303,7 @@ fun LiveTextField(
                     onValueChange(processed)
                 }
             },
-            textStyle = TextStyle(color = MainBlack, fontSize = 20.sp),
+            textStyle = inputTextStyle,
             keyboardOptions = KeyboardOptions(
                 keyboardType =
                     if (isNumber || isMoney) KeyboardType.Number
