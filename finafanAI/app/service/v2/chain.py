@@ -221,6 +221,7 @@ def get_agent_chain(callback):
             max_iterations=10,
             max_execution_time=30,
             return_exceptions=False,
+            return_intermediate_steps=True,
             verbose=True,
             output_key="output",
         )

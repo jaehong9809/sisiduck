@@ -149,7 +149,7 @@ def get_weather(city="Seoul"):
     cloud_percent = data["clouds"]["all"]  # 구름량 (%)
 
     return (
-        f"대한민국 서울 현재 날씨는 '{weather}'이고, "
+        f"대한민국 현재 날씨는 '{weather}'이고, "
         f"온도는 {temp}도, 습도는 {humidity}%, "
         f"풍속은 초속 {wind_speed}m, 구름량은 {cloud_percent}%입니다."
     )
