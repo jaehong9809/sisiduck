@@ -100,9 +100,26 @@ fun FanRadarScreen(
                 isTextCentered = true
             )
         },
-        containerColor = MainWhite
-    ) { innerPadding ->
+        containerColor = MainWhite,
 
+        bottomBar = {
+            if (fans.isNotEmpty()) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                ) {
+                    PrimaryGradButton(
+                        text = stringResource(R.string.show_fans_cheers),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(70.dp),
+                        onClick = onShowCheerClick
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -111,7 +128,6 @@ fun FanRadarScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Spacer(Modifier.height(24.dp))
 
             Box(
@@ -124,6 +140,8 @@ fun FanRadarScreen(
                     myProfileUrl = myProfileUrl,
                     fans = fans
                 )
+
+                Spacer(Modifier.height(12.dp))
 
                 if (fans.isNotEmpty()) {
                     SpeechBubble(
@@ -141,16 +159,7 @@ fun FanRadarScreen(
                 }
             }
 
-            if (fans.isNotEmpty()) {
-                PrimaryGradButton(
-                    text = stringResource(R.string.show_fans_cheers),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(bottom = 24.dp),
-                    onClick = onShowCheerClick
-                )
-            } else {
+            if (fans.isEmpty()) {
                 Text(
                     text = stringResource(R.string.finding_now),
                     fontWeight = FontWeight.Bold,
@@ -262,9 +271,12 @@ private fun SpeechBubble(
     Box(
         modifier
             .background(MainBgLightGray, RoundedCornerShape(16.dp))
-            .padding(horizontal = 20.dp, vertical = 12.dp)
+            .padding(horizontal = 28.dp, vertical = 16.dp)
     ) {
-        Text(text, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text,
+            fontSize = 20.sp,
+            style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -280,5 +292,22 @@ private fun SpeechBubblePreview() {
             append("팬이 있어요!")
         },
         modifier = Modifier.padding(16.dp)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FanRadarScreenPreview() {
+    val heroUrl = "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/775e6e08-eb42-4ef7-82b7-84fc5465afb0_1744257521339.jpg"
+
+    val dummyFans = listOf(
+        Fan(id = 1, name = "이*호", profileUrl = heroUrl),
+        Fan(id = 2, name = "강*주", profileUrl = heroUrl),
+    )
+
+    FanRadarScreen(
+        myProfileUrl = heroUrl,
+        fans = dummyFans,
+        onShowCheerClick = {}
     )
 }
