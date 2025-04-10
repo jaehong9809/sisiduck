@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +38,7 @@ import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainBlackTransparency
 import com.a702.finafan.common.ui.theme.MainTextBlue
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
@@ -147,6 +149,12 @@ fun HistoryItem(
             .padding(bottom = 12.dp)
             .clip(RoundedCornerShape(25.dp))
             .height(74.dp)
+            .shadow(
+                elevation = 2.dp,
+                shape = RoundedCornerShape(25.dp),
+                ambientColor = MainBlackTransparency,
+                spotColor = MainBlackTransparency
+            )
             .background(MainWhite)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },

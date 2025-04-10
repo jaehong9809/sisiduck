@@ -33,7 +33,7 @@ fun AddStarDialog(
         onClickConfirm = onClickConfirm
     ) {
         CircleBorderImage(
-            modifier = Modifier.size(50.dp),
+            modifier = Modifier.size(60.dp),
             imageUrl = star.starImageUrl
         )
 
@@ -44,7 +44,7 @@ fun AddStarDialog(
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium,
             color = MainBlack,
-            fontSize = 20.sp
+            fontSize = 22.sp
         )
     }
 }
