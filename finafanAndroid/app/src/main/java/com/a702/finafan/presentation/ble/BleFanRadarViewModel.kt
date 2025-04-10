@@ -2,41 +2,71 @@ package com.a702.finafan.presentation.ble
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.a702.finafan.domain.ble.model.Fan
+import com.a702.finafan.common.domain.DataResource
+import com.a702.finafan.domain.ble.usecase.GetMatchedFanDepositsUseCase
+import com.a702.finafan.domain.ble.usecase.MatchFansUseCase
+import com.a702.finafan.domain.ble.usecase.RegisterBleUuidUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class BleFanRadarViewModel @Inject constructor(
-
+    private val registerBleUuidUseCase: RegisterBleUuidUseCase,
+    private val matchFansUseCase: MatchFansUseCase,
+    private val getMatchedFanDepositsUseCase: GetMatchedFanDepositsUseCase
 ) : ViewModel() {
 
-    // 프로필 URL 상태. 실제로는 네트워크 또는 로컬 데이터로부터 가져오는 값으로 업데이트
-    private val _myProfileUrl = MutableStateFlow("https://example.com/default_profile.jpg")
-    val myProfileUrl: StateFlow<String> = _myProfileUrl
+    private val _uiState = MutableStateFlow(BleUiState())
+    val uiState: StateFlow<BleUiState> = _uiState.asStateFlow()
 
-    // 팬 목록 상태. 실제 데이터로 업데이트 가능함.
-    private val _fans = MutableStateFlow<List<Fan>>(emptyList())
-    val fans: StateFlow<List<Fan>> = _fans
-
-    init {
-        // 초기 데이터 로드를 위한 예시. 실제 로직에서는 repository 호출 등 비동기 작업 수행.
+    fun registerUuid(uuid: String) {
         viewModelScope.launch {
-            // 예시 지연. 실제 네트워크 호출이나 DB 로드 작업으로 대체할 수 있음.
-            delay(1000)
-
-            // 팬 목록 예시 데이터
-            _fans.value = listOf(
-                //Fan(id = "1", name = "Fan One", profileUrl = "https://example.com/fan1.jpg"),
-                //Fan(id = "2", name = "Fan Two", profileUrl = "https://example.com/fan2.jpg")
-            )
-
-            // myProfileUrl 또한 필요시 업데이트할 수 있음.
-            _myProfileUrl.value = "https://example.com/my_profile.jpg"
+            when (val result = registerBleUuidUseCase(uuid)) {
+                is DataResource.Success -> Unit
+                is DataResource.Error -> updateError(result.throwable.message)
+                is DataResource.Loading -> TODO("찾는 중입니다..!!")
+            }
         }
+    }
+
+    fun matchFans(uuids: List<String>) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            when (val result = matchFansUseCase(uuids)) {
+                is DataResource.Success -> _uiState.value = _uiState.value.copy(
+                    matchedFans = result.data,
+                    isLoading = false
+                )
+                is DataResource.Error -> updateError(result.throwable.message)
+                is DataResource.Loading -> Unit
+            }
+        }
+    }
+
+    fun fetchMatchedFanDeposits() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            when (val result = getMatchedFanDepositsUseCase()) {
+                is DataResource.Success -> _uiState.value = _uiState.value.copy(
+                    fanDeposits = result.data,
+                    isLoading = false
+                )
+                is DataResource.Error -> updateError(result.throwable.message)
+                is DataResource.Loading -> TODO()
+            }
+        }
+    }
+
+    fun clearError() {
+        _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
+
+    private fun updateError(message: String?) {
+        _uiState.value = _uiState.value.copy(errorMessage = message ?: "알 수 없는 오류가 발생했어요.")
     }
 }
