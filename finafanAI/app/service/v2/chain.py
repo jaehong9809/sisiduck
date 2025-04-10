@@ -145,9 +145,22 @@ def get_agent_chain(callback):
                 answer = "임영웅의 소속사는 물고기뮤직이야!"
             elif "찬원" in x["input"]:
                 answer = "이찬원의 소속사는 티엔엔터테인먼트야!"
-            friendly = await to_friendly_tone(answer)
+            
+            if answer:  # 👉 이름이 인식된 경우에만 처리
+                friendly = await to_friendly_tone(answer)
+                return {"output": friendly}
 
-            return {"output": friendly}
+        if "생일" in x["input"]:
+            answer = ""
+            if "영웅" in x["input"]:
+                answer = "임영웅 생일은 1991년 6월 16일이야!"
+            elif "찬원" in x["input"]:
+                answer = "이찬원 생일은 1996년 11월 1일이야!"
+
+            if answer:  # 👉 이름이 인식된 경우에만 처리
+                friendly = await to_friendly_tone(answer)
+                return {"output": friendly}
+            
 
         llm = get_llm(streaming=True, callback=callback)
 
@@ -170,7 +183,7 @@ def get_agent_chain(callback):
             max_execution_time=20,
             early_stopping_method="generate",
             return_exceptions=False,
-            verbose=True,
+            verbose=False,
             output_key="output",
         )
         del x["user_id"]
