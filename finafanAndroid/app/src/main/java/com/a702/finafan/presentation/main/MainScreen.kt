@@ -46,10 +46,12 @@ import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBtnLightBlue
 import com.a702.finafan.common.ui.theme.MainBtnLightOrange
 import com.a702.finafan.common.ui.theme.MainBtnLightYellow
+import com.a702.finafan.di.entrypoint.BleRegistrarEntryPoint
 import com.a702.finafan.infrastructure.android.BleForegroundService
 import com.a702.finafan.presentation.ble.rememberBlePermissionLauncher
 import com.a702.finafan.presentation.main.viewmodel.MainViewModel
 import com.a702.finafan.presentation.navigation.NavRoutes
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun MainScreen(
@@ -75,10 +77,16 @@ fun MainScreen(
         }
     )
 
+    val bleUuidRegistrar = EntryPointAccessors.fromApplication(
+        context.applicationContext,
+        BleRegistrarEntryPoint::class.java
+    ).bleUuidRegistrar()
+
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
             viewModel.fetchUserInfo()
             viewModel.fetchMainSavings()
+            bleUuidRegistrar.registerOnce()
         }
     }
 
