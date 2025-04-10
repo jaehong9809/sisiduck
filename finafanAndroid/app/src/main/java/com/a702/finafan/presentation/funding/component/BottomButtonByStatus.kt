@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.funding.component
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +23,8 @@ fun BottomButtonByStatus(
             // 바텀 버튼 없음
         }
         FundingStatus.INPROGRESS -> {
+            Log.d("INPROGRESS isHost: ", "${isHost}")
+            Log.d("INPROGRESS isParticipant: ", "${isParticipant}")
             when {
                 isHost -> GradSelectBottomButton(
                     modifier = Modifier,
@@ -49,7 +52,7 @@ fun BottomButtonByStatus(
         FundingStatus.SUCCESS -> {
             if (isHost) {
                 CustomGradBottomButton(
-                    onClick = { /* TODO: 증빙 제출 */ },
+                    onClick = { onNavigate(NavRoutes.FundingSubmitForm.route) },
                     text = "증빙 서류 제출하기",
                     gradientColor = listOf(colorSet[0], colorSet[2])
                 )

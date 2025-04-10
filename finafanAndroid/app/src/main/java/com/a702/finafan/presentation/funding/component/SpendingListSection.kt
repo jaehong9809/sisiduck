@@ -20,27 +20,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.a702.finafan.common.ui.component.Badge
 import com.a702.finafan.common.ui.component.LiveTextField
+import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.starMidGreen
-import com.a702.finafan.presentation.funding.viewmodel.SubmitFormViewModel
 
 @Composable
-fun SpendingListSection() {
-
-    val submitFormViewModel: SubmitFormViewModel = hiltViewModel()
-
-    var items by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
+fun SpendingListSection(
+    items: List<Pair<String, String>>,
+    onItemsChanged: (List<Pair<String, String>>) -> Unit,
+    modifier: Modifier
+) {
     var isAdding by remember { mutableStateOf(false) }
     var tempContent by remember { mutableStateOf("") }
     var tempAmount by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         SpendingHeader()
-        items.forEach { (content, amount) ->
-            SpendingItem(content, amount)
+        items.forEachIndexed { index, (content, amount) ->
+            SpendingItem(
+                content = content,
+                amount = amount,
+                onDelete = {
+                    val updated = items.toMutableList()
+                    updated.removeAt(index)
+                    onItemsChanged(updated)
+                }
+            )
         }
 
         if (isAdding) {
@@ -56,7 +63,7 @@ fun SpendingListSection() {
                 },
                 onComplete = {
                     if (tempContent.isNotBlank() && tempAmount.isNotBlank()) {
-                        items = items + (tempContent to tempAmount)
+                        onItemsChanged(items + (tempContent to tempAmount))
                         isAdding = false
                         tempContent = ""
                         tempAmount = ""
@@ -67,19 +74,20 @@ fun SpendingListSection() {
             AddSpendingButton(onClick = { isAdding = true })
         }
 
-        // 합계 표시
+        // 합계
         val total = items.sumOf { it.second.replace(",", "").replace("원", "").toIntOrNull() ?: 0 }
         Text(
-            text = "합계  ${"%,d".format(total)} 원",
+            text = "합계  ${"%,d".format(total)}원",
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 4.dp),
+                .padding(end = 4.dp, top = 20.dp, bottom = 20.dp),
             textAlign = TextAlign.End,
-            fontSize = 16.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold
         )
     }
 }
+
 
 @Composable
 fun SpendingHeader() {
@@ -92,34 +100,54 @@ fun SpendingHeader() {
             text = "내용",
             modifier = Modifier.weight(1f),
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontSize = 16.sp,
         )
         Text(
             text = "금액",
             modifier = Modifier.weight(1f),
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp,
+            fontSize = 16.sp,
         )
     }
 }
 
 @Composable
-fun SpendingItem(content: String, amount: String) {
+fun SpendingItem(
+    content: String,
+    amount: String,
+    onDelete: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp, horizontal = 8.dp)
+            .padding(vertical = 6.dp, horizontal = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = content,
-            modifier = Modifier.weight(1f),
-            fontSize = 20.sp
-        )
-        Text(
-            text = "${amount}원",
-            modifier = Modifier.weight(1f),
-            fontSize = 20.sp,
-            textAlign = TextAlign.End
+        Row(modifier = Modifier.weight(1f)) {
+            Text(
+                text = content,
+                modifier = Modifier.weight(1f),
+                fontSize = 20.sp,
+                lineHeight = 20.sp
+            )
+            Text(
+                text = "${amount}원",
+                modifier = Modifier.weight(1f),
+                fontSize = 20.sp
+            )
+        }
+
+        Badge(
+            content = "삭제",
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .clickable { onDelete() },
+            fontColor = MainWhite,
+            bgColor = MainTextGray,
+            widthMin = 60.dp,
+            widthMax = 80.dp,
+            height = 30.dp,
+            fontSize = 12.sp
         )
     }
 }
@@ -134,7 +162,8 @@ fun SpendingItemInput(
     onComplete: () -> Unit,
     onCancel: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth()
+        .padding(top = 10.dp)) {
         LiveTextField(
             hint = "내용 입력",
             value = title,
@@ -160,14 +189,22 @@ fun SpendingItemInput(
                 content = "취소",
                 modifier = Modifier.clickable{ onCancel() },
                 fontColor = MainWhite,
-                bgColor = starMidGreen
+                bgColor = starMidGreen,
+                widthMin = 100.dp,
+                widthMax = 120.dp,
+                height = 45.dp,
+                fontSize = 14.sp
             )
             Spacer(modifier = Modifier.width(8.dp))
             Badge(
                 content = "완료",
                 modifier = Modifier.clickable{ onComplete() },
                 fontColor = MainWhite,
-                bgColor = starMidGreen
+                bgColor = starMidGreen,
+                widthMin = 100.dp,
+                widthMax = 120.dp,
+                height = 45.dp,
+                fontSize = 14.sp
             )
         }
     }
@@ -182,9 +219,14 @@ fun AddSpendingButton(onClick: () -> Unit) {
     ) {
         Badge(
             content = "항목 추가",
-            modifier = Modifier.clickable{ onClick() },
+            modifier = Modifier.clickable{ onClick() }
+                .padding(top = 10.dp),
             fontColor = MainWhite,
-            bgColor = starMidGreen
+            bgColor = starMidGreen,
+            widthMin = 100.dp,
+            widthMax = 120.dp,
+            height = 45.dp,
+            fontSize = 14.sp
         )
     }
 

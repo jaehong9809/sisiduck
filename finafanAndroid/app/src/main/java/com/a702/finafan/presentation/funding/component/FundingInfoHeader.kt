@@ -94,19 +94,22 @@ fun FundingInfoHeader(
                     bgColor = starThemes[funding.star.index].mid
                 )
 
-                Spacer(modifier = Modifier.weight(1f)) // 오른쪽으로 밀기
+                Spacer(modifier = Modifier.weight(1f))
 
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         text = getRemainingDaysText(funding.fundingExpiryDate),
-                        fontSize = 12.sp,
-                        color = MainTextGray
+                        fontSize = 16.sp,
+                        color = MainTextGray,
+                        fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = getFundingProgressText(funding.currentAmount, funding.goalAmount),
-                        fontSize = 12.sp,
-                        color = starThemes[funding.star.index].end
+                        fontSize = 16.sp,
+                        color = starThemes[funding.star.index].end,
+                        fontWeight = FontWeight.Medium
+
                     )
                 }
             }

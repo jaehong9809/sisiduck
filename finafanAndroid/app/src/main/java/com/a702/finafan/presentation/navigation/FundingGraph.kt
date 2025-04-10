@@ -16,9 +16,11 @@ import com.a702.finafan.presentation.funding.screen.SubmitFormScreen
 import com.a702.finafan.presentation.funding.viewmodel.FundingCreateViewModel
 import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
 import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
+import com.a702.finafan.presentation.main.viewmodel.MainViewModel
 
 fun NavGraphBuilder.fundingGraph(
     navController: NavHostController,
+    mainViewModel: MainViewModel,
     fundingViewModel: FundingViewModel,
     fundingCreateViewModel: FundingCreateViewModel,
     fundingDetailViewModel: FundingDetailViewModel,
@@ -39,7 +41,7 @@ fun NavGraphBuilder.fundingGraph(
             arguments = listOf(navArgument("fundingId") { type = NavType.LongType })
         ) { backStackEntry ->
             val fundingId = backStackEntry.arguments?.getLong("fundingId") ?: 0L
-            FundingDetailScreen(fundingId, fundingDetailViewModel)
+            FundingDetailScreen(fundingId, fundingDetailViewModel, mainViewModel)
         }
 
         // 펀딩 참여

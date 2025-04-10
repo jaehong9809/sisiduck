@@ -2,6 +2,7 @@ package com.a702.finafan.data.funding.dto.response
 
 import com.a702.finafan.domain.funding.model.Funding
 import com.a702.finafan.domain.funding.model.FundingDetail
+import com.a702.finafan.domain.funding.model.FundingStatus
 import com.a702.finafan.domain.funding.model.Star
 import java.time.LocalDate
 
@@ -20,11 +21,12 @@ data class FundingDetailResponse(
 data class Entertainer(
     val entertainerId: Long,
     val name: String,
-    val imageUrl: String
+    val imageUrl: String,
+    val thumbnailUrl: String
 )
 
 data class AdminUser(
-    val adminId: Long,
+    val id: Long,
     val adminName: String,
     val fundingCount: Int,
     val fundingSuccessCount: Int
@@ -38,19 +40,19 @@ fun FundingDetailResponse.toDomain(id: Long): FundingDetail {
                 name = entertainer.name,
                 image = entertainer.imageUrl,
                 index = 0, // TODO: DB에 INDEX 매핑해달라고 해야 함 ...
-                thumbnail = entertainer.imageUrl
+                thumbnail = entertainer.thumbnailUrl
             ),
             id = id,
             title = fundingName,
             accountNo = "",
-            status = status,
+            status = FundingStatus.valueOf(status),
             currentAmount = currentAmount,
             goalAmount = goalAmount,
             fundingExpiryDate = LocalDate.parse(fundingExpiryDate)
         ),
         description = description,
         host = adminUser.adminName,
-        hostId = adminUser.adminId,
+        hostId = adminUser.id,
         hostFundingCount = adminUser.fundingCount,
         hostSuccessCount = adminUser.fundingSuccessCount,
         participated = participated

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,10 +27,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.a702.finafan.R
+import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.ui.component.BottomSheetLayout
 import com.a702.finafan.common.ui.component.Card
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.CustomGradButton
+import com.a702.finafan.common.ui.component.DialogLayout
 import com.a702.finafan.common.ui.component.ImageItem
 import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.MainBgLightGray
@@ -45,23 +46,29 @@ import com.a702.finafan.domain.funding.model.FundingStatus
 import com.a702.finafan.presentation.funding.component.BottomButtonByStatus
 import com.a702.finafan.presentation.funding.component.DepositHistoryList
 import com.a702.finafan.presentation.funding.component.FundingDetailHeader
+import com.a702.finafan.presentation.funding.component.HostInfoDialogContent
 import com.a702.finafan.presentation.funding.component.MenuTitle
 import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
+import com.a702.finafan.presentation.main.viewmodel.MainViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
-import com.a702.finafan.presentation.navigation.NavRoutes
 
 @Composable
 fun FundingDetailScreen(
     fundingId: Long,
-    viewModel: FundingDetailViewModel
+    viewModel: FundingDetailViewModel,
+    mainViewModel: MainViewModel
 ) {
     val navController = LocalNavController.current
+
     val uiState by viewModel.uiState.collectAsState()
+    val userState by mainViewModel.userState.collectAsState()
+    val userIdState = remember { mutableStateOf<Long?>(null) }
 
     val showBottomSheet = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
 
     val funding = uiState.funding
-    val status = funding?.status?.let { FundingStatus.valueOf(it) }
+    val status = funding?.status
     val isHost = uiState.isHost
     val isParticipant = uiState.isParticipant
     val hostInfo = uiState.hostInfo
@@ -84,7 +91,22 @@ fun FundingDetailScreen(
 
     LaunchedEffect(fundingId) {
         viewModel.fetchFundingDetail(fundingId)
-        viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL)
+        mainViewModel.fetchUserInfo()
+        when (val state = userState) {
+            is DataResource.Success -> userIdState.value = state.data.userId.toLong()
+            else -> Log.d("로그인", "로그인이 필요합니다")
+        }
+    }
+
+    val userId = userIdState.value
+
+    LaunchedEffect(userId, uiState.hostInfo) {
+        val uid = userId
+        val host = uiState.hostInfo
+        if (uid != null && host != null) {
+            viewModel.updateIsHost(uid)
+            Log.d("🔥 isHost 호출", "host: ${host.id}, userId: $uid")
+        }
     }
 
     LaunchedEffect(funding) {
@@ -95,8 +117,6 @@ fun FundingDetailScreen(
             }
         }
     }
-
-    Log.d("hostState: ", "${hostInfo}")
 
     Scaffold(
         topBar = {
@@ -129,13 +149,6 @@ fun FundingDetailScreen(
             }
 
             if (isParticipant) {
-                // 테스트용
-                Button(onClick = {
-                    navController.navigate(NavRoutes.FundingSubmitForm.route)
-                }) {
-                    Text("지출 내역 입력하러 가기")
-                }
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -146,7 +159,9 @@ fun FundingDetailScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 26.dp, horizontal = 6.dp),
-                        onClick = {},
+                        onClick = {
+                            showDialog.value = true
+                        },
                         text = stringResource(R.string.funding_detail_title),
                         gradientColor = listOf(colorSet[0], colorSet[2])
                     )
@@ -201,6 +216,19 @@ fun FundingDetailScreen(
                 FundingStatus.FAILED -> stringResource(R.string.funding_fail_bottom_sheet_message)
                 else -> ""
             })
+        }
+
+        DialogLayout(
+            showDialog = showDialog,
+            confirmBtnText = stringResource(id = R.string.btn_confirm),
+            onClickConfirm = {
+                showDialog.value = false
+            }
+        ) {
+            HostInfoDialogContent(
+                hostInfo = hostInfo,
+                description = description
+            )
         }
     }
 }

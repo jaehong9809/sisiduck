@@ -1,9 +1,11 @@
 package com.a702.finafan.presentation.funding.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.data.funding.dto.response.AdminUser
+import com.a702.finafan.data.user.local.UserPreferences
 import com.a702.finafan.domain.funding.model.Deposit
 import com.a702.finafan.domain.funding.model.DepositFilter
 import com.a702.finafan.domain.funding.usecase.CreateDepositUseCase
@@ -23,7 +25,8 @@ class FundingDetailViewModel @Inject constructor(
     private val getFundingDetailUseCase: GetFundingDetailUseCase,
     private val getFundingDepositHistoryUseCase: GetFundingDepositHistoryUseCase,
     private val joinFundingUseCase: JoinFundingUseCase,
-    private val createDepositUseCase: CreateDepositUseCase
+    private val createDepositUseCase: CreateDepositUseCase,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FundingDetailState())
@@ -35,32 +38,40 @@ class FundingDetailViewModel @Inject constructor(
 
             when (val result = getFundingDetailUseCase(fundingId)) {
                 is DataResource.Success -> {
-                    val fundingDetail = result.data
+                    val detail = result.data
+
+                    Log.d("FundingDetailViewModel", "fetchFundingDetail: ${detail}")
+
                     _uiState.update {
                         it.copy(
-                            funding = fundingDetail.funding,
-                            isParticipant = fundingDetail.participated,
-                            deposits = fundingDetail.depositHistory ?: emptyList(),
+                            funding = detail.funding,
+                            isParticipant = detail.participated,
+                            deposits = detail.depositHistory ?: emptyList(),
                             hostInfo = AdminUser(
-                                adminId = fundingDetail.hostId,
-                                adminName = fundingDetail.host,
-                                fundingCount = fundingDetail.hostFundingCount,
-                                fundingSuccessCount = fundingDetail.hostSuccessCount
+                                id = detail.hostId,
+                                adminName = detail.host,
+                                fundingCount = detail.hostFundingCount,
+                                fundingSuccessCount = detail.hostSuccessCount
                             ),
-                            description = fundingDetail.description,
+                            description = detail.description,
                             isLoading = false
                         )
                     }
                 }
                 is DataResource.Error -> {
-                    _uiState.update {
-                        it.copy(isLoading = false, error = result.throwable)
-                    }
+                    _uiState.update { it.copy(isLoading = false, error = result.throwable) }
                 }
                 is DataResource.Loading -> {
                     _uiState.update { it.copy(isLoading = true) }
                 }
             }
+        }
+    }
+
+    fun updateIsHost(userId: Long) {
+        val host = _uiState.value.hostInfo
+        if (host != null) {
+            _uiState.update { it.copy(isHost = host.id == userId) }
         }
     }
 

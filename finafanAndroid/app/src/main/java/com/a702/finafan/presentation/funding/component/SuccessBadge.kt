@@ -35,12 +35,12 @@ fun SuccessBadge(
             .size(size)
             .background(
                 color = MainWhite,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(15.dp)
             )
             .border(
                 width = 2.dp,
                 color = color?: starGradTurquoise,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(15.dp)
             ),
         contentAlignment = Alignment.Center
     ) {

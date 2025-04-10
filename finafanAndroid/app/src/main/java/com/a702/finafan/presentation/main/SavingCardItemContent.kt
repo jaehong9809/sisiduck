@@ -169,6 +169,7 @@ fun SavingContent(saving: MainSaving) {
                     color = MainBlack,
                     modifier = Modifier.padding(vertical = 20.dp))
             }
+            // TODO: AsyncImage로 리팩토링
             Image(
                 painter = rememberAsyncImagePainter(saving.starImageUrl),
                 contentDescription = saving.starName,

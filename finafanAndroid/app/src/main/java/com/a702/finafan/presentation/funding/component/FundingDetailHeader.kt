@@ -30,11 +30,9 @@ import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.Typography
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.common.utils.StringUtil.getRemainingDaysText
 import com.a702.finafan.domain.funding.model.Funding
-import com.a702.finafan.domain.funding.model.FundingStatus
 import com.a702.finafan.domain.funding.model.Star
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 @Composable
 fun FundingDetailHeader(
@@ -54,30 +52,33 @@ fun FundingDetailHeader(
             .background(brush = Brush.linearGradient(
                 colors = listOf(colorSet[0].copy(alpha = 0.1f), colorSet[2].copy(alpha = 0.1f))
             ))
-            .padding(top = 15.dp, start = 25.dp, end = 25.dp)
+            .padding(top = 15.dp, end = 25.dp)
 
     ) {
-        Text(text = FundingStatus.valueOf(funding.status).toString(), style = Typography.headlineSmall,
-            color = colorSet[2])
-        ScreenTitle(funding.title, modifier = Modifier.padding(vertical = 8.dp))
-        Text(funding.star.name, modifier = Modifier.padding(bottom = 5.dp),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = Pretendard
-        )
-        FundingProgressPercentage(funding.currentAmount, funding.goalAmount,
-            colorSet[2],
-            modifier = Modifier
-        )
-        Spacer(modifier = Modifier.height(13.dp))
-        FundingProgressBar(funding.currentAmount, funding.goalAmount,
-            listOf(colorSet[0], colorSet[2]),
-            modifier = Modifier
-        )
+        Column(modifier = Modifier.padding(start = 25.dp)) {
+            Text(text = funding.status.value, style = Typography.headlineSmall,
+                color = colorSet[2])
+            ScreenTitle(funding.title, modifier = Modifier.padding(vertical = 8.dp))
+            Text(funding.star.name, modifier = Modifier.padding(bottom = 5.dp),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = Pretendard
+            )
+            FundingProgressPercentage(funding.currentAmount, funding.goalAmount,
+                colorSet[2],
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.height(13.dp))
+            FundingProgressBar(funding.currentAmount, funding.goalAmount,
+                listOf(colorSet[0], colorSet[2]),
+                modifier = Modifier
+            )
+
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth()
-                .padding(top = 25.dp, bottom = 10.dp),
+                .padding(top = 25.dp, bottom = 10.dp, start = 25.dp),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.Bottom
         ) {
@@ -118,7 +119,7 @@ fun FundingDetailHeader(
             Image(
                 painter = painter,
                 contentDescription = "",
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.None,
                 modifier = Modifier
                     .weight(0.6f)
                     .clipToBounds()
@@ -138,7 +139,7 @@ fun FundingDetailHeader(
                 }
 
                 Text(
-                    "${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingExpiryDate)}일 뒤 종료",
+                    getRemainingDaysText(funding.fundingExpiryDate),
                     textAlign = TextAlign.End,
                     style = Typography.displaySmall,
                     color = colorSet[2]
