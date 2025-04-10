@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.CustomGradBottomButton
@@ -41,13 +42,17 @@ import com.a702.finafan.presentation.funding.component.MenuTitle
 import com.a702.finafan.presentation.funding.component.SpendingListSection
 import com.a702.finafan.presentation.funding.component.SuccessBadge
 import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
+import com.a702.finafan.presentation.funding.viewmodel.SubmitFormViewModel
 
 @Composable
 fun SubmitFormScreen(
     navController: NavController,
     fundingDetailViewModel: FundingDetailViewModel
 ) {
+    val submitFormViewModel: SubmitFormViewModel = hiltViewModel()
+
     val fundingState by fundingDetailViewModel.uiState.collectAsState()
+    val submitFormState by submitFormViewModel.submitFormState.collectAsState()
 
     val uploadedImages = remember { mutableStateListOf<Uri>() }
     val spendingItems = remember { mutableStateListOf<Pair<String, String>>() }
@@ -95,7 +100,10 @@ fun SubmitFormScreen(
 
             MultiImageField(
                 label = "",
-                selectImages = uploadedImages
+                selectImages = uploadedImages,
+                onImagesChanged = { updatedList ->
+                    submitFormViewModel.updateImageList(updatedList) // 혹은 상태 저장 등
+                }
             )
             Spacer(Modifier.height(30.dp))
 
@@ -106,6 +114,7 @@ fun SubmitFormScreen(
                 onItemsChanged = {
                     spendingItems.clear()
                     spendingItems.addAll(it)
+                    submitFormViewModel.updateUsageList(it)
                 },
                 modifier = Modifier.padding(top = 20.dp)
             )
@@ -147,7 +156,10 @@ fun SubmitFormScreen(
             LiveTextArea(
                 placeholder = "내용",
                 description = description,
-                onValueChange = {},
+                onValueChange = {
+                    description.value = it
+                    submitFormViewModel.updateContent(it)
+                },
                 modifier = Modifier.padding(vertical = 10.dp)
             )
         }

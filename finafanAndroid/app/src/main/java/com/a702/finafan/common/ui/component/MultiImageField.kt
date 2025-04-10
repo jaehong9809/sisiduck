@@ -42,7 +42,8 @@ fun MultiImageField(
     modifier: Modifier = Modifier,
     label: String,
     selectImages: SnapshotStateList<Uri>,
-    maxImageCount: Int = 5
+    maxImageCount: Int = 5,
+    onImagesChanged: (List<Uri>) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -84,6 +85,7 @@ fun MultiImageField(
                             .background(MainWhite, RoundedCornerShape(10.dp))
                             .clickable {
                                 selectImages.removeAt(index)
+                                onImagesChanged(selectImages.toList())
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -95,7 +97,10 @@ fun MultiImageField(
             if (selectImages.size < maxImageCount) {
                 item {
                     AddImageButton { uri ->
-                        uri?.let { selectImages.add(it) }
+                        uri?.let {
+                            selectImages.add(it)
+                            onImagesChanged(selectImages.toList())
+                        }
                     }
                 }
             }

@@ -5,6 +5,7 @@ import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.funding.api.FundingApi
 import com.a702.finafan.data.funding.dto.request.WithdrawDepositRequest
+import com.a702.finafan.data.funding.dto.request.toData
 import com.a702.finafan.data.funding.dto.response.toDomain
 import com.a702.finafan.domain.funding.model.Deposit
 import com.a702.finafan.domain.funding.model.DepositFilter
@@ -13,7 +14,6 @@ import com.a702.finafan.domain.funding.model.FundingCreateForm
 import com.a702.finafan.domain.funding.model.FundingDetail
 import com.a702.finafan.domain.funding.model.FundingFilter
 import com.a702.finafan.domain.funding.model.MyStar
-import com.a702.finafan.domain.funding.model.toData
 import com.a702.finafan.domain.funding.repository.FundingRepository
 import javax.inject.Inject
 

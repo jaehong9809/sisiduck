@@ -3,15 +3,15 @@ package com.a702.finafan.data.funding.api
 import com.a702.finafan.common.data.dto.ApiResponse
 import com.a702.finafan.data.funding.dto.request.CancelFundingRequest
 import com.a702.finafan.data.funding.dto.request.DepositRequest
-import com.a702.finafan.data.funding.dto.request.PostRequest
+import com.a702.finafan.data.funding.dto.request.FormRequest
 import com.a702.finafan.data.funding.dto.request.StartFundingRequest
 import com.a702.finafan.data.funding.dto.request.UpdateFundingDescriptionRequest
 import com.a702.finafan.data.funding.dto.request.WithdrawDepositRequest
 import com.a702.finafan.data.funding.dto.response.DepositResponse
+import com.a702.finafan.data.funding.dto.response.FormResponse
 import com.a702.finafan.data.funding.dto.response.FundingDetailResponse
 import com.a702.finafan.data.funding.dto.response.FundingResponse
 import com.a702.finafan.data.funding.dto.response.MyStarResponse
-import com.a702.finafan.data.funding.dto.response.PostResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -82,27 +82,25 @@ interface FundingApi {
         @Body request: WithdrawDepositRequest
     ): ApiResponse<Void>
 
-    @POST("v1/fundings/{fundingId}/boards/create")
-    suspend fun createPost(
+    @POST("v1/fundings/{fundingId}/board/create")
+    suspend fun createForm(
         @Path("fundingId") fundingId: Long,
-        @Body request: PostRequest
+        @Body request: FormRequest
     ): ApiResponse<Void>
 
-    @GET("v1/fundings/{fundingId}/boards")
-    suspend fun getPost(
+    @GET("v1/fundings/{fundingId}/board")
+    suspend fun getForm(
         @Path("fundingId") fundingId: Long
-    ): ApiResponse<List<PostResponse>>
+    ): ApiResponse<List<FormResponse>>
 
-    @PUT("v1/fundings/{fundingId}/boards/{boardId}")
-    suspend fun updatePost(
-        @Path("fundingId") fundingId: Long,
-        @Path("boardId") boardId: Long
+    @PUT("v1/fundings/{fundingId}/board/update}")
+    suspend fun updateForm(
+        @Path("fundingId") fundingId: Long
     ): ApiResponse<Void>
 
-    @DELETE("v1/fundings/{fundingId}/boareds/{boardId}/delete")
-    suspend fun deletePost(
-        @Path("fundingId") fundingId: Long,
-        @Path("boardId") boardId: Long
+    @DELETE("v1/fundings/{fundingId}/board/delete")
+    suspend fun deleteForm(
+        @Path("fundingId") fundingId: Long
     ): ApiResponse<Void>
 
     @GET("v1/star/favorite")
