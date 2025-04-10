@@ -74,7 +74,7 @@ fun MatchedFanDepositScreenDummy() {
                     colors = ButtonDefaults.textButtonColors(containerColor = Color(0xFFE8EBF2)),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                 ) {
-                    Text("나의 응원 내역", fontSize = 22.sp, color = Color.DarkGray)
+                    Text("나의 응원 내역", fontSize = 18.sp, color = Color.DarkGray)
                 }
             }
 
