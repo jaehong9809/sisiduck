@@ -26,7 +26,7 @@ fun CircleBorderImage(modifier: Modifier = Modifier, imageUrl: String) {
         contentDescription = "",
         modifier = modifier
             .clip(CircleShape)
-            .border(1.dp, color = MainBlack, shape = CircleShape),
+            .border(2.dp, color = MainBlack, shape = CircleShape),
         contentScale = ContentScale.Crop
     )
 }
