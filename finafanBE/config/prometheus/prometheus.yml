@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'spring-apps'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['spring-app1:8084', 'spring-app2:8082', 'spring-app3:8083']
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-server:6379', 'redis-slave-1:6379', 'redis-slave-2:6379']
