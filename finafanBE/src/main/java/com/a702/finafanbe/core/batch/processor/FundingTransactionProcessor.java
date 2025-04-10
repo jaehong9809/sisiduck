@@ -55,16 +55,17 @@ public class FundingTransactionProcessor implements ItemProcessor<FundingPending
     private TransactionRequest transactionDtoFactory(FundingPendingTransaction tx) {
         FundingGroup funding = fundingGroupRepository.findById(tx.getFundingId())
                 .orElseThrow(() -> new SkipTransactionException("펀딩을 찾을 수 없습니다."));
-        GroupUser adminUser = groupUserRepository.findByFundingGroupIdAndRole(funding.getId(), Role.ADMIN)
+        GroupUser admin = groupUserRepository.findByFundingGroupIdAndRole(funding.getId(), Role.ADMIN)
                 .orElseThrow(() -> new SkipTransactionException("주최 회원을 찾을 수 없습니다."));
-        User user = userRepository.findById(adminUser.getId())
+        User user = userRepository.findById(tx.getUserId()).orElseThrow(() -> new SkipTransactionException("펀딩 참여자가 없습니다."));
+        User adminUser = userRepository.findById(admin.getId())
                 .orElseThrow(() -> new SkipTransactionException("해당 유저가 존재하지 않습니다."));
-        Account userAccount = accountRepository.findById(tx.getAccountId())
+        Account depositAccount = accountRepository.findById(tx.getAccountId())
                 .orElseThrow(() -> new SkipTransactionException("출금할 계좌가 존재하지 않습니다."));
-        Account adminAccount = accountRepository.findByAccountId(user.getRepresentAccountId())
+        Account adminAccount = accountRepository.findByAccountId(adminUser.getRepresentAccountId())
                 .orElseThrow(() -> new SkipTransactionException("대표 계좌가 설정되어 있지 않습니다."));
 
-        return TransactionRequest.of(tx.getId(), user.getSocialEmail(), adminAccount.getAccountNo(), tx.getBalance(), userAccount.getAccountNo(), funding.getName(), funding.getName());
+        return TransactionRequest.of(tx.getId(), user.getSocialEmail(), adminAccount.getAccountNo(), tx.getBalance(), depositAccount.getAccountNo(), funding.getName(), funding.getName());
     }
 
     private TransactionResponse apiTransaction(TransactionRequest request) {
