@@ -551,6 +551,30 @@ public class DemandDepositFacade {
         return recList;
     }
 
+    private boolean isAccountEligible(
+            InquireDemandDepositAccountListResponse.REC account,
+            Set<String> registeredAccountNos,
+            List<Long> targetBankIds,
+            Map<String, Long> bankCodeToIdMap
+    ) {
+        if (registeredAccountNos.contains(account.accountNo())) return false;
+
+        Long bankId = bankCodeToIdMap.get(account.bankCode());
+        return bankId != null && targetBankIds.contains(bankId);
+    }
+
+    private BankAccountResponse convertToBankAccountResponse(
+            InquireDemandDepositAccountListResponse.REC account,
+            Map<String, Long> bankCodeToIdMap,
+            Map<Long, Bank> bankIdMap
+    ) {
+        Long bankId = bankCodeToIdMap.get(account.bankCode());
+        Bank bank = bankIdMap.get(bankId);
+        log.info("Bank matched: {}", bank.getBankName());
+
+        return BankAccountResponse.of(account.accountNo(), bank);
+    }
+
     private List<BankAccountResponse> filterAndConvertAccounts(
             List<InquireDemandDepositAccountListResponse.REC> userAccounts,
             Set<String> registeredAccountNos,
@@ -559,24 +583,11 @@ public class DemandDepositFacade {
             Map<String, Long> bankCodeToIdMap
     ) {
         return userAccounts.stream()
-                .filter(account -> {
-                    if (registeredAccountNos.contains(account.accountNo())) return false;
-
-                    Long bankId = bankCodeToIdMap.get(account.bankCode());
-                    return bankId != null && targetBankIds.contains(bankId);
-                })
-                .map(account -> {
-                    Long bankId = bankCodeToIdMap.get(account.bankCode());
-                    Bank bank = bankIdMap.get(bankId);
-                    log.info("Bank matched: {}", bank.getBankName());
-
-                    return BankAccountResponse.of(
-                            account.accountNo(),
-                            bank
-                    );
-                })
+                .filter(account -> isAccountEligible(account, registeredAccountNos, targetBankIds, bankCodeToIdMap))
+                .map(account -> convertToBankAccountResponse(account, bankCodeToIdMap, bankIdMap))
                 .collect(Collectors.toList());
     }
+
 
     public List<BankAccountResponse> findUserAccountsByBanks(User user, List<Long> bankIds) {
 
