@@ -32,15 +32,15 @@ tools = [
         func=youtube_search,
         description="YouTube에서 영상이나 방송 클립을 보고 싶을 때 사용",
     ),
-    Tool(
-        name="연예인정보검색",
-        func=search_person_info,
-        description="연예인의 기본 정보나 경력, 나이, 데뷔 정보 등이 필요할 때 사용. 정보를 못 찾을 경우 '웹검색' 사용"
-    ),
+    # Tool(
+    #     name="연예인정보검색",
+    #     func=search_person_info,
+    #     description="연예인의 기본 정보나 경력, 나이, 데뷔 정보 등이 필요할 때 사용. 정보를 못 찾을 경우 '웹검색' 사용"
+    # ),
     Tool(
         name="웹검색",
         func=duckduckgo_search,
-        description="다른 툴로 원하는 정보를 찾지 못했을 때 전체 웹에서 폭넓게 검색. 예: 커뮤니티 반응, 블로그 글, 또는 연예인 정보가 없을 때 보조적으로 사용",
+        description="연예인의 기본 정보나 경력, 나이, 데뷔 정보 등이 필요할 때 사용. 예: 커뮤니티 반응, 블로그 글, 또는 연예인 정보 검색 때 사용",
     ),
     Tool(
         name="날씨검색",
