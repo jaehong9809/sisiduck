@@ -41,8 +41,7 @@ fun DialogLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = MainWhite
-                        , shape = RoundedCornerShape(25.dp)),
+                        color = MainWhite, shape = RoundedCornerShape(25.dp)),
             ) {
                 Column(
                     modifier = Modifier
@@ -65,5 +64,4 @@ fun DialogLayout(
             }
         }
     }
-
 }

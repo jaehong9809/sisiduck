@@ -19,7 +19,7 @@ fun FundingList(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
-            .padding(horizontal = 14.dp, vertical = 8.dp),
+            .padding(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(fundings) { funding ->

@@ -1,6 +1,7 @@
 package com.a702.finafan.data.funding.dto.response
 
 import com.a702.finafan.domain.funding.model.Funding
+import com.a702.finafan.domain.funding.model.FundingStatus
 import java.time.LocalDate
 
 data class FundingResponse(
@@ -20,7 +21,7 @@ fun FundingResponse.toDomain(): Funding {
         id = this.fundingId,
         title = this.fundingName,
         accountNo = this.fundingAccountNo,
-        status = this.status,
+        status = FundingStatus.valueOf(this.status),
         currentAmount = this.currentAmount,
         goalAmount = this.goalAmount,
         fundingExpiryDate = LocalDate.parse(this.fundingExpiryDate)

@@ -11,6 +11,7 @@ sealed class NavRoutes(val route: String) {
 
     /* Ble */
     object Ble : NavRoutes("ble")
+    object MatchFans : NavRoutes("matched_fan_deposits")
 
     /* Saving */
     object Saving : NavRoutes("saving")
@@ -62,6 +63,7 @@ sealed class NavRoutes(val route: String) {
     object FundingDeposit : NavRoutes("funding_deposit")
     object FundingWithdraw : NavRoutes("funding_withdraw")
     object FundingCancel : NavRoutes("funding_cancel")
+    object FundingSubmitForm : NavRoutes("funding_submit_form")
 
     /* AllAccount */
     object AllAccount : NavRoutes("all_account")

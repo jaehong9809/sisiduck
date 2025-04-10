@@ -1,5 +1,6 @@
 package com.a702.finafan.domain.funding.model
 
+
 enum class FundingStatus(val value: String) {
     INPROGRESS("진행 중"),
     CANCELED("진행 무산"),

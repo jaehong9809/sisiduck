@@ -463,6 +463,7 @@ public class DemandDepositFacade {
 
     public void deleteStarAccount(User user, Long savingAccountId) {
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
+        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         log.info("Waccount {}" , savingsAccount.getAccountNo());
         DeleteAccountResponse.REC deleteResponse = deleteAccountService.deleteAccount(
                 "/demandDeposit/deleteDemandDepositAccount",
@@ -470,7 +471,7 @@ public class DemandDepositFacade {
                         user.getSocialEmail(),
                         savingsAccount.getAccountNo(),
                         "deleteDemandDepositAccount",
-                        savingsAccount.getAccountNo()
+                        withdrawalAccount.getAccountNo()
                 )
         ).REC();
 

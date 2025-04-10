@@ -12,6 +12,7 @@ data class FundingCreateState(
     val fundingDescription: String = "",
     val fundingExpiryDate: LocalDate? = null,
     val isTermAgreed: Boolean = false,
+    val isFundingCreated: Boolean = false,
     override val isLoading: Boolean = false,
     override val error: Throwable? = null,
     override val toastMessage: String? = null,
