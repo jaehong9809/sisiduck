@@ -79,8 +79,8 @@ public class EntertainSavingsController {
             return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(user, createStarAccountRequest));
     }
 
-    @PutMapping("/deposit")
-    public ResponseEntity<ResponseData<EntertainerDepositResponse>> deposit(
+    @PostMapping("/deposit")
+    public ResponseEntity<ResponseData<EntertainerDepositResponse>> putBalanceWithDeposit(
             @AuthMember User user,
             @ModelAttribute StarTransferRequest starTransferRequest
             ){
@@ -159,7 +159,7 @@ public class EntertainSavingsController {
     }
 
     @GetMapping("/favorite")
-    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers(User user) {
+    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers(@AuthMember User user) {
         return ResponseUtil.success(demandDepositFacade.getPossessionEntertainer(user.getSocialEmail()));
     }
 
@@ -177,7 +177,7 @@ public class EntertainSavingsController {
         return ResponseUtil.success(savingsAccountService.getWithdrawalAccounts(user.getSocialEmail()));
     }
 
-    @PutMapping("/alias/{savingAccountId}")
+    @PostMapping("/alias/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> updateAccountAlias(
             @PathVariable Long savingAccountId,
             @RequestBody  UpdateSavingsRequest updateSavingsRequest

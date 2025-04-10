@@ -35,6 +35,7 @@ import com.a702.finafan.common.ui.component.CommonProgress
 import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 
@@ -140,27 +141,44 @@ fun SelectBankAccountScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
 
-                if (accountState.isLoading) {
-                    item {
-                        CommonProgress()
+                when {
+                    accountState.isLoading -> {
+                        item { CommonProgress() }
                     }
-                } else {
-                    items(accountState.accounts) { item ->
-                        val account = item
-                        val isSelected = selectedAccountNos.any { it == account.accountNo }
 
-                        AccountInfoItem(
-                            account = account,
-                            isConnect = true,
-                            selectedAccounts = selectedAccountNos,
-                            onSelect = { clickedAccountNo ->
-                                if (isSelected) {
-                                    selectedAccountNos.removeAll { it == clickedAccountNo }
-                                } else {
-                                    selectedAccountNos.add(clickedAccountNo)
+                    accountState.accounts.isEmpty() -> {
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = stringResource(R.string.all_account_list_empty),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MainTextGray,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 30.sp
+                            )
+                        }
+                    }
+                    else -> {
+                        items(accountState.accounts) { item ->
+                            val account = item
+                            val isSelected = selectedAccountNos.any { it == account.accountNo }
+
+                            AccountInfoItem(
+                                account = account,
+                                isConnect = true,
+                                selectedAccounts = selectedAccountNos,
+                                onSelect = { clickedAccountNo ->
+                                    if (isSelected) {
+                                        selectedAccountNos.removeAll { it == clickedAccountNo }
+                                    } else {
+                                        selectedAccountNos.add(clickedAccountNo)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
 

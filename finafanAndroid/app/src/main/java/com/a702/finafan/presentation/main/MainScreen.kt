@@ -2,8 +2,9 @@ package com.a702.finafan.presentation.main
 
 import android.Manifest
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,7 +39,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.a702.finafan.R
 import com.a702.finafan.common.domain.DataResource
-import com.a702.finafan.common.ui.component.ImageItem
 import com.a702.finafan.common.ui.component.MainSquareIconButton
 import com.a702.finafan.common.ui.component.MainWideButton
 import com.a702.finafan.common.ui.component.MainWideIconButton
@@ -81,11 +82,6 @@ fun MainScreen(
         }
     }
 
-    // Logging userState
-    LaunchedEffect(userState) {
-        Log.d("Compose", "userState changed: $userState")
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -107,6 +103,7 @@ fun MainScreen(
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
             )
+
 
             CardCarousel(
                 isLoggedIn = isLoggedIn,
@@ -157,7 +154,7 @@ fun MainScreen(
                             .background(MainBtnLightBlue)
                             .padding(5.dp)
                     ) {
-                        ImageItem(Modifier.fillMaxSize(), { }, R.drawable.ble)
+                        ImageItem(Modifier.fillMaxSize(), R.drawable.ble)
                     }
                 },
                 text = "주변 팬 찾기"
@@ -176,7 +173,7 @@ fun MainScreen(
                             .background(MainBtnLightOrange)
                             .padding(10.dp)
                     ) {
-                        ImageItem(Modifier.fillMaxSize(), { }, R.drawable.funding_box)
+                        ImageItem(Modifier.fillMaxSize(), R.drawable.funding_box)
                     }
                 },
                 text = "모금"
@@ -200,7 +197,7 @@ fun MainScreen(
                         .background(MainBtnLightYellow)
                         .padding(8.dp)
                 ) {
-                    ImageItem(Modifier.fillMaxSize(), { }, R.drawable.duck)
+                    ImageItem(Modifier.fillMaxSize(), R.drawable.duck)
                 }
             },
             text = "덕순이랑 놀기"
@@ -217,4 +214,13 @@ fun MainScreen(
 
         MainRanking(viewModel, modifier = Modifier.padding(horizontal = 16.dp))
     }
+}
+
+@Composable
+fun ImageItem(modifier: Modifier, @DrawableRes imageId: Int) {
+    Image(
+        modifier = modifier,
+        painter = painterResource(id = imageId),
+        contentDescription = "back",
+    )
 }

@@ -102,6 +102,9 @@ fun CreateSavingContent() {
             color = MainTextGray,
             fontFamily = Pretendard,
             modifier = Modifier.padding(top = 20.dp, bottom = 13.dp))
+
+        Spacer(modifier = Modifier.weight(1f))
+
         Box(
             modifier = Modifier
                 .background(
@@ -172,6 +175,9 @@ fun SavingContent(saving: MainSaving) {
                 modifier = Modifier
             )
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
         Box(
             modifier = Modifier
                 .background(

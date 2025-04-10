@@ -1,4 +1,8 @@
 package com.a702.finafan.presentation.funding.screen
 
-class ViewFormScreen {
+import androidx.compose.runtime.Composable
+
+@Composable
+fun ViewFormScreen() {
+
 }

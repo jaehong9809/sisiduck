@@ -40,6 +40,7 @@ import com.a702.finafan.common.ui.theme.starThemes
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.funding.model.Funding
 import com.a702.finafan.domain.funding.model.Star
+import com.a702.finafan.presentation.navigation.NavRoutes
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -62,7 +63,7 @@ fun FundingCardItem(
             .background(MainWhite)
             .padding(20.dp)
             .clickable {
-                navController.navigate("funding_detail/${funding.id}")
+                navController.navigate(NavRoutes.FundingDetail.withId(funding.id))
             }
     ) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween ) {

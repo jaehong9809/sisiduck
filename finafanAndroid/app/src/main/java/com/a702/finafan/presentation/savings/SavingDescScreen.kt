@@ -14,6 +14,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradButton
@@ -37,12 +40,16 @@ import com.a702.finafan.common.ui.theme.SavingDescGray
 import com.a702.finafan.common.ui.theme.gradientBlue
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
+import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 // 적금 상품 설명 화면
 @Composable
-fun SavingDescScreen() {
+fun SavingDescScreen(
+    viewModel: SavingViewModel = viewModel()
+) {
 
     val navController = LocalNavController.current
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
 
     Scaffold(
         topBar = {
@@ -70,7 +77,11 @@ fun SavingDescScreen() {
 
                 PrimaryGradButton(
                     onClick = {
-                        navController.navigate(NavRoutes.StarSearch.route)
+                        if (isLoggedIn) {
+                            navController.navigate(NavRoutes.StarSearch.route)
+                        } else {
+                            navController.navigate("login")
+                        }
                     },
                     text = stringResource(R.string.btn_join),
                     modifier = Modifier
@@ -192,7 +203,7 @@ fun ThirdDesc() {
             color = MainBlack,
         )
 
-        TermsButtonList()
+//        TermsButtonList()
     }
 }
 

@@ -43,6 +43,19 @@ public class FundingPendingTransaction extends BaseEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Enumerated(EnumType.STRING)
+    private FundingTransactionStatus status;
+
+    @PrePersist
+    private void prePersist() {
+        this.deletedAt = null;
+        this.status = FundingTransactionStatus.PENDING;
+    }
+
+    public void updateStatus(FundingTransactionStatus status) {
+        this.status = status;
+    }
+
     @Builder
     private FundingPendingTransaction(Long userId, Long fundingId, Long accountId, Long balance, String content, String depositUserName) {
         this.userId = userId;

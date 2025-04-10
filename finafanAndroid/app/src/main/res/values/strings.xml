@@ -31,6 +31,10 @@
     <string name="not_found_audio">말씀을 잘 못 알아들었어요.</string>
     <string name="down_scroll">⬇</string>
     <string name="chatbot_input_hint">덕순이에게 말을 걸어보세요!</string>
+    <string name="voice_input">목소리 녹음</string>
+    <string name="voice_input_short">말하기</string>
+    <string name="voice_cancel">말하기 취소</string>
+    <string name="ducksoon_is_thinking">"덕순이가 생각 중이에요..."</string>
 
     <!-- TopBar Title -->
     <string name="saving_item_star_list_title">스타 목록</string>
@@ -71,6 +75,8 @@
     <string name="saving_item_name">%s 적금</string>
     <string name="saving_item_create_fail">스타 적금 개설에 실패했습니다.</string>
     <string name="saving_item_product_name_title">스타적금</string>
+    <string name="saving_item_connect_account_title">계좌 연결하기</string>
+    <string name="saving_item_connect_account_empty">연결된 계좌가 없습니다</string>
 
     <string name="format_money">%s원</string>
     <string name="format_duration">%s ~ %s</string>
@@ -78,6 +84,8 @@
     <string name="saving_item_media_permission">미디어 권한에 동의하지 않았습니다.</string>
 
     <!-- Funding Screen -->
+    <string name="funding_join_btn">참여하기</string>
+    <string name="funding_join_alert">모금 참여를 시작합니다!</string>
     <string name="funding_create_star_label">스타 선택</string>
     <string name="funding_create_title_label">모금 제목</string>
     <string name="funding_create_title_description">커피차, 생일 서포트 등 진행하고 싶은 모금의 목적을 입력해주세요.</string>
@@ -94,8 +102,14 @@
     <string name="funding_create_content_label">모금 내용</string>
     <string name="funding_create_content_description">모금액 사용 계획을 상세하게 적어주세요.</string>
     <string name="funding_create_content_placeholder">내용 (최소 100자 이상)</string>
-
+    <string name="funding_remaining_days">종료까지 %1$d일</string>
+    <string name="funding_ends_today">오늘 종료</string>
+    <string name="funding_already_ended">종료됨</string>
+    <string name="funding_progress_percentage">현재 %1$d%% 달성</string>
+    <string name="funding_remaining_amount">목표금액까지 %1$s원 남았어요!</string>
     <string name="funding_deposit_title">모금 통장 입금하기</string>
+    <string name="funding_detail">모금 상세</string>
+    <string name="funding_deposit_message">메시지 입력 (선택)</string>
 
     <!-- TextField Label -->
     <string name="saving_item_name_label">적금 이름</string>

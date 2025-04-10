@@ -1,22 +1,17 @@
 package com.a702.finafan.presentation.main
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,7 +24,6 @@ import androidx.navigation.NavController
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.domain.main.model.MainSaving
 
-
 @Composable
 fun CardCarousel(
     isLoggedIn: Boolean,
@@ -37,7 +31,6 @@ fun CardCarousel(
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
-
     val cards: List<@Composable () -> Unit> = when {
         !isLoggedIn -> listOf({ LoginContent(navController) })
         savings.isEmpty() -> listOf({ CreateSavingContent() })
@@ -47,42 +40,31 @@ fun CardCarousel(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val cardWidth = if (cards.size == 1) screenWidth - 32.dp else screenWidth * 0.8f
     val peekWidth = (screenWidth - cardWidth) / 2
-
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.isScrollInProgress }
-            .collect { isScrolling ->
-                if (!isScrolling) {
-                    val index = listState.firstVisibleItemIndex
-                    val offset = listState.firstVisibleItemScrollOffset
-                    val targetIndex = if (offset > cardWidth.value / 2) index + 1 else index
-
-                    listState.animateScrollToItem(targetIndex, scrollOffset = 0)
-                }
-            }
-    }
+    val pagerState = rememberPagerState(pageCount = { cards.size })
 
     val contentPadding = if (cards.size == 1) {
         PaddingValues(horizontal = 16.dp)
     } else {
-        PaddingValues(start = peekWidth, end = peekWidth)
+        PaddingValues(horizontal = peekWidth)
     }
 
-    LazyRow(
-        state = listState,
+    HorizontalPager(
+        state = pagerState,
         contentPadding = contentPadding,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        pageSpacing = 16.dp,
         modifier = modifier.fillMaxWidth()
-            .padding(vertical = 8.dp)
+    ) { page ->
 
-    ) {
-        items(cards) { card ->
-            Box(modifier = Modifier.fillParentMaxWidth(), contentAlignment = Alignment.Center) {
-                CardItem(card, cardWidth)
-            }
+        Box(
+            modifier = Modifier
+                .width(cardWidth),
+            contentAlignment = Alignment.Center
+        ) {
+            CardItem(cards[page], cardWidth)
         }
     }
+
+
 }
 
 @Composable
