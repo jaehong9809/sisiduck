@@ -4,6 +4,7 @@ import com.a702.finafan.domain.ble.model.Fan
 import com.a702.finafan.domain.ble.model.FanDeposit
 
 data class BleUiState(
+    val myProfileUrl: String = "",
     val matchedFans: List<Fan> = emptyList(),
     val fanDeposits: List<FanDeposit> = emptyList(),
     val errorMessage: String? = null,

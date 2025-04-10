@@ -46,15 +46,16 @@ fun BleFanRadarScreen(
     modifier: Modifier = Modifier,
     viewModel: BleFanRadarViewModel = hiltViewModel()
 ) {
-    val myProfileUrl by viewModel.myProfileUrl.collectAsState()
-    val fans by viewModel.fans.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val fans = uiState.matchedFans
+    val myProfileUrl = uiState.myProfileUrl
 
     FanRadarScreen(
         myProfileUrl = myProfileUrl,
         fans = fans,
         modifier = modifier,
         onShowCheerClick = {
-            // 응원 팬 보기
+            navController.navigate("matched_fan_deposits")
         }
     )
 }

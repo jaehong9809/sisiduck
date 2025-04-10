@@ -3,6 +3,7 @@ package com.a702.finafan.infrastructure.util
 import android.content.Context
 import android.util.Log
 import com.a702.finafan.domain.ble.usecase.RegisterBleUuidUseCase
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 class BleUuidRegistrar @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val registerBleUuidUseCase: RegisterBleUuidUseCase
 ) {
     fun registerOnce() {

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.domain.ble.usecase.GetMatchedFanDepositsUseCase
 import com.a702.finafan.domain.ble.usecase.MatchFansUseCase
-import com.a702.finafan.domain.ble.usecase.RegisterBleUuidUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
