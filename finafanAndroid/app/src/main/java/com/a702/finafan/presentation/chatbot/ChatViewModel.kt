@@ -25,7 +25,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val repository: ChatRepository,
-    private val speechRecognizerHelper: SpeechRecognizerHelper,
     app: Application
 ) : ViewModel() {
 
@@ -58,7 +57,6 @@ class ChatViewModel @Inject constructor(
         _uiState.update { it.copy(isListening = false, error = null) }
     }
 
-
     fun clearToastMessage() {
         _uiState.update { it.copy(toastMessage = null) }
     }
@@ -82,7 +80,7 @@ class ChatViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         messages      = it.messages + ChatMessage(message, isUser = true),
-                        streamingText = "",          // 빈 봇 말풍선 내용
+                        streamingText = "",
                         isStreaming   = true,
                         isLoading = true
                     )
