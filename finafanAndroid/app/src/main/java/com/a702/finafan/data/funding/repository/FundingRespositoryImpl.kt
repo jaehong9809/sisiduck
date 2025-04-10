@@ -4,7 +4,7 @@ import com.a702.finafan.common.data.dto.getOrThrow
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.funding.api.FundingApi
-import com.a702.finafan.data.funding.dto.request.toData
+import com.a702.finafan.data.funding.dto.request.WithdrawDepositRequest
 import com.a702.finafan.data.funding.dto.response.toDomain
 import com.a702.finafan.domain.funding.model.Deposit
 import com.a702.finafan.domain.funding.model.DepositFilter
@@ -13,6 +13,7 @@ import com.a702.finafan.domain.funding.model.FundingCreateForm
 import com.a702.finafan.domain.funding.model.FundingDetail
 import com.a702.finafan.domain.funding.model.FundingFilter
 import com.a702.finafan.domain.funding.model.MyStar
+import com.a702.finafan.domain.funding.model.toData
 import com.a702.finafan.domain.funding.repository.FundingRepository
 import javax.inject.Inject
 
@@ -33,15 +34,15 @@ class FundingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun leaveFunding(fundingId: Long): DataResource<Boolean> = safeApiCall {
-        TODO("Not yet implemented")
+        api.leaveFunding(fundingId).getOrThrow { true }
     }
 
-    override suspend fun createDeposit(deposit: Deposit): DataResource<Boolean> = safeApiCall {
-        TODO("Not yet implemented")
+    override suspend fun createDeposit(fundingId: Long, deposit: Deposit): DataResource<Boolean> = safeApiCall {
+        api.createDeposit(fundingId, deposit.toData()).getOrThrow { true }
     }
 
-    override suspend fun withDrawDeposit(): DataResource<Boolean> = safeApiCall {
-        TODO("Not yet implemented")
+    override suspend fun withdrawDeposit(fundingId: Long, deposits: List<Long>): DataResource<Boolean> = safeApiCall {
+        api.withdrawDeposit(fundingId, WithdrawDepositRequest(deposits)).getOrThrow { true }
     }
 
     override suspend fun createPost(): DataResource<Boolean> = safeApiCall {
@@ -68,11 +69,14 @@ class FundingRepositoryImpl @Inject constructor(
         api.startFunding(form.toData()).getOrThrow { true }
     }
 
-    override suspend fun cancelFunding(cancelDescription: String): DataResource<Boolean> = safeApiCall {
+    override suspend fun cancelFunding(
+        fundingId: Long,
+        cancelDescription: String
+    ): DataResource<Boolean> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun terminateFunding(): DataResource<Boolean> = safeApiCall {
+    override suspend fun terminateFunding(fundingId: Long): DataResource<Boolean> {
         TODO("Not yet implemented")
     }
 

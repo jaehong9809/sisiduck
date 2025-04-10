@@ -64,7 +64,9 @@ public class FundingQueryRepository {
                                 EntertainerResponse.class,
                                 entertainer.entertainerId,
                                 entertainer.entertainerName,
-                                entertainer.entertainerProfileUrl
+                                entertainer.entertainerProfileUrl,
+                                entertainer.entertainerThumbnailUrl
+
                         ),
                         fundingGroup.id,
                         fundingGroup.name,
@@ -80,6 +82,7 @@ public class FundingQueryRepository {
                 .join(entertainer).on(fundingGroup.entertainerId.eq(entertainer.entertainerId))
                 .leftJoin(savingsAccount).on(fundingGroup.accountId.eq(savingsAccount.id))
                 .where(where)
+                .orderBy(fundingGroup.fundingExpiryDate.asc())
                 .fetch();
     }
 
@@ -95,8 +98,8 @@ public class FundingQueryRepository {
                 .where(groupUser.fundingGroupId.eq(fundingId), groupUser.role.eq(Role.ADMIN))
                 .fetchOne();
 
-        String adminName = queryFactory
-                .select(user.name)
+        Tuple adminUser = queryFactory
+                .select(user.userId, user.name)
                 .from(user)
                 .where(user.userId.eq(adminUserId))
                 .fetchFirst();
@@ -130,13 +133,14 @@ public class FundingQueryRepository {
                         entertainer.entertainerId,
                         entertainer.entertainerName,
                         entertainer.entertainerProfileUrl,
+                        entertainer.entertainerThumbnailUrl,
                         transaction.balance.sum().coalesce(0L)
                 )
                 .from(fundingGroup)
                 .join(entertainer).on(fundingGroup.entertainerId.eq(entertainer.entertainerId))
                 .leftJoin(transaction).on(transaction.fundingId.eq(fundingGroup.id))
                 .where(fundingGroup.id.eq(fundingId))
-                .groupBy(fundingGroup.id, entertainer.entertainerId, entertainer.entertainerName, entertainer.entertainerProfileUrl)
+                .groupBy(fundingGroup.id, entertainer.entertainerId, entertainer.entertainerName, entertainer.entertainerProfileUrl, entertainer.entertainerThumbnailUrl)
                 .fetchOne();
         if (result == null) {
             throw new RuntimeException("펀딩 정보를 찾을 수 없습니다.");
@@ -147,10 +151,12 @@ public class FundingQueryRepository {
                 new EntertainerResponse(
                         result.get(entertainer.entertainerId),
                         result.get(entertainer.entertainerName),
-                        result.get(entertainer.entertainerProfileUrl)
+                        result.get(entertainer.entertainerProfileUrl),
+                        result.get(entertainer.entertainerThumbnailUrl)
                 ),
                 new GetFundingAdminResponse(
-                        adminName,
+                        adminUser.get(user.userId),
+                        adminUser.get(user.name),
                         fundingCount != null ? fundingCount.intValue() : 0,
                         fundingSuccessCount != null ? fundingSuccessCount.intValue() : 0
                 ),
@@ -202,32 +208,4 @@ public class FundingQueryRepository {
                 )
                 .fetchFirst() != null;
     }
-
-//    public List<FundingGroup> selectExpiredFundingStatue() {
-//        return queryFactory
-//                .selectFrom(fundingGroup)
-//                .where(
-//                        fundingGroup.status.eq(FundingStatus.INPROGRESS),
-//                        fundingGroup.fundingExpiryDate.before(LocalDateTime.now()),
-//                        JPAExpressions
-//                                .select(transaction.balance.sum())
-//                                .where(transaction.id.eq(fundingGroup.id))
-//                                .goe(transaction.balance.sum())
-//                )
-//                .fetch();
-//    }
-//
-//    public void changeExpiredFundingState(List<FundingGroup> fundings, boolean isSuccess) {
-//        if (fundings == null || fundings.isEmpty()) return;
-//        FundingStatus status = isSuccess ? FundingStatus.SUCCESS : FundingStatus.FAILED;
-//        List<Long> ids = fundings.stream()
-//                .map(FundingGroup::getId)
-//                .toList();
-//
-//        queryFactory
-//                .update(fundingGroup)
-//                .set(fundingGroup.status, status)
-//                .where(fundingGroup.id.in(ids))
-//                .execute();
-//    }
 }

@@ -1,5 +1,7 @@
 package com.a702.finafan.presentation.chatbot
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,7 +12,16 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -18,11 +29,25 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,9 +55,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.theme.BackWhite
+import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
 import com.a702.finafan.common.ui.theme.MainGradViolet
 import com.a702.finafan.common.ui.theme.MainWhite
@@ -44,42 +71,63 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
+fun ChatScreen(
+    viewModel: ChatViewModel = viewModel()
+) {
+    /* ─── State & helpers ─── */
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
+    val owner = LocalLifecycleOwner.current
 
+    /* 새 메시지 도착 시 자동 스크롤 */
     LaunchedEffect(uiState.messages.size, uiState.streamingText) {
-        coroutineScope.launch {
-            listState.animateScrollToItem(uiState.messages.size)
-        }
+        scope.launch { listState.animateScrollToItem(uiState.messages.size) }
     }
 
-    val showScrollToBottomButton by remember {
+    /* “맨 아래로” 버튼 표시 */
+    val showScrollToBottom by remember {
         derivedStateOf {
-            val isNotAtBottom = listState.firstVisibleItemIndex < uiState.messages.lastIndex
-            val isScrollable = listState.layoutInfo.totalItemsCount > 5
-            isNotAtBottom && isScrollable
+            val layoutInfo = listState.layoutInfo
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            val totalItemsCount = layoutInfo.totalItemsCount
+
+            val atBottom = lastVisibleItemIndex == totalItemsCount - 1
+            val scrollable = totalItemsCount > 5
+
+            !atBottom && scrollable
         }
     }
 
+    /* RECORD_AUDIO 권한 런처 */
     val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            viewModel.startListening()
-        } else {
-            Toast.makeText(context, context.getString(R.string.permission_audio_required), Toast.LENGTH_SHORT).show()
-        }
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) viewModel.startListening()
+        else Toast.makeText(
+            context,
+            context.getString(R.string.permission_audio_required),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
+    /* Speech Manager 통한 LifeCycle 관리 */
+    DisposableEffect(owner) {
+        viewModel.attachLifecycle(owner)
+        onDispose { viewModel.detachLifecycle(owner) }
+    }
+
+    /* Error Toast */
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
-            Toast.makeText(context, it.message ?: context.getString(R.string.error_audio), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                it.message ?: context.getString(R.string.error_audio),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
-
     LaunchedEffect(uiState.toastMessage) {
         uiState.toastMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -87,64 +135,84 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(top = 12.dp)
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+    /* ─── Scaffold ─── */
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = { ChatInputBar(viewModel) },
+        floatingActionButton = {
+            VoiceFab (
+                onClick = {
+                    if (context.checkSelfPermission(Manifest.permission.RECORD_AUDIO)
+                        == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        viewModel.startListening()
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                    }
+                }
+            )
+        },
+        floatingActionButtonPosition = FabPosition.End,
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets
+    ) { innerPadding ->
+
+        /* ─── 본문(Box) ─── */
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MainBgLightGray)
+                .padding(innerPadding)  // bottomBar + 시스템 inset
+        ) {
+            /* 메시지 리스트 */
             LazyColumn(
                 state = listState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(bottom = 84.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(
+                    top = 12.dp,
+                    bottom = 28.dp + 56.dp + 12.dp
+                )
             ) {
                 items(uiState.messages) { ChatBubble(it) }
 
-                if (uiState.isStreaming && uiState.streamingText.isNotBlank()) {
-                    item {
-                        ChatBubble(ChatMessage(uiState.streamingText, isUser = false))
+                if (uiState.isStreaming) {
+                    item(key = "streaming") {
+                        if (uiState.streamingText.isEmpty() && uiState.isLoading) LoadingChatBubble()
+                        else ChatBubble(ChatMessage(uiState.streamingText, isUser = false))
                     }
                 }
             }
-        }
 
-        if (uiState.isListening) {
-            ListeningDialog(
-                onStopListening = { viewModel.cancelListening() }
-            )
-        }
-
-        ChatInputBar(
-            viewModel = viewModel,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-
-        AnimatedVisibility(
-            visible = showScrollToBottomButton,
-            enter = fadeIn() + slideInVertically { it },
-            exit = fadeOut() + slideOutVertically { it },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 96.dp)
-        ) {
-            FloatingActionButton(
-                onClick = {
-                    coroutineScope.launch {
-                        listState.animateScrollToItem(uiState.messages.size)
-                    }
-                },
-                modifier = Modifier.size(48.dp),
-                containerColor = MainWhite,
-                shape = CircleShape,
-                elevation = FloatingActionButtonDefaults.elevation(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = stringResource(R.string.down_scroll),
-                    tint = MainBlack
+            if (uiState.isListening) {
+                ListeningDialog(
+                    onStopListening = { viewModel.cancelListening() }
                 )
+            }
+
+            /* 맨 아래 이동 버튼 */
+            AnimatedVisibility(
+                visible = showScrollToBottom,
+                enter = fadeIn() + slideInVertically { it },
+                exit  = fadeOut() + slideOutVertically { it },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 96.dp)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch { listState.animateScrollToItem(uiState.messages.size) }
+                    },
+                    modifier = Modifier.size(48.dp),
+                    containerColor = MainWhite,
+                    shape = CircleShape,
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = stringResource(R.string.down_scroll),
+                        tint = MainBlack
+                    )
+                }
             }
         }
     }
@@ -189,9 +257,9 @@ fun ListeningDialog(
 
                 Text(
                     text = stringResource(R.string.ducksoon_is_listening),
-                    fontSize = 20.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF37474F)
+                    color = MainBlack
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -202,7 +270,12 @@ fun ListeningDialog(
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MainGradViolet)
                 ) {
-                    Text("말하기 종료", color = MainWhite, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = stringResource(R.string.voice_cancel),
+                        color = MainWhite,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                 }
             }
         }

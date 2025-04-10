@@ -19,7 +19,7 @@ class FundingViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FundingState())
-    val uiState: StateFlow<FundingState> = _uiState.asStateFlow()
+    val fundingState: StateFlow<FundingState> = _uiState.asStateFlow()
 
     fun fetchFundings(filter: FundingFilter) {
         viewModelScope.launch {

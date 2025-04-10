@@ -54,10 +54,11 @@ fun FundingDetailHeader(
             .background(brush = Brush.linearGradient(
                 colors = listOf(colorSet[0].copy(alpha = 0.1f), colorSet[2].copy(alpha = 0.1f))
             ))
-            .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+            .padding(top = 60.dp, start = 25.dp, end = 25.dp)
 
     ) {
-        Text(text = FundingStatus.valueOf(funding.status).toString())
+        Text(text = FundingStatus.valueOf(funding.status).toString(), style = Typography.headlineSmall,
+            color = colorSet[2])
         ScreenTitle(funding.title, modifier = Modifier.padding(vertical = 8.dp))
         Text(funding.star.name, modifier = Modifier.padding(bottom = 10.dp),
             fontSize = 16.sp,
