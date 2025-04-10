@@ -76,7 +76,19 @@ object StringUtil {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val dateTime = LocalDateTime.parse(dateString, formatter)
 
-        val outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+        val outputFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 HH:mm")
+        return dateTime.format(outputFormatter)
+    }
+
+    fun formatTime(dateString: String): String {
+        if (dateString.isEmpty()) {
+            return ""
+        }
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val dateTime = LocalDateTime.parse(dateString, formatter)
+
+        val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
         return dateTime.format(outputFormatter)
     }
 
