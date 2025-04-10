@@ -223,6 +223,7 @@ fun RankingCard(ranking: MainRanking, rankingType: RankingType) {
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Left,
                 color = MainWhite,
+                lineHeight = 30.sp,
                 modifier = Modifier.fillMaxWidth()
             )
         }
