@@ -13,6 +13,9 @@ import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
 import com.a702.finafan.presentation.auth.LoginScreen
+import com.a702.finafan.presentation.ble.BleFanRadarScreen
+import com.a702.finafan.presentation.ble.FanRadarScreen
+import com.a702.finafan.presentation.ble.MatchedFanDepositScreen
 import com.a702.finafan.presentation.ble.UuidListScreen
 import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.chatbot.ChatViewModel
@@ -44,7 +47,7 @@ fun NavGraph(
         val currentRoute = currentBackStackEntry?.destination?.route
 
         val statusBarColor = when (currentRoute) {
-            NavRoutes.Main.route, NavRoutes.AllAccountParam.route, NavRoutes.FundingMain.route -> MainBgLightGray
+            NavRoutes.Main.route, NavRoutes.AllAccountParam.route, NavRoutes.FundingMain.route, NavRoutes.Chat.route -> MainBgLightGray
             else -> MainWhite
         }
 
@@ -74,7 +77,11 @@ fun NavGraph(
             }
 
             composable(NavRoutes.Ble.route){
-                UuidListScreen()
+                BleFanRadarScreen(navController)
+            }
+
+            composable("matched_fan_deposits") {
+                MatchedFanDepositScreen(navController = navController)
             }
 
             savingGraph(

@@ -62,6 +62,7 @@ public class FundingBatchConfig {
                 .faultTolerant()
                 .retry(RetryTransactionException.class)
                 .retryLimit(3)
+                .skip(RetryTransactionException.class)
                 .skip(SkipTransactionException.class)
                 .skipLimit(Integer.MAX_VALUE)
                 .build();

@@ -64,7 +64,9 @@ public class FundingQueryRepository {
                                 EntertainerResponse.class,
                                 entertainer.entertainerId,
                                 entertainer.entertainerName,
-                                entertainer.entertainerProfileUrl
+                                entertainer.entertainerProfileUrl,
+                                entertainer.entertainerThumbnailUrl
+
                         ),
                         fundingGroup.id,
                         fundingGroup.name,
@@ -80,6 +82,7 @@ public class FundingQueryRepository {
                 .join(entertainer).on(fundingGroup.entertainerId.eq(entertainer.entertainerId))
                 .leftJoin(savingsAccount).on(fundingGroup.accountId.eq(savingsAccount.id))
                 .where(where)
+                .orderBy(fundingGroup.fundingExpiryDate.asc())
                 .fetch();
     }
 
@@ -130,13 +133,14 @@ public class FundingQueryRepository {
                         entertainer.entertainerId,
                         entertainer.entertainerName,
                         entertainer.entertainerProfileUrl,
+                        entertainer.entertainerThumbnailUrl,
                         transaction.balance.sum().coalesce(0L)
                 )
                 .from(fundingGroup)
                 .join(entertainer).on(fundingGroup.entertainerId.eq(entertainer.entertainerId))
                 .leftJoin(transaction).on(transaction.fundingId.eq(fundingGroup.id))
                 .where(fundingGroup.id.eq(fundingId))
-                .groupBy(fundingGroup.id, entertainer.entertainerId, entertainer.entertainerName, entertainer.entertainerProfileUrl)
+                .groupBy(fundingGroup.id, entertainer.entertainerId, entertainer.entertainerName, entertainer.entertainerProfileUrl, entertainer.entertainerThumbnailUrl)
                 .fetchOne();
         if (result == null) {
             throw new RuntimeException("펀딩 정보를 찾을 수 없습니다.");
@@ -147,7 +151,8 @@ public class FundingQueryRepository {
                 new EntertainerResponse(
                         result.get(entertainer.entertainerId),
                         result.get(entertainer.entertainerName),
-                        result.get(entertainer.entertainerProfileUrl)
+                        result.get(entertainer.entertainerProfileUrl),
+                        result.get(entertainer.entertainerThumbnailUrl)
                 ),
                 new GetFundingAdminResponse(
                         adminUser.get(user.userId),

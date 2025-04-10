@@ -22,7 +22,7 @@ public class FundingStateScheduler {
     private final FundingPendingTransactionRepository fundingPendingTransactionRepository;
     private final FundingGroupRepository fundingGroupRepository;
 
-    //@Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void fundingStateScheduler() {
 

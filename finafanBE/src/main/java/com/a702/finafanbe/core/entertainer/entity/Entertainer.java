@@ -27,6 +27,9 @@ public class Entertainer {
     @Column(name = "entertainer_profile_url", nullable = false, length = 1024)
     private String entertainerProfileUrl;
 
+    @Column(name = "entertainer_thumbnail_url", nullable = false)
+    private String entertainerThumbnailUrl;
+
     @Column(name = "fandom_name", nullable = false, length = 100)
     private String fandomName;
 
