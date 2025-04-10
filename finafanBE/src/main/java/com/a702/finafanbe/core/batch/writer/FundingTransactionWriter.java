@@ -28,11 +28,6 @@ public class FundingTransactionWriter implements ItemWriter<TransactionResponse>
             System.out.println("writer" + response.id());
             transactionRepository.findById(response.id())
                     .ifPresent(tx -> tx.updateStatus(response.status()));
-            if (response.status().equals(FundingTransactionStatus.SUCCESS)) {
-                FundingPendingTransaction tx = transactionRepository.findById(response.id()).get();
-                Account account = accountRepository.findByAccountId(tx.getAccountId()).get();
-                account.addAmount(BigDecimal.valueOf(tx.getBalance()).negate());
-            }
         }
     }
 }
