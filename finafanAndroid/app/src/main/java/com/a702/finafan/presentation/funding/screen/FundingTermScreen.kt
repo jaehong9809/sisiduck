@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.a702.finafan.R
+import com.a702.finafan.common.constants.Terms
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.PrimaryGradBottomButton
@@ -53,11 +54,11 @@ fun FundingTermScreen(
             Box(
                 modifier = Modifier.padding(25.dp)
             ) {
-                Text("이용 약관 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관" +
-                        " 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관" +
-                        " 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관 이용 약관",
+                Text(
+                    text = Terms.FUNDING_TERMS,
                     fontSize = 20.sp,
-                    color = MainBlack
+                    color = MainBlack,
+                    lineHeight = 20.sp
                     )
             }
         }
@@ -67,7 +68,7 @@ fun FundingTermScreen(
             onClick = {
                 viewModel.joinFunding(fundingId)
             },
-            text = stringResource(R.string.btn_create)
+            text = stringResource(R.string.funding_join_btn)
         )
         
         if(showDialog.value) {

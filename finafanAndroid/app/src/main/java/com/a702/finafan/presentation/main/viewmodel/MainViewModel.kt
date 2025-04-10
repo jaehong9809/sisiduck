@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.main.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a702.finafan.common.domain.DataResource
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,6 +30,7 @@ class MainViewModel @Inject constructor(
 ): ViewModel() {
 
     val isLoggedIn = userPreferences.userStateFlow
+        .map { it.isLoggedIn }
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     private val _userState = MutableStateFlow<DataResource<User>>(DataResource.Loading())
@@ -96,6 +99,7 @@ class MainViewModel @Inject constructor(
             _userState.value = DataResource.Loading()
 
             val result = getUserInfoUseCase()
+            Log.d("result:", "${result}")
             _userState.value = result
         }
     }

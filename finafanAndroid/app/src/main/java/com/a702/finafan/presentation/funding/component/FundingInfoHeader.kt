@@ -4,10 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,7 +42,9 @@ import com.a702.finafan.domain.funding.model.Funding
 
 @Composable
 fun FundingInfoHeader(
-    funding: Funding
+    funding: Funding,
+    showDetailButton: Boolean = true,
+    showRemainingAmount: Boolean = true
 ) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
@@ -48,10 +52,10 @@ fun FundingInfoHeader(
             .build()
     )
 
-    Column(
-    ) {
+    Column {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Box(
                 modifier = Modifier
@@ -59,7 +63,10 @@ fun FundingInfoHeader(
                     .clip(CircleShape)
                     .background(
                         brush = Brush.linearGradient(
-                            colors = listOf(starThemes[funding.star.index].start, starThemes[funding.star.index].end)
+                            colors = listOf(
+                                starThemes[funding.star.index].start,
+                                starThemes[funding.star.index].end
+                            )
                         )
                     )
             ) {
@@ -74,58 +81,90 @@ fun FundingInfoHeader(
                         .border(2.dp, color = MainWhite, shape = CircleShape)
                 )
             }
+
             Spacer(modifier = Modifier.width(8.dp))
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Badge(funding.star.name, MainWhite, starThemes[funding.star.index].mid)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column() {
-                        Text(text = getRemainingDaysText(funding.fundingExpiryDate),
-                            fontSize = 12.sp,
-                            color = MainTextGray)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = getFundingProgressText(funding.currentAmount, funding.goalAmount),
-                            fontSize = 12.sp,
-                            color = starThemes[funding.star.index].end)
-                    }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Badge(
+                    content = funding.star.name,
+                    fontColor = MainWhite,
+                    bgColor = starThemes[funding.star.index].mid
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = getRemainingDaysText(funding.fundingExpiryDate),
+                        fontSize = 16.sp,
+                        color = MainTextGray,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = getFundingProgressText(funding.currentAmount, funding.goalAmount),
+                        fontSize = 16.sp,
+                        color = starThemes[funding.star.index].end,
+                        fontWeight = FontWeight.Medium
+
+                    )
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = funding.title,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp)
-        Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = getRemainingAmountText(funding.currentAmount, funding.goalAmount),
-            fontSize = 16.sp,
-            color = starThemes[funding.star.index].mid,
-            fontWeight = FontWeight.Bold
+            text = funding.title,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(starThemes[funding.star.index].start, starThemes[funding.star.index].end)
-                    )
+        if (showRemainingAmount) {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = getRemainingAmountText(funding.currentAmount, funding.goalAmount),
+                    fontSize = 16.sp,
+                    color = starThemes[funding.star.index].mid,
+                    fontWeight = FontWeight.Bold
                 )
-                .clickable(onClick = { /* 모금 상세 */ })
-                .padding(horizontal = 16.dp, vertical = 10.dp)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        if (showDetailButton) {
+            Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
-            Text(
-                text = stringResource(R.string.funding_detail),
-                color = MainWhite,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.align(Alignment.Center)
-            )
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                starThemes[funding.star.index].start,
+                                starThemes[funding.star.index].end
+                            )
+                        )
+                    )
+                    .clickable(onClick = { /* 모금 상세 */ })
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.funding_detail_title),
+                    color = MainWhite,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
         }
     }
-
 }

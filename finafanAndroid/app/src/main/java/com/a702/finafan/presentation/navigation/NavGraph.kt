@@ -23,6 +23,7 @@ import com.a702.finafan.presentation.funding.viewmodel.FundingCreateViewModel
 import com.a702.finafan.presentation.funding.viewmodel.FundingDetailViewModel
 import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 import com.a702.finafan.presentation.main.MainScreen
+import com.a702.finafan.presentation.main.viewmodel.MainViewModel
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -32,6 +33,8 @@ fun NavGraph(
     modifier: Modifier = Modifier
 ) {
     NavControllerProvider(navController = navController) {
+        val mainViewModel: MainViewModel = hiltViewModel()
+
         val savingViewModel: SavingViewModel = hiltViewModel()
         val accountViewModel: AccountViewModel = hiltViewModel()
 
@@ -96,6 +99,7 @@ fun NavGraph(
 
             fundingGraph(
                 navController = navController,
+                mainViewModel = mainViewModel,
                 fundingViewModel = fundingViewModel,
                 fundingDetailViewModel = fundingDetailViewModel,
                 fundingCreateViewModel = fundingCreateViewModel,
