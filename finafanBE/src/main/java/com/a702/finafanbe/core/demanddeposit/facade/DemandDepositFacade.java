@@ -543,7 +543,7 @@ public class DemandDepositFacade {
             return List.of();
         }
 
-        Set<String> existingAccountNos = inquireDemandDepositAccountService.findAccountByUserId(1L).stream()
+        Set<String> existingAccountNos = inquireDemandDepositAccountService.findAccountByUserId(user.getUserId()).stream()
             .map(Account::getAccountNo)
             .collect(Collectors.toSet());
 
