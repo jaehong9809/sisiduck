@@ -25,7 +25,7 @@ tools = [
     Tool(
         name="뉴스검색",
         func=fast_news_search,
-        description="최신 뉴스, 연예인 기사 등 외부 정보를 찾을 때 사용",
+        description="최신 뉴스, 연예인 기사, 소식 등 외부 정보를 찾을 때 사용",
     ),
     Tool(
         name="동영상검색",
