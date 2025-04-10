@@ -9,6 +9,7 @@ from app.service.v2.search import (
     duckduckgo_search,
     get_weather,
     read_webpage,
+    search_person_info
 )
 from app.service.v2.prompts import DUKSUNI_SYSTEM_PROMPT
 from app.service.v2.llm import get_llm, get_hard_llm, get_soft_llm
@@ -32,9 +33,14 @@ tools = [
         description="YouTube에서 영상이나 방송 클립을 보고 싶을 때 사용",
     ),
     Tool(
+        name="연예인정보검색",
+        func=search_person_info,
+        description="연예인의 기본 정보나 경력, 나이, 데뷔 정보 등이 필요할 때 사용. 정보를 못 찾을 경우 '웹검색' 사용"
+    ),
+    Tool(
         name="웹검색",
         func=duckduckgo_search,
-        description="일반 연예인 정보, 블로그, 커뮤니티 등 전체 웹 검색이 필요할 때 사용",
+        description="다른 툴로 원하는 정보를 찾지 못했을 때 전체 웹에서 폭넓게 검색. 예: 커뮤니티 반응, 블로그 글, 또는 연예인 정보가 없을 때 보조적으로 사용",
     ),
     Tool(
         name="날씨검색",
@@ -45,7 +51,7 @@ tools = [
         name="웹페이지읽기",
         func=read_webpage,
         description="링크된 웹페이지의 실제 내용을 읽고 싶을 때 사용",
-    ),
+    )
 ]
 
 
@@ -118,7 +124,7 @@ def get_chat_chain(callback):
             ]
         )
 
-        print("\n🧩 [Chat 원본 출력]")
+        print("\n응답 메시지 : ")
         print(result.content)
 
         memory.save_context({"input": x["input"]}, {"output": result.content})
@@ -160,9 +166,11 @@ def get_agent_chain(callback):
             tools=tools,
             memory=memory,
             handle_parsing_errors=True,
+            max_iterations=6,
+            max_execution_time=20,
+            early_stopping_method="generate",
+            return_exceptions=False,
             verbose=True,
-            max_iterations=8,
-            return_intermediate_steps=True,
             output_key="output",
         )
         del x["user_id"]
@@ -191,11 +199,11 @@ def get_agent_chain(callback):
         # 전체 맥락 연결
         # full_context = final_answer + "\n\n" + search_summary
 
-        print("\n🪄 [Final Answer 추출 결과]")
-        print(final_answer)
+        # print("\n🪄 [Final Answer 추출 결과]")
+        # print(final_answer)
 
         friendly = await to_friendly_tone(final_answer)
-        print("\n💬 [덕순이 말투 변환 결과]")
+        print("\n응답 메시지")
         print(friendly)
 
         return {"output": friendly}

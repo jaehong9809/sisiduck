@@ -109,13 +109,29 @@ def youtube_search(query: str, max_results: int = 3) -> str:
 
 
 # 인물 정보 검색
-# embeddings = OpenAIEmbeddings()
-# person_db = Chroma(persist_directory="./person_db", embedding_function=embeddings)
-# person_retriever = person_db.as_retriever(search_kwargs={"k": 1})
+embeddings = OpenAIEmbeddings()
+person_db = Chroma(persist_directory="./person_db", embedding_function=embeddings)
+person_retriever = person_db.as_retriever(search_kwargs={"k": 2})
 
-# def search_person_info(query: str) -> str:
-#     docs = person_retriever.get_relevant_documents(query)
-#     return "\n".join([doc.page_content for doc in docs])
+def search_person_info(query: str) -> str:
+    docs = person_retriever.get_relevant_documents(query)
+
+    if not docs:
+        return "해당 연예인에 대한 정보를 찾을 수 없습니다. 웹검색 도구를 사용해 보세요."
+
+    # 상위 최대 3개까지, 너무 많으면 자르기
+    results = []
+    for doc in docs:
+        content = doc.page_content.strip()
+        source = doc.metadata.get("source", None)  # 없을 수도 있음
+        if len(content) > 500:
+            content = content[:500] + "..."
+        if source:
+            results.append(f"[출처: {source}]\n{content}")
+        else:
+            results.append(content)
+
+    return "연예인 정보 검색 결과입니다:\n\n" + "\n\n".join(results)
 
 
 def get_weather(city="Seoul"):
