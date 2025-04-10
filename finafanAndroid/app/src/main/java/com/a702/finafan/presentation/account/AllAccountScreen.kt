@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +49,7 @@ import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.AccountBoxGray
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainBlackTransparency
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
@@ -375,6 +377,12 @@ fun WithdrawalAccountItem(account: Account, onSelect: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .shadow(
+                    elevation = 2.dp,
+                    shape = RoundedCornerShape(20.dp),
+                    ambientColor = MainBlackTransparency,
+                    spotColor = MainBlackTransparency
+                )
                 .background(MainWhite, RoundedCornerShape(20.dp))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
@@ -433,6 +441,12 @@ fun CommonAccountItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .shadow(
+                    elevation = 2.dp,
+                    shape = RoundedCornerShape(20.dp),
+                    ambientColor = MainBlackTransparency,
+                    spotColor = MainBlackTransparency
+                )
                 .background(MainWhite, RoundedCornerShape(20.dp))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },

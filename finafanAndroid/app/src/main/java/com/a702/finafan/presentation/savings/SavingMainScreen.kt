@@ -1,7 +1,6 @@
 package com.a702.finafan.presentation.savings
 
 import android.graphics.drawable.BitmapDrawable
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,7 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
@@ -163,12 +162,6 @@ fun SavingHeader(account: SavingAccount) {
         }
     }
 
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(account.imageUrl)
-            .build()
-    )
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -176,8 +169,8 @@ fun SavingHeader(account: SavingAccount) {
             .clip(RoundedCornerShape(0.dp, 0.dp, 25.dp, 25.dp))
     ) {
 
-        Image(
-            painter = painter,
+        AsyncImage(
+            model = account.imageUrl,
             contentDescription = "Star Image",
             modifier = Modifier
                 .fillMaxSize()
