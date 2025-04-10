@@ -18,7 +18,6 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
-import retrofit2.http.PartMap
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -35,7 +34,7 @@ interface SavingApi {
     @Multipart
     @POST("v1/star/deposit")
     suspend fun deposit(
-        @PartMap map: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part("request") requestBody: RequestBody,
         @Part imageFile: MultipartBody.Part?
     ): ApiResponse<SavingDepositResponse>
 

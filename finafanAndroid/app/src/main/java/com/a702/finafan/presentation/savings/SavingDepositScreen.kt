@@ -92,9 +92,8 @@ fun SavingDepositScreen(
         buttonText = stringResource(R.string.btn_deposit),
         isButtonEnabled = message.value.isNotEmpty() && money.value.isNotEmpty(),
         onButtonClick = {
-
             val contentResolver: ContentResolver = context.contentResolver
-            val imageMultipart = image.value.asMultipart("file", contentResolver)
+            val imageMultipart = image.value.asMultipart("imageFile", contentResolver)
 
             val savingDeposit = SavingDeposit(
                 savingAccountId = savingAccountId,

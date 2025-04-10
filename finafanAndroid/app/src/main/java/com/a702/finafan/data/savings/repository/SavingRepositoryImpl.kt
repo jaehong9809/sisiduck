@@ -15,8 +15,8 @@ import com.a702.finafan.domain.savings.model.SavingAccountInfo
 import com.a702.finafan.domain.savings.model.Star
 import com.a702.finafan.domain.savings.model.Transaction
 import com.a702.finafan.domain.savings.repository.SavingRepository
+import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
@@ -30,20 +30,24 @@ class SavingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deposit(request: SavingDepositRequest): DataResource<Long> = safeApiCall {
-        val map = mutableMapOf<String, RequestBody>().apply {
-            put(
-                "depositAccountId",
-                request.depositAccountId.toString().toRequestBody("text/plain".toMediaType())
-            )
-            put(
-                "transactionBalance",
-                request.transactionBalance.toString()
-                    .toRequestBody("text/plain".toMediaType())
-            )
-            put("message", request.message.toRequestBody("text/plain".toMediaType()))
-        }
+//        val map = mutableMapOf<String, RequestBody>().apply {
+//            put(
+//                "depositAccountId",
+//                request.depositAccountId.toString().toRequestBody("text/plain".toMediaType())
+//            )
+//            put(
+//                "transactionBalance",
+//                request.transactionBalance.toString()
+//                    .toRequestBody("text/plain".toMediaType())
+//            )
+//            put("message", request.message.toRequestBody("text/plain".toMediaType()))
+//        }
 
-        api.deposit(map, request.imageFile).getOrThrow { it.depositAccountId }
+        val gson = Gson()
+        val json = gson.toJson(request.copy(imageFile = null))
+        val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaType())
+
+        api.deposit(requestBody, request.imageFile).getOrThrow { it.depositAccountId }
     }
 
     override suspend fun createSaving(request: SavingCreateRequest): DataResource<Long> = safeApiCall {
