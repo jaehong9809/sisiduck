@@ -7,15 +7,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -23,6 +25,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
@@ -36,6 +39,7 @@ import com.a702.finafan.common.ui.component.PrimaryGradButton
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.ble.model.Fan
+import com.a702.finafan.infrastructure.ble.BleScanner
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -46,9 +50,30 @@ fun BleFanRadarScreen(
     modifier: Modifier = Modifier,
     viewModel: BleFanRadarViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val fans = uiState.matchedFans
     val myProfileUrl = uiState.myProfileUrl
+
+    val bleScanner = remember {
+        BleScanner(context = context) { uuid ->
+            viewModel.addScannedUuid(uuid)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        bleScanner.start()
+    }
+
+    // UUID 수집 후, 서버에 매핑 요청
+    LaunchedEffect(viewModel.nearbyUuids) {
+        viewModel.nearbyUuids.collect { uuids ->
+            if (uuids.isNotEmpty()) {
+                val uuidStrings = uuids.map { it.toString() }
+                viewModel.matchFans(uuidStrings)
+            }
+        }
+    }
 
     FanRadarScreen(
         myProfileUrl = myProfileUrl,
@@ -83,11 +108,11 @@ fun FanRadarScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(24.dp))
 
             Box(
                 modifier = Modifier
@@ -113,13 +138,6 @@ fun FanRadarScreen(
                             .align(Alignment.TopCenter)
                             .padding(top = 72.dp)
                     )
-                } else {
-                    Text(
-                        text = stringResource(R.string.finding_now),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
                 }
             }
 
@@ -131,6 +149,13 @@ fun FanRadarScreen(
                         .height(56.dp)
                         .padding(bottom = 24.dp),
                     onClick = onShowCheerClick
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.finding_now),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
         }
@@ -175,7 +200,7 @@ private fun Radar(
 
         // 주변 팬
         fans.forEachIndexed { index, fan ->
-            val angle = (index * 60f + 30f) % 360      // 예시 각도
+            val angle = (index * 60f + 30f) % 360
             val distanceFactor = if (index % 2 == 0) 0.5f else 0.8f
             val radius = parentRadiusPx * distanceFactor
 
@@ -229,7 +254,6 @@ private fun polarToOffset(r: Float, deg: Float): Offset {
 }
 
 
-// ---------- SpeechBubble ----------
 @Composable
 private fun SpeechBubble(
     text: AnnotatedString,
@@ -237,9 +261,24 @@ private fun SpeechBubble(
 ) {
     Box(
         modifier
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MainBgLightGray, RoundedCornerShape(16.dp))
             .padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
         Text(text, style = MaterialTheme.typography.bodyLarge)
     }
+}
+
+@Preview
+@Composable
+private fun SpeechBubblePreview() {
+    SpeechBubble(
+        text = buildAnnotatedString {
+            append("주변에 ")
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                append("3명의 ")
+            }
+            append("팬이 있어요!")
+        },
+        modifier = Modifier.padding(16.dp)
+    )
 }

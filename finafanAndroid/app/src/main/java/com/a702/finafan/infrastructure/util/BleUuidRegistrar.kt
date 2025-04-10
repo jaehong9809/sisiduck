@@ -21,6 +21,7 @@ class BleUuidRegistrar @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             kotlin.runCatching {
                 registerBleUuidUseCase(uuid.toString())
+                Log.d("BLE", "✅ UUID 등록 요청: $uuid")
             }.onFailure {
                 Log.e("BLE", "❌ UUID 등록 실패: ${it.message}")
             }
