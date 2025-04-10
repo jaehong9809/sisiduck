@@ -16,23 +16,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BleFanRadarViewModel @Inject constructor(
-    private val registerBleUuidUseCase: RegisterBleUuidUseCase,
     private val matchFansUseCase: MatchFansUseCase,
     private val getMatchedFanDepositsUseCase: GetMatchedFanDepositsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BleUiState())
     val uiState: StateFlow<BleUiState> = _uiState.asStateFlow()
-
-    fun registerUuid(uuid: String) {
-        viewModelScope.launch {
-            when (val result = registerBleUuidUseCase(uuid)) {
-                is DataResource.Success -> Unit
-                is DataResource.Error -> updateError(result.throwable.message)
-                is DataResource.Loading -> TODO("찾는 중입니다..!!")
-            }
-        }
-    }
 
     fun matchFans(uuids: List<String>) {
         viewModelScope.launch {
