@@ -12,7 +12,7 @@ fun BleFanRadarScreenDummy(
 
     val dummyFans = listOf(
         Fan(id = 1, name = "이*호", profileUrl = heroUrl),
-        Fan(id = 3, name = "이*홍", profileUrl = heroUrl)
+        Fan(id = 2, name = "강*주", profileUrl = heroUrl)
     )
 
     FanRadarScreen(
