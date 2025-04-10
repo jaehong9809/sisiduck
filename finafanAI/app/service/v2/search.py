@@ -55,7 +55,7 @@ def duckduckgo_search(query: str, max_results: int = 5) -> str:
     with DDGS() as ddgs:
         results = ddgs.text(query, max_results=max_results)
         return "\n".join(
-            [f"{r['title']} - {r['href']}" for r in results if "href" in r]
+            [f"[{r['title']}]({r['href']})" for r in results if "href" in r]
         )
 
 def shorten_url(long_url: str) -> str:
@@ -80,7 +80,7 @@ def fast_news_search(query: str, max_results: int = 3) -> str:
     if not entries:
         return "관련된 뉴스 기사를 찾지 못했어ㅠㅠ"
 
-    results = [f"{entry.title} - ({shorten_url(entry.link)})" for entry in entries]
+    results = [f"[{entry.title}]({shorten_url(entry.link)})" for entry in entries]
 
     return "\n".join(results)
 
@@ -103,7 +103,7 @@ def youtube_search(query: str, max_results: int = 3) -> str:
         video_id = item["id"]["videoId"]
         title = item["snippet"]["title"]
         url = f"https://www.youtube.com/watch?v={video_id}"
-        results.append(f"{title} - {url}")
+        results.append(f"[{title}]({url})")
 
     return "\n".join(results)
 
