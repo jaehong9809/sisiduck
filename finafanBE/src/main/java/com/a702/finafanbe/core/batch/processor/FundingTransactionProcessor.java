@@ -3,15 +3,14 @@ package com.a702.finafanbe.core.batch.processor;
 import com.a702.finafanbe.core.batch.dto.TransactionRequest;
 import com.a702.finafanbe.core.batch.dto.TransactionResponse;
 import com.a702.finafanbe.core.batch.exception.RetryTransactionException;
+import com.a702.finafanbe.core.batch.exception.SkipTransactionException;
 import com.a702.finafanbe.core.demanddeposit.application.ExternalDemandDepositApiService;
 import com.a702.finafanbe.core.demanddeposit.dto.response.UpdateDemandDepositAccountTransferResponse;
 import com.a702.finafanbe.core.demanddeposit.entity.Account;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
-import com.a702.finafanbe.core.demanddeposit.facade.DemandDepositFacade;
 import com.a702.finafanbe.core.funding.funding.entity.FundingGroup;
 import com.a702.finafanbe.core.funding.funding.entity.FundingPendingTransaction;
 import com.a702.finafanbe.core.funding.funding.entity.FundingTransactionStatus;
-import com.a702.finafanbe.core.funding.funding.entity.infrastructure.FundingPendingTransactionRepository;
 import com.a702.finafanbe.core.funding.group.entity.GroupUser;
 import com.a702.finafanbe.core.funding.group.entity.Role;
 import com.a702.finafanbe.core.funding.group.entity.infrastructure.FundingGroupRepository;
@@ -23,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 @Slf4j
 @Component
@@ -44,21 +41,21 @@ public class FundingTransactionProcessor implements ItemProcessor<FundingPending
 
     @Override
     public TransactionResponse process(FundingPendingTransaction tx) throws Exception {
-        return TransactionResponse.of(tx.getId(), FundingTransactionStatus.FAILED);
-        //return apiTransaction(transactionDtoFactory(tx));
+        //return TransactionResponse.of(tx.getId(), FundingTransactionStatus.FAILED);
+        return apiTransaction(transactionDtoFactory(tx));
     }
 
     private TransactionRequest transactionDtoFactory(FundingPendingTransaction tx) {
         FundingGroup funding = fundingGroupRepository.findById(tx.getFundingId())
-                .orElseThrow(() -> new IllegalArgumentException("펀딩을 찾을 수 없습니다."));
+                .orElseThrow(() -> new SkipTransactionException("펀딩을 찾을 수 없습니다."));
         GroupUser adminUser = groupUserRepository.findByFundingGroupIdAndRole(funding.getId(), Role.ADMIN)
-                .orElseThrow(() -> new RuntimeException("주최 회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new SkipTransactionException("주최 회원을 찾을 수 없습니다."));
         User user = userRepository.findById(adminUser.getId())
-                .orElseThrow(() -> new RuntimeException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new SkipTransactionException("해당 유저가 존재하지 않습니다."));
         Account userAccount = accountRepository.findById(tx.getAccountId())
-                .orElseThrow(() -> new RuntimeException("출금할 계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new SkipTransactionException("출금할 계좌가 존재하지 않습니다."));
         Account adminAccount = accountRepository.findByAccountId(user.getRepresentAccountId())
-                .orElseThrow(() -> new RuntimeException("대표 계좌가 설정되어 있지 않습니다."));
+                .orElseThrow(() -> new SkipTransactionException("대표 계좌가 설정되어 있지 않습니다."));
 
         return TransactionRequest.of(tx.getId(), user.getSocialEmail(), adminAccount.getAccountNo(), tx.getBalance(), userAccount.getAccountNo(), funding.getName(), funding.getName());
     }
