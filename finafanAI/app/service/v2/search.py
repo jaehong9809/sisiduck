@@ -80,7 +80,7 @@ def fast_news_search(query: str, max_results: int = 3) -> str:
     if not entries:
         return "관련된 뉴스 기사를 찾지 못했어ㅠㅠ"
 
-    results = [f"{entry.title} - {shorten_url(entry.link)}" for entry in entries]
+    results = [f"{entry.title} - ({shorten_url(entry.link)})" for entry in entries]
 
     return "\n".join(results)
 
