@@ -54,7 +54,6 @@ fun CardCarousel(
         pageSpacing = 16.dp,
         modifier = modifier.fillMaxWidth()
     ) { page ->
-
         Box(
             modifier = Modifier
                 .width(cardWidth),

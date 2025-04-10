@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -25,6 +27,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -173,51 +176,74 @@ fun RankingCard(ranking: MainRanking, rankingType: RankingType) {
                     navController.navigate(NavRoutes.RankingMain.route + "?selectedTabIndex=${selectedTabIndex}")
                 }
             ),
+//        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 30.dp, vertical = 34.dp)
+        Row(
+            modifier = Modifier.fillMaxHeight()
+                .weight(1f)
         ) {
-            Text(
-                text = "${ranking.rank}${stringResource(R.string.ranking_card_rank_text)}",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Left,
-                color = MainWhite,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                text = ranking.starName,
-                fontSize = 36.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left,
-                color = MainWhite,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Column(
+                modifier = Modifier.padding(start = 30.dp, end = 30.dp, top = 34.dp)
+                    .weight(1f)
+            ) {
+                Text(
+                    text = "${ranking.rank}${stringResource(R.string.ranking_card_rank_text)}",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Left,
+                    color = MainWhite,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = ranking.starName,
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Left,
+                    color = MainWhite,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                text = rankingPeriodText,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Left,
-                color = MainWhite,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(bottom = 3.dp)
-            )
-            Text(
-                text = StringUtil.formatCurrency(ranking.amount),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Left,
-                color = MainWhite,
-                modifier = Modifier.fillMaxWidth()
-            )
+                Text(
+                    text = rankingPeriodText,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Left,
+                    color = MainWhite,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(bottom = 3.dp)
+                )
+                Text(
+                    text = StringUtil.formatCurrency(ranking.amount),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Left,
+                    color = MainWhite,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(ranking.starImageUrl),
+                    contentDescription = ranking.starName,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .align(Alignment.BottomEnd)
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 0.dp,
+                                topEnd = 0.dp,
+                                bottomStart = 0.dp,
+                                bottomEnd = 25.dp
+                            )
+                        )
+                )
+            }
         }
-        Image(
-            painter = rememberAsyncImagePainter(ranking.starImageUrl),
-            contentDescription = ranking.starName,
-            modifier = Modifier
-        )
     }
 }

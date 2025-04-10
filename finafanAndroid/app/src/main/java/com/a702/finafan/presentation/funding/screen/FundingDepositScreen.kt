@@ -70,7 +70,7 @@ fun FundingDepositScreen(
                             Deposit(
                                 accountId = accountState.selectAccount.accountId,
                                 balance = formatNumber(amount.value),
-                                name = "로그인해서 받아와야...",
+                                name = "로그인해서 받아와야...", // TODO: 로그인 값 받아와야...
                                 message = message.value
                             )
                         )
