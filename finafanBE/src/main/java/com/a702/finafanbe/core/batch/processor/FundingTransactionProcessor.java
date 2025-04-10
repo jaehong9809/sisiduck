@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -33,11 +35,11 @@ public class FundingTransactionProcessor implements ItemProcessor<FundingPending
     private final AccountRepository accountRepository;
     private final FinancialRequestFactory financialRequestFactory;
     private final ExternalDemandDepositApiService externalDemandDepositApiService;
+    private final FundingGroupRepository fundingGroupRepository;
 
     private final String SUCCESS_CODE = "H0000";
     private final String NO_MONEY = "A1014";
     private final String CANT_SEND_MONEY = "A1017";
-    private final FundingGroupRepository fundingGroupRepository;
 
     @Override
     public TransactionResponse process(FundingPendingTransaction tx) throws Exception {
@@ -86,6 +88,10 @@ public class FundingTransactionProcessor implements ItemProcessor<FundingPending
                 return TransactionResponse.of(request.id(), FundingTransactionStatus.SKIPPED);
             } else if (responseCode.equals(SUCCESS_CODE)) {
                 log.info("입금 성공 계좌  : {}", request.userEmail());
+                Account withDrawlAccount = accountRepository.findByAccountNo(request.withdrawalAccountNo()).get();
+                withDrawlAccount.addAmount(BigDecimal.valueOf(request.transactionBalance()).negate());
+                Account depositAccount = accountRepository.findByAccountNo(request.depositAccountNo()).get();
+                depositAccount.addAmount(BigDecimal.valueOf(request.transactionBalance()));
                 return TransactionResponse.of(request.id(), FundingTransactionStatus.SUCCESS);
             } else {
                 throw new RetryTransactionException("API 통신 문제 : " + responseCode);
