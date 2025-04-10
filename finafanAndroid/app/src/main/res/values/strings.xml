@@ -203,6 +203,9 @@
     <!-- BLUETOOTH -->
     <string name="ble_find_user">주변 팬 찾기</string>
     <string name="ble_finding_user">주변 탐색 중...</string>
+    <string name="find_fan_radar">주변 팬 찾기</string>
+    <string name="finding_now">주위에 팬을 찾고 있어요</string>
+    <string name="show_fans_cheers">가까운 팬 응원글 보기</string>
 
     <!-- All Account -->
     <string name="all_account_title">내 계좌</string>
