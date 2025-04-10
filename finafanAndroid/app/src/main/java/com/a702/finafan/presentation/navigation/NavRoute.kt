@@ -11,6 +11,7 @@ sealed class NavRoutes(val route: String) {
 
     /* Ble */
     object Ble : NavRoutes("ble")
+    object MatchFans : NavRoutes("matched_fan_deposits")
 
     /* Saving */
     object Saving : NavRoutes("saving")

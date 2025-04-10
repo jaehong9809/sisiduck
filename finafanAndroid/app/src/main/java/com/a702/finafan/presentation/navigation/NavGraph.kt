@@ -17,6 +17,8 @@ import com.a702.finafan.presentation.ble.BleFanRadarScreen
 import com.a702.finafan.presentation.ble.FanRadarScreen
 import com.a702.finafan.presentation.ble.MatchedFanDepositScreen
 import com.a702.finafan.presentation.ble.UuidListScreen
+import com.a702.finafan.presentation.ble.dummy.BleFanRadarScreenDummy
+import com.a702.finafan.presentation.ble.dummy.MatchedFanDepositScreenDummy
 import com.a702.finafan.presentation.chatbot.ChatScreen
 import com.a702.finafan.presentation.chatbot.ChatViewModel
 import com.a702.finafan.presentation.funding.viewmodel.FundingCreateViewModel
@@ -74,11 +76,17 @@ fun NavGraph(
             }
 
             composable(NavRoutes.Ble.route){
-                BleFanRadarScreen(navController)
+                //BleFanRadarScreen(navController)
+                BleFanRadarScreenDummy(
+                    onShowCheerClick = {
+                        navController.navigate(NavRoutes.MatchFans.route)
+                    }
+                )
             }
 
-            composable("matched_fan_deposits") {
-                MatchedFanDepositScreen(navController = navController)
+            composable(NavRoutes.MatchFans.route) {
+                //MatchedFanDepositScreen(navController = navController)
+                MatchedFanDepositScreenDummy()
             }
 
             savingGraph(
