@@ -1,5 +1,12 @@
 package com.a702.finafan.presentation.ble
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -36,7 +44,9 @@ import coil.compose.AsyncImage
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
 import com.a702.finafan.common.ui.component.PrimaryGradButton
+import com.a702.finafan.common.ui.theme.BubbleBlue
 import com.a702.finafan.common.ui.theme.MainBgLightGray
+import com.a702.finafan.common.ui.theme.MainGradBlue
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.domain.ble.model.Fan
 import com.a702.finafan.infrastructure.ble.BleScanner
@@ -178,12 +188,24 @@ private fun Radar(
     myProfileUrl: String,
     fans: List<Fan>
 ) {
-    BoxWithConstraints(modifier) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val radarOffsetX by infiniteTransition.animateFloat(
+        initialValue = -4f,
+        targetValue = 4f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    BoxWithConstraints(
+        modifier = modifier.offset(x = radarOffsetX.dp)
+    ) {
         val parentRadiusPx = with(LocalDensity.current) {
             min(maxWidth, maxHeight).toPx() / 2f
         }
 
-        // circles
+        // Radar Circles
         Canvas(
             Modifier
                 .matchParentSize()
@@ -192,35 +214,89 @@ private fun Radar(
             val radiusStep = parentRadiusPx / 4f
             repeat(4) { i ->
                 drawCircle(
-                    color  = MainBgLightGray,
+                    color = Color.LightGray.copy(alpha = 0.5f),
                     radius = radiusStep * (i + 1),
                     center = center,
-                    style  = Stroke(width = 1.dp.toPx())
+                    style = Stroke(width = 1.dp.toPx())
                 )
             }
         }
 
         // 내 사진
-        Avatar(
+        AnimatedAvatar(
             url = myProfileUrl,
-            label = "나",
+            name = "나",
             modifier = Modifier.align(Alignment.Center)
         )
 
         // 주변 팬
         fans.forEachIndexed { index, fan ->
             val angle = (index * 60f + 30f) % 360
-            val distanceFactor = if (index % 2 == 0) 0.5f else 0.8f
+            val distanceFactor = if (index % 2 == 0) 1.1f else 1.4f
             val radius = parentRadiusPx * distanceFactor
-
             val offset = polarToOffset(radius, angle)
-            Avatar(
+
+            AnimatedAvatar(
                 url = fan.profileUrl,
+                name = fan.name,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .offset { IntOffset(offset.x.toInt(), offset.y.toInt()) }
             )
         }
+    }
+}
+
+@Composable
+private fun AnimatedAvatar(
+    url: String,
+    name: String,
+    modifier: Modifier = Modifier
+) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.2f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .scale(pulseScale)
+                    .clip(CircleShape)
+                    .background(BubbleBlue.copy(alpha = pulseAlpha))
+            )
+            AsyncImage(
+                model = url,
+                contentDescription = name,
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(CircleShape)
+            )
+        }
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = name,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
