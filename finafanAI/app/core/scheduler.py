@@ -1,5 +1,6 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger 
 
 from app.core.conv_utils import redis_client
 
@@ -13,5 +14,6 @@ async def clear_all_memory():
 
 def start_scheduler():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(clear_all_memory, CronTrigger(minute=0))  # 매시 정각
+    # scheduler.add_job(clear_all_memory, CronTrigger(minute=0))  # 매시 정각
+    scheduler.add_job(clear_all_memory, IntervalTrigger(hours=1))  # 매시 정각
     scheduler.start()
