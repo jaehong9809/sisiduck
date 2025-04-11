@@ -178,7 +178,8 @@ CI/CD 파이프라인 구축 및 배포 자동화
 - 향후 오프라인 이벤트 및 모임 연계 가능성
 
 ### AI 챗봇
-![덕순이 AI 챗봇](readmeimg/chatbot.jpg)
+<img src="readmeimg/chatbot.jpg" alt="img" width="200"/>
+
 - LangChain LCEL을 활용한 유연한 대화 분기 처리
 - Agent를 사용해 질문 유형에 따라 최적의 정보 소스 선택
 - 연예인 정보, 뉴스, 영상 등 다양한 컨텐츠 제공
