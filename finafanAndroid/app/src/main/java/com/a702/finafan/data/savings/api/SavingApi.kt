@@ -17,9 +17,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
-import retrofit2.http.PUT
 import retrofit2.http.Part
-import retrofit2.http.PartMap
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -34,9 +32,9 @@ interface SavingApi {
 
     // 입금하기
     @Multipart
-    @PUT("v1/star/deposit")
+    @POST("v1/star/deposit")
     suspend fun deposit(
-        @PartMap map: Map<String, RequestBody>,
+        @Part("request") requestBody: RequestBody,
         @Part imageFile: MultipartBody.Part?
     ): ApiResponse<SavingDepositResponse>
 
@@ -57,7 +55,7 @@ interface SavingApi {
     suspend fun savingAccounts(): ApiResponse<SavingAccountInfoResponse>
 
     // 적금 계좌 이름 변경
-    @PUT("v1/star/alias/{savingAccountId}")
+    @POST("v1/star/alias/{savingAccountId}")
     suspend fun updateSavingName(
         @Path("savingAccountId") savingAccountId: Long,
         @Body request: Map<String, String>

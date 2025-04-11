@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -79,11 +80,12 @@ public class EntertainSavingsController {
             return ResponseUtil.success(demandDepositFacade.createEntertainerSavings(user, createStarAccountRequest));
     }
 
-    @PutMapping("/deposit")
-    public ResponseEntity<ResponseData<EntertainerDepositResponse>> deposit(
+    @PostMapping("/deposit")
+    public ResponseEntity<ResponseData<EntertainerDepositResponse>> putBalanceWithDeposit(
             @AuthMember User user,
-            @ModelAttribute StarTransferRequest starTransferRequest
-            ){
+            @RequestPart("request") StarTransferRequest starTransferRequest,
+            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile
+    ){
         ResponseEntity<UpdateDemandDepositAccountTransferResponse> exchange = demandDepositFacade.transferEntertainerAccount(
                 starTransferRequest.depositAccountId(),
                 starTransferRequest.transactionBalance()
@@ -100,8 +102,8 @@ public class EntertainSavingsController {
 
         if(exchange.getStatusCode()== HttpStatus.OK){
             String image ="";
-            if(starTransferRequest.imageFile()!=null){
-                image = s3Service.uploadImage(starTransferRequest.imageFile());
+            if(imageFile!=null){
+                image = s3Service.uploadImage(imageFile);
             }
             EntertainerDepositResponse response = entertainService.deposit(
                 user.getSocialEmail(),
@@ -159,7 +161,7 @@ public class EntertainSavingsController {
     }
 
     @GetMapping("/favorite")
-    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers(User user) {
+    public ResponseEntity<ResponseData<List<EntertainerResponse>>> getFavoriteEntertainers(@AuthMember User user) {
         return ResponseUtil.success(demandDepositFacade.getPossessionEntertainer(user.getSocialEmail()));
     }
 
@@ -177,7 +179,7 @@ public class EntertainSavingsController {
         return ResponseUtil.success(savingsAccountService.getWithdrawalAccounts(user.getSocialEmail()));
     }
 
-    @PutMapping("/alias/{savingAccountId}")
+    @PostMapping("/alias/{savingAccountId}")
     public ResponseEntity<ResponseData<InquireEntertainerAccountResponse>> updateAccountAlias(
             @PathVariable Long savingAccountId,
             @RequestBody  UpdateSavingsRequest updateSavingsRequest

@@ -17,8 +17,8 @@ INSERT INTO accounts (
     created_at,
     modified_at
 ) VALUES (
-             1, -- user_id
-             '0010047340147585', -- account_no
+             4, -- user_id
+             '0018037473008926', -- account_no
              10000.00, -- amount
              'ACTIVE', -- status
              1, -- bank_code

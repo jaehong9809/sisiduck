@@ -17,28 +17,63 @@ import com.a702.finafan.presentation.account.ConnectAccountScreen
 import com.a702.finafan.presentation.account.ConnectBankScreen
 import com.a702.finafan.presentation.account.SelectBankAccountScreen
 import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
+import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 
 fun NavGraphBuilder.accountGraph(
     savingViewModel: SavingViewModel,
+    fundingViewModel: FundingViewModel,
     accountViewModel: AccountViewModel,
     navController: NavHostController
 ) {
     navigation(
-        startDestination = NavRoutes.ConnectBank.route, route = NavRoutes.Account.route
+        startDestination = NavRoutes.Main.route, route = NavRoutes.Account.route
     ) {
-        composable(NavRoutes.ConnectBank.route) {
-            ConnectBankScreen(accountViewModel, onComplete = {
-                navController.navigate(NavRoutes.SelectAccount.route)
-            })
+
+        composable(
+            route = NavRoutes.ConnectBank.route,
+            arguments = listOf(navArgument("from") { defaultValue = "allAccount" })
+        ) { backStackEntry ->
+            val from = backStackEntry.arguments?.getString("from") ?: "allAccount"
+
+            ConnectBankScreen(
+                accountViewModel,
+                onComplete = {
+                    navController.navigate(NavRoutes.SelectAccount.from(from))
+                }
+            )
         }
 
-        composable(NavRoutes.SelectAccount.route) {
-            SelectBankAccountScreen(accountViewModel, onComplete = {
-                navController.navigate(NavRoutes.AllAccount.route + "?selectedTabIndex=2") {
-                    popUpTo(NavRoutes.AllAccount.route)
+        composable(
+            route = NavRoutes.SelectAccount.route,
+            arguments = listOf(navArgument("from") { defaultValue = "allAccount" })
+        ) { backStackEntry ->
+            val from = backStackEntry.arguments?.getString("from") ?: "allAccount"
+
+            SelectBankAccountScreen(
+                accountViewModel,
+                onComplete = {
+                    when (from) {
+                        "allAccount" -> {
+                            navController.navigate(NavRoutes.AllAccount.route + "?selectedTabIndex=2") {
+                                popUpTo(NavRoutes.ConnectBank.route) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+
+                        "savingSelectAccount" -> {
+                            navController.navigate(NavRoutes.SavingSelectAccount.route) {
+                                popUpTo(NavRoutes.SavingSelectAccount.route) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
                 }
-            })
+            )
         }
 
         composable(NavRoutes.AccountInput.route) {
@@ -91,7 +126,7 @@ fun NavGraphBuilder.accountGraph(
                 )
             }
 
-            AllAccountScreen(selectedTabIndex, savingViewModel, accountViewModel)
+            AllAccountScreen(selectedTabIndex, savingViewModel, fundingViewModel, accountViewModel)
         }
 
     }

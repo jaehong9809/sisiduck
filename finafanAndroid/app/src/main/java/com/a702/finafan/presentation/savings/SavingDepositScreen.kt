@@ -58,8 +58,12 @@ fun SavingDepositScreen(
 
                 // 입금 완료 시 완료 후에 적금 내역으로 이동
                 if (savingState.depositAccountId > 0) {
-                    navController.navigate(NavRoutes.SavingMain.route + "/${savingState.depositAccountId}") {
-                        popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
+                    viewModel.resetDeposit()
+
+                    navController.navigate(NavRoutes.SavingMain.route + "/${savingAccountId}") {
+                        popUpTo(NavRoutes.SavingDeposit.route + "/${savingAccountId}") {
+                            inclusive = true
+                        }
                         launchSingleTop = true
                     }
                 }
@@ -86,11 +90,10 @@ fun SavingDepositScreen(
     SavingScreenLayout(
         title = stringResource(R.string.saving_item_deposit_title),
         buttonText = stringResource(R.string.btn_deposit),
-        isButtonEnabled = message.value.isNotEmpty() && money.value.isNotEmpty(),
+        isButtonEnabled = message.value.isNotEmpty() && money.value.isNotEmpty() && money.value != "0",
         onButtonClick = {
-
             val contentResolver: ContentResolver = context.contentResolver
-            val imageMultipart = image.value.asMultipart("file", contentResolver)
+            val imageMultipart = image.value.asMultipart("imageFile", contentResolver)
 
             val savingDeposit = SavingDeposit(
                 savingAccountId = savingAccountId,

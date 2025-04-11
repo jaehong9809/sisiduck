@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,12 +49,16 @@ import com.a702.finafan.common.ui.component.ThreeTabRow
 import com.a702.finafan.common.ui.theme.AccountBoxGray
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainBlackTransparency
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
 import com.a702.finafan.domain.account.model.Account
+import com.a702.finafan.domain.funding.model.Funding
+import com.a702.finafan.domain.funding.model.FundingFilter
 import com.a702.finafan.domain.savings.model.SavingAccount
 import com.a702.finafan.presentation.account.viewmodel.AccountViewModel
+import com.a702.finafan.presentation.funding.viewmodel.FundingViewModel
 import com.a702.finafan.presentation.navigation.LocalNavController
 import com.a702.finafan.presentation.navigation.NavRoutes
 import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
@@ -63,6 +68,7 @@ import com.a702.finafan.presentation.savings.viewmodel.SavingViewModel
 fun AllAccountScreen(
     selectedTabIndex: MutableIntState,
     savingViewModel: SavingViewModel = viewModel(),
+    fundingViewModel: FundingViewModel = viewModel(),
     accountViewModel: AccountViewModel = viewModel()
 ) {
 
@@ -70,53 +76,56 @@ fun AllAccountScreen(
     val context = LocalContext.current
 
     val savingState by savingViewModel.savingState.collectAsState()
+    val fundingState by fundingViewModel.fundingState.collectAsState()
     val accountState by accountViewModel.accountState.collectAsState()
+
+    val isLoggedIn by savingViewModel.isLoggedIn.collectAsState()
 
     LaunchedEffect(Unit) {
         when (selectedTabIndex.intValue) {
             0 -> savingViewModel.fetchSavingAccount()
-            1 -> 0 // TODO: 모금 통장 API
+            1 -> fundingViewModel.fetchFundings(FundingFilter.MY)
             2 -> accountViewModel.fetchWithdrawalAccount()
         }
     }
 
-    val count by remember(selectedTabIndex, savingState, accountState) {
+    val count by remember(selectedTabIndex, savingState, fundingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accounts.size
-                1 -> 0 // TODO: 모금 통장 개수
+                1 -> fundingState.fundings.size
                 2 -> accountState.withdrawalAccounts.size
                 else -> 0
             }
         }
     }
 
-    val accountAmount by remember(selectedTabIndex, savingState, accountState) {
+    val accountAmount by remember(selectedTabIndex, savingState, fundingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.total
-                1 -> 0 // TODO: 모금 통장 총액
+                1 -> fundingState.totalAmount
                 else -> 0
             }
         }
     }
 
-    val accountList by remember(selectedTabIndex, savingState, accountState) {
+    val accountList by remember(selectedTabIndex, savingState, fundingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.savingAccountInfo.accounts
-                1 -> emptyList() // TODO: 모금 통장 리스트
+                1 -> fundingState.fundings
                 2 -> accountState.withdrawalAccounts
                 else -> emptyList()
             }
         }
     }
 
-    val isLoading by remember(selectedTabIndex, savingState, accountState) {
+    val isLoading by remember(selectedTabIndex, savingState, fundingState, accountState) {
         derivedStateOf {
             when (selectedTabIndex.intValue) {
                 0 -> savingState.isLoading
-                1 -> true // TODO: 모금 통장 로딩
+                1 -> fundingState.isLoading
                 2 -> accountState.isLoading
                 else -> true
             }
@@ -179,7 +188,7 @@ fun AllAccountScreen(
                         },
                         {
                             selectedTabIndex.intValue = 1
-                            // TODO: 모금 계좌 목록 API 호출
+                            fundingViewModel.fetchFundings(FundingFilter.MY)
                         },
                         {
                             selectedTabIndex.intValue = 2
@@ -211,8 +220,14 @@ fun AllAccountScreen(
                                     navController.navigate(NavRoutes.SavingDesc.route)
                                 }
                             }
-                            1 -> "" // TODO: 모금통장 가입 화면으로 이동
-                            2 -> navController.navigate(NavRoutes.Account.route)
+                            1 -> navController.navigate(NavRoutes.FundingCreate.route)
+                            2 -> {
+                                if (isLoggedIn) {
+                                    navController.navigate(NavRoutes.ConnectBank.from("allAccount"))
+                                } else {
+                                    navController.navigate("login")
+                                }
+                            }
                         }
                     },
                     text = buttonText.toString(),
@@ -260,12 +275,15 @@ fun AllAccountScreen(
                                         navController.navigate(NavRoutes.SavingMain.route + "/${account.accountId}")
                                     }
                                 )
-                                1 -> SavingAccountItem(
-                                    account as SavingAccount,
-                                    onSelect = {
-                                        // TODO: 모금통장 타입으로 변경 필요, 모금 통장 상세 화면으로 이동
-                                    }
-                                )
+                                1 -> {
+                                    val funding = account as Funding
+                                    FundingItem(
+                                        funding = funding,
+                                        onSelect = {
+                                            navController.navigate(NavRoutes.FundingDetail.withId(funding.id))
+                                        }
+                                    )
+                                }
                                 2 -> WithdrawalAccountItem(
                                     account as Account,
                                     onSelect = {
@@ -359,6 +377,12 @@ fun WithdrawalAccountItem(account: Account, onSelect: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .shadow(
+                    elevation = 2.dp,
+                    shape = RoundedCornerShape(20.dp),
+                    ambientColor = MainBlackTransparency,
+                    spotColor = MainBlackTransparency
+                )
                 .background(MainWhite, RoundedCornerShape(20.dp))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
@@ -417,6 +441,12 @@ fun CommonAccountItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .shadow(
+                    elevation = 2.dp,
+                    shape = RoundedCornerShape(20.dp),
+                    ambientColor = MainBlackTransparency,
+                    spotColor = MainBlackTransparency
+                )
                 .background(MainWhite, RoundedCornerShape(20.dp))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
@@ -465,6 +495,66 @@ fun CommonAccountItem(
                 )
             }
 
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun FundingItem(
+    funding: Funding,
+    onSelect: () -> Unit
+) {
+    Column {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MainWhite, RoundedCornerShape(20.dp))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { onSelect() }
+                )
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 15.dp, horizontal = 24.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = funding.title,
+                        color = MainBlack,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 24.sp,
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(top = 4.dp),
+                        text = "종료일: ${funding.fundingExpiryDate}",
+                        color = MainTextGray,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal,
+                        lineHeight = 24.sp,
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = StringUtil.formatCurrency(funding.currentAmount),
+                    color = MainBlack,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 24.sp,
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

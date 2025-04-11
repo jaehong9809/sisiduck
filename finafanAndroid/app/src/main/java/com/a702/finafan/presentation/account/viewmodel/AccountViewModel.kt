@@ -37,11 +37,18 @@ class AccountViewModel @Inject constructor(
 
             when (val result = getWithdrawalAccountUseCase()) {
                 is DataResource.Success -> {
+                    val empty = result.data.isEmpty()
+
                     _accountState.update {
                         it.copy(
                             withdrawalAccounts = result.data,
-                            isLoading = false
+                            isLoading = false,
+                            dialogShow = empty
                         )
+                    }
+
+                    if (result.data.isNotEmpty()) {
+                        updateSelectAccount(result.data.first())
                     }
                 }
                 is DataResource.Error -> {
@@ -53,7 +60,11 @@ class AccountViewModel @Inject constructor(
                     }
                 }
                 is DataResource.Loading -> {
-                    _accountState.update { it.copy(isLoading = true) }
+                    _accountState.update {
+                        it.copy(
+                            isLoading = true
+                        )
+                    }
                 }
             }
         }
@@ -124,7 +135,7 @@ class AccountViewModel @Inject constructor(
                     _accountState.update {
                         it.copy(
                             accounts = result.data,
-                            isLoading = false
+                            isLoading = false,
                         )
                     }
                 }
@@ -202,6 +213,10 @@ class AccountViewModel @Inject constructor(
 
     fun updateSelectAccount(account: Account) {
         _accountState.update { it.copy(selectAccount = account) }
+    }
+
+    fun setDialogShow(show: Boolean) {
+        _accountState.update { it.copy(dialogShow = show) }
     }
 
 }

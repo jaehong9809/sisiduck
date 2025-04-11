@@ -55,12 +55,12 @@ fun TermGuideScreen(
             ) {
                 Text(
                     modifier = Modifier,
-                    text = "설명입니다.",
+                    text = title + " 설명입니다.",
                     color = MainBlack,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 36.sp,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Center
                 )
             }
 

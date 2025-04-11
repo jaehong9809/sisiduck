@@ -7,7 +7,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -18,25 +20,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.a702.finafan.common.ui.theme.MainWhite
+import com.a702.finafan.common.ui.theme.gradientBlue
 import com.a702.finafan.domain.funding.model.MyStar
 
 @Composable
 fun MyStarRow(
     myStars: List<MyStar>,
     selectedStar: MyStar?,
-    onStarSelected: (MyStar) -> Unit
+    onStarSelected: (MyStar) -> Unit,
+    modifier: Modifier
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(vertical = 10.dp)
     ) {
         items(myStars) { star ->
             MyStarItem(
@@ -59,27 +65,28 @@ fun MyStarItem(
         .data(star.imageUrl)
         .build()
 )
-    val borderColor = if (isSelected) Color.Blue else MainWhite
+    val borderColor: Brush = if (isSelected) gradientBlue else  SolidColor(MainWhite)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(color = MainWhite)
-                .border(2.dp, color = borderColor, shape = CircleShape)
-                .clickable { onClick() }
-        ) {
+        Box() {
             Image(
                 painter = painter,
                 contentDescription = "Star Image",
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(color = MainWhite)
+                    .align(Alignment.Center)
+                    .border(3.dp, brush = borderColor, shape = CircleShape)
+                    .clickable { onClick() }
             )
         }
+        Spacer(Modifier.height(10.dp))
         Text(
-            text = star.name
+            text = star.name,
+            fontSize = 16.sp
         )
     }
 }

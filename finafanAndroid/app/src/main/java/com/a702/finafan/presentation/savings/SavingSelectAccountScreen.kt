@@ -1,5 +1,7 @@
 package com.a702.finafan.presentation.savings
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -7,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -20,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.ConfirmDialog
 import com.a702.finafan.common.ui.component.SelectAccountField
+import com.a702.finafan.common.ui.component.SubButton
 import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.data.savings.dto.request.toData
 import com.a702.finafan.domain.savings.model.SavingCreate
@@ -42,37 +45,23 @@ fun SavingSelectAccountScreen(
     val accountState by accountViewModel.accountState.collectAsState()
     val savingState by savingViewModel.savingState.collectAsState()
 
-    val showDialog = rememberSaveable { mutableStateOf(false) }
-    val dialogContent = rememberSaveable { mutableStateOf("") }
-
-    val showAccountDialog = rememberSaveable { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
+    val dialogContent = remember { mutableStateOf("") }
 
     // 출금계좌 목록 조회
     LaunchedEffect(Unit) {
         accountViewModel.fetchWithdrawalAccount()
     }
 
-    LaunchedEffect(accountState.withdrawalAccounts) {
-        if (!accountState.isLoading) {
-            if (accountState.withdrawalAccounts.isEmpty()) {
-                // 출금 계좌가 없으면 계좌 연결 페이지로 이동
-                showAccountDialog.value = true
-            } else {
-                // 출금 계좌가 있으면 첫 번째 계좌를 연결
-                val firstAccount = accountState.withdrawalAccounts.first()
-                accountViewModel.updateSelectAccount(firstAccount)
-            }
-        }
-    }
-
-    if (showAccountDialog.value) {
+    // 출금 계좌가 없으면 계좌 연결 페이지로 이동
+    if (accountState.dialogShow) {
         ConfirmDialog(
-            showAccountDialog,
+            showDialog = remember { mutableStateOf(true) },
             content = context.getString(R.string.saving_item_withdrawal_empty),
             isConfirm = false,
             onClickConfirm = {
-                showAccountDialog.value = false
-                navController.navigate(NavRoutes.Account.route)
+                accountViewModel.setDialogShow(false) // 다이얼로그 닫기
+                navController.navigate(NavRoutes.ConnectBank.from("savingSelectAccount"))
             }
         )
     }
@@ -95,6 +84,8 @@ fun SavingSelectAccountScreen(
 
                 // 개설 완료 시
                 if (savingState.createAccountId > 0) {
+                    savingViewModel.resetCreate()
+
                     navController.navigate(NavRoutes.SavingMain.route + "/${savingState.createAccountId}") {
                         popUpTo(NavRoutes.SavingDesc.route) { inclusive = true }
                         launchSingleTop = true
@@ -140,6 +131,16 @@ fun SavingSelectAccountScreen(
         )
 
         SelectAccountField(accountViewModel, accountState.withdrawalAccounts)
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        SubButton(
+            modifier = Modifier.padding(start = 4.dp),
+            text = stringResource(R.string.saving_item_connect_account_title),
+            fontSize = 16.sp
+        ) {
+            navController.navigate(NavRoutes.ConnectBank.from("savingSelectAccount"))
+        }
 
     }
 }

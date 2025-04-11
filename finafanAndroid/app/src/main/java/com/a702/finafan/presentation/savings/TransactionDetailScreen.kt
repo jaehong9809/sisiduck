@@ -2,7 +2,6 @@ package com.a702.finafan.presentation.savings
 
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +34,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.CommonBackTopBar
@@ -85,12 +84,6 @@ fun TransactionDetailScreen(
         }
     }
 
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(transaction.imageUrl)
-            .build()
-    )
-
     val randomGradient = remember { gradientList.random() }
 
     Scaffold(
@@ -114,8 +107,8 @@ fun TransactionDetailScreen(
                     .fillMaxSize(),
             ) {
 
-                Image(
-                    painter = painter,
+                AsyncImage(
+                    model = transaction.imageUrl,
                     contentDescription = "Transaction Image",
                     modifier = Modifier
                         .fillMaxSize()
@@ -157,7 +150,7 @@ fun TransactionDetailScreen(
                     )
 
                     Text(
-                        text = "+ " + StringUtil.formatCurrency(transaction.amount),
+                        text = "+ " + StringUtil.formatCurrency(transaction.balance),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = textColor,

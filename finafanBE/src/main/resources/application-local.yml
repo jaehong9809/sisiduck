@@ -2,6 +2,11 @@ spring:
   config:
     activate:
       on-profile: local
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
   jpa:
     hibernate:
       ddl-auto: update
@@ -55,3 +60,4 @@ ssafy:
   api-key: ${FINANCIAL_NETWORK_API_KEY:test}
   institution-code: ${INSTITUTION_CODE:test}
   fintech-app-no: ${FINTECH_APP_NO:test}
+

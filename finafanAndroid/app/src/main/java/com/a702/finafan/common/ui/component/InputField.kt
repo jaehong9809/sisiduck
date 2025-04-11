@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -46,6 +47,7 @@ import com.a702.finafan.common.ui.theme.EditBgGray
 import com.a702.finafan.common.ui.theme.EditTextGray
 import com.a702.finafan.common.ui.theme.MainBgLightGray
 import com.a702.finafan.common.ui.theme.MainBlack
+import com.a702.finafan.common.ui.theme.MainTextGray
 import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.utils.StringUtil
 
@@ -134,7 +136,7 @@ fun TextItem(text: String, color: Color, fontSize: TextUnit, isLabel: Boolean = 
         text = text,
         color = color,
         fontSize = fontSize,
-        lineHeight = 24.sp,
+        lineHeight = 28.sp,
         modifier = if (isLabel) Modifier.padding(bottom = 8.dp, start = 8.dp) else Modifier
     )
 }
@@ -154,7 +156,12 @@ fun CommonTextField(
     maxLength: Int = 0,
     onClick: (() -> Unit)? = null,
     ) {
+
     val keyboardController = LocalSoftwareKeyboardController.current
+    val inputTextStyle = MaterialTheme.typography.bodyLarge.copy(
+        fontSize = 20.sp,
+        lineHeight = 28.sp
+    )
 
     Column(
         modifier = modifier
@@ -176,7 +183,7 @@ fun CommonTextField(
                     }
                 }
             },
-            textStyle = TextStyle(color = MainBlack, fontSize = 20.sp),
+            textStyle = inputTextStyle,
             keyboardOptions = KeyboardOptions(
                 keyboardType =
                     if (isPassword) KeyboardType.Password
@@ -274,6 +281,10 @@ fun LiveTextField(
     onClick: (() -> Unit)? = null,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val inputTextStyle = MaterialTheme.typography.bodyLarge.copy(
+        fontSize = 20.sp,
+        lineHeight = 28.sp
+    )
 
     Column(
         modifier = modifier
@@ -292,7 +303,7 @@ fun LiveTextField(
                     onValueChange(processed)
                 }
             },
-            textStyle = TextStyle(color = MainBlack, fontSize = 20.sp),
+            textStyle = inputTextStyle,
             keyboardOptions = KeyboardOptions(
                 keyboardType =
                     if (isNumber || isMoney) KeyboardType.Number
@@ -382,12 +393,18 @@ fun LiveTextArea(
         )
 
         charLimit?.let {
-            Text(
-                text = "${description.value.length} / $charLimit",
-                fontSize = 16.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(top = 4.dp, start = 4.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            ) {
+                Text(
+                    text = "${description.value.length} / $charLimit",
+                    fontSize = 16.sp,
+                    color = MainTextGray,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                )
+            }
         }
     }
 }

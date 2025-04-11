@@ -38,7 +38,6 @@ interface FundingApi {
         @Query("filter") filter: String
     ): ApiResponse<List<DepositResponse>>
 
-    // TODO: 백엔드 배포 후 테스트
     @POST("v1/fundings")
     suspend fun startFunding(
         @Body request: StartFundingRequest

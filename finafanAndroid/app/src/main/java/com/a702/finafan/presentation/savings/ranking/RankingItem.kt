@@ -20,15 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
+import coil.compose.AsyncImage
 import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.GradSubButton
 import com.a702.finafan.common.ui.theme.MainBgLightGray
@@ -69,14 +67,8 @@ fun FirstStar(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val painter = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(ranking.starImageUrl)
-                    .build()
-            )
-
-            Image(
-                painter = painter,
+            AsyncImage(
+                model = ranking.starImageUrl,
                 contentDescription = "Image",
                 modifier = Modifier
                     .width(110.dp)

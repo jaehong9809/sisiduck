@@ -1,5 +1,6 @@
 package com.a702.finafanbe.core.demanddeposit.facade;
 
+import com.a702.finafanbe.core.auth.application.AuthService;
 import com.a702.finafanbe.core.bank.application.BankService;
 import com.a702.finafanbe.core.bank.dto.response.BankAccountConnectionResponse;
 import com.a702.finafanbe.core.bank.dto.response.BankAccountResponse;
@@ -20,7 +21,6 @@ import com.a702.finafanbe.core.ranking.application.RankingService;
 import com.a702.finafanbe.core.transaction.deposittransaction.application.DepositTransactionService;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.user.application.UserService;
-import com.a702.finafanbe.core.user.dto.response.UserFinancialNetworkResponse;
 import com.a702.finafanbe.core.user.entity.User;
 import com.a702.finafanbe.global.common.exception.BadRequestException;
 import com.a702.finafanbe.global.common.exception.ErrorCode;
@@ -28,8 +28,6 @@ import com.a702.finafanbe.global.common.financialnetwork.util.ApiConstants;
 import com.a702.finafanbe.global.common.financialnetwork.util.FinancialRequestFactory;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import com.a702.finafanbe.global.common.util.DateUtil;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -279,27 +277,31 @@ public class DemandDepositFacade {
                 totalValue,
                 starAccounts.stream()
                         .map(savingsAccount -> {
-                            EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(
-                                    savingsAccount.getId());
-                            long maintenanceDays = savingsAccount.getMaintenanceDays(depositAccount);
-                            Bank bank = bankService.findBankById(depositAccount.getBankId());
-                            Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
-                                    savingsAccount.getWithdrawalAccountId());
-                            Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
-                            return InquireEntertainerAccountResponse.of(
-                                    depositAccount.getId(),
-                                    depositAccount.getAccountNo(),
-                                    depositAccount.getProductName(),
-                                    depositAccount.getAmount(),
-                                    depositAccount.getCreatedAt(),
-                                    savingsAccount.getInterestRate(),
-                                    savingsAccount.getDuration(),
-                                    maintenanceDays,
-                                    savingsAccount.getImageUrl(),
-                                    withdrawalAccount,
-                                    bank,
-                                    withdrawalBank
-                            );
+                            try{
+                                EntertainerSavingsAccount depositAccount = entertainSavingsService.findEntertainerAccountById(
+                                        savingsAccount.getId());
+                                long maintenanceDays = savingsAccount.getMaintenanceDays(depositAccount);
+                                Bank bank = bankService.findBankById(depositAccount.getBankId());
+                                Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(
+                                        savingsAccount.getWithdrawalAccountId());
+                                Bank withdrawalBank = bankService.findBankById(withdrawalAccount.getBankId());
+                                return InquireEntertainerAccountResponse.of(
+                                        depositAccount.getId(),
+                                        depositAccount.getAccountNo(),
+                                        depositAccount.getProductName(),
+                                        depositAccount.getAmount(),
+                                        depositAccount.getCreatedAt(),
+                                        savingsAccount.getInterestRate(),
+                                        savingsAccount.getDuration(),
+                                        maintenanceDays,
+                                        savingsAccount.getImageUrl(),
+                                        withdrawalAccount,
+                                        bank,
+                                        withdrawalBank
+                                );
+                            }catch (Exception e){
+                                return null;
+                            }
                         })
                         .collect(Collectors.toList())
         );
@@ -350,7 +352,7 @@ public class DemandDepositFacade {
                     transaction.transactionUniqueNo(),
                     transaction.transactionAfterBalance(),
                     transaction.transactionBalance(),
-                    transaction.transactionMemo(),
+                    detail.getMessage(),
                     imageUrl,
                     detail.getCreatedAt()
                 );
@@ -461,6 +463,7 @@ public class DemandDepositFacade {
 
     public void deleteStarAccount(User user, Long savingAccountId) {
         EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(savingAccountId);
+        Account withdrawalAccount = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
         log.info("Waccount {}" , savingsAccount.getAccountNo());
         DeleteAccountResponse.REC deleteResponse = deleteAccountService.deleteAccount(
                 "/demandDeposit/deleteDemandDepositAccount",
@@ -468,7 +471,7 @@ public class DemandDepositFacade {
                         user.getSocialEmail(),
                         savingsAccount.getAccountNo(),
                         "deleteDemandDepositAccount",
-                        savingsAccount.getAccountNo()
+                        withdrawalAccount.getAccountNo()
                 )
         ).REC();
 
@@ -476,6 +479,8 @@ public class DemandDepositFacade {
         if (savingsAccount.getAmount() != null && savingsAccount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
             if (savingsAccount.isPresent()) {
                 double amountToDeduct = savingsAccount.getAmount().negate().doubleValue();
+                Account account = inquireDemandDepositAccountService.findAccountById(savingsAccount.getWithdrawalAccountId());
+                account.addAmount(savingsAccount.getAmount());
                 rankingService.updateRanking(
                         savingsAccount.getUserId(),
                         savingsAccount.getEntertainerId(),
@@ -483,9 +488,7 @@ public class DemandDepositFacade {
                 );
             }
         }
-
         entertainSavingsService.deleteByAccountId(depositAccount.getId());
-        deleteAccountService.deleteById(savingsAccount.getId());
     }
 
     public void deleteStarWithdrawalAccount(Long accountId) {
@@ -495,6 +498,8 @@ public class DemandDepositFacade {
         if(entertainSavingsService.existsEntertainerAccountById(accountId)){
             throw new BadRequestException(ResponseData.createResponse(ErrorCode.ENTERTAINER_SAVINGS));
         }
+        EntertainerSavingsAccount savingsAccount = entertainSavingsService.findEntertainerAccountById(accountId);
+        savingsAccount.deleteWithdrawalAccountId();
         deleteAccountService.deleteById(accountId);
     }
 
@@ -539,7 +544,7 @@ public class DemandDepositFacade {
             return List.of();
         }
 
-        Set<String> existingAccountNos = inquireDemandDepositAccountService.findAccountByUserId(1L).stream()
+        Set<String> existingAccountNos = inquireDemandDepositAccountService.findAccountByUserId(user.getUserId()).stream()
             .map(Account::getAccountNo)
             .collect(Collectors.toSet());
 
@@ -613,13 +618,16 @@ public class DemandDepositFacade {
 
                 // 계좌 객체 생성
                 Account account = Account.of(
-//                    user.getUserId(),
-                    1L,
+                    user.getUserId(),
                     acc.accountNo(),
-                    "KRW", // 기본 통화
+                    "KRW",
                     acc.accountName(),
-                    "GENERAL001", // 기본 계좌 유형
-                    bank.getBankId()
+                    "GENERAL001",
+                    bank.getBankId(),
+                    acc.accountBalance(),
+                    acc.accountTypeCode(),
+                    acc.dailyTransferLimit(),
+                    acc.oneTimeTransferLimit()
                 );
                 accountsToSave.add(account);
             }
@@ -638,17 +646,5 @@ public class DemandDepositFacade {
         }else{
             throw new BadRequestException(ResponseData.createResponse(ErrorCode.DUPLICATE_ACCOUNT));
         }
-    }
-
-    public ApiCreateAccountResponse signUpWithFinancialNetwork(
-        String userEmail
-    ) {
-        UserFinancialNetworkResponse financialNetwork = userService.requestFinancialNetwork(
-            "https://finopenapi.ssafy.io/ssafy/api/v1/member",
-            userEmail
-        );
-        userService.createUser(userEmail, financialNetwork.userKey());
-
-        return createTestAccount(userEmail);
     }
 }

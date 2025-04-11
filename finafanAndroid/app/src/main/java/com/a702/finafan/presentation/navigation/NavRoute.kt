@@ -11,6 +11,7 @@ sealed class NavRoutes(val route: String) {
 
     /* Ble */
     object Ble : NavRoutes("ble")
+    object MatchFans : NavRoutes("matched_fan_deposits")
 
     /* Saving */
     object Saving : NavRoutes("saving")
@@ -31,13 +32,19 @@ sealed class NavRoutes(val route: String) {
 
     /* ConnectAccount */
     object Account : NavRoutes("account")
-    object ConnectBank : NavRoutes("connect_bank")
     object AccountInput : NavRoutes("account_input")
     object AccountSend : NavRoutes("account_send")
     object AccountCode : NavRoutes("account_code")
     object AccountCodeConfirm : NavRoutes("account_code_confirm")
     object ConnectAccount : NavRoutes("connect_account")
-    object SelectAccount : NavRoutes("select_account")
+
+    object ConnectBank : NavRoutes("connect_bank?from={from}") {
+        fun from(from: String) = "connect_bank?from=$from"
+    }
+
+    object SelectAccount : NavRoutes("select_account?from={from}") {
+        fun from(from: String) = "select_account?from=$from"
+    }
 
     /* Ranking */
     object RankingMain : NavRoutes("ranking_main")
@@ -46,9 +53,17 @@ sealed class NavRoutes(val route: String) {
     /* Funding */
     object Funding : NavRoutes("funding")
     object FundingMain : NavRoutes("funding_main")
-    object FundingDetail : NavRoutes("funding_detail")
-    object FundingJoin : NavRoutes("funding_join")
+    object FundingDetail : NavRoutes("funding_detail/{fundingId}") {
+        fun withId(fundingId: Long) = "funding_detail/$fundingId"
+    }
+    object FundingJoin : NavRoutes("funding_join/{fundingId}") {
+        fun withId(fundingId: Long) = "funding_join/$fundingId"
+    }
     object FundingCreate : NavRoutes("funding_create")
+    object FundingDeposit : NavRoutes("funding_deposit")
+    object FundingWithdraw : NavRoutes("funding_withdraw")
+    object FundingCancel : NavRoutes("funding_cancel")
+    object FundingSubmitForm : NavRoutes("funding_submit_form")
 
     /* AllAccount */
     object AllAccount : NavRoutes("all_account")
