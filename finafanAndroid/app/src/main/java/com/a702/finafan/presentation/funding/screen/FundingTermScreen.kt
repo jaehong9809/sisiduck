@@ -58,7 +58,7 @@ fun FundingTermScreen(
                     text = Terms.FUNDING_TERMS,
                     fontSize = 20.sp,
                     color = MainBlack,
-                    lineHeight = 20.sp
+                    lineHeight = 25.sp
                     )
             }
         }

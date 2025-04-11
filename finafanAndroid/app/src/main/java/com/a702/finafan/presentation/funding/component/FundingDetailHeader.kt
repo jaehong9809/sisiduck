@@ -101,14 +101,15 @@ fun FundingDetailHeader(
             }
             Column(
                 modifier = Modifier.align(Alignment.Bottom)
-                    .padding(start = 20.dp)
+                    .padding(start = 10.dp)
             ) {
                 Text(text = "목표 금액",
-                    style = Typography.displaySmall,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
                     color = MainTextGray
                 )
                 Text(text = StringUtil.formatCurrency(funding.goalAmount),
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = Pretendard,
                     color = MainTextGray
@@ -119,7 +120,7 @@ fun FundingDetailHeader(
             Image(
                 painter = painter,
                 contentDescription = "",
-                contentScale = ContentScale.None,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .weight(0.6f)
                     .clipToBounds()

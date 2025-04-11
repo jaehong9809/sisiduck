@@ -94,7 +94,6 @@ fun FundingCreateScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
             MenuTitle(stringResource(R.string.funding_create_star_label))
             MyStarRow(
                 myStars = myStars,

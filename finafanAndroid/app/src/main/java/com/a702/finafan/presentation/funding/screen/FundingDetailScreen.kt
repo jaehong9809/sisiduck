@@ -110,11 +110,9 @@ fun FundingDetailScreen(
     }
 
     LaunchedEffect(funding) {
-        funding?.let {
-            viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL)
-            if (status == FundingStatus.CANCELED || status == FundingStatus.FAILED) {
+        viewModel.fetchDepositHistory(fundingId, DepositFilter.ALL)
+        if (status == FundingStatus.CANCELED || status == FundingStatus.FAILED) {
                 showBottomSheet.value = true
-            }
         }
     }
 

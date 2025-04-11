@@ -21,6 +21,9 @@ class FundingViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FundingState())
     val fundingState: StateFlow<FundingState> = _uiState.asStateFlow()
 
+    private val _selectedFilter = MutableStateFlow(FundingFilter.ALL)
+    val selectedFilter: StateFlow<FundingFilter> = _selectedFilter
+
     fun fetchFundings(filter: FundingFilter) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
@@ -55,5 +58,10 @@ class FundingViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    fun updateSelectedFilter(filter: FundingFilter) {
+        _selectedFilter.value = filter
+        fetchFundings(filter)
     }
 }

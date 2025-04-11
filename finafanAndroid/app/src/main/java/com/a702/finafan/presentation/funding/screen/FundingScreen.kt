@@ -36,10 +36,21 @@ fun FundingScreen(
     fundingViewModel: FundingViewModel
 ) {
     val fundingState by fundingViewModel.fundingState.collectAsState()
+    val selectedFilter by fundingViewModel.selectedFilter.collectAsState()
 
     LaunchedEffect(Unit) {
         fundingViewModel.fetchFundings(FundingFilter.ALL)
         fundingState.fundings
+    }
+
+    LaunchedEffect(selectedFilter) {
+        fundingViewModel.fetchFundings(selectedFilter)
+    }
+
+    val tabIndex = when (selectedFilter) {
+        FundingFilter.ALL -> 0
+        FundingFilter.PARTICIPATED -> 1
+        FundingFilter.MY -> 2
     }
 
     Scaffold(
