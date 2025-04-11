@@ -85,7 +85,12 @@
     <string name="saving_item_media_permission">미디어 권한에 동의하지 않았습니다.</string>
 
     <!-- Funding Screen -->
-    <string name="funding_join_btn">참여하기</string>
+    <string name="funding">모금</string>
+    <string name="funding_page">모금 보기</string>
+    <string name="funding_list_tap_all">전체</string>
+    <string name="funding_list_tap_participating">참여</string>
+    <string name="funding_list_tap_my">내 모금</string>
+    <string name="funding_join_btn">동의</string>
     <string name="funding_join_alert">모금 참여를 시작합니다!</string>
     <string name="funding_create_star_label">스타 선택</string>
     <string name="funding_create_title_label">모금 제목</string>
@@ -95,12 +100,15 @@
     <string name="funding_create_goal_amount_description">달성하고 싶은 금액을 입력해주세요.</string>
     <string name="funding_create_goal_date_label">목표 달성일</string>
     <string name="funding_create_goal_date_description">달성하고 싶은 날짜를 입력해주세요.</string>
+    <string name="funding_create_goal_date_btn">날짜 선택</string>
     <string name="funding_create_goal_date_year">년</string>
     <string name="funding_create_goal_date_month">월</string>
     <string name="funding_create_goal_date_day">일</string>
     <string name="funding_create_caution_title">☝ 주의사항</string>
     <string name="funding_create_caution_description">달성일 내에 목표 모금액 이상 모이지 않으면 모금은 자동 취소됩니다.</string>
     <string name="funding_create_content_label">모금 내용</string>
+    <string name="funding_create_term_title">상품 이용 약관</string>
+    <string name="funding_create_term_read">읽어보기</string>
     <string name="funding_create_content_description">모금액 사용 계획을 상세하게 적어주세요.</string>
     <string name="funding_create_content_placeholder">내용 (최소 100자 이상)</string>
     <string name="funding_remaining_days">종료까지 %1$d일</string>
@@ -109,8 +117,17 @@
     <string name="funding_progress_percentage">현재 %1$d%% 달성</string>
     <string name="funding_remaining_amount">목표금액까지 %1$s원 남았어요!</string>
     <string name="funding_deposit_title">모금 통장 입금하기</string>
-    <string name="funding_detail">모금 상세</string>
+    <string name="funding_detail_title">모금 상세</string>
+    <string name="funding_detail_host_title">진행자 정보</string>
+    <string name="funding_detail_host_history">✅</string>
     <string name="funding_deposit_message">메시지 입력 (선택)</string>
+    <string name="success_badge_text">달성 완료</string>
+    <string name="funding_cancel_bottom_sheet_title">모금 진행 취소</string>
+    <string name="funding_cancel_bottom_sheet_message">아래와 같은 사유로 모금 진행이
+취소되었어요.</string>
+    <string name="funding_fail_bottom_sheet_title">모금 달성 실패</string>
+    <string name="funding_fail_bottom_sheet_message">목표 기한 내에 모금액이 달성되지 않아
+모금이 취소되었어요.</string>
 
     <!-- TextField Label -->
     <string name="saving_item_name_label">적금 이름</string>
@@ -203,6 +220,9 @@
     <!-- BLUETOOTH -->
     <string name="ble_find_user">주변 팬 찾기</string>
     <string name="ble_finding_user">주변 탐색 중...</string>
+    <string name="find_fan_radar">주변 팬 찾기</string>
+    <string name="finding_now">주위에 팬을 찾고 있어요</string>
+    <string name="show_fans_cheers">가까운 팬 응원글 보기</string>
 
     <!-- All Account -->
     <string name="all_account_title">내 계좌</string>

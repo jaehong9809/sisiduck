@@ -56,10 +56,13 @@ public class RankingWebSocketService {
         // 3. 연예인 주간 랭킹 조회 및 브로드캐스트
         broadcastEntertainerRanking("weekly");
 
-        // 4. 특정 연예인 적금 내 사용자 일간 랭킹 조회 및 브로드캐스트
+        // 4. 연예인 누적 랭킹 조회 및 브로드캐스트
+        broadcastEntertainerRanking("total");
+
+        // 5. 특정 연예인 적금 내 사용자 일간 랭킹 조회 및 브로드캐스트
         broadcastUserRanking(entertainerId, "daily");
 
-        // 5. 특정 연예인 적금 내 사용자 주간 랭킹 조회 및 브로드캐스트
+        // 6. 특정 연예인 적금 내 사용자 주간 랭킹 조회 및 브로드캐스트
         broadcastUserRanking(entertainerId, "weekly");
 
         log.info("Updated and broadcast all rankings for entertainer: {}", entertainerId);
@@ -71,11 +74,16 @@ public class RankingWebSocketService {
     private void broadcastEntertainerRanking(String period) {
         List<RankingService.EntertainerRankingEntry> entries;
 
-        // 일간 또는 주간 랭킹 조회
+        // 일간, 주간, 또는 누적 랭킹 조회
         if ("daily".equals(period)) {
             entries = rankingService.getDailyEntertainerRanking();
-        } else {
+        } else if ("weekly".equals(period)) {
             entries = rankingService.getWeeklyEntertainerRanking();
+        } else if ("total".equals(period)) {
+            entries = rankingService.getTotalEntertainerRanking();
+        } else {
+            log.warn("Invalid ranking period: {}", period);
+            return;
         }
 
         // 응답 DTO 변환

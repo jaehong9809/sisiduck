@@ -1,7 +1,6 @@
 package com.a702.finafan.data.user.repository
 
 import com.a702.finafan.common.data.dto.getOrThrow
-import com.a702.finafan.common.data.toDomain
 import com.a702.finafan.common.domain.DataResource
 import com.a702.finafan.common.utils.safeApiCall
 import com.a702.finafan.data.user.api.UserApi

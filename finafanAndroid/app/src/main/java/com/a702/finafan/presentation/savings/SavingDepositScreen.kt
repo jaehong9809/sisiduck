@@ -90,11 +90,10 @@ fun SavingDepositScreen(
     SavingScreenLayout(
         title = stringResource(R.string.saving_item_deposit_title),
         buttonText = stringResource(R.string.btn_deposit),
-        isButtonEnabled = message.value.isNotEmpty() && money.value.isNotEmpty(),
+        isButtonEnabled = message.value.isNotEmpty() && money.value.isNotEmpty() && money.value != "0",
         onButtonClick = {
-
             val contentResolver: ContentResolver = context.contentResolver
-            val imageMultipart = image.value.asMultipart("file", contentResolver)
+            val imageMultipart = image.value.asMultipart("imageFile", contentResolver)
 
             val savingDeposit = SavingDeposit(
                 savingAccountId = savingAccountId,

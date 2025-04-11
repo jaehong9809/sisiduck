@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.androidx.datastore.core.android)
+    implementation(libs.androidx.foundation.layout.android)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 

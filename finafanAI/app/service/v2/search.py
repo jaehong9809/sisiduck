@@ -55,9 +55,19 @@ def duckduckgo_search(query: str, max_results: int = 5) -> str:
     with DDGS() as ddgs:
         results = ddgs.text(query, max_results=max_results)
         return "\n".join(
-            [f"{r['title']} - {r['href']}" for r in results if "href" in r]
+            [f"[{r['title']}]({r['href']})" for r in results if "href" in r]
         )
 
+def shorten_url(long_url: str) -> str:
+    api_url = f"http://tinyurl.com/api-create.php?url={long_url}"
+    try:
+        response = requests.get(api_url, timeout=3)
+        if response.status_code == 200:
+            return response.text
+        else:
+            return long_url  # 실패하면 원래 URL 반환
+    except Exception:
+        return long_url
 
 # 뉴스 검색
 def fast_news_search(query: str, max_results: int = 3) -> str:
@@ -70,7 +80,7 @@ def fast_news_search(query: str, max_results: int = 3) -> str:
     if not entries:
         return "관련된 뉴스 기사를 찾지 못했어ㅠㅠ"
 
-    results = [f"{entry.title} - {entry.link}" for entry in entries]
+    results = [f"[{entry.title}]({shorten_url(entry.link)})" for entry in entries]
 
     return "\n".join(results)
 
@@ -93,19 +103,35 @@ def youtube_search(query: str, max_results: int = 3) -> str:
         video_id = item["id"]["videoId"]
         title = item["snippet"]["title"]
         url = f"https://www.youtube.com/watch?v={video_id}"
-        results.append(f"{title} - {url}")
+        results.append(f"[{title}]({url})")
 
     return "\n".join(results)
 
 
 # 인물 정보 검색
-# embeddings = OpenAIEmbeddings()
-# person_db = Chroma(persist_directory="./person_db", embedding_function=embeddings)
-# person_retriever = person_db.as_retriever(search_kwargs={"k": 1})
+embeddings = OpenAIEmbeddings()
+person_db = Chroma(persist_directory="./person_db", embedding_function=embeddings)
+person_retriever = person_db.as_retriever(search_kwargs={"k": 2})
 
-# def search_person_info(query: str) -> str:
-#     docs = person_retriever.get_relevant_documents(query)
-#     return "\n".join([doc.page_content for doc in docs])
+def search_person_info(query: str) -> str:
+    docs = person_retriever.get_relevant_documents(query)
+
+    if not docs:
+        return "해당 연예인에 대한 정보를 찾을 수 없습니다. 웹검색 도구를 사용해 보세요."
+
+    # 상위 최대 3개까지, 너무 많으면 자르기
+    results = []
+    for doc in docs:
+        content = doc.page_content.strip()
+        source = doc.metadata.get("source", None)  # 없을 수도 있음
+        if len(content) > 500:
+            content = content[:500] + "..."
+        if source:
+            results.append(f"[출처: {source}]\n{content}")
+        else:
+            results.append(content)
+
+    return "연예인 정보 검색 결과입니다:\n\n" + "\n\n".join(results)
 
 
 def get_weather(city="Seoul"):
@@ -123,7 +149,7 @@ def get_weather(city="Seoul"):
     cloud_percent = data["clouds"]["all"]  # 구름량 (%)
 
     return (
-        f"대한민국 서울 현재 날씨는 '{weather}'이고, "
+        f"대한민국 현재 날씨는 '{weather}'이고, "
         f"온도는 {temp}도, 습도는 {humidity}%, "
         f"풍속은 초속 {wind_speed}m, 구름량은 {cloud_percent}%입니다."
     )

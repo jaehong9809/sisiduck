@@ -9,6 +9,7 @@ from app.service.v2.search import (
     duckduckgo_search,
     get_weather,
     read_webpage,
+    search_person_info
 )
 from app.service.v2.prompts import DUKSUNI_SYSTEM_PROMPT
 from app.service.v2.llm import get_llm, get_hard_llm, get_soft_llm
@@ -19,12 +20,11 @@ from app.core.conv_utils import get_user_memory
 # ✅ 메모리
 # memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="output")
 
-# ✅ 도구 정의
 tools = [
     Tool(
         name="뉴스검색",
         func=fast_news_search,
-        description="최신 뉴스, 연예인 기사 등 외부 정보를 찾을 때 사용",
+        description="최신 뉴스, 연예인 기사, 소식 등 외부 정보를 찾을 때 사용",
     ),
     Tool(
         name="동영상검색",
@@ -34,7 +34,7 @@ tools = [
     Tool(
         name="웹검색",
         func=duckduckgo_search,
-        description="일반 연예인 정보, 블로그, 커뮤니티 등 전체 웹 검색이 필요할 때 사용",
+        description="연예인의 기본 정보나 경력, 나이, 데뷔 정보 등이 필요할 때 사용. 예: 커뮤니티 반응, 블로그 글, 또는 연예인 정보 검색 때 사용",
     ),
     Tool(
         name="날씨검색",
@@ -45,8 +45,9 @@ tools = [
         name="웹페이지읽기",
         func=read_webpage,
         description="링크된 웹페이지의 실제 내용을 읽고 싶을 때 사용",
-    ),
+    )
 ]
+
 
 
 # ✅ 말투 변환
@@ -118,7 +119,7 @@ def get_chat_chain(callback):
             ]
         )
 
-        print("\n🧩 [Chat 원본 출력]")
+        print("\n응답 메시지 : ")
         print(result.content)
 
         memory.save_context({"input": x["input"]}, {"output": result.content})
@@ -139,10 +140,67 @@ def get_agent_chain(callback):
                 answer = "임영웅의 소속사는 물고기뮤직이야!"
             elif "찬원" in x["input"]:
                 answer = "이찬원의 소속사는 티엔엔터테인먼트야!"
-            friendly = await to_friendly_tone(answer)
+            
+            if answer:  # 👉 이름이 인식된 경우에만 처리
+                friendly = await to_friendly_tone(answer)
+                return {"output": friendly}
 
-            return {"output": friendly}
+        if "생일" in x["input"]:
+            answer = ""
+            if "영웅" in x["input"]:
+                answer = "임영웅 생일은 1991년 6월 16일이야!"
+            elif "찬원" in x["input"]:
+                answer = "이찬원 생일은 1996년 11월 1일이야!"
 
+            if answer:  # 👉 이름이 인식된 경우에만 처리
+                friendly = await to_friendly_tone(answer)
+                return {"output": friendly}
+            
+        if "군대" in x["input"]:
+            answer = ""
+            if "영웅" in x["input"]:
+                answer = "임영웅은 병역 대상이지만 아직 군 복무를 하지 않았어!"
+            elif "찬원" in x["input"]:
+                answer = "이찬원은 군 복무를 마치지 않았고, 미스터트롯 활동 이후 연예계 활동에 집중하고 있어!"
+
+            if answer:
+                friendly = await to_friendly_tone(answer)
+                return {"output": friendly}
+
+        if "키" in x["input"]:
+            answer = ""
+            if "영웅" in x["input"]:
+                answer = "임영웅의 키는 약 182cm 정도야!"
+            elif "찬원" in x["input"]:
+                answer = "이찬원의 키는 약 176cm 정도로 알려져 있어!"
+
+            if answer:
+                friendly = await to_friendly_tone(answer)
+                return {"output": friendly}
+
+        if "가족" in x["input"] or "가족관계" in x["input"]:
+            answer = ""
+            if "영웅" in x["input"]:
+                answer = "임영웅은 어머니와 단둘이 살며, 어머니와의 각별한 사이로 유명해!"
+            elif "찬원" in x["input"]:
+                answer = "이찬원은 부모님과 형제가 있는 것으로 알려져 있어. 가족과의 유대가 깊은 편이야!"
+
+            if answer:
+                friendly = await to_friendly_tone(answer)
+                return {"output": friendly}
+
+        if "mbti" in x["input"].lower():
+            answer = ""
+            if "영웅" in x["input"]:
+                answer = "임영웅의 MBTI는 정확히 공개되진 않았지만 팬들 사이에선 INFJ나 ISFJ로 추정돼!"
+            elif "찬원" in x["input"]:
+                answer = "이찬원의 MBTI는 ENFP로 알려져 있어. 밝고 에너지 넘치는 성격이래!"
+
+            if answer:
+                friendly = await to_friendly_tone(answer)
+                return {"output": friendly}
+        
+        
         llm = get_llm(streaming=True, callback=callback)
 
         # prompt = react_prompt_kr.partial(
@@ -160,9 +218,11 @@ def get_agent_chain(callback):
             tools=tools,
             memory=memory,
             handle_parsing_errors=True,
-            verbose=True,
-            max_iterations=8,
+            max_iterations=10,
+            max_execution_time=30,
+            return_exceptions=False,
             return_intermediate_steps=True,
+            verbose=True,
             output_key="output",
         )
         del x["user_id"]
@@ -191,11 +251,11 @@ def get_agent_chain(callback):
         # 전체 맥락 연결
         # full_context = final_answer + "\n\n" + search_summary
 
-        print("\n🪄 [Final Answer 추출 결과]")
-        print(final_answer)
+        # print("\n🪄 [Final Answer 추출 결과]")
+        # print(final_answer)
 
         friendly = await to_friendly_tone(final_answer)
-        print("\n💬 [덕순이 말투 변환 결과]")
+        print("\n응답 메시지")
         print(friendly)
 
         return {"output": friendly}

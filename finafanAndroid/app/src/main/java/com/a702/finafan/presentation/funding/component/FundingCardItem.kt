@@ -1,5 +1,6 @@
 package com.a702.finafan.presentation.funding.component
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,12 +25,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.a702.finafan.R
 import com.a702.finafan.common.ui.component.Badge
 import com.a702.finafan.common.ui.theme.CustomTypography.titleMedium
 import com.a702.finafan.common.ui.theme.MainBlack
@@ -38,11 +41,10 @@ import com.a702.finafan.common.ui.theme.MainWhite
 import com.a702.finafan.common.ui.theme.Pretendard
 import com.a702.finafan.common.ui.theme.starThemes
 import com.a702.finafan.common.utils.StringUtil
+import com.a702.finafan.common.utils.StringUtil.getRemainingDaysText
 import com.a702.finafan.domain.funding.model.Funding
 import com.a702.finafan.domain.funding.model.Star
 import com.a702.finafan.presentation.navigation.NavRoutes
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 @Composable
 fun FundingCardItem(
@@ -56,6 +58,8 @@ fun FundingCardItem(
             .build()
     )
 
+    Log.d("thumbnail:", "${star.thumbnail}")
+
     Column(
         modifier = Modifier
             .height(260.dp)
@@ -66,7 +70,7 @@ fun FundingCardItem(
                 navController.navigate(NavRoutes.FundingDetail.withId(funding.id))
             }
     ) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween ) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
@@ -90,20 +94,32 @@ fun FundingCardItem(
                         )
                     }
                     Spacer(Modifier.width(12.dp))
-                    Badge(star.name, MainWhite, starThemes[star.index].mid)
+                    Badge(content = star.name, fontColor =  MainWhite, bgColor =  starThemes[star.index].mid)
                 }
-                Text(
-                    "종료까지 ${ChronoUnit.DAYS.between(LocalDate.now(), funding.fundingExpiryDate)}일",
-                    style = titleMedium,
-                    color = MainTextGray
-                )
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = getRemainingDaysText(funding.fundingExpiryDate),
+                        style = titleMedium,
+                        color = MainTextGray
+                    )
+                    if(funding.currentAmount >= funding.goalAmount) {
+                        Image(
+                            painter = painterResource(id = R.drawable.check),
+                            contentDescription = "check",
+                            modifier = Modifier.size(50.dp),
+                        )
+                    }
+
+                }
             }
 
             Text(text = funding.title,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = Pretendard,
-                modifier = Modifier.padding(horizontal = 0.dp, vertical = 20.dp))
+                modifier = Modifier.padding(horizontal = 0.dp, vertical = 18.dp))
         Row(modifier = Modifier.fillMaxWidth()
             .padding(bottom = 14.dp),
             verticalAlignment = Alignment.CenterVertically,

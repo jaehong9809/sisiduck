@@ -169,14 +169,13 @@ fun SavingContent(saving: MainSaving) {
                     color = MainBlack,
                     modifier = Modifier.padding(vertical = 20.dp))
             }
+            // TODO: AsyncImage로 리팩토링
             Image(
                 painter = rememberAsyncImagePainter(saving.starImageUrl),
                 contentDescription = saving.starName,
-                modifier = Modifier
+                modifier = Modifier.align(Alignment.Bottom)
             )
         }
-
-        Spacer(modifier = Modifier.weight(1f))
 
         Box(
             modifier = Modifier
