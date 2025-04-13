@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EntertainerSavingsTransactionDetailRepository extends JpaRepository<EntertainerSavingsTransactionDetail, Integer> {
+public interface EntertainerSavingsTransactionDetailRepository extends JpaRepository<EntertainerSavingsTransactionDetail, Integer>, EntertainerSavingsTransactionDetailRepositoryCustom {
 
     Optional<List<EntertainerSavingsTransactionDetail>> findByDepositAccountId(Long accountId);
 

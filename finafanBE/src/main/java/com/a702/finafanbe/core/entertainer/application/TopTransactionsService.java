@@ -1,13 +1,13 @@
 package com.a702.finafanbe.core.entertainer.application;
 
 import com.a702.finafanbe.core.demanddeposit.entity.EntertainerSavingsAccount;
-import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.AccountRepository;
 import com.a702.finafanbe.core.demanddeposit.entity.infrastructure.EntertainerSavingsAccountRepository;
 import com.a702.finafanbe.core.entertainer.dto.response.TopTransactionResponse;
 import com.a702.finafanbe.core.entertainer.dto.response.TopTransactionsResponse;
 import com.a702.finafanbe.core.entertainer.entity.Entertainer;
 import com.a702.finafanbe.core.entertainer.entity.infrastructure.EntertainerRepository;
 import com.a702.finafanbe.core.ranking.application.RankingService;
+import com.a702.finafanbe.core.ranking.application.RankingService.EntertainerRankingEntry;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.EntertainerSavingsTransactionDetail;
 import com.a702.finafanbe.core.transaction.deposittransaction.entity.infrastructure.EntertainerSavingsTransactionDetailRepository;
 import com.a702.finafanbe.core.user.entity.User;
@@ -18,6 +18,7 @@ import com.a702.finafanbe.global.common.exception.NotFoundException;
 import com.a702.finafanbe.global.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -44,26 +45,14 @@ public class TopTransactionsService {
 
     private static final int TOP_TRANSACTIONS_LIMIT = 10;
 
-    @Transactional
-    public TopTransactionsResponse getTopTransactions(Long entertainerId, String period) {
+    @Transactional(readOnly = true)
+    public TopTransactionsResponse getTopTransactions(Long entertainerId, String period, PageRequest pageRequest) {
         Entertainer entertainer = entertainerRepository.findById(entertainerId)
             .orElseThrow(() -> new BadRequestException(ResponseData.createResponse(ErrorCode.NotFoundEntertainer)));
 
+        EntertainerRankingEntry entertainerRankingEntry = getRankingEntryByPeriod(period, entertainerId);
+
         LocalDateTime filterFromTime = getFilterTimeByPeriod(period);
-
-        List<RankingService.EntertainerRankingEntry> entertainerRanking = new ArrayList<>();
-        if(period.equals("weekly")) {
-            entertainerRanking = rankingService.getWeeklyEntertainerRanking();
-        }else if (period.equals("daily")){
-            entertainerRanking = rankingService.getDailyEntertainerRanking();
-        }else if (period.equals("total")){
-            entertainerRanking = rankingService.getTotalEntertainerRanking();
-        }
-
-        RankingService.EntertainerRankingEntry entertainerRankingEntry = entertainerRanking.stream()
-                .filter(ranking -> entertainer.getEntertainerId().equals(ranking.getEntertainerId()))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(ResponseData.createResponse(ErrorCode.NotFoundEntertainer)));
 
         List<EntertainerSavingsAccount> savingsAccounts =
             savingsAccountRepository.findByEntertainerId(entertainerId);
@@ -74,42 +63,22 @@ public class TopTransactionsService {
 
         if (depositAccountIds.isEmpty()) {
             return TopTransactionsResponse.of(
-                    entertainerRankingEntry.getRank(),
-                    entertainer,
-                    entertainerRankingEntry.getTotalAmount(),
-                    List.of()
+                entertainerRankingEntry.getRank(),
+                entertainer,
+                entertainerRankingEntry.getTotalAmount(),
+                List.of()
             );
         }
 
-        List<EntertainerSavingsTransactionDetail> allTransactions = depositAccountIds.stream()
-            .flatMap(accountId -> {
-                List<EntertainerSavingsTransactionDetail> details =
-                    transactionDetailRepository.findByDepositAccountId(accountId)
-                        .orElse(List.of());
-                return details.stream();
-            })
-            .collect(Collectors.toList());
+        List<EntertainerSavingsTransactionDetail> topTransactions =
+            transactionDetailRepository.findTopTransactionsByEntertainerIdAndPeriod(
+                depositAccountIds,
+                filterFromTime,
+                "total".equals(period),
+                TOP_TRANSACTIONS_LIMIT
+            );
 
-        List<EntertainerSavingsTransactionDetail> filteredTransactions;
-        if (!"total".equals(period)) {
-            filteredTransactions = allTransactions.stream()
-                .filter(transaction -> transaction.getCreatedAt().isAfter(filterFromTime))
-                .collect(Collectors.toList());
-        } else {
-            filteredTransactions = allTransactions;
-        }
-
-        List<EntertainerSavingsTransactionDetail> topTransactions = filteredTransactions.stream()
-            .sorted((t1, t2) -> t2.getTransactionBalance().compareTo(t1.getTransactionBalance()))
-            .limit(TOP_TRANSACTIONS_LIMIT)
-            .collect(Collectors.toList());
-
-        Map<Long, User> userMap = topTransactions.stream()
-            .map(EntertainerSavingsTransactionDetail::getUserId)
-            .distinct()
-            .map(userId -> userRepository.findById(userId).orElse(null))
-            .filter(user -> user != null)
-            .collect(Collectors.toMap(User::getUserId, user -> user));
+        Map<Long, User> userMap = transactionDetailRepository.findUsersByTransactionDetails(topTransactions);
 
         List<TopTransactionResponse> topTransactionResponses = topTransactions.stream()
             .map(transaction -> {
@@ -134,6 +103,31 @@ public class TopTransactionsService {
                 entertainerRankingEntry.getTotalAmount(),
                 topTransactionResponses
         );
+    }
+
+    private EntertainerRankingEntry getRankingEntryByPeriod(
+        String period,
+        Long entertainerId
+    ) {
+        List<EntertainerRankingEntry> ranking = new ArrayList<>();
+
+        switch (period){
+            case "weekly":
+                ranking = rankingService.getWeeklyEntertainerRanking();
+                break;
+            case "daily":
+                ranking = rankingService.getDailyEntertainerRanking();
+                break;
+            case "total":
+            default:
+                ranking = rankingService.getTotalEntertainerRanking();
+                break;
+        }
+
+        return ranking.stream()
+                .filter(entry -> entertainerId.equals(entry.getEntertainerId()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(ResponseData.createResponse(ErrorCode.NotFoundEntertainer)));
     }
 
     private LocalDateTime getFilterTimeByPeriod(String period) {

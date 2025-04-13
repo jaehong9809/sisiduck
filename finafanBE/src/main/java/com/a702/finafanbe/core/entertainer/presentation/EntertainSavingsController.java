@@ -26,6 +26,8 @@ import com.a702.finafanbe.global.common.util.ResponseUtil;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -205,13 +207,17 @@ public class EntertainSavingsController {
     @GetMapping("/{entertainerId}/top-transactions")
     public ResponseEntity<ResponseData<TopTransactionsResponse>> getTopTransactions(
         @PathVariable Long entertainerId,
-        @RequestParam(defaultValue = "daily") String period) {
+        @RequestParam(defaultValue = "daily") String period,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
 
         log.info("Getting top transactions for entertainer: {}, period: {}",
             entertainerId, period);
 
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("transactionBalance"));
         TopTransactionsResponse response =
-            topTransactionsService.getTopTransactions(entertainerId, period);
+            topTransactionsService.getTopTransactions(entertainerId, period, pageRequest);
 
         return ResponseUtil.success(response);
     }

@@ -72,6 +72,9 @@ public class Account extends BaseEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Version
+    private Long version;
+
     public BigDecimal addAmount(BigDecimal amount) {
         return this.amount.add(amount);
     }
