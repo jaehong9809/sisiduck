@@ -63,6 +63,9 @@ public class EntertainerSavingsAccount extends BaseEntity {
     @Column(name = "max_subscription_balance", nullable = false)
     private BigDecimal maxSubscriptionBalance;
 
+    @Version
+    private Long version;
+
     public static EntertainerSavingsAccount of(
         Long userId,
         Long entertainerId,
